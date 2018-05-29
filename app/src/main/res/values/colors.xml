@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--main colors-->
+    <color name="colorPrimary">#245c8c</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background">#F2F2F2</color>
+    <color name="transparent">#70FFFFFF</color>
+    <color name="white">#ffffff</color>
+    <color name="gray_soft">#EEEAE9</color>
+    <color name="gray">#D0CCCC</color>
+    <color name="black">#000000 </color>
+
+    <!--splash-->
+    <color name="progressbar_color">#679DE7</color>
+
+    <!--start fragment-->
+    <color name="start_button_color_front">#F7921E</color>
+    <color name="start_button_color_back">#BF4024</color>
+    <color name="has_account_button_color">#B0DC3A</color>
+
+    <!--login fragment-->
+    <color name="singin_button_color">#101E45</color>
+    <color name="singin_facebook_front">#2D89CB</color>
+    <color name="singin_facebook_back">#101E45</color>
+    <color name="singin_google_front">#F7921E</color>
+    <color name="singin_google_back">#BA4026</color>
+
+
+    <color name="comipems_background">#F7921E</color>
+    <color name="secundary_background">#B0DC3A</color>
+
+
+    <color name="select_button_color_front">#101E45</color>
+    <color name="select_button_color_back">#2D89CB</color>
+
+    <color name="it_is_understood_button_color_front">#B0DC3A</color>
+    <color name="it_is_understood_button_color_back">#92AA2D</color>
+
+    <!--profile fragment-->
+    <color name="my_profile_color">#F7921E</color>
+    <color name="profile_hint_text_color">#D2D2D2</color>
+    <color name="restor_purchase_text_color">#059CAE</color>
+    <color name="suggestion_text_color">#205A8F</color>
+    <color name="log_out_text_color">#205A8F</color>
+    <color name="facebook_text_color">#205A8F</color>
+    <color name="notification_text_color">#205A8F</color>
+    <color name="time_to_notify_text_color">#B0DC3A</color>
+    <color name="terms_and_privacy_color">#E6E6E6</color>
+    <color name="terms_and_privacy_text_color">#205A8F</color>
+    <color name="switch_color_thumb">#F2F2F2</color>
+    <color name="switch_color_track">#205A8F</color>
+    <color name="not_selected_schools_text_color">#205A8F</color>
+
+    <!--payment fragment-->
+    <color name="are_you_premium_text_color">#205A8F</color>
+    <color name="become_user_premium_text_color">#205A8F</color>
+    <color name="paymen_line_color">#5E87AC</color>
+    <color name="exams_text_color2">#205A8F</color>
+    <color name="questions_text_color2">#205A8F</color>
+    <color name="get_all_exams_and_questions_text_color">#808080</color>
+    <color name="you_have_acces_of_all_contents_text_color">#205A8F</color>
+
+
+    <!--question module fragment-->
+    <color name="checked_module_color">#059CAE</color>
+    <color name="unchecked_module_color">#101E45</color>
+    <color name="square_first_padding_color">#B0DC3A</color>
+    <color name="square_second_padding_color">#F7921E</color>
+
+    <!--questions fragments-->
+    <color name="question_background_color">#101E45</color>
+    <color name="option_text_color">#B2D8FF</color>
+    <color name="answer_background_color">#F2F2F2</color>
+    <color name="option_answer_text_color">#CCCCCC</color>
+    <color name="option_unselected_answer_background_color">#059CAE</color>
+    <color name="option_correct_answer_background_color">#B0DC3A</color>
+    <color name="option_wrong_answer_background_color">#FF0000</color>
+    <color name="bottom_bar_background_color">#E6E6E6</color>
+
+    <!--advances fragment-->
+    <color name="verbal_skills_text_color">#059CAE</color>
+    <color name="mathematical_skills_text_color">#205A8F</color>
+    <color name="chemical_skills_text_color">#B0DC3A</color>
+    <color name="spanish_skills_text_color">#F7921E</color>
+    
+    <!--advances fragment-->
+    <color name="questions_text_color">#101E45</color>
+    <color name="answered_questions_text_color">#205A8F</color>
+    <color name="hits_and_misses_box_color">#E6E6E6</color>
+    <color name="score_hits_text_color">#B2DD42</color>
+    <color name="score_misses_text_color">#F7921E</color>
+    <color name="exams_text_color">#101E45</color>
+    <color name="exam_text_color">#FFFFFF</color>
+    <color name="average_by_subject_text_color">#101E45</color>
+    <color name="question_number_text_color">#2D5D83</color>
+    <color name="exam_not_done_text_color">#6F6F6F</color>
+    <color name="exam_done_text_color">#161831</color>
+
+    <!--score fragemnt-->
+    <color name="comipems_2017_text_color">#101E45</color>
+    <color name="school_text_color">#225B90</color>
+    <color name="hits_number_text_color">#6F8F17</color>
+    <color name="hits_text_color">#666666</color>
+    <color name="line_1_background_color">#707990</color>
+    <color name="percentage_line_color">#9D9D9D</color>
+    <color name="average_progress_color">#B0DC3A</color>
+
+    <!--exams average fragment-->
+    <color name="average_line_color">#FC5961</color>
+    <color name="me_color">#B0DC3A</color>
+    <color name="beast_color">#F7921E</color>
+    <color name="average_color">#205A8F</color>
+
+    <!--exam fragment-->
+    <color name="not_exams_currently_text_color">#205A8F</color>
+    <color name="not_wrong_questions_text">#205A8F</color>
+
+    <!--dialogs-->
+    <color name="dialog_background_color">#E6E6E6</color>
+    <color name="dialog_horizontal_line_color">#EEBF8B</color>
+    <color name="dialog_vertical_line_color">#959595</color>
+    <color name="dialog_message_text_color">#818181</color>
+    <color name="dialog_yes_text_color">#F7921E</color>
+    <color name="dialog_not_text_color">#828282</color>
+    <color name="dialog_ok_text_color">#828282</color>
+    
+</resources>

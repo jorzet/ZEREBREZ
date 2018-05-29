@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp">
+
+                <GridLayout
+                    android:id="@+id/table_left"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+
+                <GridLayout
+                    android:id="@+id/table_center"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/table_left"
+                    android:layout_toEndOf="@+id/table_left"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+                <GridLayout
+                    android:id="@+id/table_right"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/table_center"
+                    android:layout_toEndOf="@+id/table_center"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">ZEREBREZ</string>
+
+    <string name="facebook_app_id">158510518316332</string>
+    <string name="fb_login_protocol_scheme">fb158510518316332</string>
+
+    <!-- for the initialization -->
+
+    <string name="get_knowladge_key_text">¡Obtén la llave\ndel conocimiento!</string>
+    <string name="start_button_text">Comenzar</string>
+    <string name="do_you_have_account_text">¿Ya tienes una cuenta?</string>
+    <string name="user_email_text">Usuario o correo</string>
+    <string name="password_text">Contraseña</string>
+    <string name="singin_text">INGRESAR</string>
+    <string name="singin_with">INICIAR CON</string>
+
+    <string name="comipems_text">COMIPEMS</string>
+    <string name="split_comipems_text">C O M I P E M S</string>
+    <string name="secundary_text">SECUNDARIA</string>
+    <string name="split_secundary_text">S E C U N D A R I A</string>
+
+    <string name="select_text">SELECCIONAR</string>
+    <string name="split_select_text">S E L E C C I O N A R</string>
+
+    <string name="init">Pequeños módulos \n con preguntas de todas \n las materias</string>
+    <string name="it_is_understood">ENTENDIDO</string>
+
+    <string name="user_or_email">Usuario o correo</string>
+    <string name="password">Contraseña</string>
+    <string name="login">INGRESAR</string>
+    <string name="login_with_text">INICIAR CON</string>
+
+    <!--practice-->
+    <string name="small_modules_with_questions">Pequeños módulos con preguntas de todas las materias</string>
+    <string name="study_by_subject_and_topic">¡Estudia por materia y por tema!</string>
+    <string name="study_wrong_question">Aquí puedes repasar tus preguntas incorrectas</string>
+    <string name="ready_to_do_complete_exam">¿Estás listo? Realiza un examen completo</string>
+
+    <!--advances-->
+    <string name="here_you_can_check_your_advance">¡Aquí puedes ver tu avance!</string>
+
+    <!--score-->
+    <string name="know_school_you_are">¡Averigua en qué escuelas te quedas!</string>
+    <string name="you_need_to_have_almost_one_exam">Debes tener al menos un examen real resuelto</string>
+    <string name="compare_your_results">¡Compara tus resultados con los demás usuarios!</string>
+
+    <!--profile-->
+    <string name="my_profile_text">MI PERFIL</string>
+    <string name="name_profile_text">Nombre</string>
+    <string name="last_name_profile_text">Apellido</string>
+    <string name="course_profile_text">Curso</string>
+    <string name="password_profile_text">Contraseña</string>
+    <string name="email_profile_text">Correo</string>
+    <string name="restore_purchase_text">RESTAURAR COMPRAS</string>
+    <string name="suggestion_text">SUGERENCIAS</string>
+    <string name="log_out_text">CERRAR SESIÓN</string>
+    <string name="use_mobile_data_text">USAR DATOS MÓVILES</string>
+    <string name="notification_text">NOTIFICACIÓN</string>
+    <string name="time_to_notify_text">Hora de Notificación</string>
+    <string name="terms_and_privacy">TÉRMINOS Y PRIVACIDAD</string>
+    <string name="not_selected_schools_text">No tienes escuelas</string>
+
+    <!--payment-->
+    <string name="you_are_premium_text">¡Eres PREMIUM!</string>
+    <string name="are_you_premium">¿Ya eres PREMIUM?</string>
+    <string name="yes_text">SÍ</string>
+    <string name="not_text">NO</string>
+    <string name="become_premium_user_text">¡Vuélvete PREMIUM!</string>
+    <string name="exams_number_text">10 examénes</string>
+    <string name="questions_number_text">3239 preguntas</string>
+    <string name="get_all_exams_and_questions_text">Y obtén gratis todas las preguntas y exámenes que se agreguen!</string>
+    <string name="i_want_to_be_premium_text">QUIERO SER PREMIUM</string>
+    <string name="get_free_exams_and_questions_text">OBTÉN GRATIS EXÁMENES Y PREGUNTAS</string>
+    <string name="you_have_acces_of_all_contents_text">¡Tienes acceso a todo el contenido!</string>
+
+
+    <!--question fragments-->
+    <string name="show_answer">VER SOLUCIÓN</string>
+    <string name="option_a_text">a)</string>
+    <string name="option_b_text">b)</string>
+    <string name="option_c_text">c)</string>
+    <string name="option_d_text">d)</string>
+
+
+    <!--advances fragment-->
+    <string name="verbal_skills_text">HABILIDAD VERBAL</string>
+    <string name="mathematical_skills_text">HABILIDAD MATEMÁTICA</string>
+    <string name="chemical_skills_text">QUÍMICA</string>
+    <string name="spanish_skills_text">ESPAÑOL</string>
+
+    <!--exam fragment-->
+    <string name="chocolate_exam_text">DE CHOCOLATE</string>
+    <string name="not_fake_exam_text">100% REAL, NO FAKE</string>
+    <string name="without_time_text">Sin tiempo</string>
+    <string name="step_by_step_text">Puedes revisar el paso a paso</string>
+    <string name="not_exams_currently_text">Por el momento no hay examenes diponibles</string>
+
+
+    <!--advances fragment-->
+    <string name="questions_text">Preguntas</string>
+    <string name="answered_questions_text">contestadas</string>
+    <string name="exams_text">Exámenes</string>
+    <string name="exam_text">EXAMEN</string>
+    <string name="hits_text">aciertos</string>
+    <string name="average_by_subjet">Promedio por materia</string>
+
+    <!--score fragment-->
+    <string name="comipems_2017_text">COMIPEMS 2017</string>
+    <string name="school_text">ESCUELA</string>
+    <string name="hits_text_2">ACIERTOS</string>
+
+    <!--wrong questions-->
+    <string name="not_wrong_questions_text">Por el momento no tienes preguntas erroneas que repasar</string>
+
+    <!--dialogs-->
+    <string name="dialog_yes_text">Sí</string>
+    <string name="dialog_not_text">No</string>
+    <string name="dialog_ok_text">OK</string>
+
+
+    <!--terms and privacy-->
+    <string name="terms_and_privacy_text">El respeto a tu privacidad se encuentra codificado en nuestro ADN. Desde que iniciamos WhatsApp, hemos construido nuestros servicios con fuertes principios de privacidad en mente. En nuestros Términos de servicio y Política de privacidad actualizados encontrarás lo siguiente:
+
+Información más fácil de comprender. Nuestros Términos de Servicio y Política de Privacidad son más fáciles de comprender y reflejan nuevas funciones, tales como la Llamada WhatsApp y WhatsApp para computadora.
+Nos unimos a Facebook en 2014. WhatsApp es parte de la familia de empresas de Facebook. Nuestra Política de Privacidad explica cómo trabajamos en conjunto para brindarte una mejor experiencia; por ejemplo, al combatir los mensajes no solicitados entre las aplicaciones, hacer sugerencias de productos, y mostrarte ofertas y publicidad relevantes en Facebook. Nada de lo que compartes en WhatsApp--incluyendo tus mensajes, fotos, e información de perfil--será compartido en Facebook, o en alguna de las aplicaciones que pertenecen a la familia de Facebook, para que otros los vean. De la misma manera, lo que tú publiques en esas aplicaciones no será compartido en WhatsApp para que otros lo vean.
+Tus mensajes te pertenecen y nosotros no podemos leerlos. En WhatsApp hemos desarrollado funciones para proteger tu privacidad y seguridad. No almacenamos tus mensajes una vez que son entregados. Cuando los mensajes están cifrados de extremo a extremo; ni nosotros, ni terceras personas pueden leerlos.
+Cero anuncios bannner de terceros. No permitimos publicidad por parte de terceros en WhatsApp.
+Nuevas maneras de usar WhatsApp. Exploraremos maneras para que tú y diferentes comercios puedan comunicarse usando WhatsApp, por ejemplo con información de pedidos, transacciones y citas; notificaciones de entrega y envío; actualizaciones de producto y servicio; y mercadotecnia en general. Por ejemplo, puedes recibir información sobre el estado de un vuelo para un viaje próximo, un recibo de algo que compraste o una notificación sobre la fecha de una entrega. Los mensajes de mercadotecnia podrían incluir una oferta de algo que quizás te interese. No queremos que recibas mensajes no solicitados, es por eso que, al igual que con todos tus mensajes, puedes administrar estas comunicaciones y respetaremos las opciones que elijas.
+Tus opciones. Si eres un usuario actual, tendrás la opción de elegir que la información de tu cuenta WhatsApp no sea compartida con Facebook para mejorar tu experiencia con la publicidad y los productos en Facebook. Los usuarios que acepten nuestros Términos y Política de Privacidad actualizados, tendrán 30 días adicionales para tomar esta decisión yendo a Ajustes > Cuenta.
+</string>
+
+    <!--select schools fragment-->
+    <string name="select_your_school_text">Elige tus tres opciones</string>
+    <string name="continue_text">CONTINUAR</string>
+    <string name="ok_text">OK</string>
+
+
+    <string name="angle_down">&#xf107;</string>
+    <string name="angle_up">&#xf106;</string>
+
+    <!--payway activity-->
+    <string name="google_pay_text">Google Pay</string>
+    <string name="mercado_pago_text">Mercado Pago</string>
+
+
+    <string name="web_client_id">Include your web client id here</string>
+
+</resources>

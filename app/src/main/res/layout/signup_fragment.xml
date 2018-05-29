@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateTint="@color/background"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Practica mas"
+        android:textColor="@color/white"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_login_inputs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:hint="@string/user_email_text"
+            android:gravity="center"
+            android:textColorHint="@color/gray"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_user_email_background"/>
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_email"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="1dp"
+            android:inputType="textPassword"
+            android:hint="@string/password"
+            android:gravity="center"
+            android:textColorHint="@color/gray"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_password_background"/>
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/et_password"
+            android:layout_marginTop="45dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/signin_button_image"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_login_other_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp">
+
+        <TextView
+            android:id="@+id/tv_login_with"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/login_with_text"
+            android:textSize="20dp"/>
+
+        <ImageView
+            android:id="@+id/iv_gary_line2"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_login_with"
+            android:src="@drawable/gray_line_icon"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_gary_line2"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:id="@+id/btn_facebook_login"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/facebook_button_image"/>
+
+            <Button
+                android:id="@+id/btn_google_login"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/google_button_image"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

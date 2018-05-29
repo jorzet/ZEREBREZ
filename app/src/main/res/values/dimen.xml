@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--secundary fragment-->
+    <dimen name="secundary_image_width">150dp</dimen>
+    <dimen name="secundary_image_height">250dp</dimen>
+
+    <!--comipems fragment-->
+    <dimen name="comipems_image_width">150dp</dimen>
+    <dimen name="comipems_image_height">250dp</dimen>
+
+    <!--main container-->
+    <dimen name="height_top_tablayout">80dp</dimen>
+
+    <!--question module fragment-->
+    <dimen name="width_table">100dp</dimen>
+    <dimen name="width_square">70dp</dimen>
+    <dimen name="height_square">70dp</dimen>
+    <dimen name="width_square_padding">50dp</dimen>
+    <dimen name="height_square_padding">50dp</dimen>
+
+    <!--question image, text, ecuation fragment-->
+    <dimen name="margin_left_option">10dp</dimen>
+    <dimen name="margin_right_option">20dp</dimen>
+    <dimen name="width_option">60dp</dimen>
+    <dimen name="min_height_option">30dp</dimen>
+
+    <!--custom module and custom wrong question xml-->
+    <dimen name="width_row">100dp</dimen>
+    <dimen name="height_row">100dp</dimen>
+
+    <!--advances fragment-->
+    <dimen name="advances_module_image_width_image">70dp</dimen>
+    <dimen name="advances_module_image_height_image">70dp</dimen>
+
+    <!--school average canvas-->
+    <dimen name="average_progress_bar_widh">25dp</dimen>
+    <dimen name="line_average_progress_bar_width">2dp</dimen>
+    <dimen name="text_top_width">30dp</dimen>
+    <dimen name="text_top_size">15sp</dimen>
+
+    <!--school score canvas-->
+    <dimen name="hits_width">30dp</dimen>
+    <dimen name="users_height">30dp</dimen>
+    <dimen name="line_chart_width">2dp</dimen>
+
+
+</resources>

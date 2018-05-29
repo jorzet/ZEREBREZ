@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp">
+
+            <RelativeLayout
+                android:id="@+id/rl_score_questions_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp">
+
+                <RelativeLayout
+                    android:id="@+id/rl_question_gray_lines"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:src="@drawable/gray_line_icon"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/questions_text"
+                        android:textColor="@color/questions_text_color"
+                        android:textSize="30sp"/>
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/gray_line_icon"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_quetion_answered"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_question_gray_lines"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true">
+                    <TextView
+                        android:id="@+id/tv_num_answered_questions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="23"
+                        android:textColor="@color/answered_questions_text_color"
+                        android:textSize="20sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_num_answered_questions"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/answered_questions_text"
+                        android:textColor="@color/answered_questions_text_color"
+                        android:textSize="20sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_quetion_answered"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_squere_1"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/hits_misses_background">
+
+                        <ImageView
+                            android:id="@+id/iv_hits"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/tick_circle_icon"/>
+
+                        <TextView
+                            android:id="@+id/tv_hits_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/iv_hits"
+                            android:layout_centerHorizontal="true"
+                            android:text="210"
+                            android:textColor="@color/score_hits_text_color"
+                            android:textSize="20sp"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_squere_2"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_toRightOf="@+id/rl_squere_1"
+                        android:layout_toEndOf="@+id/rl_squere_1"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginStart="25dp"
+                        android:background="@drawable/hits_misses_background">
+
+                        <ImageView
+                            android:id="@+id/iv_misses"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/cross_circle_icon"/>
+
+                        <TextView
+                            android:id="@+id/tv_misses_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/iv_misses"
+                            android:layout_centerHorizontal="true"
+                            android:text="61"
+                            android:textColor="@color/score_misses_text_color"
+                            android:textSize="20sp"/>
+
+                    </RelativeLayout>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_gray_line1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/rl_score_questions_container"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/gray_line_icon"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_exams_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_gray_line1">
+
+                <TextView
+                    android:id="@+id/tv_exams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/exams_text"
+                    android:textColor="@color/exams_text_color"
+                    android:textSize="30sp"/>
+
+                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                    android:id="@+id/nslv_exams"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_exams"
+                    android:layout_marginTop="30dp">
+                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_gray_line2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/rl_exams_container"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/gray_line_icon"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_average_by_subject_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_gray_line2">
+
+                <TextView
+                    android:id="@+id/tv_average_by_subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/average_by_subjet"
+                    android:textColor="@color/average_by_subject_text_color"
+                    android:textSize="30sp"/>
+
+                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                    android:id="@+id/nslv_average_by_subject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_average_by_subject"
+                    android:layout_marginTop="30dp">
+                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_below="@+id/rl_average_by_subject_container"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_number": "389253974515",
+    "firebase_url": "https://zerebrez.firebaseio.com",
+    "project_id": "zerebrez",
+    "storage_bucket": "zerebrez.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389253974515:android:6a76cfeaed718bf1",
+        "android_client_info": {
+          "package_name": "com.zerebrez.zerebrez"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389253974515-td46cliol84kvu4df99aus3t55e9h6j7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zerebrez.zerebrez",
+            "certificate_hash": "a0ba4d835b9b45f54f4376dc888b82366dbc6a8a"
+          }
+        },
+        {
+          "client_id": "389253974515-9eak5q2r78pchph09t7dsgbrik50jbv2.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "389253974515-9eak5q2r78pchph09t7dsgbrik50jbv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVxzQZezrxmp87PnZeUN1UewZddrf5Bjw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "389253974515-9eak5q2r78pchph09t7dsgbrik50jbv2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "389253974515-tj765n0jsj86ajlvulpompak0vhqcpu9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zerebrez.zerebrez"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

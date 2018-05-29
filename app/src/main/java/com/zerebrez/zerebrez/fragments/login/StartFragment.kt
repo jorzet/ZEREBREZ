@@ -1,0 +1,129 @@
+/*
+ * Copyright [2018] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.zerebrez.zerebrez.fragments.login
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
+import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.fragments.init.InitFragment
+import com.zerebrez.zerebrez.models.Module
+import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.NetworkUtil
+
+/**
+ * Created by Jorge Zepeda Tinoco on 12/03/18.
+ * jorzet.94@gmail.com
+ */
+
+class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
+    }
+
+    private lateinit var mStartButton : Button
+    private lateinit var mGoLoginButton : Button
+    private lateinit var mButtonsContainer : View
+    private lateinit var mLoadingProgressBar : ProgressBar
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        if (container == null)
+            return null
+
+        val rootView = inflater.inflate(R.layout.start_fragment, container, false)!!
+
+        mStartButton = rootView.findViewById(R.id.btn_start)
+        mGoLoginButton = rootView.findViewById(R.id.has_account)
+        mButtonsContainer = rootView.findViewById(R.id.rl_buttons_container)
+        mLoadingProgressBar = rootView.findViewById(R.id.pb_loading)
+
+        mStartButton.setOnClickListener(mStartButtonListener)
+        mGoLoginButton.setOnClickListener(mGoLogInButtonListener)
+
+        return rootView
+    }
+
+    private val mStartButtonListener : View.OnClickListener = View.OnClickListener {
+
+        if (NetworkUtil.isConnected(context!!)) {
+
+            mButtonsContainer.visibility = View.GONE
+            mLoadingProgressBar.visibility = View.VISIBLE
+
+            requestLogIn(null)
+        } else {
+            ErrorDialog.newInstance("Error", "Necesitas tener conexión a intenet para poder iniciar",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+    }
+
+    private val mGoLogInButtonListener : View.OnClickListener = View.OnClickListener {
+        goSingInFragment()
+    }
+
+    override fun onDoLogInSuccess(success: Boolean) {
+        super.onDoLogInSuccess(success)
+        requestModules()
+    }
+
+    override fun onDoLogInFail(throwable: Throwable) {
+        super.onDoLogInFail(throwable)
+        mButtonsContainer.visibility = View.VISIBLE
+        mLoadingProgressBar.visibility = View.GONE
+    }
+
+    override fun onGetModulesSucces(result: List<Module>) {
+        super.onGetModulesSucces(result)
+        goInitFragment()
+    }
+
+    override fun onGetModulesFail(throwable: Throwable) {
+        super.onGetModulesFail(throwable)
+        mButtonsContainer.visibility = View.VISIBLE
+        mLoadingProgressBar.visibility = View.GONE
+    }
+
+    private fun goInitFragment() {
+        val manager = getFragmentManager();
+        val transaction = manager!!.beginTransaction();
+        transaction.replace(R.id.fragment_container, InitFragment())
+        transaction.commit();
+    }
+
+    private fun goSingInFragment() {
+        val manager = getFragmentManager();
+        val transaction = manager!!.beginTransaction();
+        transaction.replace(R.id.fragment_container, SignInFragment())
+        transaction.commit();
+    }
+
+
+}

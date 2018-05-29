@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/rl_question_option_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/question_background_color">
+                <TextView
+                    android:id="@+id/tv_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:text="question"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+                <ImageView
+                    android:id="@+id/iv_gray_line1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/gray_line_icon"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/tv_question"
+                    android:layout_marginTop="5dp"/>
+
+                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                    android:id="@+id/nslv_option_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_below="@id/iv_gray_line1"
+                    android:layout_marginTop="30dp"
+                    android:numColumns="1"
+                    android:clickable="false">
+                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_below="@id/nslv_option_container">
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/rl_question_option_container"
+                android:background="@color/answer_background_color">
+
+                <LinearLayout
+                    android:id="@+id/rl_answer_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/padding_top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp">
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_option_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_a_option"
+                            android:layout_width="@dimen/width_option"
+                            android:layout_height="@dimen/min_height_option">
+                            <TextView
+                                android:id="@+id/tv_option_a"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/option_a_text"
+                                android:textColor="@color/option_answer_text_color"
+                                android:textSize="25sp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/option_a"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/min_height_option"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/rl_a_option"
+                            android:layout_toEndOf="@+id/rl_a_option"
+                            android:layout_marginLeft="@dimen/margin_left_option"
+                            android:layout_marginStart="@dimen/margin_left_option"
+                            android:layout_marginRight="@dimen/margin_right_option"
+                            android:layout_marginEnd="@dimen/margin_right_option"
+                            android:background="@drawable/answer_unselected_option_background" >
+                            <TextView
+                                android:id="@+id/answer_a"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:text="a"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_option_b"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_b_option"
+                            android:layout_width="@dimen/width_option"
+                            android:layout_height="@dimen/min_height_option">
+
+                            <TextView
+                            android:id="@+id/tv_option_b"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/option_b_text"
+                            android:textColor="@color/option_answer_text_color"
+                            android:textSize="25sp"/>
+
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:id="@+id/option_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/min_height_option"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/rl_b_option"
+                            android:layout_toEndOf="@+id/rl_b_option"
+                            android:layout_marginLeft="@dimen/margin_left_option"
+                            android:layout_marginStart="@dimen/margin_left_option"
+                            android:layout_marginRight="@dimen/margin_right_option"
+                            android:layout_marginEnd="@dimen/margin_right_option"
+                            android:background="@drawable/answer_unselected_option_background">
+                            <TextView
+                                android:id="@+id/answer_b"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:text="b"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_option_c"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_c_option"
+                        android:layout_width="@dimen/width_option"
+                        android:layout_height="@dimen/min_height_option">
+
+                        <TextView
+                            android:id="@+id/tv_option_c"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/option_c_text"
+                            android:textColor="@color/option_answer_text_color"
+                            android:textSize="25sp"/>
+
+                    </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:id="@+id/option_c"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/min_height_option"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/rl_c_option"
+                            android:layout_toEndOf="@+id/rl_c_option"
+                            android:layout_marginLeft="@dimen/margin_left_option"
+                            android:layout_marginStart="@dimen/margin_left_option"
+                            android:layout_marginRight="@dimen/margin_right_option"
+                            android:layout_marginEnd="@dimen/margin_right_option"
+                            android:background="@drawable/answer_unselected_option_background">
+                            <TextView
+                                android:id="@+id/answer_c"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:text="c"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_option_d"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_d_option"
+                            android:layout_width="@dimen/width_option"
+                            android:layout_height="@dimen/min_height_option">
+
+                            <TextView
+                                android:id="@+id/tv_option_d"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/option_d_text"
+                                android:textColor="@color/option_answer_text_color"
+                                android:textSize="25sp"/>
+
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:id="@+id/option_d"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/min_height_option"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/rl_d_option"
+                            android:layout_toEndOf="@+id/rl_d_option"
+                            android:layout_marginLeft="@dimen/margin_left_option"
+                            android:layout_marginStart="@dimen/margin_left_option"
+                            android:layout_marginRight="@dimen/margin_right_option"
+                            android:layout_marginEnd="@dimen/margin_right_option"
+                            android:background="@drawable/answer_unselected_option_background">
+                            <TextView
+                                android:id="@+id/answer_d"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:text="a"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp">
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

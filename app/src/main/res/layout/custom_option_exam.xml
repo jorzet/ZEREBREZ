@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:background="@color/background">
+
+        <ImageView
+            android:id="@+id/iv_exam"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/exam_icon"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_exam"
+            android:layout_toEndOf="@+id/iv_exam"
+            android:layout_marginLeft="30dp">
+
+            <TextView
+                android:id="@+id/tv_exam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Examen 1"
+                android:textColor="@color/exam_not_done_text_color"
+                android:textSize="15sp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_correct_incorrect_container"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@+id/tv_exam"
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_correct"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/tick_circle_icon"/>
+
+                <TextView
+                    android:id="@+id/tv_correct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_correct"
+                    android:layout_marginLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:text="1"
+                    android:textColor="@color/exams_text_color2"
+                    android:textSize="15sp"/>
+
+                <ImageView
+                    android:id="@+id/iv_incorrect"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_toRightOf="@+id/tv_correct"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/cross_circle_icon"/>
+
+                <TextView
+                    android:id="@+id/tv_incorrect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_incorrect"
+                    android:layout_marginLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:text="3"
+                    android:textColor="@color/exams_text_color2"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_exam_not_done_container"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@+id/tv_exam"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/tv_question_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="3"
+                    android:textColor="@color/question_number_text_color"
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_question_number"
+                    android:layout_marginLeft="20dp"
+                    android:text="Preguntas"
+                    android:textColor="@color/question_number_text_color"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

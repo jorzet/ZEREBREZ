@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <katex.hourglass.in.mathlib.MathView
+        android:id="@+id/mv_equation"
+        app:setTextColor="@color/white"
+        app:setTextSize="10sp"
+        app:setClickable="true"
+        app:setText="$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$$"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

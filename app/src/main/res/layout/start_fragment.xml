@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_brain_key"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/brain_key_icon"/>
+
+    <RelativeLayout
+        android:id="@+id/text_start_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/iv_gary_line1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/gray_line_icon"/>
+
+        <TextView
+            android:id="@+id/text_between_lines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_gary_line1"
+            android:layout_centerHorizontal="true"
+            android:lines="2"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:text="@string/get_knowladge_key_text"/>
+
+        <ImageView
+            android:id="@+id/iv_gary_line2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_between_lines"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/gray_line_icon"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_buttons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/text_start_group"
+        android:layout_marginTop="60dp">
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="@string/start_button_text"
+            android:background="@drawable/start_button_background"/>
+
+        <Button
+            android:id="@+id/has_account"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_start"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/do_you_have_account_text"
+            android:background="@drawable/have_account_button_background"/>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/text_start_group"
+        android:layout_marginTop="100dp"
+        android:indeterminateTint="@color/background"
+        android:visibility="gone"/>
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp">
+
+            <TextView
+                android:id="@+id/tv_comipems_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="@string/comipems_2017_text"
+                android:textColor="@color/comipems_2017_text_color"
+                android:textSize="30sp"/>
+
+            <ImageView
+                android:id="@+id/iv_gary_line"
+                android:layout_width="250dp"
+                android:layout_height="2dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/tv_comipems_year"
+                android:layout_marginTop="20dp"
+                android:background="@color/line_1_background_color"/>
+
+            <com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
+                android:id="@+id/school_average"
+                android:layout_height="3000dp"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/iv_gary_line"
+                android:layout_marginTop="30dp"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

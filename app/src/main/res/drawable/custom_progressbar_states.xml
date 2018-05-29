@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <rotate
+            android:fromDegrees="90"
+            android:toDegrees="90">
+            <shape
+                android:shape="line">
+                <stroke
+                    android:width="20dp"
+                    android:color="@color/average_progress_color" />
+            </shape>
+        </rotate>
+    </item>
+    <item android:id="@android:id/background">
+        <rotate
+            android:fromDegrees="90"
+            android:toDegrees="90">
+            <shape
+                android:shape="line">
+                <stroke
+                    android:width="18dp"
+                    android:color="@color/background" />
+            </shape>
+        </rotate>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip android:clipOrientation="vertical" android:gravity="bottom">
+            <rotate
+                android:fromDegrees="90"
+                android:toDegrees="90">
+                <shape
+                    android:shape="line">
+                    <stroke
+                        android:width="20dp"
+                        android:color="@color/average_progress_color" />
+                </shape>
+            </rotate>
+        </clip>
+    </item>
+</layer-list>

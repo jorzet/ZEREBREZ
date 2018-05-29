@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:id="@+id/rl_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_option_2"
+            android:layout_width="@dimen/width_option"
+            android:layout_height="@dimen/min_height_option">
+
+            <TextView
+                android:id="@+id/tv_option_d"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/option_d_text"
+                android:textColor="@color/option_answer_text_color"
+                android:textSize="25sp"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/min_height_option"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/rl_option_2"
+            android:layout_toEndOf="@+id/rl_option_2"
+            android:layout_marginLeft="@dimen/margin_left_option"
+            android:layout_marginStart="@dimen/margin_left_option"
+            android:layout_marginRight="@dimen/margin_right_option"
+            android:layout_marginEnd="@dimen/margin_right_option"
+            android:background="@drawable/answer_unselected_option_background">
+            <TextView
+                android:id="@+id/answer_d"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="a"
+                android:textColor="@color/white"
+                android:textSize="15sp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
