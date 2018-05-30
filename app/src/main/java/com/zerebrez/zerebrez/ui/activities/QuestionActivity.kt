@@ -19,9 +19,11 @@ package com.zerebrez.zerebrez.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.question.QuestionEquationFragment
+import com.zerebrez.zerebrez.fragments.question.QuestionFragmentRefactor
 import com.zerebrez.zerebrez.fragments.question.QuestionImageFragment
 import com.zerebrez.zerebrez.fragments.question.QuestionTextFragment
 import com.zerebrez.zerebrez.models.Exam
@@ -55,9 +57,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
     /*
      * UI accessors
      */
-    private lateinit var mBackQuestion : View
-    private lateinit var mNextQuestion : View
-    private lateinit var mShowAnswer : TextView
+    private lateinit var mNextQuestion : Button
+    private lateinit var mShowAnswer : Button
 
     /*
      * Variables
@@ -83,11 +84,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.question_container)
 
-        mBackQuestion = findViewById(R.id.rl_back_question)
-        mNextQuestion = findViewById(R.id.rl_next_question)
-        mShowAnswer = findViewById(R.id.tv_show_answer)
+        mShowAnswer = findViewById(R.id.btn_show_answer)
+        mNextQuestion = findViewById(R.id.btn_next_question)
 
-        mBackQuestion.setOnClickListener(mBackQuestionListener)
+        //mBackQuestion.setOnClickListener(mBackQuestionListener)
         mNextQuestion.setOnClickListener(mNextQuestionListener)
         mShowAnswer.setOnClickListener(mShowAnswerListener)
 
@@ -106,24 +106,18 @@ class QuestionActivity : BaseActivityLifeCycle() {
             mQuestions = DataHelper(baseContext).getQuestionsByModuleId(Integer(mModuleId))
         }
 
-        if (mQuestions.size > 1) {
-            mBackQuestion.visibility = View.VISIBLE
-        } else {
-            mBackQuestion.visibility = View.GONE
-        }
-
         showQuestion()
     }
 
     /*
      * A listener that check current question and show back question
      */
-    private val mBackQuestionListener = View.OnClickListener {
+    /*private val mBackQuestionListener = View.OnClickListener {
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size) {
             showQuestion()
             mCurrentQuestion--
         }
-    }
+    }*/
 
     /*
      * A listener that check current question and show next question
@@ -160,7 +154,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private fun showQuestion() {
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
-        when (mQuestions.get(mCurrentQuestion).getQuestionType()) {
+        transaction.replace(R.id.question_fragment_container, QuestionFragmentRefactor());
+        transaction.commit()
+
+        /*when (mQuestions.get(mCurrentQuestion).getQuestionType()) {
             QuestionType.EQUATION.toString() -> {
                 transaction.replace(R.id.question_fragment_container, QuestionEquationFragment());
                 transaction.commit()
@@ -173,7 +170,7 @@ class QuestionActivity : BaseActivityLifeCycle() {
                 transaction.replace(R.id.question_fragment_container, QuestionImageFragment());
                 transaction.commit()
             }
-        }
+        }*/
     }
 
     /**

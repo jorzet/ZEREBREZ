@@ -145,7 +145,10 @@ class ContentActivity : BaseActivityLifeCycle() {
 
     override fun onStart() {
         super.onStart()
-        startDownloadImages()
+        val dataHelper = DataHelper(this)
+        if (!dataHelper.areImagesDownloaded()) {
+            startDownloadImages()
+        }
     }
 
     /*
@@ -349,6 +352,8 @@ class ContentActivity : BaseActivityLifeCycle() {
     fun stopDownloadImagesService() {
         this.stopService(Intent(this, DownloadImages::class.java))
         Log.i(TAG, "Stopped service ***************************")
+        val dataHelper = DataHelper(this)
+        dataHelper.setImagesDownloaded(true)
     }
 
     private val br = object : BroadcastReceiver() {
@@ -357,7 +362,7 @@ class ContentActivity : BaseActivityLifeCycle() {
                 if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_COMPLETE,false)) {
                     stopDownloadImagesService()
                 } else {
-
+                    Log.i(TAG, "Downloading ...")
                 }
             }
         }

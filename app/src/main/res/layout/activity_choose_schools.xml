@@ -158,7 +158,8 @@
         android:id="@+id/lv_schools_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/rl_tool_choose_school">
+        android:layout_below="@+id/rl_tool_choose_school"
+        android:layout_above="@+id/rl_continue_container">
     </ExpandableListView>
 
     <RelativeLayout

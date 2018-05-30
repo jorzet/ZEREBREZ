@@ -66,7 +66,7 @@ class DownloadImages: Service() {
             }
         })
 
-        DownloadImageTask(this).execute(mImages)
+        downloadImageTask.execute(mImages)
 
     }
 

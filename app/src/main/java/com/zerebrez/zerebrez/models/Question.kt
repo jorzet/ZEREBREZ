@@ -27,7 +27,9 @@ class Question {
     private var questionId : Integer = Integer(0)
     private var moduleId : Integer = Integer(0)
     private var subjectType : SubjectType = SubjectType.NONE
-    private var text : List<String> = arrayListOf()
+    private var texts : List<String> = arrayListOf()
+    private var images : List<String> = arrayListOf()
+    private var equations : List<String> = arrayListOf()
     private var optionOne : String = ""
     private var optionTwo : String = ""
     private var optionThree : String = ""
@@ -90,8 +92,8 @@ class Question {
      * @param text
      *      Set the question text
      */
-    fun setText(text : List<String>) {
-        this.text = text
+    fun setText(texts : List<String>) {
+        this.texts = texts
     }
 
     /**
@@ -99,7 +101,39 @@ class Question {
      *      the question text
      */
     fun getText() : List<String> {
-        return this.text
+        return this.texts
+    }
+
+    /**
+     * @param equations
+     *      Set the question text
+     */
+    fun setEquations(equations : List<String>) {
+        this.equations = equations
+    }
+
+    /**
+     * @return
+     *      the question text
+     */
+    fun getEquations() : List<String> {
+        return this.equations
+    }
+
+    /**
+     * @param images
+     *      Set the question text
+     */
+    fun setImages(images : List<String>) {
+        this.images = images
+    }
+
+    /**
+     * @return
+     *      the question text
+     */
+    fun getImages() : List<String> {
+        return this.images
     }
 
     /**

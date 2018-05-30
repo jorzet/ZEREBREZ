@@ -281,6 +281,14 @@ class DataHelper(context: Context) {
         return images
     }
 
+    fun setImagesDownloaded(areDownloaded : Boolean) {
+        SharedPreferencesManager(mContext).setImagesDownloaded(areDownloaded)
+    }
+
+    fun areImagesDownloaded() : Boolean {
+        return SharedPreferencesManager(mContext).areImagesDownloaded()
+    }
+
     /*fun insertModules(modules: List<Module>) {
         // Gets the data repository in write mode
         val db = dbHelper.writableDatabase
