@@ -343,7 +343,7 @@ class ContentActivity : BaseActivityLifeCycle() {
     fun startDownloadImages() {
         this.startService(Intent(this, DownloadImages::class.java))
         Log.i(TAG, "Started download service **********************")
-        this.registerReceiver(br, IntentFilter(DownloadImages.TAG))
+        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
     }
 
     fun stopDownloadImagesService() {
@@ -357,7 +357,7 @@ class ContentActivity : BaseActivityLifeCycle() {
                 if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_COMPLETE,false)) {
                     stopDownloadImagesService()
                 } else {
-
+                    Log.d(TAG, "downloading .....")
                 }
             }
         }

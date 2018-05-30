@@ -66,7 +66,7 @@ class DownloadImages: Service() {
             }
         })
 
-        DownloadImageTask(this).execute(mImages)
+        downloadImageTask.execute(mImages)
 
     }
 
@@ -80,10 +80,6 @@ class DownloadImages: Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
-    }
-
-    open fun getDownloadStatus() {
-
     }
 
 }
