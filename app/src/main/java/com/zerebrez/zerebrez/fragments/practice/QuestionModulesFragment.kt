@@ -198,6 +198,7 @@ class QuestionModulesFragment : BaseContentFragment() {
     private fun drawModules() {
 
         var cnt : Int = 0
+        val user = getUser()
 
         for (i in 0 .. mModuleList.size - 1) {
 
@@ -235,9 +236,11 @@ class QuestionModulesFragment : BaseContentFragment() {
                 val module = mModuleList.get(i)
                 if (module.isAnsweredModule()) {
                     view.background = resources.getDrawable(R.drawable.checked_module_background)
-                } else {
+                } else
                     view.background = resources.getDrawable(R.drawable.unchecked_module_background)
-                }
+                /*} else if (!user.isPremiumUser() && module.isFreeModule() &&) {
+                    view.background = resources.getDrawable(R.drawable.not_premium_module_background)
+                }*/
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()
                 param.bottomMargin = 2

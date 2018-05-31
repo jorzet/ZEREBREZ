@@ -256,13 +256,39 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                         Log.d(TAG,"json has text value ------")
                         val texts = json.getJSONArray("text")
                         val text = arrayListOf<String>()
-                        for (i in 0..texts.length() - 1) {
+                        for (i in 0 .. texts.length() - 1) {
                             text.add(texts.get(i).toString())
                         }
 
                         question.setText(text)
                     } else {
                         Log.d(TAG,"json has not text value ******  " + json.toString())
+                    }
+
+                    if (json.has("equation")) {
+                        Log.d(TAG,"json has text value ------")
+                        val equations = json.getJSONArray("equation")
+                        val equation = arrayListOf<String>()
+                        for (i in 0 .. equations.length() - 1) {
+                            equation.add(equations.get(i).toString())
+                        }
+
+                        question.setEquations(equation)
+                    } else {
+                        Log.d(TAG,"json has not equation value ******  " + json.toString())
+                    }
+
+                    if (json.has("image")) {
+                        Log.d(TAG,"json has text value ------")
+                        val images = json.getJSONArray("image")
+                        val image = arrayListOf<String>()
+                        for (i in 0 .. images.length() - 1) {
+                            image.add(images.get(i).toString())
+                        }
+
+                        question.setImages(image)
+                    } else {
+                        Log.d(TAG,"json has not image value ******  " + json.toString())
                     }
 
                     if (json.has("subject")) {

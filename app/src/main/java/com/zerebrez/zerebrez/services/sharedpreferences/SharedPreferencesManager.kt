@@ -36,6 +36,7 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_PREMIUM_MODULES : String = "json_premium_modules"
     private val JSON_PREMIUM_EXAMS : String = "json_premium_exams"
     private val PERSISTANCE_DATA : String = "persistance_data"
+    private val IMAGES_DOWNLOADED : String = "images_downloaded"
     private val IS_LOGGED_IN : String = "is_logged_in"
     private val JSON_INSTITUTES : String = "json_institutes"
     private val JSON_EXAMS : String = "json_exams"
@@ -243,6 +244,17 @@ class SharedPreferencesManager(context: Context) {
     fun getJsonImagesPath() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(JSON_IMAGES_PATH, "")
+    }
+
+    fun setImagesDownloaded(areDownloaded : Boolean) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(IMAGES_DOWNLOADED, areDownloaded)
+        editor.apply()
+    }
+
+    fun areImagesDownloaded() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(IMAGES_DOWNLOADED, false)
     }
 
     /*

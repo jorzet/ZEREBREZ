@@ -65,6 +65,7 @@
     <!--question module fragment-->
     <color name="checked_module_color">#059CAE</color>
     <color name="unchecked_module_color">#101E45</color>
+    <color name="not_premium_module_color">#989898</color>
     <color name="square_first_padding_color">#B0DC3A</color>
     <color name="square_second_padding_color">#F7921E</color>
 

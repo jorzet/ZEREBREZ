@@ -24,5 +24,6 @@ package com.zerebrez.zerebrez.models.enums
 enum class QuestionType {
     EQUATION,
     IMAGE,
-    TEXT
+    TEXT,
+    NONE
 }
