@@ -349,50 +349,52 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             }
         } else {
             val mUser2 = User()
-            val modules = DataHelper(context!!).getModulesAnsQuestions()
+            if (context != null) {
+                val modules = DataHelper(context!!).getModulesAnsQuestions()
 
-            mUser2.setEmail(user.getEmail())
-            mUser2.setPassword(user.getPassword())
-            mUser2.setCourse(user.getCourse())
-            mUser2.setPremiumUser(user.isPremiumUser())
+                mUser2.setEmail(user.getEmail())
+                mUser2.setPassword(user.getPassword())
+                mUser2.setCourse(user.getCourse())
+                mUser2.setPremiumUser(user.isPremiumUser())
 
-            if (user.getSelectedSchools().isNotEmpty()) {
-                mUser2.setSelectedShools(user.getSelectedSchools())
-            }
-
-            if (user.getAnsweredModule().isNotEmpty()) {
-                for (i in 0 .. modules.size - 1) {
-                    for (module in user.getAnsweredModule()) {
-                        if (modules.get(i).getId().equals(module.getId())){
-                            modules.get(i).setAnsweredModule(true)
-                            modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
-                            modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
-                        }
-                    }
+                if (user.getSelectedSchools().isNotEmpty()) {
+                    mUser2.setSelectedShools(user.getSelectedSchools())
                 }
-            }
 
-            if (user.getAnsweredQuestion().isNotEmpty()) {
-                for (i in 0 .. modules.size - 1) {
-                    for (j in 0 .. modules.get(i).getQuestions().size - 1) {
-                        for (question2 in user.getAnsweredQuestion()) {
-                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                if (user.getAnsweredModule().isNotEmpty()) {
+                    for (i in 0..modules.size - 1) {
+                        for (module in user.getAnsweredModule()) {
+                            if (modules.get(i).getId().equals(module.getId())) {
+                                modules.get(i).setAnsweredModule(true)
+                                modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
+                                modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
                             }
                         }
                     }
                 }
-            }
 
-            mUser2.setSelectedShools(user.getSelectedSchools())
+                if (user.getAnsweredQuestion().isNotEmpty()) {
+                    for (i in 0..modules.size - 1) {
+                        for (j in 0..modules.get(i).getQuestions().size - 1) {
+                            for (question2 in user.getAnsweredQuestion()) {
+                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
+                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
+                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
+                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                                }
+                            }
+                        }
+                    }
+                }
 
-            if (context != null) {
-                Log.d(TAG, "save modules")
-                val dataHelper = DataHelper(context!!)
-                dataHelper.saveModules(modules)
-                saveUser(mUser2)
+                mUser2.setSelectedShools(user.getSelectedSchools())
+
+                if (context != null) {
+                    Log.d(TAG, "save modules")
+                    val dataHelper = DataHelper(context!!)
+                    dataHelper.saveModules(modules)
+                    saveUser(mUser2)
+                }
             }
         }
         requestGetExams()

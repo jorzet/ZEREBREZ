@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.TextView
+//import com.nishant.math.MathView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.adapters.OptionQuestionAdapterRefactor
@@ -113,20 +115,22 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
 
             for (i in 0 .. realSize) {
-                val questionOption = QuestionOption()
                 if (texts.size > i) {
+                    val questionOption = QuestionOption()
                     questionOption.setQuestion(texts.get(i))
                     questionOption.setQuestionType(QuestionType.TEXT)
                     mSortOptions.add(questionOption)
                 }
 
                 if (equations.size > i) {
+                    val questionOption = QuestionOption()
                     questionOption.setQuestion(equations.get(i))
                     questionOption.setQuestionType(QuestionType.EQUATION)
                     mSortOptions.add(questionOption)
                 }
 
                 if (images.size > i) {
+                    val questionOption = QuestionOption()
                     val nameInStorage = getNameInStorage(images.get(i), mImagesPath)
                     questionOption.setQuestion(nameInStorage)
                     questionOption.setQuestionType(QuestionType.IMAGE)
@@ -169,10 +173,14 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mImageAnswerD.visibility = View.GONE
             }
             QuestionType.EQUATION.toString() -> {
-                mEquationAnswerA.setDisplayText(question!!.getOptionOne())
-                mEquationAnswerB.setDisplayText(question!!.getOptionTwo())
-                mEquationAnswerC.setDisplayText(question!!.getOptionThree())
-                mEquationAnswerD.setDisplayText(question!!.getOptionFour())
+                /*mEquationAnswerA.text = "$$"+question!!.getOptionOne()+"$$"
+                mEquationAnswerB.text = "$$"+question!!.getOptionTwo()+"$$"
+                mEquationAnswerC.text = "$$"+question!!.getOptionThree()+"$$"
+                mEquationAnswerD.text = "$$"+question!!.getOptionFour()+"$$"*/
+                mEquationAnswerA.setDisplayText("$$"+question!!.getOptionOne()+"$$")
+                mEquationAnswerB.setDisplayText("$$"+question!!.getOptionTwo()+"$$")
+                mEquationAnswerC.setDisplayText("$$"+question!!.getOptionThree()+"$$")
+                mEquationAnswerD.setDisplayText("$$"+question!!.getOptionFour()+"$$")
                 mTextAnswerA.visibility = View.GONE
                 mTextAnswerB.visibility = View.GONE
                 mTextAnswerC.visibility = View.GONE
@@ -244,6 +252,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         (activity as QuestionActivity).setQuestionAnswer("a", false)
                     }
                 }
+                mOptionA.setOnClickListener(null)
+                mOptionB.setOnClickListener(null)
+                mOptionC.setOnClickListener(null)
+                mOptionD.setOnClickListener(null)
             }
             R.id.option_b -> {
                 when (answer) {
@@ -267,6 +279,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         (activity as QuestionActivity).setQuestionAnswer("b", false)
                     }
                 }
+                mOptionA.setOnClickListener(null)
+                mOptionB.setOnClickListener(null)
+                mOptionC.setOnClickListener(null)
+                mOptionD.setOnClickListener(null)
             }
             R.id.option_c -> {
                 when (answer) {
@@ -290,6 +306,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         (activity as QuestionActivity).setQuestionAnswer("c", false)
                     }
                 }
+                mOptionA.setOnClickListener(null)
+                mOptionB.setOnClickListener(null)
+                mOptionC.setOnClickListener(null)
+                mOptionD.setOnClickListener(null)
             }
             R.id.option_d -> {
                 when (answer) {
@@ -313,6 +333,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         (activity as QuestionActivity).setQuestionAnswer("d", true)
                     }
                 }
+                mOptionA.setOnClickListener(null)
+                mOptionB.setOnClickListener(null)
+                mOptionC.setOnClickListener(null)
+                mOptionD.setOnClickListener(null)
             }
         }
 

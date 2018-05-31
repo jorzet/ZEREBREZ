@@ -11,9 +11,6 @@
         android:layout_weight="1"
         android:background="@color/question_background_color">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -40,25 +37,18 @@
 
                 <com.zerebrez.zerebrez.adapters.NonScrollListView
                     android:id="@+id/nslv_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginRight="40dp"
                     android:layout_below="@id/iv_gray_line1"
                     android:layout_marginTop="30dp"
                     android:numColumns="1"
                     android:clickable="false">
                 </com.zerebrez.zerebrez.adapters.NonScrollListView>
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_below="@id/nslv_image_container">
-                </RelativeLayout>
+
             </RelativeLayout>
-        </ScrollView>
+
 
     </LinearLayout>
 
@@ -131,6 +121,14 @@
                             android:textColor="@color/white"
                             android:textSize="15sp"/>
 
+                        <!--<com.nishant.math.MathView
+                            android:id="@+id/mv_answer_a"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>-->
+
                         <katex.hourglass.in.mathlib.MathView
                             android:id="@+id/mv_answer_a"
                             app:setTextColor="@color/white"
@@ -142,6 +140,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:foregroundGravity="center"
                             android:visibility="gone"/>
 
                         <ImageView
@@ -203,6 +202,14 @@
                             android:text="b"
                             android:textColor="@color/white"
                             android:textSize="15sp"/>
+
+                        <!--<com.nishant.math.MathView
+                            android:id="@+id/mv_answer_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>-->
 
                         <katex.hourglass.in.mathlib.MathView
                             android:id="@+id/mv_answer_b"
@@ -275,6 +282,14 @@
                             android:text="c"
                             android:textColor="@color/white"
                             android:textSize="15sp"/>
+
+                        <!--<com.nishant.math.MathView
+                            android:id="@+id/mv_answer_c"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>-->
 
                         <katex.hourglass.in.mathlib.MathView
                             android:id="@+id/mv_answer_c"
@@ -349,6 +364,14 @@
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:visibility="visible"/>
+
+                        <!--<com.nishant.math.MathView
+                            android:id="@+id/mv_answer_d"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>-->
 
                         <katex.hourglass.in.mathlib.MathView
                             android:id="@+id/mv_answer_d"

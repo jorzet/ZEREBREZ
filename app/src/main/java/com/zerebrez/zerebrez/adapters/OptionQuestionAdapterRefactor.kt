@@ -34,7 +34,8 @@ class OptionQuestionAdapterRefactor(texts : List<QuestionOption>, context: Conte
                 optionView.iv_option.visibility = View.GONE
             }
             QuestionType.EQUATION -> {
-                optionView.mv_otion.setDisplayText(currentOption.getQuestion())
+                //optionView.mv_otion.text = "$$"+currentOption.getQuestion()+"$$"
+                optionView.mv_otion.setDisplayText("$$"+currentOption.getQuestion()+"$$")
                 optionView.tv_option.visibility = View.GONE
                 optionView.mv_otion.visibility = View.VISIBLE
                 optionView.iv_option.visibility = View.GONE
