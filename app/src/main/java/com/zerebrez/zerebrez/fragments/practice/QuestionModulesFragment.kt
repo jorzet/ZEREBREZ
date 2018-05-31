@@ -31,13 +31,16 @@ import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import android.util.DisplayMetrics
+import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 
 /**
  * Created by Jorge Zepeda Tinoco on 26/04/18.
  * jorzet.94@gmail.com
  */
 
-class QuestionModulesFragment : BaseContentFragment() {
+class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     /*
      * tags
@@ -84,12 +87,12 @@ class QuestionModulesFragment : BaseContentFragment() {
         if (modules == null) {
             requestModules()
         } else {
-            val user = getUser()
+            //val user = getUser()
 
-            if (user != null && user.isPremiumUser()) {
+            //if (user != null && user.isPremiumUser()) {
                 updateModuleList(modules)
                 drawModules()
-            } else {
+           /* } else {
                 val freeModules = arrayListOf<Module>()
                 for (module in modules) {
                     if (module.isFreeModule()) {
@@ -98,7 +101,7 @@ class QuestionModulesFragment : BaseContentFragment() {
                 }
                 updateModuleList(freeModules)
                 drawModules()
-            }
+            }*/
         }
 
         return rootView
@@ -116,10 +119,10 @@ class QuestionModulesFragment : BaseContentFragment() {
         } else {
             val user = getUser()
 
-            if (user != null && user.isPremiumUser()) {
+            //if (user != null && user.isPremiumUser()) {
                 updateModuleList(modules)
                 drawModules()
-            } else {
+            /*} else {
                 val freeModules = arrayListOf<Module>()
                 for (module in modules) {
                     if (module.isFreeModule()) {
@@ -128,7 +131,7 @@ class QuestionModulesFragment : BaseContentFragment() {
                 }
                 updateModuleList(freeModules)
                 drawModules()
-            }
+            }*/
         }
     }
 
@@ -234,13 +237,14 @@ class QuestionModulesFragment : BaseContentFragment() {
                 param.setGravity(Gravity.CENTER)
             } else {
                 val module = mModuleList.get(i)
-                if (module.isAnsweredModule()) {
-                    view.background = resources.getDrawable(R.drawable.checked_module_background)
-                } else
-                    view.background = resources.getDrawable(R.drawable.unchecked_module_background)
-                /*} else if (!user.isPremiumUser() && module.isFreeModule() &&) {
+                if (!module.isFreeModule() && !user!!.isPremiumUser()) {
                     view.background = resources.getDrawable(R.drawable.not_premium_module_background)
-                }*/
+                } else if (module.isAnsweredModule()) {
+                    view.background = resources.getDrawable(R.drawable.checked_module_background)
+                } else {
+                    view.background = resources.getDrawable(R.drawable.unchecked_module_background)
+                }
+
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()
                 param.bottomMargin = 2
@@ -249,11 +253,18 @@ class QuestionModulesFragment : BaseContentFragment() {
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
                 view.setOnClickListener(View.OnClickListener {
-                    val textView : TextView =  view.findViewById(R.id.text)
-                    val text : String = textView.text.toString()
-                    Log.d(TAG, "onClick: number --- " + number)
-                    goQuestionActivity(Integer.parseInt(number))
+                    if (user!!.isPremiumUser() || module.isFreeModule()) {
+                        val textView: TextView = view.findViewById(R.id.text)
+                        val text: String = textView.text.toString()
+                        Log.d(TAG, "onClick: number --- " + number)
+                        goQuestionActivity(Integer.parseInt(number))
+                    } else {
+                        ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
+                                DialogType.OK_DIALOG, this)!!
+                                .show(fragmentManager!!, "")
+                    }
                 })
+
             }
 
 
@@ -299,5 +310,20 @@ class QuestionModulesFragment : BaseContentFragment() {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, false)
         this.startActivity(intent)
+    }
+
+    /*
+     * Dialog listeners
+     */
+    override fun onConfirmationAccept() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+        (activity as ContentActivity).goPaymentFragment()
+    }
+
+    override fun onConfirmationCancel() {
+
     }
 }

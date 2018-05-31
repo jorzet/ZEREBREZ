@@ -429,18 +429,25 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 val dataHelper = DataHelper(mActivity)
                 val modules = dataHelper.getModulesAnsQuestions()
 
-                val updatedModules = arrayListOf<Module>()
-
                 for (freeModule in mFreeModuleList) {
-                    for (module in modules) {
-                        if (freeModule.getId().equals(module.getId())) {
-                            module.setFreeModule(true)
-                            updatedModules.add(module)
+                    for (i in 0 .. modules.size - 1) {
+                        if (freeModule.getId().equals(modules.get(i).getId())) {
+                            modules.get(i).setFreeModule(true)
                         }
                     }
                 }
 
-                dataHelper.saveModules(updatedModules)
+                val exams = dataHelper.getExams()
+                for (freeExam in mFreeExamList) {
+                    for (i in 0 .. exams.size - 1) {
+                        if (freeExam.getExamId().equals(exams.get(i).getExamId())) {
+                            exams.get(i).setFreeExam(true)
+                        }
+                    }
+                }
+
+                dataHelper.saveModules(modules)
+                dataHelper.saveExams(exams)
                 dataHelper.saveFreeModules(mFreeModuleList)
                 dataHelper.saveFreeExams(mFreeExamList)
 

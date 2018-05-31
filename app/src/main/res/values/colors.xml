@@ -106,6 +106,7 @@
     <color name="line_1_background_color">#707990</color>
     <color name="percentage_line_color">#9D9D9D</color>
     <color name="average_progress_color">#B0DC3A</color>
+    <color name="my_score_text_color">#E8AF3B</color>
 
     <!--exams average fragment-->
     <color name="average_line_color">#FC5961</color>

@@ -263,30 +263,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             val dataHelper = DataHelper(context!!)
             dataHelper.saveModules(result)
         }
-        requestCourses()
+        requestGetUserData()
     }
 
     override fun onGetModulesFail(throwable: Throwable) {
         super.onGetModulesFail(throwable)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveSessionData(false)
-        }
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
-    }
-
-    /*
-     * get courses listeners
-     */
-    override fun onGetCoursesSuccess(courses: List<String>) {
-        super.onGetCoursesSuccess(courses)
-        requestGetUserData()
-    }
-
-    override fun onGetCoursesFail(throwable: Throwable) {
-        super.onGetCoursesFail(throwable)
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
@@ -422,11 +403,31 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             dataHelper.saveExams(exams)
         }
 
-        requestGetInstitutes()
+        requestCourses()
     }
 
     override fun onGetExamsFail(throwable: Throwable) {
         super.onGetExamsFail(throwable)
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+        }
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+    }
+
+    /*
+     * get courses listeners
+     */
+    override fun onGetCoursesSuccess(courses: List<String>) {
+        super.onGetCoursesSuccess(courses)
+
+        requestGetInstitutes()
+    }
+
+    override fun onGetCoursesFail(throwable: Throwable) {
+        super.onGetCoursesFail(throwable)
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)

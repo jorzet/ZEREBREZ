@@ -73,7 +73,7 @@
                 <RelativeLayout
                     android:id="@+id/padding_top"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp">
+                    android:layout_height="20dp">
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -399,7 +399,7 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp">
+                    android:layout_height="10dp">
                 </RelativeLayout>
 
             </LinearLayout>

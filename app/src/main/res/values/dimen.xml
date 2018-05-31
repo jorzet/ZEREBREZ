@@ -23,7 +23,7 @@
     <dimen name="margin_left_option">10dp</dimen>
     <dimen name="margin_right_option">20dp</dimen>
     <dimen name="width_option">60dp</dimen>
-    <dimen name="min_height_option">30dp</dimen>
+    <dimen name="min_height_option">50dp</dimen>
 
     <!--custom module and custom wrong question xml-->
     <dimen name="width_row">100dp</dimen>

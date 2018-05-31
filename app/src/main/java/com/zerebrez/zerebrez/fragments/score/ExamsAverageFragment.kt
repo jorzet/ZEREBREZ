@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
+import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamAverageListAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
@@ -35,6 +36,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 class ExamsAverageFragment : BaseContentFragment() {
 
     private lateinit var examsAverageListView : ListView
+    private lateinit var notExamsDidIt : TextView
 
     private lateinit var examsAverageListAdapter: ExamAverageListAdapterRefactor
 
@@ -46,6 +48,7 @@ class ExamsAverageFragment : BaseContentFragment() {
         val rootView = inflater.inflate(R.layout.exams_average_fragment, container, false)!!
 
         examsAverageListView = rootView.findViewById(R.id.lv_exams_average)
+        notExamsDidIt = rootView.findViewById(R.id.tv_not_exams_currently)
 
         val dataHelper = DataHelper(context!!)
         val examScores = dataHelper.getExamScores()
@@ -61,13 +64,13 @@ class ExamsAverageFragment : BaseContentFragment() {
             }
         }
 
-        if (mExamsDidIt.isNotEmpty()) {
+        if (mExamsDidIt.isEmpty()) {
+            examsAverageListView.visibility = View.GONE
+            notExamsDidIt.visibility = View.VISIBLE
+        } else {
             examsAverageListAdapter = ExamAverageListAdapterRefactor(mExamsDidIt, context!!)
             examsAverageListView.adapter = examsAverageListAdapter
-        } else {
-
         }
-
 
         return rootView
     }

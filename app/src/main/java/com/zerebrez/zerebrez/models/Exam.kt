@@ -29,6 +29,7 @@ class Exam {
     private var misses : Int = 0
     private var questions : List<Question> = arrayListOf()
     private var answeredExam : Boolean = false
+    private var isFreeExam : Boolean = false
 
     fun setExamId(examId : Integer) {
         this.examId = examId
@@ -92,5 +93,13 @@ class Exam {
 
     fun isAnsweredExam() : Boolean {
         return this.answeredExam
+    }
+
+    fun setFreeExam(isFreeExam : Boolean) {
+        this.isFreeExam = isFreeExam
+    }
+
+    fun isFreeExam() : Boolean {
+        return this.isFreeExam
     }
 }

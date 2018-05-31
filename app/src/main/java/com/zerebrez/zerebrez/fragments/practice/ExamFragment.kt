@@ -29,15 +29,18 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/05/18.
  * jorzet.94@gmail.com
  */
 
-class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
+class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, ErrorDialog.OnErrorDialogListener {
 
     /*
      * Tags
@@ -88,9 +91,9 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
             val freeExams = mDataHelper.getFreeExams()
             updatedExams = arrayListOf<Exam>()
             val user = getUser()
-            if (user != null && user.isPremiumUser()) {
+            //if (user != null && user.isPremiumUser()) {
                 updatedExams.addAll(exams)
-            } else {
+            /*} else {
                 if (freeExams.isNotEmpty()) {
                     for (freeExam in freeExams) {
                         for (exam in exams) {
@@ -100,7 +103,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
                         }
                     }
                 }
-            }
+            }*/
 
             examListAdapter = ExamListAdapter(updatedExams, context!!)
             mExamList.adapter = examListAdapter
@@ -121,9 +124,9 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
             val freeExams = mDataHelper.getFreeExams()
             updatedExams = arrayListOf<Exam>()
             val user = getUser()
-            if (user != null && user.isPremiumUser()) {
+            //if (user != null && user.isPremiumUser()) {
                 updatedExams.addAll(exams)
-            } else {
+            /*} else {
                 if (freeExams.isNotEmpty()) {
                     for (freeExam in freeExams) {
                         for (exam in exams) {
@@ -133,7 +136,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
                         }
                     }
                 }
-            }
+            }*/
 
             examListAdapter = ExamListAdapter(updatedExams, context!!)
             mExamList.adapter = examListAdapter
@@ -144,8 +147,15 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
         Log.d(TAG, "item clicked--- position: " + position)
         if (updatedExams.isNotEmpty()) {
-            val examId = updatedExams.get(position).getExamId()
-            goQuestionActivity(examId.toInt())
+            val user = getUser()
+            if (user!!.isPremiumUser() || updatedExams.get(position).isFreeExam()) {
+                val examId = updatedExams.get(position).getExamId()
+                goQuestionActivity(examId.toInt())
+            } else {
+                ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
+                        DialogType.OK_DIALOG, this)!!
+                        .show(fragmentManager!!, "")
+            }
         }
     }
 
@@ -155,6 +165,20 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_EXAM_FRAGMENT, true)
         this.startActivity(intent)
+    }
+
+    /*
+     * Dialog listeners
+     */
+
+    override fun onConfirmationAccept() {
+    }
+
+    override fun onConfirmationNeutral() {
+        (activity as ContentActivity).goPaymentFragment()
+    }
+
+    override fun onConfirmationCancel() {
     }
 
 }

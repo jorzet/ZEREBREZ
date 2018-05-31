@@ -342,6 +342,13 @@ class ContentActivity : BaseActivityLifeCycle() {
         super.onGetExamScoresFail(throwable)
     }
 
+    fun goPaymentFragment() {
+        val tab = mBottomTabLayout.getTabAt(4)
+        tab!!.select()
+        currentTab = NodeType.PROFILE
+        setTopTabIcons()
+        mViewPager.currentItem = 1
+    }
 
     fun startDownloadImages() {
         this.startService(Intent(this, DownloadImages::class.java))

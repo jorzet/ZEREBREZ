@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.models.Institute;
 import com.zerebrez.zerebrez.models.School;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,6 +54,10 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
     private List<School> mSchools = new ArrayList<>();
 
+    private int userHits = 0;
+
+    private int chartStarts = 0;
+
     public SchoolAverageCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint();
@@ -71,17 +76,35 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         }
     }
 
+    public void setSchools(List<School> schools) {
+        this.mSchools = schools;
+    }
+
+    public void setUserHits(int userHits) {
+        this.userHits = userHits;
+    }
+
+    private int getChartStart() {
+        List<Integer> scores = new ArrayList<>();
+        for (int i = 0; i < mSchools.size(); i++) {
+            scores.add(mSchools.get(i).getHitsNumber());
+        }
+        scores.add(userHits);
+
+        int min = Collections.min(scores);
+        return min;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         this.canvas = canvas;
         paint = new Paint();
+
         paint.setColor(getResources().getColor(R.color.background));
 
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
-        int userHits = 100;
-
 
         // draw score text
         drawTex(String.valueOf(userHits), mTextTopSize, getResources().getColor(R.color.hits_number_text_color),
@@ -92,8 +115,13 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         // draw hits text
         drawTex("ACIERTOS", mTextTopSize, getResources().getColor(R.color.hits_text_color),
                 width - 250, 0, width - 50, mTextTopWidth);
+
+        int progressHeight = height - mTextTopWidth;
+        int startHit = (getChartStart() - 10) < 0 ? 0 : getChartStart() - 10;
+        int starts = progressHeight - (((startHit) * progressHeight) / maxHits);
+
         // draw progress bar
-        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, height);
+        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, starts);
 
 
         for (int i = 0; i < mSchools.size(); i++) {
@@ -105,6 +133,9 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                     getResources().getColor(R.color.hits_text_color),
                     50, 150, width - 250, width - 50);
         }
+
+        drawUserHits(userHits, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
+                width - 250, width - 50);
     }
 
     @Override
@@ -218,5 +249,40 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         paint.setColor(getResources().getColor(R.color.percentage_line_color));
         canvas.drawRect(secondLine, paint);
 
+    }
+
+    public void drawUserHits(int hits, int textUserHitsSize, int textUserHitsColor, int leftHits, int rightHits) {
+        int progressHeight = height - mTextTopWidth;
+        int yPos = mTextTopWidth + progressHeight - ((hits * progressHeight) / maxHits);
+        int xPos = width/2;
+        int offset = mProgressBarWidth/2;
+
+        /*
+         * Draw user hits
+         */
+        // fake ractangle where text going to center
+        Rect areaRectuserHits = new Rect(leftHits, yPos - 25, rightHits, yPos + 25);
+        // draw the background style (pure color or image)
+        paint.setColor(getResources().getColor(R.color.background));
+        canvas.drawRect(areaRectuserHits, paint);
+        // measure text
+        String userhitsText = String.valueOf(hits);
+        RectF boundsUserHits = new RectF(areaRectuserHits);
+        paint.setTextSize(textUserHitsSize);
+        boundsUserHits.right = paint.measureText(userhitsText, 0, userhitsText.length());
+        boundsUserHits.bottom = paint.descent() - paint.ascent();
+        boundsUserHits.left += (areaRectuserHits.width() - boundsUserHits.right) / 2.0f;
+        boundsUserHits.top += (areaRectuserHits.height() - boundsUserHits.bottom) / 2.0f;
+        // draw text in center
+        paint.setColor(textUserHitsColor);
+        paint.setTextSize(textUserHitsSize);
+        canvas.drawText(userhitsText, boundsUserHits.left, boundsUserHits.top - paint.ascent(), paint);
+
+        Rect secondLine = new Rect(xPos + mProgressBarWidth,
+                yPos - mLineProgressBarWidth/2,
+                xPos + mProgressBarWidth + offset,
+                yPos + mLineProgressBarWidth/2);
+        paint.setColor(getResources().getColor(R.color.my_score_text_color));
+        canvas.drawRect(secondLine, paint);
     }
 }

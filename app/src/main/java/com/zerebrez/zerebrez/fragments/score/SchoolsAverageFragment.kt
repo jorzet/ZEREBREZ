@@ -45,8 +45,14 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
         val dataHelper = DataHelper(context!!)
         val institutes = dataHelper.getInstitutes()
-        if (institutes.isNotEmpty()) {
+        val schools = getUser()!!.getSelectedSchools()
+        /*if (institutes.isNotEmpty()) {
             schoolAverageCanvas.setInstitutes(institutes)
+        }*/
+
+        if (schools.isNotEmpty()) {
+            schoolAverageCanvas.setSchools(schools)
+            schoolAverageCanvas.setUserHits(1)
         }
 
         return rootView
