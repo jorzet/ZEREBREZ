@@ -12,12 +12,15 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <android.support.design.widget.TabLayout
+        app:tabTextAppearance="@style/CustomTabTextSize"
         android:id="@+id/top_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_top_tablayout"
         android:layout_alignParentTop="true"
         android:background="@color/gray_soft"
         android:minHeight="80dp"
+        app:tabTextColor="@color/tab_text_top_color_unselected"
+        app:tabSelectedTextColor="@color/tab_text_top_color_selected"
         android:orientation="horizontal"/>
 
     <android.support.design.widget.CoordinatorLayout
@@ -44,10 +47,13 @@
         android:layout_alignParentBottom="true">
 
         <android.support.design.widget.TabLayout
+            app:tabTextAppearance="@style/CustomTabTextSize"
             android:id="@+id/bottom_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@color/colorPrimary"
+            app:tabTextColor="@color/tab_text_bottom_color_unselected"
+            app:tabSelectedTextColor="@color/tab_text_bottom_color_selected"
             android:elevation="6dp"
             android:minHeight="60dp"/>
 
@@ -58,14 +64,6 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true">
-
-        <ImageView
-            android:id="@+id/main_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/zerebrez_main_icon"/>
 
     </RelativeLayout>
 
