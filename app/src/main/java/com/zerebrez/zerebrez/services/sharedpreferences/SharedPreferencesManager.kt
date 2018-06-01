@@ -46,6 +46,8 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_EXAM_SCORES : String = "json_exam_scores"
     private val JSON_LAST_EXAM_DIT_IT : String = "json_last_exam_did_it"
     private val JSON_IMAGES_PATH : String = "json_images_path"
+    private val NOTIFICATION_TIME : String = "notification_time"
+    private val REMINDER_SATUS : String = "reminder_status"
 
     /*
      * fragment tags
@@ -255,6 +257,28 @@ class SharedPreferencesManager(context: Context) {
     fun areImagesDownloaded() : Boolean {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getBoolean(IMAGES_DOWNLOADED, false)
+    }
+
+    fun storeNotificationTime(notificationTime : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(NOTIFICATION_TIME, notificationTime)
+        editor.apply()
+    }
+
+    fun getNotificationTime() : String {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(NOTIFICATION_TIME, "")
+    }
+
+    fun storeReminderStatus(remaind : Boolean) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(REMINDER_SATUS, remaind)
+        editor.apply()
+    }
+
+    fun getReminderStatus() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(REMINDER_SATUS, false)
     }
 
     /*

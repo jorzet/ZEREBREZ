@@ -34,15 +34,23 @@ import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.ChooseSchoolsActivity
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
-import com.zerebrez.zerebrez.ui.activities.SendEmailActivity
 import com.zerebrez.zerebrez.utils.MyNetworkUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
+import android.os.Build
+import android.app.TimePickerDialog
+import com.zerebrez.zerebrez.services.database.DataHelper
+import java.util.*
+import com.zerebrez.zerebrez.services.notification.NotificationScheduler
+import android.util.Log
+import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
  * jorzet.94@gmail.com
  */
+
+private const val TAG : String = "ProfileFragment"
 
 class ProfileFragment : BaseContentFragment() {
 
@@ -61,11 +69,14 @@ class ProfileFragment : BaseContentFragment() {
     private lateinit var mSelectedSchoolsList : NonScrollListView
     private lateinit var mLogOut : TextView
     private lateinit var mSendEmail : TextView
+    private lateinit var mNotification : TextView
+    private lateinit var mTimeNotification : TextView
     private lateinit var mTermsAndPrivacy : View
     private lateinit var mEditSchoolsButton : Button
     private lateinit var mLinkEmailButton : Button
     private lateinit var mNotSelectedSchools : TextView
     private lateinit var mAllowMobileDataSwitch : Switch
+    private lateinit var mAllowNotificationsSwitch : Switch
 
     /*
      * Adapters
@@ -96,14 +107,26 @@ class ProfileFragment : BaseContentFragment() {
         mNotSelectedSchools = rootView.findViewById(R.id.tv_not_selected_schools)
         mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
 
+        mNotification = rootView.findViewById(R.id.tv_notification)
+        mTimeNotification = rootView.findViewById(R.id.tv_time)
+        mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
+
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)
         mLinkEmailButton.setOnClickListener(mLinkEmailButtonListener)
 
         mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
+        mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
+
+        // set notification
+        mAllowNotificationsSwitch.setChecked(DataHelper(context!!).getReminderStatus());
 
         mLogOut.setOnClickListener(mLogOutListener)
         mTermsAndPrivacy.setOnClickListener(mTermsAndPrivacyListener)
         mSendEmail.setOnClickListener(mSendEmailListener)
+        mNotification.setOnClickListener(mNotificationListener)
+
+        val dataHelper = DataHelper(context!!)
+        mTimeNotification.text = dataHelper.getNotificationTime()
 
         checkEmailAndPassword()
         checkMobileDataSate()
@@ -148,6 +171,26 @@ class ProfileFragment : BaseContentFragment() {
         }
     }
 
+    private val mAllowNotificationsSwitchListener = object : CompoundButton.OnCheckedChangeListener {
+        override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
+            DataHelper(context!!).setReminderStatus(isChecked)
+            if (isChecked) {
+                Log.d(TAG, "onCheckedChanged: true")
+                val dataHelper = DataHelper(context!!)
+                val time = dataHelper.getNotificationTime()
+                val times = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val hour = Integer.parseInt(times[0])
+                val minute = Integer.parseInt(times[1])
+                NotificationScheduler.setReminder(activity, NotificationAlarmReciver::class.java, hour, minute)
+                //ll_set_time.setAlpha(1f)
+            } else {
+                Log.d(TAG, "onCheckedChanged: false")
+                NotificationScheduler.cancelReminder(activity, NotificationAlarmReciver::class.java)
+                //ll_set_time.setAlpha(0.4f)
+            }
+        }
+    }
+
     private val mLogOutListener = View.OnClickListener {
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()
@@ -162,6 +205,33 @@ class ProfileFragment : BaseContentFragment() {
 
     private val mSendEmailListener = View.OnClickListener {
         goSendEmailActivity()
+    }
+
+    private val mNotificationListener = View.OnClickListener {
+        // TODO Auto-generated method stub
+        val mcurrentTime = Calendar.getInstance()
+        val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
+        val minute = mcurrentTime.get(Calendar.MINUTE)
+        val mTimePicker: TimePickerDialog
+        mTimePicker = TimePickerDialog(activity,
+                TimePickerDialog.OnTimeSetListener { timePicker, selectedHour, selectedMinute ->
+                    val notificationTime = selectedHour.toString() + ":" + selectedMinute
+                    mTimeNotification.setText(notificationTime)
+                    DataHelper(context!!).saveNotificationTime(notificationTime)
+
+                    NotificationScheduler.cancelReminder(activity, NotificationAlarmReciver::class.java)
+
+                    val dataHelper = DataHelper(context!!)
+                    val time = dataHelper.getNotificationTime()
+                    val times = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val hour = Integer.parseInt(times[0])
+                    val minute = Integer.parseInt(times[1])
+                    NotificationScheduler.setReminder(activity, NotificationAlarmReciver::class.java, hour, minute)
+
+
+                }, hour, minute, false)//Yes 24 hour time
+        mTimePicker.setTitle("Select Time")
+        mTimePicker.show()
     }
 
     private val mLinkEmailButtonListener = View.OnClickListener {
@@ -260,8 +330,21 @@ class ProfileFragment : BaseContentFragment() {
     }
 
     private fun goSendEmailActivity() {
-        val intent = Intent(activity, SendEmailActivity::class.java)
-        activity!!.startActivity(intent)
+        //val intent = Intent(activity, SendEmailActivity::class.java)
+        //activity!!.startActivity(intent)
+        val emailIntent = Intent(Intent.ACTION_SENDTO,
+                Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Aquí escribe tu mensaje" + "" +
+                "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
+        startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
+    }
+
+    fun getAndroidVersion(): String {
+        val release = Build.VERSION.RELEASE
+        val sdkVersion = Build.VERSION.SDK_INT
+        return "Android SDK: $sdkVersion ($release)"
     }
 
     private fun goTermsAndPrivacyActivity() {
@@ -288,5 +371,8 @@ class ProfileFragment : BaseContentFragment() {
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
         startActivity(intent)
     }
+
+
+
 
 }

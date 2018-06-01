@@ -289,6 +289,22 @@ class DataHelper(context: Context) {
         return SharedPreferencesManager(mContext).areImagesDownloaded()
     }
 
+    fun saveNotificationTime(notificationTime : String) {
+        SharedPreferencesManager(mContext).storeNotificationTime(notificationTime)
+    }
+
+    fun getNotificationTime() : String {
+        return SharedPreferencesManager(mContext).getNotificationTime()
+    }
+
+    fun setReminderStatus(remaind : Boolean) {
+        SharedPreferencesManager(mContext).storeReminderStatus(remaind)
+    }
+
+    fun getReminderStatus() : Boolean {
+        return SharedPreferencesManager(mContext).getReminderStatus()
+    }
+
     /*fun insertModules(modules: List<Module>) {
         // Gets the data repository in write mode
         val db = dbHelper.writableDatabase

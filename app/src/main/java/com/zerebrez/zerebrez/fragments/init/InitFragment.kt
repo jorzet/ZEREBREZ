@@ -28,7 +28,9 @@ import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.InitViewPager
+import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 
@@ -67,10 +69,27 @@ class InitFragment : BaseContentFragment() {
         secundary.setOnClickListener(secundaryListener)
         comipems.setOnClickListener(comipemsListener)
 
-        requestCourses()
+        requestGetExams()
+
         loading.visibility = View.VISIBLE
 
         return rootView
+    }
+
+    override fun onGetExamsSuccess(exams: List<Exam>) {
+        super.onGetExamsSuccess(exams)
+
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveExams(exams)
+        }
+
+        requestCourses()
+    }
+
+    override fun onGetExamsFail(throwable: Throwable) {
+        super.onGetExamsFail(throwable)
+        loading.visibility = View.GONE
     }
 
     override fun onGetCoursesSuccess(courses: List<String>) {

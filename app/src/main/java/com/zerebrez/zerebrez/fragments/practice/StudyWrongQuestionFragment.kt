@@ -163,32 +163,44 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                     image.background = resources.getDrawable(R.drawable.main_icon)
                 }
                 SubjectType.MATHEMATICS -> {
-                    image.background = resources.getDrawable(R.drawable.math_icon)
+                    image.background = resources.getDrawable(R.drawable.mat_1_subject_icon)
                 }
                 SubjectType.SPANISH -> {
-                    image.background = resources.getDrawable(R.drawable.spanish_icon)
+                    image.background = resources.getDrawable(R.drawable.esp_subject_icon)
                 }
-                SubjectType.VERBAL -> {
+                SubjectType.VERBAL_HABILITY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.user_unselected_icon)
+                    image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon)
                 }
-                SubjectType.CHEMISTRY -> {
-                    image.background = resources.getDrawable(R.drawable.chemic_icon)
+                SubjectType.MATHEMATICAL_HABILITY -> {
+                    // TODO
+                    image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon)
                 }
                 SubjectType.BIOLOGY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.user_selected_icon)
+                    image.background = resources.getDrawable(R.drawable.bio_subject_icon)
+                }
+                SubjectType.CHEMISTRY -> {
+                    image.background = resources.getDrawable(R.drawable.quim_subject_icon)
+                }
+                SubjectType.PHYSICS -> {
+                    // TODO
+                    image.background = resources.getDrawable(R.drawable.fis_subject_icon)
                 }
                 SubjectType.GEOGRAPHY -> {
-                    image.background = resources.getDrawable(R.drawable.geo_icon)
+                    image.background = resources.getDrawable(R.drawable.geo_subject_icon)
                 }
                 SubjectType.MEXICO_HISTORY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.school_selected_icon)
+                    image.background = resources.getDrawable(R.drawable.his_mex_subject_icon)
                 }
                 SubjectType.UNIVERSAL_HISTORY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.school_unselected_icon)
+                    image.background = resources.getDrawable(R.drawable.his_subject_icon)
+                }
+                SubjectType.FCE -> {
+                    // TODO
+                    image.background = resources.getDrawable(R.drawable.civ_et_subject_icon)
                 }
             }
 

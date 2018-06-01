@@ -23,13 +23,16 @@ package com.zerebrez.zerebrez.models.enums
 
 enum class SubjectType constructor(val value : String)  {
     NONE(""),
-    VERBAL("Habilidad Verbal"),
+    VERBAL_HABILITY("Habilidad Verbal"),
+    MATHEMATICAL_HABILITY("Habilidad Matematica"),
     SPANISH("Español"),
     ENGLISH("Ingles"),
     MATHEMATICS("Matematicas"),
     CHEMISTRY("Química"),
+    PHYSICS("Física"),
     BIOLOGY("Biología"),
     GEOGRAPHY("Geografía"),
     MEXICO_HISTORY("Historia de México"),
-    UNIVERSAL_HISTORY("Historia Universal");
+    UNIVERSAL_HISTORY("Historia Universal"),
+    FCE("FCE");
 }

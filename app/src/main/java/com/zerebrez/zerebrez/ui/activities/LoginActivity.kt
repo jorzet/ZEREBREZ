@@ -40,9 +40,14 @@ import com.zerebrez.zerebrez.models.enums.ErrorType
 import android.Manifest.permission
 import android.Manifest.permission.WRITE_CALENDAR
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-
+import com.zerebrez.zerebrez.fragments.init.InitFragment
+import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.services.firebase.DownloadImages
 
 
 /**
@@ -153,6 +158,13 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         transaction.commit()
     }
 
+    fun showInitFragment() {
+        val manager = getSupportFragmentManager();
+        val transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment_container, InitFragment());
+        transaction.commit()
+    }
+
     private fun showSigUpFragment() {
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
@@ -171,6 +183,32 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult)
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
+    }
+
+    open fun startDownloadImages() {
+        this.startService(Intent(this, DownloadImages::class.java))
+        Log.i(TAG, "Started download service **********************")
+        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+    }
+
+    fun stopDownloadImagesService() {
+        this.stopService(Intent(this, DownloadImages::class.java))
+        Log.i(TAG, "Stopped service ***************************")
+        val dataHelper = DataHelper(this)
+        dataHelper.setImagesDownloaded(true)
+        showInitFragment()
+    }
+
+    private val br = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.getExtras() != null) {
+                if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_COMPLETE,false)) {
+                    stopDownloadImagesService()
+                } else {
+                    Log.i(TAG, "Downloading ...")
+                }
+            }
+        }
     }
 
 }

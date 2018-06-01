@@ -25,8 +25,11 @@ import android.widget.ProgressBar
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.fragments.init.InitFragment
+import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.NetworkUtil
 
@@ -102,13 +105,31 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     override fun onGetModulesSucces(result: List<Module>) {
         super.onGetModulesSucces(result)
-        goInitFragment()
+        requestGetImagesPath()
+        //goInitFragment()
     }
 
     override fun onGetModulesFail(throwable: Throwable) {
         super.onGetModulesFail(throwable)
         mButtonsContainer.visibility = View.VISIBLE
         mLoadingProgressBar.visibility = View.GONE
+    }
+
+    override fun onGetImagesPathSuccess(images: List<Image>) {
+        super.onGetImagesPathSuccess(images)
+
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(true)
+            dataHelper.saveImagesPath(images)
+        }
+
+
+        (activity as LoginActivity).startDownloadImages()
+    }
+
+    override fun onGetImagesPathFail(throwable: Throwable) {
+        super.onGetImagesPathFail(throwable)
     }
 
     private fun goInitFragment() {

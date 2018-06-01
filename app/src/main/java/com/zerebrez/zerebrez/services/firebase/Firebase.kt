@@ -294,6 +294,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                     if (json.has("subject")) {
                         val subject = json.getString("subject")
                         when (subject) {
+                            SubjectType.VERBAL_HABILITY.value -> {
+                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                            }
+                            SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                            }
                             SubjectType.MATHEMATICS.value -> {
                                 question.setSubjectType(SubjectType.MATHEMATICS)
                             }
@@ -306,11 +312,20 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                             SubjectType.CHEMISTRY.value -> {
                                 question.setSubjectType(SubjectType.CHEMISTRY)
                             }
+                            SubjectType.PHYSICS.value -> {
+                                question.setSubjectType(SubjectType.PHYSICS)
+                            }
+                            SubjectType.GEOGRAPHY.value -> {
+                                question.setSubjectType(SubjectType.GEOGRAPHY)
+                            }
                             SubjectType.UNIVERSAL_HISTORY.value -> {
                                 question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
                             }
                             SubjectType.MEXICO_HISTORY.value -> {
                                 question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                            }
+                            SubjectType.FCE.value -> {
+                                question.setSubjectType(SubjectType.FCE)
                             }
                         }
                     }
@@ -713,6 +728,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                     if (key3.equals("subject")) {
                                         val subject = questionAnswered.get(key3)
                                         when (subject) {
+                                            SubjectType.VERBAL_HABILITY.value -> {
+                                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                            }
+                                            SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                            }
                                             SubjectType.MATHEMATICS.value -> {
                                                 question.setSubjectType(SubjectType.MATHEMATICS)
                                             }
@@ -725,11 +746,20 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                             SubjectType.CHEMISTRY.value -> {
                                                 question.setSubjectType(SubjectType.CHEMISTRY)
                                             }
+                                            SubjectType.PHYSICS.value -> {
+                                                question.setSubjectType(SubjectType.PHYSICS)
+                                            }
+                                            SubjectType.GEOGRAPHY.value -> {
+                                                question.setSubjectType(SubjectType.GEOGRAPHY)
+                                            }
                                             SubjectType.UNIVERSAL_HISTORY.value -> {
                                                 question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
                                             }
                                             SubjectType.MEXICO_HISTORY.value -> {
                                                 question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                            }
+                                            SubjectType.FCE.value -> {
+                                                question.setSubjectType(SubjectType.FCE)
                                             }
                                         }
                                     } else if (key3.equals("isCorrect")) {

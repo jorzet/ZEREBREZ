@@ -25,6 +25,7 @@ import android.widget.TextView
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 /**
@@ -133,8 +134,19 @@ class SplashActivity : BaseActivityLifeCycle() {
     }
 
     private fun goContentActivity() {
+        initNotificationService()
         val intent = Intent(this, ContentActivity::class.java)
         this.startActivity(intent)
         this.finish()
+    }
+
+    private fun initNotificationService() {
+        val dataHelper = DataHelper(this)
+        val notifcationTime = dataHelper.getNotificationTime()
+        if (notifcationTime.equals("")) { // set default notification time at 4:00
+            dataHelper.saveNotificationTime("4:00")
+        } else {
+
+        }
     }
 }
