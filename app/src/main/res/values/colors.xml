@@ -10,6 +10,10 @@
     <color name="gray_soft">#EEEAE9</color>
     <color name="gray">#D0CCCC</color>
     <color name="black">#000000 </color>
+    <color name="tab_text_top_color_selected">#4B9DA1</color>
+    <color name="tab_text_top_color_unselected">#FFAA57</color>
+    <color name="tab_text_bottom_color_selected">#7AB370</color>
+    <color name="tab_text_bottom_color_unselected">#C0DBE7</color>
 
     <!--splash-->
     <color name="progressbar_color">#679DE7</color>
