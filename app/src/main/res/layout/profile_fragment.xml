@@ -237,32 +237,12 @@
                     android:layout_marginTop="10dp"
                     android:src="@drawable/gray_line_icon"/>
 
-                <TextView
-                    android:id="@+id/tv_restore_purchase"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/iv_gary_line3"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/restore_purchase_text"
-                    android:textSize="20sp"
-                    android:textColor="@color/restor_purchase_text_color"/>
-
-                <ImageView
-                    android:id="@+id/iv_gary_line4"
-                    android:layout_width="280dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/tv_restore_purchase"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/gray_line_icon"/>
-
 
                 <TextView
                     android:id="@+id/tv_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/iv_gary_line4"
+                    android:layout_below="@+id/iv_gary_line3"
                     android:layout_marginTop="10dp"
                     android:text="@string/notification_text"
                     android:textSize="20sp"
@@ -295,7 +275,7 @@
                     android:theme="@style/SwitchCompatStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/iv_gary_line4"
+                    android:layout_below="@+id/iv_gary_line3"
                     android:layout_marginTop="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
@@ -336,11 +316,31 @@
                     android:layout_marginTop="30dp"
                     android:src="@drawable/gray_line_icon"/>
 
+                <TextView
+                    android:id="@+id/tv_support_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_gary_line5"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/support_email_text"
+                    android:textSize="20sp"
+                    android:textColor="@color/restor_purchase_text_color"/>
+
+                <ImageView
+                    android:id="@+id/iv_gary_line4"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/tv_support_email"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/gray_line_icon"/>
+
                 <RelativeLayout
                     android:id="@+id/rl_terms_and_privacy_container"
                     android:layout_width="280dp"
                     android:layout_height="150dp"
-                    android:layout_below="@+id/iv_gary_line5"
+                    android:layout_below="@+id/iv_gary_line4"
                     android:layout_marginTop="30dp"
                     android:background="@drawable/terms_and_privacy_background">
 

@@ -16,7 +16,9 @@
 
 package com.zerebrez.zerebrez.fragments.profile
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +34,10 @@ import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.ChooseSchoolsActivity
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
-import com.zerebrez.zerebrez.ui.activities.TermsAndPrivacyActivity
+import com.zerebrez.zerebrez.ui.activities.SendEmailActivity
 import com.zerebrez.zerebrez.utils.MyNetworkUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -57,6 +60,7 @@ class ProfileFragment : BaseContentFragment() {
     private lateinit var mPassword : EditText
     private lateinit var mSelectedSchoolsList : NonScrollListView
     private lateinit var mLogOut : TextView
+    private lateinit var mSendEmail : TextView
     private lateinit var mTermsAndPrivacy : View
     private lateinit var mEditSchoolsButton : Button
     private lateinit var mLinkEmailButton : Button
@@ -85,6 +89,7 @@ class ProfileFragment : BaseContentFragment() {
         mPassword = rootView.findViewById(R.id.et_password)
         mSelectedSchoolsList = rootView.findViewById(R.id.nslv_schools_selected)
         mLogOut = rootView.findViewById(R.id.tv_log_out)
+        mSendEmail = rootView.findViewById(R.id.tv_support_email)
         mTermsAndPrivacy = rootView.findViewById(R.id.rl_terms_and_privacy_container)
         mEditSchoolsButton = rootView.findViewById(R.id.btn_change_schools)
         mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
@@ -98,6 +103,7 @@ class ProfileFragment : BaseContentFragment() {
 
         mLogOut.setOnClickListener(mLogOutListener)
         mTermsAndPrivacy.setOnClickListener(mTermsAndPrivacyListener)
+        mSendEmail.setOnClickListener(mSendEmailListener)
 
         checkEmailAndPassword()
         checkMobileDataSate()
@@ -152,6 +158,10 @@ class ProfileFragment : BaseContentFragment() {
 
     private val mTermsAndPrivacyListener = View.OnClickListener {
         goTermsAndPrivacyActivity()
+    }
+
+    private val mSendEmailListener = View.OnClickListener {
+        goSendEmailActivity()
     }
 
     private val mLinkEmailButtonListener = View.OnClickListener {
@@ -249,9 +259,28 @@ class ProfileFragment : BaseContentFragment() {
         activity!!.finish()
     }
 
+    private fun goSendEmailActivity() {
+        val intent = Intent(activity, SendEmailActivity::class.java)
+        activity!!.startActivity(intent)
+    }
+
     private fun goTermsAndPrivacyActivity() {
-        val intent = Intent(activity, TermsAndPrivacyActivity::class.java)
-        startActivity(intent)
+        val url = resources.getString(R.string.url_terms_and_privacy)
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        intent.data = Uri.parse(url)
+        // this allow the smatphone find chrome browser application
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setPackage("com.android.chrome")
+
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            // Chrome browser may be is not installed so allow user to choose instead
+            intent.setPackage(null)
+            startActivity(intent)
+        }
+
     }
 
     private fun goChooseSchoolsActivity() {
@@ -259,4 +288,5 @@ class ProfileFragment : BaseContentFragment() {
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
         startActivity(intent)
     }
+
 }

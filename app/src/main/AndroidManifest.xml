@@ -54,7 +54,7 @@
         <activity android:name=".ui.activities.QuestionActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.TermsAndPrivacyActivity"
+        <activity android:name=".ui.activities.SendEmailActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.activities.ChooseSchoolsActivity"
