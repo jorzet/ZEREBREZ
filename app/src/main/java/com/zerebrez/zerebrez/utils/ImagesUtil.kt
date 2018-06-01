@@ -31,14 +31,12 @@ class ImagesUtil {
         val mBottomSelectedIcons = intArrayOf(
                 R.drawable.practice_selected_icon,
                 R.drawable.advances_selected_icon,
-                R.drawable.zerebrez_main_icon,
                 R.drawable.score_selected_icon,
                 R.drawable.profile_selected_icon)
 
         val mBottomUnselectedIcons = intArrayOf(
                 R.drawable.practice_unselected_icon,
                 R.drawable.advances_unselected_icon,
-                R.drawable.zerebrez_main_icon,
                 R.drawable.score_unselected_icon,
                 R.drawable.profile_unselected_icon)
 
