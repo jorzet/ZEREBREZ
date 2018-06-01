@@ -112,7 +112,7 @@ class ContentActivity : BaseActivityLifeCycle() {
 
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(PRACTICE_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(ADVANCES_TAG))
-        mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(MAIN_ICON_TAG))
+        //mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(MAIN_ICON_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(SCORE_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(PROFILE_TAG))
 
@@ -204,33 +204,31 @@ class ContentActivity : BaseActivityLifeCycle() {
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab?) {
-            if(tab!!.position != 2) {
-                mBottomTabLayout.getTabAt(tab.position)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[tab.position])
-            }
+            mBottomTabLayout.getTabAt(tab!!.position)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[tab.position])
         }
 
         override fun onTabSelected(tab: TabLayout.Tab?) {
             when(tab!!.position) {
                 0 -> {currentTab = NodeType.PRACTICE}
                 1 -> {currentTab = NodeType.ADVANCES}
-                2 -> {currentTab = NodeType.BAINKEY/* this node is the brain key icon */}
-                3 -> {currentTab = NodeType.SCORE}
-                4 -> {currentTab = NodeType.PROFILE}
+                2 -> {currentTab = NodeType.SCORE/* this node is the brain key icon */}
+                3 -> {currentTab = NodeType.PROFILE}
             }
 
             // Draw top TabLayout icons
-            if (currentTab != NodeType.BAINKEY)
-                setTopTabIcons()
+            setTopTabIcons()
 
             if (currentTab == NodeType.ADVANCES) { // when is second tab hide top TabLayout
                 mTopTabLayout.visibility = View.GONE
                 mBottomTabLayout.getTabAt(tab.position)!!.setIcon(ImagesUtil.mBottomSelectedIcons[tab.position])
                 mBottomTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.colorPrimary))
-            } else if (currentTab != NodeType.BAINKEY) { // Draw icons if is not brain icon
+            } else { // Draw icons if is not brain icon
                 mTopTabLayout.visibility = View.VISIBLE
                 mBottomTabLayout.getTabAt(tab.position)!!.setIcon(ImagesUtil.mBottomSelectedIcons[tab.position])
                 mBottomTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.colorPrimary))
             }
+            mBottomTabLayout.setTabTextColors(resources.getColor(R.color.tab_text_bottom_color_unselected),
+                    resources.getColor(R.color.tab_text_bottom_color_selected))
         }
     }
 
@@ -247,9 +245,13 @@ class ContentActivity : BaseActivityLifeCycle() {
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mPracticeTopSelectedIcons[0])
+                mTopTabLayout.getTabAt(0)!!.setText("Preguntas")
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[1])
+                mTopTabLayout.getTabAt(1)!!.setText("Materias")
                 mTopTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[2])
+                mTopTabLayout.getTabAt(2)!!.setText("Erroneas")
                 mTopTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[3])
+                mTopTabLayout.getTabAt(3)!!.setText("Examenes")
             }
             NodeType.ADVANCES -> {
                 mViewPager.setAdapter(mAdvancesViewPager)
@@ -262,7 +264,9 @@ class ContentActivity : BaseActivityLifeCycle() {
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mScoreTopSelectedIcons[0])
+                mTopTabLayout.getTabAt(0)!!.setText("Escuelas")
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mScoreTopUnselectedIcons[1])
+                mTopTabLayout.getTabAt(1)!!.setText("Usuarios")
             }
             NodeType.PROFILE -> {
                 mViewPager.setAdapter(mProfileViewPager)
@@ -270,7 +274,9 @@ class ContentActivity : BaseActivityLifeCycle() {
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mProfileTopSelectedIcons[0])
+                mTopTabLayout.getTabAt(0)!!.setText("Mi Perfil")
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mProfileTopUnselectedIcons[1])
+                mTopTabLayout.getTabAt(1)!!.setText("Premium")
             }
         }
     }
@@ -280,10 +286,15 @@ class ContentActivity : BaseActivityLifeCycle() {
      */
     private fun setBottomTabIcons() {
         mBottomTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mBottomSelectedIcons[0])
+        mBottomTabLayout.getTabAt(0)!!.setText("Practicar")
         mBottomTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[1])
+        mBottomTabLayout.getTabAt(1)!!.setText("Progreso")
         mBottomTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[2])
+        mBottomTabLayout.getTabAt(2)!!.setText("Ranking")
         mBottomTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[3])
-        mBottomTabLayout.getTabAt(4)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[4])
+        mBottomTabLayout.getTabAt(3)!!.setText("Mi Perfil")
+        //mBottomTabLayout.getTabAt(4)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[4])
+        //mBottomTabLayout.getTabAt(4)!!.setText("Mi Perfil")
     }
 
     /*
@@ -372,6 +383,12 @@ class ContentActivity : BaseActivityLifeCycle() {
                     Log.i(TAG, "Downloading ...")
                 }
             }
+        }
+    }
+
+    private val notificationBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+
         }
     }
 }
