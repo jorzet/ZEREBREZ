@@ -263,11 +263,35 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             val dataHelper = DataHelper(context!!)
             dataHelper.saveModules(result)
         }
-        requestGetUserData()
+        requestGetExams()
     }
 
     override fun onGetModulesFail(throwable: Throwable) {
         super.onGetModulesFail(throwable)
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+        }
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+    }
+
+    /*
+     * Get exams listeners
+     */
+    override fun onGetExamsSuccess(exams: List<Exam>) {
+        super.onGetExamsSuccess(exams)
+
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveExams(exams)
+        }
+        requestGetUserData()
+    }
+
+    override fun onGetExamsFail(throwable: Throwable) {
+        super.onGetExamsFail(throwable)
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
@@ -285,7 +309,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
 
         val mUser = getUser()
         if (mUser != null) {
-            val modules = DataHelper(context!!).getModulesAnsQuestions()
+            val dataHelper = DataHelper(context!!)
+            val modules = dataHelper.getModulesAnsQuestions()
+            val exams = dataHelper.getExams()
 
             mUser.setCourse(user.getCourse())
             mUser.setPremiumUser(user.isPremiumUser())
@@ -320,18 +346,32 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
                 }
             }
 
+            if (user.getAnsweredExams().isNotEmpty()) {
+                for (i in 0 .. exams.size - 1) {
+                    for (exam in user.getAnsweredExams()) {
+                        if (exams.get(i).getExamId().equals(exam.getExamId())) {
+                            exams.get(i).setAnsweredExam(true)
+                            exams.get(i).setMisses(exam.getMisses())
+                            exams.get(i).setHits(exam.getHits())
+                        }
+                    }
+                }
+            }
+
             mUser.setSelectedShools(user.getSelectedSchools())
 
             if (context != null) {
                 Log.d(TAG, "save modules")
-                val dataHelper = DataHelper(context!!)
                 dataHelper.saveModules(modules)
+                dataHelper.saveExams(exams)
                 saveUser(mUser)
             }
         } else {
             val mUser2 = User()
             if (context != null) {
-                val modules = DataHelper(context!!).getModulesAnsQuestions()
+                val dataHelper = DataHelper(context!!)
+                val modules = dataHelper.getModulesAnsQuestions()
+                val exams = dataHelper.getExams()
 
                 mUser2.setEmail(user.getEmail())
                 mUser2.setPassword(user.getPassword())
@@ -368,46 +408,32 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
                     }
                 }
 
+                if (user.getAnsweredExams().isNotEmpty()) {
+                    for (i in 0 .. exams.size - 1) {
+                        for (exam in user.getAnsweredExams()) {
+                            if (exams.get(i).getExamId().equals(exam.getExamId())) {
+                                exams.get(i).setAnsweredExam(true)
+                                exams.get(i).setMisses(exam.getMisses())
+                                exams.get(i).setHits(exam.getHits())
+                            }
+                        }
+                    }
+                }
+
                 mUser2.setSelectedShools(user.getSelectedSchools())
 
                 if (context != null) {
                     Log.d(TAG, "save modules")
-                    val dataHelper = DataHelper(context!!)
                     dataHelper.saveModules(modules)
                     saveUser(mUser2)
                 }
             }
         }
-        requestGetExams()
+        requestCourses()
     }
 
     override fun onGetUserDataFail(throwable: Throwable) {
         super.onGetUserDataFail(throwable)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveSessionData(false)
-        }
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
-    }
-
-    /*
-     * Get exams listeners
-     */
-    override fun onGetExamsSuccess(exams: List<Exam>) {
-        super.onGetExamsSuccess(exams)
-
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveExams(exams)
-        }
-
-        requestCourses()
-    }
-
-    override fun onGetExamsFail(throwable: Throwable) {
-        super.onGetExamsFail(throwable)
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)

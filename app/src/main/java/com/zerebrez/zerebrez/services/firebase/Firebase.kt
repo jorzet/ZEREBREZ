@@ -841,6 +841,27 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                 modules.add(module)
                             }
                             user.setAnsweredModules(modules)
+                        } else if (key.equals("answeredExams")) {
+                            val answeredExams = map.get(key) as HashMap<String, String>
+                            val exams = arrayListOf<Exam>()
+                            for (key2 in answeredExams.keys) {
+                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val exam = Exam()
+                                exam.setExamId(Integer(key2.replace("e","")))
+
+                                for (key3 in examAnswered.keys) {
+                                    if (key3.equals("incorrect")) {
+                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                        exam.setMisses(incorrectQuestions)
+                                    } else if (key3.equals("correct")) {
+                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                        exam.setHits(correctQuestions)
+                                    }
+                                }
+
+                                exams.add(exam)
+                            }
+                            user.setAnsweredExams(exams)
                         }
                     }
                     Log.d(TAG, "user data ------ " + user.getUUID())

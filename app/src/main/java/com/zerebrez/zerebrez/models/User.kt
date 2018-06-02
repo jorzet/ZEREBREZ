@@ -25,6 +25,7 @@ class User {
     private var googleLogIn = false
     private var answeredModules : List<Module> = arrayListOf()
     private var answeredQuestions : List<Question> = arrayListOf()
+    private var answeredExams : List<Exam> = arrayListOf()
     private var selectedSchools : List<School> = arrayListOf()
     private var premiumUser : Boolean = false
 
@@ -77,6 +78,14 @@ class User {
 
     fun setAnsweredQuestions(answeredQuestions : List<Question>) {
         this.answeredQuestions = answeredQuestions
+    }
+
+    fun setAnsweredExams(answeredExams : List<Exam>) {
+        this.answeredExams = answeredExams
+    }
+
+    fun getAnsweredExams() : List<Exam> {
+        return this.answeredExams
     }
 
     fun getAnsweredQuestion() : List<Question> {
