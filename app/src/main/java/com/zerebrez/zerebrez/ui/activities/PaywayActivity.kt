@@ -160,7 +160,7 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
 
     private val mMercadoPagoViewListener = View.OnClickListener {
         ErrorDialog.newInstance("Metodo de pago no disponible",
-                DialogType.CANCEL_DIALOG ,this)!!
+                DialogType.OK_DIALOG ,this)!!
                 .show(supportFragmentManager, "paywayNotAllow")
     }
 

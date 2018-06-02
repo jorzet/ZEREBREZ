@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_question_container"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -35,7 +36,7 @@
                     android:layout_below="@+id/tv_question"
                     android:layout_marginTop="5dp"/>
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                <ListView
                     android:id="@+id/nslv_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -44,7 +45,7 @@
                     android:layout_marginTop="30dp"
                     android:numColumns="1"
                     android:clickable="false">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                </ListView>
 
 
             </RelativeLayout>

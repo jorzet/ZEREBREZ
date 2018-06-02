@@ -24,7 +24,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.activities.PaywayActivity
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -33,7 +35,7 @@ import com.zerebrez.zerebrez.ui.activities.PaywayActivity
 
 private const val TAG : String = "PaymentFragment"
 
-class PaymentFragment : BaseContentFragment() {
+class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     private lateinit var mIWantToBePremiumButton : Button
     private lateinit var mGetFreeQuestionsExamsButton : Button
@@ -60,11 +62,28 @@ class PaymentFragment : BaseContentFragment() {
     }
 
     private val mGetFreeQuestionsExamsListener = View.OnClickListener {
-
+        ErrorDialog.newInstance("Muy pronto",
+                DialogType.OK_DIALOG ,this)!!
+                .show(fragmentManager!!, "paywayNotAllow")
     }
 
     private fun goPaywayActivity() {
         val intent = Intent(activity, PaywayActivity::class.java)
         startActivity(intent)
+    }
+
+    /*
+     * Dialog listeners
+     */
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
     }
 }

@@ -5,139 +5,38 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/lv_subject_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="30dp"
+        android:numColumns="1"
+        android:clickable="false"
+        android:visibility="visible">
+    </ListView>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="40dp">
-
-                <RelativeLayout
-                    android:id="@+id/rl_verbal_skills"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/iv_verbal_skills"
-                        android:layout_width="@dimen/advances_module_image_width_image"
-                        android:layout_height="@dimen/advances_module_image_height_image"
-                        android:src="@drawable/verbal_skills_module_icon"/>
-
-                    <TextView
-                        android:id="@+id/tv_verbal_skills"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:lines="2"
-                        android:text="@string/verbal_skills_text"
-                        android:textColor="@color/verbal_skills_text_color"
-                        android:textSize="20sp"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_mathematical_skills"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/rl_verbal_skills">
-
-                    <ImageView
-                        android:id="@+id/iv_mathematical_skills"
-                        android:layout_width="@dimen/advances_module_image_width_image"
-                        android:layout_height="@dimen/advances_module_image_height_image"
-                        android:src="@drawable/mathematical_skills_module_icon"/>
-
-                    <TextView
-                        android:id="@+id/tv_mathematical_skills"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:lines="2"
-                        android:text="@string/mathematical_skills_text"
-                        android:textColor="@color/mathematical_skills_text_color"
-                        android:textSize="20sp"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_chemical_skills"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/rl_mathematical_skills">
-
-                    <ImageView
-                        android:id="@+id/iv_chemical_skills"
-                        android:layout_width="@dimen/advances_module_image_width_image"
-                        android:layout_height="@dimen/advances_module_image_height_image"
-                        android:src="@drawable/chemical_skills_module_icon"/>
-
-                    <TextView
-                        android:id="@+id/tv_chemical_skills"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:lines="2"
-                        android:text="@string/chemical_skills_text"
-                        android:textColor="@color/chemical_skills_text_color"
-                        android:textSize="20sp"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_spanish_skills"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/rl_chemical_skills">
-
-                    <ImageView
-                        android:id="@+id/iv_spanish_skills"
-                        android:layout_width="@dimen/advances_module_image_width_image"
-                        android:layout_height="@dimen/advances_module_image_height_image"
-                        android:src="@drawable/spanish_skills_module_icon"/>
-
-                    <TextView
-                        android:id="@+id/tv_spanish_skills"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:lines="2"
-                        android:text="@string/spanish_skills_text"
-                        android:textColor="@color/spanish_skills_text_color"
-                        android:textSize="20sp"/>
-
-                </RelativeLayout>
-
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-    </ScrollView>
-
+    <TextView
+        android:id="@+id/tv_not_subjects_currently"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/not_exams_currently_text"
+        android:textColor="@color/not_exams_currently_text_color"
+        android:textSize="20sp"
+        android:visibility="gone"/>
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:id="@+id/iv_go_to_bottom"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

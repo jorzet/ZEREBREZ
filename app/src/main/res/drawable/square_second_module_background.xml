@@ -2,7 +2,29 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item>
+    <item
+        android:height="@dimen/height_square"
+        android:width="@dimen/width_square">
+        <shape>
+            <corners
+                android:radius="10dip" />
+            <gradient
+                android:startColor="@color/background"
+                android:centerY="0.50"
+                android:endColor="@color/background"
+                android:angle="270"/>
+            <padding
+                android:left="15dp"
+                android:right="15dp"
+                android:bottom="15dp"
+                android:top="15dp">
+            </padding>
+        </shape>
+    </item>
+
+    <item
+        android:height="@dimen/height_square_padding"
+        android:width="@dimen/width_square_padding">
         <shape>
             <corners
                 android:radius="10dip" />

@@ -17,6 +17,7 @@
 package com.zerebrez.zerebrez.services.sharedpreferences
 
 import android.content.Context
+import com.zerebrez.zerebrez.models.Question
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -46,6 +47,7 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_EXAM_SCORES : String = "json_exam_scores"
     private val JSON_LAST_EXAM_DIT_IT : String = "json_last_exam_did_it"
     private val JSON_IMAGES_PATH : String = "json_images_path"
+    private val JSON_CURRENT_QUESTION : String = "json_current_question"
     private val NOTIFICATION_TIME : String = "notification_time"
     private val REMINDER_SATUS : String = "reminder_status"
 
@@ -59,6 +61,11 @@ class SharedPreferencesManager(context: Context) {
     private val ADVANCES_FRAGMENT : String = "advances_fragment"
     private val SCHOOL_AVERAGE_FRAGMENT : String = "school_average_fragment"
     private val EXAMS_AVERAGE_FRAGMENT : String = "exams_average_fragemnt"
+
+    /*
+     * messages tags
+     */
+    private val SHOW_ANSWER_MESSAGE : String = "show_answer_message"
 
     /*
      * Objects
@@ -145,6 +152,18 @@ class SharedPreferencesManager(context: Context) {
     fun getJsonFreeExams() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(JSON_FREE_EXAMS, "")
+    }
+
+
+    fun storeJsonCurrentQuestion(json : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(JSON_CURRENT_QUESTION, json)
+        editor.apply()
+    }
+
+    fun getJsonCurrentQuestion() : String? {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(JSON_CURRENT_QUESTION, null)
     }
 
 
@@ -359,6 +378,17 @@ class SharedPreferencesManager(context: Context) {
     fun isExamsAverageFragmentOK() : Boolean {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getBoolean(EXAMS_AVERAGE_FRAGMENT, false)
+    }
+
+    fun setShowAnswerMessageOK() {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(SHOW_ANSWER_MESSAGE, true)
+        editor.apply()
+    }
+
+    fun isShowAnswerMessageOK() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(SHOW_ANSWER_MESSAGE, false)
     }
 
     fun saveGoogleToken(token : String) {

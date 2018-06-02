@@ -226,7 +226,16 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
             } else if(number.equals("-2")) {
-                view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                val randomNumber = Math.random()
+                var rand = 0
+                if (randomNumber > 0.5) {
+                    rand = 1
+                }
+                if (rand.equals(0)) {
+                    view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                } else {
+                    view.background = resources.getDrawable(R.drawable.square_second_module_background)
+                }
                 text.visibility = View.GONE
                 param.height = resources.getDimension(R.dimen.width_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()

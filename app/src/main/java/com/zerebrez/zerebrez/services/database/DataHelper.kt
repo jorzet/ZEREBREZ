@@ -86,6 +86,22 @@ class DataHelper(context: Context) {
         return quetions
     }
 
+    fun saveCurrentQuestion(currentQuestion : Question?) {
+        var json = ""
+        if (currentQuestion != null) {
+            json = JsonParcer.parceObjectToJson(currentQuestion)
+        }
+        SharedPreferencesManager(mContext).storeJsonCurrentQuestion(json)
+    }
+
+    fun getCurrentQuestion() : Question? {
+        val json = SharedPreferencesManager(mContext).getJsonCurrentQuestion()
+        if (json != null) {
+            val currectQuestion = JsonParcer.getObjectFromJson(json, Question::class.java) as Question
+            return currectQuestion
+        }
+        return null
+    }
 
     fun getQuestionsByModuleId(moduleId : Integer) : List<Question>{
         val json = SharedPreferencesManager(mContext).getJsonModules()

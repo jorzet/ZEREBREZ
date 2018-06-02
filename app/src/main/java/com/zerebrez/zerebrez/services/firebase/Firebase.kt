@@ -291,6 +291,52 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                         Log.d(TAG,"json has not image value ******  " + json.toString())
                     }
 
+                    /*
+                     * here it is get the step by step
+                     */
+                    if (json.has("stepByStepText")) {
+                        Log.d(TAG,"json has text value ------")
+                        val texts = json.getJSONArray("stepByStepText")
+                        val stepByStepText = arrayListOf<String>()
+                        for (i in 0 .. texts.length() - 1) {
+                            stepByStepText.add(texts.get(i).toString())
+                        }
+
+                        question.setStepByStepText(stepByStepText)
+                    } else {
+                        Log.d(TAG,"json has not text value ******  " + json.toString())
+                    }
+
+                    if (json.has("stepByStepEquation")) {
+                        Log.d(TAG,"json has text value ------")
+                        val equations = json.getJSONArray("stepByStepEquation")
+                        val stepByStepEquation = arrayListOf<String>()
+                        for (i in 0 .. equations.length() - 1) {
+                            stepByStepEquation.add(equations.get(i).toString())
+                        }
+
+                        question.setStepByStepEquations(stepByStepEquation)
+                    } else {
+                        Log.d(TAG,"json has not equation value ******  " + json.toString())
+                    }
+
+                    if (json.has("stepByStepImage")) {
+                        Log.d(TAG,"json has text value ------")
+                        val images = json.getJSONArray("stepByStepImage")
+                        val stepByStepImage = arrayListOf<String>()
+                        for (i in 0 .. images.length() - 1) {
+                            stepByStepImage.add(images.get(i).toString())
+                        }
+
+                        question.setStepByStepImages(stepByStepImage)
+                    } else {
+                        Log.d(TAG,"json has not image value ******  " + json.toString())
+                    }
+
+
+                    /*
+                     * Here it is get the subjects
+                     */
                     if (json.has("subject")) {
                         val subject = json.getString("subject")
                         when (subject) {

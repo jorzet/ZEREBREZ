@@ -35,12 +35,25 @@
                 android:layout_marginTop="20dp"
                 android:background="@color/line_1_background_color"/>
 
+            <TextView
+                android:id="@+id/tv_not_128_exams_questions_currently"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_gary_line"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="Aún no tienes examenes de 128 preguntas contestados"
+                android:textColor="@color/dialog_yes_text_color"
+                android:textSize="12sp"
+                android:visibility="visible"/>
+
             <com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
                 android:id="@+id/school_average"
                 android:layout_height="3000dp"
                 android:layout_width="match_parent"
                 android:layout_below="@+id/iv_gary_line"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="50dp"/>
 
         </RelativeLayout>
 

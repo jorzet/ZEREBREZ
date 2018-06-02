@@ -16,15 +16,21 @@ import java.io.File
 import java.io.FileInputStream
 
 
-class OptionQuestionAdapterRefactor(texts : List<QuestionOption>, context: Context) : BaseAdapter() {
+class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOption>, context: Context) : BaseAdapter() {
     private val mQuestionOption : List<QuestionOption> = texts
     private val mContext : Context = context
+    private val mIsAnswer : Boolean = isAnswer
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val currentOption = getItem(position) as QuestionOption
 
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val optionView = inflator.inflate(R.layout.custom_question_refactor, null)
+        val optionView : View
+        if (mIsAnswer) {
+            optionView = inflator.inflate(R.layout.custom_answer_refactor, null)
+        } else {
+            optionView = inflator.inflate(R.layout.custom_question_refactor, null)
+        }
 
         when (currentOption.getQuestionType()) {
             QuestionType.TEXT -> {

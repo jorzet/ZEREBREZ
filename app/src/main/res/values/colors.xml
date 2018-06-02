@@ -27,8 +27,8 @@
     <color name="singin_button_color">#101E45</color>
     <color name="singin_facebook_front">#2D89CB</color>
     <color name="singin_facebook_back">#101E45</color>
-    <color name="singin_google_front">#F7921E</color>
-    <color name="singin_google_back">#BA4026</color>
+    <color name="singin_google_front">#ffffff</color>
+    <color name="singin_google_back">#CCCCCC</color>
 
 
     <color name="comipems_background">#F7921E</color>
@@ -82,6 +82,11 @@
     <color name="option_correct_answer_background_color">#B0DC3A</color>
     <color name="option_wrong_answer_background_color">#FF0000</color>
     <color name="bottom_bar_background_color">#E6E6E6</color>
+    <color name="show_andwer_background_color">#F4A01C</color>
+
+    <!--show answer activity-->
+    <color name="show_question_background">#EAEAEA</color>
+    <color name="answer_text_color">#8B8B8B</color>
 
     <!--advances fragment-->
     <color name="verbal_skills_text_color">#059CAE</color>
@@ -131,4 +136,17 @@
     <color name="dialog_not_text_color">#828282</color>
     <color name="dialog_ok_text_color">#828282</color>
     
+    <!--subject fragment-->
+    <color name="verbal_habilitiy_subject_color">#2CA5B6</color>
+    <color name="mathematical_habilitiy_subject_color">#2B659A</color>
+    <color name="chemistry_subject_color">#F4A01C</color>
+    <color name="spanish_subject_color">#BADF3D</color>
+    <color name="geography_subject_color">#2CA5B6</color>
+    <color name="history_subject_color">#2B659A</color>
+    <color name="fce_subject_color">#F4A01C</color>
+    <color name="mathematics_subject_color">#BADF3D</color>
+    <color name="physics_subject_color">#2CA5B6</color>
+    <color name="biology_subject_color">#2B659A</color>
+    <color name="mexico_history_subject_color">#BADF3D</color>
+
 </resources>

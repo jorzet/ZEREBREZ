@@ -104,36 +104,13 @@ public class NotificationScheduler
                 .setTicker("vamos a estudiar")  // the status text
                 .setWhen(System.currentTimeMillis())  // the time stamp
                 .setContentTitle("Zerebrez")  // the label of the entry
-                .setContentText("")  // the contents of the entry
+                .setContentText("Es tiempo de estudiar")  // the contents of the entry
                 .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
                 .build();
 
         // Send the notification.
         NotificationManager mNM = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
         mNM.notify(2, notification);
-
-        /*Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        Intent notificationIntent = new Intent(context, cls);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(cls);
-        stackBuilder.addNextIntent(notificationIntent);
-
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(DAILY_REMINDER_REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        Notification notification = builder.setContentTitle(title)
-                .setContentText(content)
-                .setAutoCancel(true)
-                .setSound(alarmSound)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentIntent(pendingIntent).build();
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(DAILY_REMINDER_REQUEST_CODE, notification);*/
 
     }
 

@@ -44,7 +44,6 @@ import com.zerebrez.zerebrez.services.notification.NotificationScheduler
 import android.util.Log
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 
-
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
  * jorzet.94@gmail.com
@@ -77,6 +76,10 @@ class ProfileFragment : BaseContentFragment() {
     private lateinit var mNotSelectedSchools : TextView
     private lateinit var mAllowMobileDataSwitch : Switch
     private lateinit var mAllowNotificationsSwitch : Switch
+    private lateinit var mLinkWithFacebookButton : View
+    private lateinit var mLinkWithGoogleButton : View
+    private lateinit var mIsLoggedInWithFacebookImage : ImageView
+    private lateinit var mIsLoggedInWithGoogleImage : ImageView
 
     /*
      * Adapters
@@ -103,31 +106,37 @@ class ProfileFragment : BaseContentFragment() {
         mSendEmail = rootView.findViewById(R.id.tv_support_email)
         mTermsAndPrivacy = rootView.findViewById(R.id.rl_terms_and_privacy_container)
         mEditSchoolsButton = rootView.findViewById(R.id.btn_change_schools)
-        mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
         mNotSelectedSchools = rootView.findViewById(R.id.tv_not_selected_schools)
         mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
-
         mNotification = rootView.findViewById(R.id.tv_notification)
         mTimeNotification = rootView.findViewById(R.id.tv_time)
         mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
+        mLinkWithFacebookButton = rootView.findViewById(R.id.btn_facebook_login)
+        mLinkWithGoogleButton = rootView.findViewById(R.id.btn_google_login)
+        mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
+        mIsLoggedInWithFacebookImage = rootView.findViewById(R.id.iv_is_loggedin_with_facebook)
+        mIsLoggedInWithGoogleImage = rootView.findViewById(R.id.iv_is_loggedin_with_google)
 
+        // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)
         mLinkEmailButton.setOnClickListener(mLinkEmailButtonListener)
-
-        mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
-        mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
-
-        // set notification
-        mAllowNotificationsSwitch.setChecked(DataHelper(context!!).getReminderStatus());
-
+        mLinkWithFacebookButton.setOnClickListener(mLinkWithFacebookButtonListener)
+        mLinkWithGoogleButton.setOnClickListener(mLinkWithGoogleButtonListener)
         mLogOut.setOnClickListener(mLogOutListener)
         mTermsAndPrivacy.setOnClickListener(mTermsAndPrivacyListener)
         mSendEmail.setOnClickListener(mSendEmailListener)
         mNotification.setOnClickListener(mNotificationListener)
 
+        mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
+        mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
+
+        // set notification
         val dataHelper = DataHelper(context!!)
+
+        mAllowNotificationsSwitch.setChecked(dataHelper.getReminderStatus());
         mTimeNotification.text = dataHelper.getNotificationTime()
 
+        checkProviders()
         checkEmailAndPassword()
         checkMobileDataSate()
 
@@ -172,7 +181,7 @@ class ProfileFragment : BaseContentFragment() {
     }
 
     private val mAllowNotificationsSwitchListener = object : CompoundButton.OnCheckedChangeListener {
-        override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
+        override fun onCheckedChanged(compoundButton: CompoundButton?, isChecked: Boolean) {
             DataHelper(context!!).setReminderStatus(isChecked)
             if (isChecked) {
                 Log.d(TAG, "onCheckedChanged: true")
@@ -253,18 +262,6 @@ class ProfileFragment : BaseContentFragment() {
                 requestUpdateUser(user)
             }
 
-            // check if has profile changes
-            /*var hasProfileChanges = false
-            if (mCourse.text.toString().equals(user.getCourse())) {
-                user.setCourse(mCourse.text.toString())
-                hasProfileChanges = true
-            }
-
-            // send request just if has profile changes
-            if (hasProfileChanges) {
-                requestSendUser(user)
-            }*/
-
             // check has account changes or profile changes
             if (hasChangesAccount) {
                 saveUser(user)
@@ -272,8 +269,33 @@ class ProfileFragment : BaseContentFragment() {
         }
     }
 
+    private val mLinkWithFacebookButtonListener = View.OnClickListener {
+
+    }
+
+    private val mLinkWithGoogleButtonListener = View.OnClickListener {
+
+    }
+
     private val mEditSchoolsListener = View.OnClickListener {
         goChooseSchoolsActivity()
+    }
+
+    private fun checkProviders() {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser != null) {
+            for (userInfo in firebaseUser.getProviderData()) {
+                if (userInfo.getProviderId() == "facebook.com") {
+                    Log.d("TAG", "User is signed in with Facebook")
+                    mIsLoggedInWithFacebookImage.visibility = View.VISIBLE
+                    mLinkWithFacebookButton.setOnClickListener(null)
+                } else if (userInfo.getProviderId() == "google.com") {
+                    Log.d("TAG", "User is signed in with Google")
+                    mIsLoggedInWithGoogleImage.visibility = View.VISIBLE
+                    mLinkWithGoogleButton.setOnClickListener(null)
+                }
+            }
+        }
     }
 
     private fun checkEmailAndPassword() {

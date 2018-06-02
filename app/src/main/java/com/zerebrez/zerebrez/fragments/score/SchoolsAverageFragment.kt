@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
@@ -33,6 +34,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 class SchoolsAverageFragment : BaseContentFragment() {
 
     private lateinit var schoolAverageCanvas : SchoolAverageCanvas
+    private lateinit var mNot128ExmanQuestionDitIt : TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -42,6 +44,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
         val rootView = inflater.inflate(R.layout.school_average_fragment, container, false)!!
 
         schoolAverageCanvas = rootView.findViewById(R.id.school_average)
+        mNot128ExmanQuestionDitIt = rootView.findViewById(R.id.tv_not_128_exams_questions_currently)
 
         val dataHelper = DataHelper(context!!)
         val institutes = dataHelper.getInstitutes()

@@ -1,5 +1,7 @@
 package com.zerebrez.zerebrez.fragments.question
 
+import android.app.ActionBar
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 //import com.nishant.math.MathView
@@ -38,7 +41,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     /*
      * UI accessors
      */
-    private lateinit var mQuestionList : NonScrollListView
+    private lateinit var mQuestionList : ListView
     private lateinit var mQuestion : TextView
     private lateinit var mOptionA : View
     private lateinit var mOptionB : View
@@ -56,6 +59,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     private lateinit var mImageAnswerB : ImageView
     private lateinit var mImageAnswerC : ImageView
     private lateinit var mImageAnswerD : ImageView
+    private lateinit var mQuestionContainerView : LinearLayout
 
     /*
      * Adapter
@@ -91,6 +95,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mImageAnswerB = rootView.findViewById(R.id.iv_answer_b)
         mImageAnswerC = rootView.findViewById(R.id.iv_answer_c)
         mImageAnswerD = rootView.findViewById(R.id.iv_answer_d)
+        mQuestionContainerView = rootView.findViewById(R.id.ll_question_container)
 
         question = (activity as QuestionActivity).getQuestion()
         val dataHelper = DataHelper(context!!)
@@ -138,7 +143,11 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 }
             }
 
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(mSortOptions, context!!)
+            if (realSize >= 4) {
+                (activity as QuestionActivity).showExpandedQuestionButton()
+            }
+
+            optionQuestionAdapter = OptionQuestionAdapterRefactor(false, mSortOptions, context!!)
 
             setOptions()
             setAnswers()
@@ -256,6 +265,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
+                (activity as QuestionActivity).setNextQuestionEnable(true)
             }
             R.id.option_b -> {
                 when (answer) {
@@ -283,6 +293,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
+                (activity as QuestionActivity).setNextQuestionEnable(true)
             }
             R.id.option_c -> {
                 when (answer) {
@@ -310,6 +321,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
+                (activity as QuestionActivity).setNextQuestionEnable(true)
             }
             R.id.option_d -> {
                 when (answer) {
@@ -337,6 +349,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
+                (activity as QuestionActivity).setNextQuestionEnable(true)
             }
         }
 
@@ -368,6 +381,62 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             }
         }
         return ""
+    }
+
+    fun showAnswerQuestion() {
+        val answer = question!!.getAnswer()
+        when (answer) {
+            OPTION_A -> {
+                mOptionA.background = resources.getDrawable(R.drawable.show_answer_option_background)
+                mOptionB.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                (activity as QuestionActivity).setQuestionAnswer("a", false)
+            }
+            OPTION_B -> {
+                mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionB.background = resources.getDrawable(R.drawable.show_answer_option_background)
+                mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                (activity as QuestionActivity).setQuestionAnswer("b", false)
+            }
+            OPTION_C -> {
+                mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionB.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionC.background = resources.getDrawable(R.drawable.show_answer_option_background)
+                mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                (activity as QuestionActivity).setQuestionAnswer("c", false)
+            }
+            OPTION_D -> {
+                mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionB.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
+                mOptionD.background = resources.getDrawable(R.drawable.show_answer_option_background)
+                (activity as QuestionActivity).setQuestionAnswer("d", false)
+            }
+        }
+        mOptionA.setOnClickListener(null)
+        mOptionB.setOnClickListener(null)
+        mOptionC.setOnClickListener(null)
+        mOptionD.setOnClickListener(null)
+        (activity as QuestionActivity).setNextQuestionEnable(true)
+    }
+
+    fun showExpandedQuestion(showExpanded : Boolean) {
+        val param : LinearLayout.LayoutParams
+        if (showExpanded) {
+            param = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0.3f)
+
+        } else {
+            param = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f)
+        }
+        mQuestionContainerView.setLayoutParams(param)
     }
 
 }

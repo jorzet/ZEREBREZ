@@ -74,7 +74,12 @@
         <activity android:name=".ui.activities.PaywayActivity"
             android:screenOrientation="portrait"/>
 
-    </application>
+        <activity android:name=".ui.activities.ShowAnswerMessageActivity"
+            android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.activities.ShowAnswerActivity"
+            android:screenOrientation="portrait"/>
+
+    </application>
 
 </manifest>

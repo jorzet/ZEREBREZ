@@ -354,10 +354,12 @@ class ContentActivity : BaseActivityLifeCycle() {
     }
 
     fun goPaymentFragment() {
-        val tab = mBottomTabLayout.getTabAt(4)
+        // go to profile fragment
+        val tab = mBottomTabLayout.getTabAt(3)
         tab!!.select()
         currentTab = NodeType.PROFILE
         setTopTabIcons()
+        // go to payment fragment
         mViewPager.currentItem = 1
     }
 

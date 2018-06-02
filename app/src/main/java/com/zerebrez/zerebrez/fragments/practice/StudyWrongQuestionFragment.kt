@@ -32,6 +32,7 @@ import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import java.util.*
 
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.
@@ -99,6 +100,19 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         return rootView
     }
 
+    override fun onResume() {
+        super.onResume()
+        mDataHelper = DataHelper(context!!)
+        val wrongQuestions = mDataHelper.getWrongQuestions()
+        if (wrongQuestions.isEmpty()) {
+            mMainContainer.visibility = View.GONE
+            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
+        } else {
+            updateQuestionList(wrongQuestions)
+            drawQuestions()
+        }
+    }
+
     private fun updateQuestionList(questions : List<Question>) {
         var row = 1
         for (i in 0 .. questions.size - 1) {
@@ -163,44 +177,44 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                     image.background = resources.getDrawable(R.drawable.main_icon)
                 }
                 SubjectType.MATHEMATICS -> {
-                    image.background = resources.getDrawable(R.drawable.mat_1_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                 }
                 SubjectType.SPANISH -> {
-                    image.background = resources.getDrawable(R.drawable.esp_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                 }
                 SubjectType.VERBAL_HABILITY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
                 }
                 SubjectType.MATHEMATICAL_HABILITY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
                 }
                 SubjectType.BIOLOGY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.bio_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
                 }
                 SubjectType.CHEMISTRY -> {
-                    image.background = resources.getDrawable(R.drawable.quim_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
                 }
                 SubjectType.PHYSICS -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.fis_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
                 }
                 SubjectType.GEOGRAPHY -> {
-                    image.background = resources.getDrawable(R.drawable.geo_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
                 }
                 SubjectType.MEXICO_HISTORY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.his_mex_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
                 }
                 SubjectType.UNIVERSAL_HISTORY -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.his_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
                 }
                 SubjectType.FCE -> {
                     // TODO
-                    image.background = resources.getDrawable(R.drawable.civ_et_subject_icon)
+                    image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                 }
             }
 
@@ -218,7 +232,16 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
             } else if(number.equals("-2")) {
-                view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                val randomNumber = Math.random()
+                var rand = 0
+                if (randomNumber > 0.5) {
+                    rand = 1
+                }
+                if (rand.equals(0)) {
+                    view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                } else {
+                    view.background = resources.getDrawable(R.drawable.square_second_module_background)
+                }
                 image.visibility = View.GONE
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()

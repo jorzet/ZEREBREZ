@@ -37,7 +37,7 @@ class PresentationStudyBySubjectTopicFragment : BaseContentFragment() {
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.presentation_study_by_subject_and_topic_fragment, container, false)!!
+        val rootView = inflater.inflate(R.layout.presentation_study_by_subject_and_topic_fragment, container, false)!!
 
         mItIsUnderstandButton = rootView.findViewById(R.id.btn_it_is_understand)
 

@@ -30,6 +30,9 @@ class Question {
     private var texts : List<String> = arrayListOf()
     private var images : List<String> = arrayListOf()
     private var equations : List<String> = arrayListOf()
+    private var stepByStepTexts : List<String> = arrayListOf()
+    private var stepByStepImages : List<String> = arrayListOf()
+    private var stepByStepEquations : List<String> = arrayListOf()
     private var optionOne : String = ""
     private var optionTwo : String = ""
     private var optionThree : String = ""
@@ -90,7 +93,7 @@ class Question {
 
     /**
      * @param text
-     *      Set the question text
+     *      Set the question texts
      */
     fun setText(texts : List<String>) {
         this.texts = texts
@@ -98,7 +101,7 @@ class Question {
 
     /**
      * @return
-     *      the question text
+     *      the question texts
      */
     fun getText() : List<String> {
         return this.texts
@@ -106,7 +109,7 @@ class Question {
 
     /**
      * @param equations
-     *      Set the question text
+     *      Set the question equations
      */
     fun setEquations(equations : List<String>) {
         this.equations = equations
@@ -114,7 +117,7 @@ class Question {
 
     /**
      * @return
-     *      the question text
+     *      the question equations
      */
     fun getEquations() : List<String> {
         return this.equations
@@ -122,7 +125,7 @@ class Question {
 
     /**
      * @param images
-     *      Set the question text
+     *      Set the question images
      */
     fun setImages(images : List<String>) {
         this.images = images
@@ -130,10 +133,58 @@ class Question {
 
     /**
      * @return
-     *      the question text
+     *      the question images
      */
     fun getImages() : List<String> {
         return this.images
+    }
+
+    /**
+     * @param text
+     *      Set the step by step question text
+     */
+    fun setStepByStepText(stepByStepTexts : List<String>) {
+        this.stepByStepTexts = stepByStepTexts
+    }
+
+    /**
+     * @return
+     *      the question step by step text
+     */
+    fun getStepByStepText() : List<String> {
+        return this.stepByStepTexts
+    }
+
+    /**
+     * @param equations
+     *      Set the question step by step equations
+     */
+    fun setStepByStepEquations(stepByStepEquations : List<String>) {
+        this.stepByStepEquations = stepByStepEquations
+    }
+
+    /**
+     * @return
+     *      the question step by step equations
+     */
+    fun getStepByStepEquations() : List<String> {
+        return this.stepByStepEquations
+    }
+
+    /**
+     * @param images
+     *      Set the question step by step images
+     */
+    fun setStepByStepImages(stepByStepImages : List<String>) {
+        this.stepByStepImages = stepByStepImages
+    }
+
+    /**
+     * @return
+     *      the question step by step image
+     */
+    fun getStepByStepImages() : List<String> {
+        return this.stepByStepImages
     }
 
     /**
@@ -279,5 +330,9 @@ class Question {
      */
     fun getWasOK() : Boolean {
         return this.wasOK
+    }
+
+    fun hasStepByStep() : Boolean {
+        return stepByStepTexts.size > 0 || stepByStepEquations.size > 0 || stepByStepImages.size > 0
     }
 }

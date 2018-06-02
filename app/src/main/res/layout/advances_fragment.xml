@@ -177,6 +177,19 @@
                     android:layout_marginTop="30dp">
                 </com.zerebrez.zerebrez.adapters.NonScrollListView>
 
+                <TextView
+                    android:id="@+id/tv_not_exams_currently"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_exams"
+                    android:layout_marginTop="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="@string/not_exams_did_it"
+                    android:textColor="@color/not_exams_currently_text_color"
+                    android:textSize="20sp"
+                    android:visibility="gone"/>
+
             </RelativeLayout>
 
             <ImageView
@@ -212,6 +225,18 @@
                     android:layout_marginTop="30dp">
                 </com.zerebrez.zerebrez.adapters.NonScrollListView>
 
+                <TextView
+                    android:id="@+id/tv_not_able_now"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_average_by_subject"
+                    android:layout_marginTop="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="No disponible por el momento"
+                    android:textColor="@color/not_exams_currently_text_color"
+                    android:textSize="20sp"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 

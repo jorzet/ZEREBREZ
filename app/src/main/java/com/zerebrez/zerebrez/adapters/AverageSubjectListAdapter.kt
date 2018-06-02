@@ -25,8 +25,8 @@ import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.enums.SubjectType
-import kotlinx.android.synthetic.main.custom_average_by_subject.view.*
 import android.graphics.drawable.GradientDrawable
+import kotlinx.android.synthetic.main.custom_average_by_subject.view.*
 
 /*
  * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -55,44 +55,44 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
         averageBySubject.tv_average_by_subject.text = currentSubject.getSubjectAverage().toString()
         averageBySubject.tv_average_by_subject.setTextColor(color)
         averageBySubject.pb_average_by_subject.setProgress((currentSubject.getSubjectAverage() * 10).toInt())
-        averageBySubject.pb_average_by_subject.progressDrawable = gd
+        //averageBySubject.pb_average_by_subject.progressDrawable = gd
 
         when (currentSubject.getsubjectType()) {
             SubjectType.VERBAL_HABILITY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_ver_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_ver_subject_icon_blue)
             }
             SubjectType.MATHEMATICAL_HABILITY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_mat_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_mat_subject_icon_blue)
             }
             SubjectType.SPANISH -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.esp_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.esp_subject_icon_blue)
             }
             SubjectType.ENGLISH -> {
                 //averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.geo_icon)
             }
             SubjectType.MATHEMATICS -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.mat_1_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.mat_1_subject_icon_blue)
             }
             SubjectType.BIOLOGY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.bio_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.bio_subject_icon_blue)
+            }
+            SubjectType.PHYSICS -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.fis_subject_icon_blue)
             }
             SubjectType.CHEMISTRY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.quim_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.quim_subject_icon_blue)
             }
             SubjectType.GEOGRAPHY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.geo_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.geo_subject_icon_blue)
             }
             SubjectType.MEXICO_HISTORY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.his_mex_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.his_mex_subject_icon_blue)
             }
             SubjectType.UNIVERSAL_HISTORY -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.his_subject_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.his_subject_icon_blue)
             }
             SubjectType.FCE -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.civ_et_subject_icon)
-            }
-            else -> {
-                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.user_selected_icon)
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.civ_et_subject_icon_blue)
             }
         }
 

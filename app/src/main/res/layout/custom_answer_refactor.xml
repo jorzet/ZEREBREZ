@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/answer_background_color">
+
+    <TextView
+        android:id="@+id/tv_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="option_one"
+        android:textColor="@color/answer_text_color"
+        android:textSize="20sp"/>
+
+    <katex.hourglass.in.mathlib.MathView
+        android:id="@+id/mv_otion"
+        app:setTextColor="@color/answer_text_color"
+        app:setTextSize="10sp"
+        app:setText="$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$$"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tv_option"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_option"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_below="@+id/mv_otion"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+</RelativeLayout>
