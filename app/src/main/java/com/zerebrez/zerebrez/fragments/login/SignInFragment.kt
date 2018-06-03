@@ -136,7 +136,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
     private val onSendFormListener = object : TextView.OnEditorActionListener {
         override fun onEditorAction(textView: TextView?, actionId: Int, event: KeyEvent?): Boolean {
             var action = false
-            if (actionId === EditorInfo.IME_ACTION_SEND) {
+            if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
                 val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)

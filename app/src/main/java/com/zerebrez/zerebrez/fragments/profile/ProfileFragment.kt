@@ -38,10 +38,14 @@ import com.zerebrez.zerebrez.utils.MyNetworkUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
 import android.os.Build
 import android.app.TimePickerDialog
+import android.content.Context
 import com.zerebrez.zerebrez.services.database.DataHelper
 import java.util.*
 import com.zerebrez.zerebrez.services.notification.NotificationScheduler
 import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 
 /**
@@ -171,6 +175,20 @@ class ProfileFragment : BaseContentFragment() {
                 mSelectedSchoolsList.visibility = View.GONE
                 mNotSelectedSchools.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private val onSendFormListener = object : TextView.OnEditorActionListener {
+        override fun onEditorAction(textView: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+            var action = false
+            if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
+                // hide keyboard
+                val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
+                mLinkEmailButton.performClick()
+                action = true
+            }
+            return action
         }
     }
 
