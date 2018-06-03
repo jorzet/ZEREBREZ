@@ -63,7 +63,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
         val user = getUser()
         if (user != null) {
-            if (user.isPremiumUser()) {
+            if (user.isPremiumUser() || (activity as QuestionActivity).isAnonymousUser()) {
                 mBePremiumContainer.visibility = View.GONE
             }
         }

@@ -16,11 +16,30 @@
 
 package com.zerebrez.zerebrez.models.Error
 
+import com.zerebrez.zerebrez.models.enums.LoginErrorType
+
 /**
  * Created by Jorge Zepeda Tinoco on 06/05/18.
  * jorzet.94@gmail.com
  */
 
 class FirebaseError : Throwable() {
+    private lateinit var errorType : LoginErrorType
+    private lateinit var errorMessage : String
 
+    fun setErrorType(errorType : LoginErrorType) {
+        this.errorType = errorType
+    }
+
+    fun getErrorType() : LoginErrorType {
+        return this.errorType
+    }
+
+    fun setErrorMessage(errorMessage : String) {
+        this.errorMessage = errorMessage
+    }
+
+    fun getErrorMessage() : String {
+        return this.errorMessage
+    }
 }

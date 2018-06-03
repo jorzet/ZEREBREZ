@@ -44,9 +44,18 @@ import java.util.*
 import com.zerebrez.zerebrez.services.notification.NotificationScheduler
 import android.util.Log
 import android.view.KeyEvent
+import android.view.animation.AlphaAnimation
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.GraphRequest
+import com.facebook.login.LoginResult
+import com.facebook.login.widget.LoginButton
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -55,7 +64,7 @@ import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 
 private const val TAG : String = "ProfileFragment"
 
-class ProfileFragment : BaseContentFragment() {
+class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     /*
      * tags
@@ -177,6 +186,9 @@ class ProfileFragment : BaseContentFragment() {
                 mNotSelectedSchools.visibility = View.VISIBLE
             }
         }
+        checkProviders()
+        checkEmailAndPassword()
+        checkMobileDataSate()
     }
 
     private val onSendFormListener = object : TextView.OnEditorActionListener {
@@ -184,10 +196,14 @@ class ProfileFragment : BaseContentFragment() {
             var action = false
             if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
-                val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
-                mLinkEmailButton.performClick()
-                action = true
+                try {
+                    val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
+                    mLinkEmailButton.performClick()
+                    action = true
+                } catch (exception : Exception) {
+
+                }
             }
             return action
         }
@@ -290,6 +306,54 @@ class ProfileFragment : BaseContentFragment() {
 
     private val mLinkWithFacebookButtonListener = View.OnClickListener {
 
+        if (NetworkUtil.isConnected(context!!)) {
+            (activity as ContentActivity).showLoading(true)
+
+            val mFacebookSignInButton = LoginButton(context)
+            mFacebookSignInButton.setReadPermissions("email", "public_profile", "user_birthday", "user_friends");
+            mFacebookSignInButton.registerCallback((activity as ContentActivity).getCallBackManager(), object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    Log.d(TAG, "facebook:onSuccess:$loginResult")
+                    requestLinkAnonymousUserWithFacebookProvider(loginResult.accessToken)
+                }
+
+                override fun onCancel() {
+                    Log.d(TAG, "facebook:onCancel")
+                    (activity as ContentActivity).showLoading(false)
+                }
+
+                override fun onError(error: FacebookException) {
+                    Log.d(TAG, "facebook:onError", error)
+                    (activity as ContentActivity).showLoading(false)
+                }
+            })
+            mFacebookSignInButton.performClick()
+        } else {
+            ErrorDialog.newInstance("Error", "Necesitas tener conexión a intenet para poderte conectar",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+    }
+
+    override fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {
+        super.onLinkAnonymousUserWithFacebookProviderSuccess(success)
+        Log.d(TAG, "link with facebook success")
+        val user = getUser()
+        if (user != null) {
+            user.setFacebookLogIn(true)
+            saveUser(user)
+        }
+        (activity as ContentActivity).showLoading(false)
+        onResume()
+    }
+
+    override fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
+        super.onLinkAnonymousUserWithFacebookProviderFail(throwable)
+        Log.d(TAG, "link with facebook fail")
+        (activity as ContentActivity).showLoading(false)
+        ErrorDialog.newInstance("Error", "Ocurrio un error intente mas tarde",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        LoginManager.getInstance().logOut()
+
     }
 
     private val mLinkWithGoogleButtonListener = View.OnClickListener {
@@ -329,12 +393,21 @@ class ProfileFragment : BaseContentFragment() {
             val email = userCache.getEmail()
             if (!email.equals("")) {
                 mEmail.setText(email)
+            } else {
+                mEmail.setText(userFirebase.getEmail())
+                userCache.setEmail(userFirebase.getEmail()!!)
             }
 
             val pass = userCache.getPassword()
             if (!pass.equals("")) {
                 var password = ""
                 for (i in 0..pass.length) {
+                    password = password + "*"
+                }
+                mPassword.setText(password)
+            } else {
+                var password = ""
+                for (i in 0 .. 8) {
                     password = password + "*"
                 }
                 mPassword.setText(password)
@@ -413,7 +486,16 @@ class ProfileFragment : BaseContentFragment() {
         startActivity(intent)
     }
 
+    override fun onConfirmationCancel() {
 
+    }
 
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
+    }
 
 }

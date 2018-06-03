@@ -39,17 +39,6 @@ import com.zerebrez.zerebrez.utils.NetworkUtil
  */
 
 class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
-    override fun onConfirmationCancel() {
-
-    }
-
-    override fun onConfirmationNeutral() {
-
-    }
-
-    override fun onConfirmationAccept() {
-
-    }
 
     private lateinit var mStartButton : Button
     private lateinit var mGoLoginButton : Button
@@ -122,14 +111,18 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(true)
             dataHelper.saveImagesPath(images)
+
+            if (!dataHelper.areImagesDownloaded()) {
+                (activity as LoginActivity).startDownloadImages()
+            }
         }
 
-
-        (activity as LoginActivity).startDownloadImages()
     }
 
     override fun onGetImagesPathFail(throwable: Throwable) {
         super.onGetImagesPathFail(throwable)
+        mButtonsContainer.visibility = View.VISIBLE
+        mLoadingProgressBar.visibility = View.GONE
     }
 
     private fun goInitFragment() {
@@ -144,6 +137,22 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
         val transaction = manager!!.beginTransaction();
         transaction.replace(R.id.fragment_container, SignInFragment())
         transaction.commit();
+    }
+
+
+    /*
+     * Dialog listeners
+     */
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
     }
 
 

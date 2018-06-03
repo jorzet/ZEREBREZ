@@ -34,6 +34,10 @@ import com.zerebrez.zerebrez.models.enums.NodeType
 import com.zerebrez.zerebrez.utils.ImagesUtil
 import android.support.design.widget.Snackbar
 import android.util.Log
+import android.view.animation.AlphaAnimation
+import android.widget.FrameLayout
+import com.facebook.CallbackManager
+import com.facebook.FacebookSdk
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
@@ -57,6 +61,7 @@ class ContentActivity : BaseActivityLifeCycle() {
     private lateinit var mBottomTabLayout : TabLayout
     private lateinit var mViewPager : ViewPager
     private lateinit var mCordinatorView : View
+    private lateinit var progressBarHolder : FrameLayout
 
     /*
     * Adapters
@@ -94,9 +99,26 @@ class ContentActivity : BaseActivityLifeCycle() {
      */
     private var doubleBackToExitPressedOnce : Boolean = false;
 
+    /*
+     * Animation
+     */
+    private lateinit var inAnimation : AlphaAnimation
+    private lateinit var outAnimation : AlphaAnimation
+
+    /*
+     * Facebook
+     */
+    private lateinit var mCallbackManager: CallbackManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_container)
+
+        // Facebook Login
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        mCallbackManager = CallbackManager.Factory.create();
+
+        progressBarHolder = findViewById(R.id.progressBarHolder)
 
         mCordinatorView = findViewById(R.id.cordinator_view)
         mTopTabLayout = findViewById(R.id.top_tab_layout)
@@ -141,6 +163,11 @@ class ContentActivity : BaseActivityLifeCycle() {
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
         mBottomTabLayout.setOnTabSelectedListener(onBottomTabLayoutListener)
 
+        inAnimation = AlphaAnimation(0f, 1f);
+        inAnimation.setDuration(200);
+        outAnimation = AlphaAnimation(1f, 0f);
+        outAnimation.setDuration(200);
+
     }
 
     override fun onStart() {
@@ -153,6 +180,8 @@ class ContentActivity : BaseActivityLifeCycle() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        mCallbackManager.onActivityResult(requestCode, resultCode, data)
+
         if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
             //if (showPayment) {
@@ -401,6 +430,20 @@ class ContentActivity : BaseActivityLifeCycle() {
     private val notificationBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
 
+        }
+    }
+
+    fun getCallBackManager() : CallbackManager {
+        return this.mCallbackManager
+    }
+
+    fun showLoading(showLoading : Boolean) {
+        if (showLoading) {
+            progressBarHolder.setAnimation(inAnimation);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        } else {
+            progressBarHolder.setAnimation(outAnimation);
+            progressBarHolder.setVisibility(View.GONE);
         }
     }
 }

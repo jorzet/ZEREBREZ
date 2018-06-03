@@ -28,12 +28,14 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.facebook.*
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.Auth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Image
@@ -142,10 +144,14 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
             var action = false
             if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
-                val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
-                mSigninButton.performClick()
-                action = true
+                try {
+                    val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
+                    mSigninButton.performClick()
+                    action = true
+                } catch (exception : Exception) {
+
+                }
             }
             return action
         }
@@ -265,11 +271,14 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     override fun onUpdateUserFail(throwable: Throwable) {
         super.onUpdateUserFail(throwable)
-        val error = throwable as GenericError
-        if (error.getErrorType().equals(ErrorType.EMAIL_NOT_UPDATED)) {
-            Log.d(TAG, "error email not updated")
-        } else if (error.getErrorType().equals(ErrorType.PASSWORD_NOT_UPDATED)) {
-            Log.d(TAG, "error password not updated")
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
         }
         val dataHelper = DataHelper(context!!)
         dataHelper.saveSessionData(false)
@@ -403,12 +412,23 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     override fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
         super.onLinkAnonymousUserWithFacebookProviderFail(throwable)
+        LoginManager.getInstance().logOut()
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
             mLogInView.visibility = View.VISIBLE
             mLoginAnotherProvidersView.visibility = View.VISIBLE
             mLoadingProgresBar.visibility = View.GONE
+        }
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
         }
     }
 

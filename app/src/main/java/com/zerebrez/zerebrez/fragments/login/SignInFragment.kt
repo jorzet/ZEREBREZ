@@ -34,6 +34,7 @@ import android.widget.*
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.GraphRequest
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.zerebrez.zerebrez.models.*
@@ -43,6 +44,7 @@ import com.zerebrez.zerebrez.utils.NetworkUtil
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.GoogleAuthProvider
+import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -138,10 +140,14 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             var action = false
             if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
-                val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
-                mSinginButton.performClick()
-                action = true
+                try {
+                    val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
+                    mSinginButton.performClick()
+                    action = true
+                } catch (exception : Exception) {
+
+                }
             }
             return action
         }
@@ -193,7 +199,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
             mFacebookSignInButton.registerCallback((activity as LoginActivity).getCallBackManager(), object : FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult) {
                     Log.d(TAG, "facebook:onSuccess:$loginResult")
-                    val request = GraphRequest.newMeRequest(loginResult.getAccessToken()) { json, response ->
+                    /*val request = GraphRequest.newMeRequest(loginResult.getAccessToken()) { json, response ->
                         if (json != null) {
                             val email = json.getString("email")
                             val birthday = json.getString("birthday")
@@ -211,7 +217,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
                     val parameters = Bundle()
                     parameters.putString("fields", "id,name,email,gender,birthday")
                     request.setParameters(parameters)
-                    request.executeAsync()
+                    request.executeAsync()*/
+
+                    requestSignInUserWithFacebookProvider(loginResult.accessToken)
                 }
 
                 override fun onCancel() {
@@ -266,6 +274,17 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
         mLogInView.visibility = View.VISIBLE
         mLoginAnotherProvidersView.visibility = View.VISIBLE
         mLoadingProgresBar.visibility = View.GONE
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+
     }
 
     /*
@@ -591,12 +610,24 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
 
     override fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
         super.onSignInUserWithFacebookProviderFail(throwable)
+        LoginManager.getInstance().logOut()
         Log.d(TAG, "login with facebook fail")
         val dataHelper = DataHelper(context!!)
         dataHelper.saveSessionData(false)
         mLogInView.visibility = View.VISIBLE
         mLoginAnotherProvidersView.visibility = View.VISIBLE
         mLoadingProgresBar.visibility = View.GONE
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+
     }
 
     /*
