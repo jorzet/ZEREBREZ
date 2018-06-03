@@ -92,6 +92,13 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                     val paymentData = PaymentData.getFromIntent(data!!)
                     val token = paymentData!!.paymentMethodToken!!.token
                     Log.d(TAG, token.toString())
+                    val user = getUser()
+                    if (user != null) {
+                        user.setPremiumUser(true)
+                        user.setTimeStamp(System.currentTimeMillis().toString())
+                        saveUser(user)
+                        requestSendUser(user)
+                    }
                 }
                 Activity.RESULT_CANCELED -> {
                     // Do nothing.
@@ -110,7 +117,15 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
             else -> {
                 // Do nothing.
             }
+
         }
+        /*val user = getUser()
+        if (user != null) {
+            user.setPremiumUser(true)
+            user.setTimeStamp(System.currentTimeMillis().toString())
+            saveUser(user)
+            requestSendUser(user)
+        }*/
     }
 
     private fun createPaymentDataRequest(): PaymentDataRequest? {
@@ -118,8 +133,8 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                 .setTransactionInfo(
                         TransactionInfo.newBuilder()
                                 .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                                .setTotalPrice("10.00")
-                                .setCurrencyCode("USD")
+                                .setTotalPrice("100.00")
+                                .setCurrencyCode("MX")
                                 .build())
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
@@ -174,6 +189,14 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
 
     override fun onConfirmationNeutral() {
 
+    }
+
+    override fun onSendUserSuccess(success: Boolean) {
+        super.onSendUserSuccess(success)
+    }
+
+    override fun onSendUserFail(throwable: Throwable) {
+        super.onSendUserFail(throwable)
     }
 
 }

@@ -143,6 +143,18 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
+    fun requestSendUser(user : User) {
+        mRequestManager.requestSendUser(user, object : RequestManager.OnSendUserListener {
+            override fun onSendUserLoaded(success: Boolean) {
+                onSendUserSuccess(success)
+            }
+
+            override fun onSendUserError(throwable: Throwable) {
+                onSendUserFail(throwable)
+            }
+        })
+    }
+
     open fun onSendAnsweredQuestionsSuccess(success : Boolean) {
     }
 
@@ -171,6 +183,12 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     }
 
     open fun onGetExamScoresFail(throwable: Throwable) {
+    }
+
+    open fun onSendUserSuccess(success: Boolean) {
+    }
+
+    open fun onSendUserFail(throwable: Throwable) {
     }
 
 }

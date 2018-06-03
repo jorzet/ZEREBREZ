@@ -133,6 +133,7 @@ class ProfileFragment : BaseContentFragment() {
 
         mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
         mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
+        mLinkEmailButton.setOnEditorActionListener(onSendFormListener)
 
         // set notification
         val dataHelper = DataHelper(context!!)

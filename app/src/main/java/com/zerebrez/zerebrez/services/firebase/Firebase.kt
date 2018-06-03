@@ -70,7 +70,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val IMAGES_REFERENCE : String = "images/comipems"
     private val SELECTED_SCHOOLS_REFERENCE : String = "selectedSchools"
     private val COURSE_KEY : String = "course"
-    private val PREMIUM_KEY : String = "isPremium"
+    private val PREMIUM_KEY : String = "premium"
+    private val IS_PREMIUM_KEY : String = "isPremium"
+    private val TIMESTAMP_KEY : String = "timeStamp"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
     private val ANSWERED_QUESTION_MODULE : String = "answeredQuestions"
     private val ANSWERED_EXAMS : String = "answeredExams"
@@ -533,7 +535,8 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
             userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
-            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY, userCache.isPremiumUser())
+            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
+            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {
@@ -738,9 +741,18 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                         if (key.equals("profile")) {
                             val profile = map.get(key) as HashMap<String, String>
                             for (key2 in profile.keys) {
-                                if (key2.equals("isPremium")) {
-                                    val isPremium = profile.get(key2) as Boolean
-                                    user.setPremiumUser(isPremium)
+                                if (key2.equals("premium")) {
+                                    val premiumHash = map.get(key) as HashMap<String, String>
+                                    for (key4 in profile.keys) {
+                                        if (key4.equals(IS_PREMIUM_KEY)) {
+                                            val isPremium = premiumHash.get(key4) as Boolean
+                                            user.setPremiumUser(isPremium)
+                                        } else if (key4.equals(TIMESTAMP_KEY)) {
+                                            val timeStamp = premiumHash.get(key4) as String
+                                            user.setTimeStamp(timeStamp)
+                                        }
+                                    }
+
                                 } else if (key2.equals("course")) {
                                     val course = profile.get(key2).toString()
                                     user.setCourse(course)

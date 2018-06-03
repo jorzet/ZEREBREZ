@@ -28,6 +28,7 @@ class User {
     private var answeredExams : List<Exam> = arrayListOf()
     private var selectedSchools : List<School> = arrayListOf()
     private var premiumUser : Boolean = false
+    private var timestamp : String = "0"
 
     constructor(email: String, password: String) {
         this.email = email
@@ -126,5 +127,13 @@ class User {
 
     fun isAnonymous() : Boolean {
         return email.equals("") && password.equals("")
+    }
+
+    fun setTimeStamp(timestamp : String) {
+        this.timestamp = timestamp
+    }
+
+    fun getTimestamp() : String {
+        return this.timestamp
     }
 }
