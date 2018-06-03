@@ -143,8 +143,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 }
             }
 
-            if (realSize >= 4) {
-                (activity as QuestionActivity).showExpandedQuestionButton()
+            if (realSize >= 4 ) {
+                (activity as QuestionActivity).showHideExpandedQuestionButton(true)
+            } else {
+                (activity as QuestionActivity).showHideExpandedQuestionButton(false)
             }
 
             optionQuestionAdapter = OptionQuestionAdapterRefactor(false, mSortOptions, context!!)

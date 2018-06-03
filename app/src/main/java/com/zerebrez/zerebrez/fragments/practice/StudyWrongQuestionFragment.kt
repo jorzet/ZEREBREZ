@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import java.util.*
 
@@ -292,6 +293,6 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(QUESTION_ID, questionId)
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
-        this.startActivity(intent)
+        this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 }

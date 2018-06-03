@@ -151,6 +151,16 @@ class ContentActivity : BaseActivityLifeCycle() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
+            //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
+            //if (showPayment) {
+                goPaymentFragment()
+            //}
+        }
+    }
+
     /*
      * Listener to know what tab from top TabLayout is selected
      */

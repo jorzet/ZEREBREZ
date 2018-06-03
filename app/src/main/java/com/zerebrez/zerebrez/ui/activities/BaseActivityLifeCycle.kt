@@ -30,9 +30,14 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 open class BaseActivityLifeCycle : AppCompatActivity() {
 
-    val SET_CHECKED_TAG : String = "set_checked_tag"
-    val SHOW_ANSWER_RESULT_CODE : Int = 2
-    val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
+    companion object {
+        val SET_CHECKED_TAG : String = "set_checked_tag"
+        val SHOW_PAYMENT_FRAGMENT : String = "show_payment_fragment"
+        val SHOW_QUESTION_RESULT_CODE : Int = 1
+        val SHOW_ANSWER_RESULT_CODE : Int = 2
+        val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
+        val SHOW_PAYMENT_FRAGMENT_RESULT_CODE : Int = 4
+    }
 
     private lateinit var mRequestManager : RequestManager
 

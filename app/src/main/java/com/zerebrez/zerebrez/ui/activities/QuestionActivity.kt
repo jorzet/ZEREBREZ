@@ -21,12 +21,10 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.fragments.question.QuestionEquationFragment
-import com.zerebrez.zerebrez.fragments.question.QuestionFragmentRefactor
-import com.zerebrez.zerebrez.fragments.question.QuestionImageFragment
-import com.zerebrez.zerebrez.fragments.question.QuestionTextFragment
+import com.zerebrez.zerebrez.fragments.question.*
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.Question
@@ -65,6 +63,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private lateinit var mNextQuestion : View
     private lateinit var mShowExpandedQuestion : View
     private lateinit var mShowAnswer : View
+    private lateinit var mCompleteQuestionsFragmentContainer : FrameLayout
+    private lateinit var mControlsBar : View
 
     /*
      * Variables
@@ -79,6 +79,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private var isFromWrongQuestionFragment : Boolean = false
     private var isFromExamFragment : Boolean = false
     private var resetExpandedButton : Boolean = false
+    private var mExamAnsQuestionsSaved = false
+    private var mModulesAndQuestionsSaved = false
+    private var mWrongQuestionsSaver = false
+    private var mShowPaymentFragment = false
 
     /*
      * Objects
@@ -98,6 +102,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
         mShowAnswer = findViewById(R.id.btn_show_answer)
         mShowExpandedQuestion = findViewById(R.id.iv_show_expanded_question)
         mNextQuestion = findViewById(R.id.btn_next_question)
+        mCompleteQuestionsFragmentContainer = findViewById(R.id.complete_question_fragment_container)
+        mControlsBar = findViewById(R.id.bottom_bar)
 
         //mBackQuestion.setOnClickListener(mBackQuestionListener)
         mCloseQuestion.setOnClickListener(mCloseQuestionListener)
@@ -140,7 +146,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
+                if (currentFragment is QuestionFragmentRefactor)
+                    (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
@@ -149,6 +156,12 @@ class QuestionActivity : BaseActivityLifeCycle() {
     }
 
     override fun onBackPressed() {
+        if (mShowPaymentFragment) {
+            val intent = Intent()
+            intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
+            setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
+            finish()
+        }
         super.onBackPressed()
     }
 
@@ -199,7 +212,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
             mShowExpandedQuestion.background = resources.getDrawable(R.drawable.finger_selected_icon)
             resetExpandedButton = true
         }
-        (currentFragment as QuestionFragmentRefactor).showExpandedQuestion(resetExpandedButton)
+
+        if (currentFragment is QuestionFragmentRefactor) {
+            (currentFragment as QuestionFragmentRefactor).showExpandedQuestion(resetExpandedButton)
+        }
     }
 
     /*
@@ -231,21 +247,6 @@ class QuestionActivity : BaseActivityLifeCycle() {
         val transaction = manager.beginTransaction();
         transaction.replace(R.id.question_fragment_container, currentFragment);
         transaction.commit()
-
-        /*when (mQuestions.get(mCurrentQuestion).getQuestionType()) {
-            QuestionType.EQUATION.toString() -> {
-                transaction.replace(R.id.question_fragment_container, QuestionEquationFragment());
-                transaction.commit()
-            }
-            QuestionType.TEXT.toString() -> {
-                transaction.replace(R.id.question_fragment_container, QuestionTextFragment());
-                transaction.commit()
-            }
-            QuestionType.IMAGE.toString() -> {
-                transaction.replace(R.id.question_fragment_container, QuestionImageFragment());
-                transaction.commit()
-            }
-        }*/
     }
 
     /**
@@ -262,6 +263,14 @@ class QuestionActivity : BaseActivityLifeCycle() {
         }
 
         return null
+    }
+
+    fun getCorrectQuestions() : Int {
+        return this.mCorrectQuestions
+    }
+
+    fun getIncorrectQuestion() : Int {
+        return this.mIncorrectQiestions
     }
 
     /**
@@ -303,11 +312,14 @@ class QuestionActivity : BaseActivityLifeCycle() {
             //} else {
                 requestSendAnsweredModules(mModuleList)
                 requestSendAnsweredQuestions(mModuleList)
-                if (isAnonymous) {
+                mModulesAndQuestionsSaved = true
+                showQuestionsCompleteFragment()
+                // this is called on QuestionsCompleteFragment
+                /*if (isAnonymous) {
                     goLogInActivity()
                 } else {
                     onBackPressed()
-                }
+                }*/
             //}
         }
     }
@@ -332,7 +344,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
             //    requestSendAnsweredExams(mExamList)
             //} else {
                 requestSendAnsweredExams(mExamList)
-                onBackPressed()
+                mExamAnsQuestionsSaved = true
+                showQuestionsCompleteFragment()
+                // this is called on QuestionsCompleteFragment
+                //onBackPressed()
             //}
         }
     }
@@ -368,32 +383,74 @@ class QuestionActivity : BaseActivityLifeCycle() {
         super.onSendAnsweredExamsFail(throwable)
     }
 
-    /*
-     * This method is only used after StartFragment when user responds the first module
-     * the app is going to redirect to LoginActivity to show SingUpFragment
-     */
-    private fun goLogInActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.putExtra(SHOW_START, false)
-        this.startActivity(intent)
-        this.finish()
-    }
-
     private fun showAnswerMessage() {
         val intent = Intent(this, ShowAnswerMessageActivity::class.java)
-        this.startActivityForResult(intent, 1)
+        this.startActivityForResult(intent, SHOW_QUESTION_RESULT_CODE)
     }
 
     private fun showAnswer() {
         val intent = Intent(this, ShowAnswerActivity::class.java)
-        this.startActivityForResult(intent, 1)
+        this.startActivityForResult(intent, SHOW_QUESTION_RESULT_CODE)
+    }
+
+    private fun showQuestionsCompleteFragment() {
+        mCompleteQuestionsFragmentContainer.visibility = View.VISIBLE
+        showHideControlBar(false)
+
+        currentFragment = QuestionsCompleteFragment()
+        val manager = getSupportFragmentManager();
+        val transaction = manager.beginTransaction();
+        transaction.replace(R.id.complete_question_fragment_container, currentFragment);
+        transaction.commit()
     }
 
     fun setNextQuestionEnable(isEnable : Boolean) {
         mNextQuestion.isEnabled = isEnable
     }
 
-    fun showExpandedQuestionButton() {
-        mShowExpandedQuestion.visibility = View.VISIBLE
+    fun showHideExpandedQuestionButton(showButton : Boolean) {
+        if (showButton)
+            mShowExpandedQuestion.visibility = View.VISIBLE
+        else
+            mShowExpandedQuestion.visibility = View.GONE
+    }
+
+    fun showHideControlBar(showControls : Boolean) {
+        if (showControls) {
+            mControlsBar.visibility = View.VISIBLE
+        } else {
+            mControlsBar.visibility = View.GONE
+        }
+    }
+
+    /*
+     * Those method are called on QuestionsCompletefragment
+     */
+    fun areModulesAndQuestionsSaved() : Boolean {
+        return this.mModulesAndQuestionsSaved
+    }
+
+    fun areExamsAndQuestionsSaved() : Boolean {
+        return this.mExamAnsQuestionsSaved
+    }
+
+    fun areWrongQuestionsSaved() : Boolean {
+        return this.mWrongQuestionsSaver
+    }
+
+    fun isAnonymousUser() : Boolean {
+        return this.isAnonymous
+    }
+
+    fun getModuleId() : Int {
+        return this.mModuleId
+    }
+
+    fun getExamId() : Int {
+        return this.mExamId
+    }
+
+    fun showPaymentFragment(showPaymentFragment : Boolean) {
+        this.mShowPaymentFragment = showPaymentFragment
     }
 }
