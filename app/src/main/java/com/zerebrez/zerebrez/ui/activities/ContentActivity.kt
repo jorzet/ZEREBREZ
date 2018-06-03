@@ -255,7 +255,9 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                     mTopTabLayout.getTabAt(tab.position)!!.setIcon(ImagesUtil.mProfileTopSelectedIcons[tab.position])
                 }
             }
-            mTopTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.gray_soft))
+            try {
+                mTopTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.gray_soft))
+            } catch (exception : Exception) {}
         }
     }
 
