@@ -52,7 +52,16 @@ import com.facebook.FacebookException
 import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.GoogleAuthProvider
+import com.zerebrez.zerebrez.models.Error.FirebaseError
+import com.zerebrez.zerebrez.models.Error.GenericError
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
@@ -169,6 +178,36 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
 
         return rootView
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == LoginActivity.RC_SIGN_IN) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            if (result.isSuccess) {
+
+                // Google Sign In was successful, save Token and a state then authenticate with Firebase
+                val account = result.signInAccount
+
+                val idToken = account!!.idToken
+
+                SharedPreferencesManager(context!!).saveGoogleToken(idToken!!)
+                onGoogleResultSuccess(account)
+                //val credential = GoogleAuthProvider.getCredential(idToken, null)
+                //requestSigInUserWithGoogleProvider(credential)
+            } else {
+                (activity as ContentActivity).showLoading(false)
+                // Google Sign In failed, update UI appropriately
+                Log.e(TAG, "Login Unsuccessful. ")
+                val error = GenericError()
+                error.setErrorType(ErrorType.NULL_RESPONSE)
+                error.setErrorMessage("Respuesta sin datos")
+                Toast.makeText(activity, "Login Unsuccessful", Toast.LENGTH_SHORT).show()
+                onGoogleResultFaild(error)
+            }
+        }
     }
 
     override fun onResume() {
@@ -342,18 +381,72 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             user.setFacebookLogIn(true)
             saveUser(user)
         }
+        // hide loading
         (activity as ContentActivity).showLoading(false)
+        // paint again view
         onResume()
     }
 
     override fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
         super.onLinkAnonymousUserWithFacebookProviderFail(throwable)
         Log.d(TAG, "link with facebook fail")
-        (activity as ContentActivity).showLoading(false)
-        ErrorDialog.newInstance("Error", "Ocurrio un error intente mas tarde",
-                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+        // facebook log out
         LoginManager.getInstance().logOut()
+        // hide loading
+        (activity as ContentActivity).showLoading(false)
 
+    }
+
+    override fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {
+        super.onLinkAnonymousUserWithGoogleProviderSuccess(success)
+        Log.d(TAG, "link with facebook success")
+        val user = getUser()
+        if (user != null) {
+            user.setFacebookLogIn(true)
+            saveUser(user)
+        }
+        // hide loading
+        (activity as ContentActivity).showLoading(false)
+        // paint again view
+        onResume()
+    }
+
+    override fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {
+        super.onLinkAnonymousUserWithGoogleProviderFail(throwable)
+        Log.d(TAG, "link with facebook fail")
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+
+        // google logout
+        (activity as ContentActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
+            override fun onComplete(task: Task<Void>) {
+                if (task.isSuccessful) {
+                    Log.d(TAG, "logout success")
+                } else {
+                    Log.d(TAG, "logout not success")
+                }
+            }
+        })
+
+        // hide loading
+        (activity as ContentActivity).showLoading(false)
     }
 
     private val mLinkWithGoogleButtonListener = View.OnClickListener {
@@ -443,24 +536,18 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         activity!!.finish()
     }
 
-    private fun goSendEmailActivity() {
-        //val intent = Intent(activity, SendEmailActivity::class.java)
-        //activity!!.startActivity(intent)
-        val emailIntent = Intent(Intent.ACTION_SENDTO,
-                Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
-                "\n\n\n Aquí escribe tu mensaje" + "" +
-                "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
-        startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
-    }
-
+    /*
+     * This method returns the devices current API version
+     */
     fun getAndroidVersion(): String {
         val release = Build.VERSION.RELEASE
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"
     }
 
+    /*
+     * This method open google chrome to show terms and conditions web page
+     */
     private fun goTermsAndPrivacyActivity() {
         val url = resources.getString(R.string.url_terms_and_privacy)
         val intent = Intent(Intent.ACTION_VIEW)
@@ -480,12 +567,33 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     }
 
+    /*
+     * This method open the native mail app to send an email to soporte@zerebrez.com
+     */
+    private fun goSendEmailActivity() {
+        //val intent = Intent(activity, SendEmailActivity::class.java)
+        //activity!!.startActivity(intent)
+        val emailIntent = Intent(Intent.ACTION_SENDTO,
+                Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Aquí escribe tu mensaje" + "" +
+                "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
+        startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
+    }
+
+    /*
+     * This method change starts an activity to choose the schools
+     */
     private fun goChooseSchoolsActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
         startActivity(intent)
     }
 
+    /*
+     * Dialog listeners
+     */
     override fun onConfirmationCancel() {
 
     }
@@ -497,5 +605,33 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onConfirmationAccept() {
 
     }
+
+    /*
+    * LogInActivity listeners to know google response
+    */
+    fun onGoogleResultSuccess(account: GoogleSignInAccount) {
+        val idToken = account.getIdToken()
+        val credential = GoogleAuthProvider.getCredential(idToken, null);
+        requestLinkAnonymousUserWithGoogleProvider(credential)
+    }
+
+    fun onGoogleResultFaild(throwable: Throwable) {
+        val error = throwable as GenericError
+        if (error.getErrorType().equals(ErrorType.NULL_RESPONSE)) {
+            Log.d(TAG, "response is null")
+        } else if (error.getErrorType().equals(ErrorType.CANNOT_LOGIN)) {
+            Log.d(TAG, "cannot do google login")
+        }
+        (activity as ContentActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
+            override fun onComplete(task: Task<Void>) {
+                if (task.isSuccessful) {
+                    Log.d(TAG, "logout success")
+                } else {
+                    Log.d(TAG, "logout not success")
+                }
+            }
+        })
+    }
+
 
 }

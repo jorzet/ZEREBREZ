@@ -109,12 +109,18 @@
                 android:layout_marginRight="30dp"
                 android:background="@drawable/facebook_button_image"/>
 
-            <Button
+            <RelativeLayout
                 android:id="@+id/btn_google_login"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="30dp"
-                android:background="@drawable/google_button_image"/>
+                android:background="@drawable/google_button_image">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:src="@drawable/google_logo_icon"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
 
         </LinearLayout>
 

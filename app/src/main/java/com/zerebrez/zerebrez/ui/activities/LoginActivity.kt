@@ -44,7 +44,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.zerebrez.zerebrez.fragments.init.InitFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
@@ -57,7 +60,7 @@ import com.zerebrez.zerebrez.services.firebase.DownloadImages
 
 private const val TAG : String = "LoginActivity"
 
-class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFailedListener{
+class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFailedListener {
 
     private val SHOW_START = "show_start"
 
@@ -65,13 +68,19 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         val RC_SIGN_IN : Int = 9001
     }
 
-    private lateinit var mGoogleApiClient: GoogleApiClient
+    /*
+     * Facebook
+     */
     private lateinit var mCallbackManager: CallbackManager
 
-    interface OnGoogleResultListener {
-        fun onGoogleResultSuccess(account: GoogleSignInAccount)
-        fun onGoogleResultFaild(throwable: Throwable)
-    }
+    /*
+     * Google
+     */
+    private lateinit var mGoogleApiClient: GoogleApiClient
+    private lateinit var mGoogleSignInClient : GoogleSignInClient
+
+
+    private lateinit var mCurrentfragment : Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,10 +91,14 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
 
+        // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         mGoogleApiClient = GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -115,18 +128,30 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 // Google Sign In was successful, authenticate with Firebase
                 val account = result.signInAccount
                 if (account != null) {
-                    (SignInFragment::class.java as OnGoogleResultListener).onGoogleResultSuccess(account)
+                    if (mCurrentfragment is SignInFragment) {
+                        (mCurrentfragment as SignInFragment).onGoogleResultSuccess(account)
+                    } else {
+                        (mCurrentfragment as SignUpFragment).onGoogleResultSuccess(account)
+                    }
                 } else {
                     val error = GenericError()
                     error.setErrorType(ErrorType.NULL_RESPONSE)
                     error.setErrorMessage("Respuesta sin datos")
-                    (SignInFragment::class.java as OnGoogleResultListener).onGoogleResultFaild(error)
+                    if (mCurrentfragment is SignInFragment) {
+                        (mCurrentfragment as SignInFragment).onGoogleResultFaild(error)
+                    } else {
+                        (mCurrentfragment as SignUpFragment).onGoogleResultFaild(error)
+                    }
                 }
             } else {
                 val error = GenericError()
                 error.setErrorType(ErrorType.CANNOT_LOGIN)
                 error.setErrorMessage("No se pudo realizar el login")
-                (SignInFragment::class.java as OnGoogleResultListener).onGoogleResultFaild(error)
+                if (mCurrentfragment is SignInFragment) {
+                    (mCurrentfragment as SignInFragment).onGoogleResultFaild(error)
+                } else {
+                    (mCurrentfragment as SignUpFragment).onGoogleResultFaild(error)
+                }
                 // Google Sign In failed
                 Log.e(TAG, "Google Sign In failed.")
             }
@@ -152,23 +177,26 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
     }
 
     private fun showStartFragment() {
+        mCurrentfragment = StartFragment()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, StartFragment());
+        transaction.replace(R.id.fragment_container, mCurrentfragment);
         transaction.commit()
     }
 
     fun showInitFragment() {
+        mCurrentfragment = InitFragment()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, InitFragment());
+        transaction.replace(R.id.fragment_container, mCurrentfragment);
         transaction.commit()
     }
 
     private fun showSigUpFragment() {
+        mCurrentfragment = SignUpFragment()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, SignUpFragment());
+        transaction.replace(R.id.fragment_container, mCurrentfragment);
         transaction.commit()
     }
 
@@ -178,6 +206,10 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
 
     fun getGoogleApiClient() : GoogleApiClient {
         return this.mGoogleApiClient
+    }
+
+    fun getGoogleSignInClient() : GoogleSignInClient {
+        return this.mGoogleSignInClient
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {

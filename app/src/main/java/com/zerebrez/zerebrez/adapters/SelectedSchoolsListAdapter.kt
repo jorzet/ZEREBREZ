@@ -28,7 +28,11 @@ class SelectedSchoolsListAdapter (institutes : List<Institute>, context : Contex
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val instituteView = inflator.inflate(R.layout.custom_selected_institute, null)
         instituteView.tv_institute_name.text = institute.getInstituteName()
-        instituteView.tv_angle.text = Html.fromHtml(mContext.resources.getString(R.string.angle_down))
+        if (isExpanded) {
+            instituteView.tv_angle.setImageDrawable(mContext.resources.getDrawable(R.drawable.expand_less_icon))
+        } else {
+            instituteView.tv_angle.setImageDrawable(mContext.resources.getDrawable(R.drawable.expand_more_icon))
+        }
 
         return instituteView
     }

@@ -36,8 +36,15 @@ import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
@@ -52,7 +59,7 @@ import com.zerebrez.zerebrez.services.firebase.DownloadImages
 
 private const val TAG : String = "ContentActivity"
 
-class ContentActivity : BaseActivityLifeCycle() {
+class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFailedListener {
 
     /*
      * UI accessors
@@ -110,6 +117,12 @@ class ContentActivity : BaseActivityLifeCycle() {
      */
     private lateinit var mCallbackManager: CallbackManager
 
+    /*
+     * Google
+     */
+    private lateinit var mGoogleApiClient: GoogleApiClient
+    private lateinit var mGoogleSignInClient : GoogleSignInClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_container)
@@ -117,6 +130,19 @@ class ContentActivity : BaseActivityLifeCycle() {
         // Facebook Login
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
+
+        // Configure Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        mGoogleApiClient = GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build()
 
         progressBarHolder = findViewById(R.id.progressBarHolder)
 
@@ -437,6 +463,14 @@ class ContentActivity : BaseActivityLifeCycle() {
         return this.mCallbackManager
     }
 
+    fun getGoogleApiClient() : GoogleApiClient {
+        return this.mGoogleApiClient
+    }
+
+    fun getGoogleSignInClient() : GoogleSignInClient {
+        return this.mGoogleSignInClient
+    }
+
     fun showLoading(showLoading : Boolean) {
         if (showLoading) {
             progressBarHolder.setAnimation(inAnimation);
@@ -445,5 +479,10 @@ class ContentActivity : BaseActivityLifeCycle() {
             progressBarHolder.setAnimation(outAnimation);
             progressBarHolder.setVisibility(View.GONE);
         }
+    }
+
+    override fun onConnectionFailed(connectionResult: ConnectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult)
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 }

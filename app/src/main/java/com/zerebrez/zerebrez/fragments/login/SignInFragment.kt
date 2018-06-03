@@ -49,6 +49,10 @@ import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
+import android.support.annotation.NonNull
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.
@@ -57,7 +61,7 @@ import com.zerebrez.zerebrez.ui.activities.LoginActivity
 
 private const val TAG : String = "SignInFragment"
 
-class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener, LoginActivity.OnGoogleResultListener {
+class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     /*
      * UI accessors
@@ -66,7 +70,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
     private lateinit var mPasswordEditText : EditText
     private lateinit var mSinginButton : Button
     private lateinit var mSinginFacebookButton : Button
-    private lateinit var mSinginGoogleButton : Button
+    private lateinit var mSinginGoogleButton : View
     private lateinit var mLogInView : View
     private lateinit var mLoginAnotherProvidersView : View
     private lateinit var mLoadingProgresBar : ProgressBar
@@ -113,13 +117,20 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
                 val idToken = account!!.idToken
 
                 SharedPreferencesManager(context!!).saveGoogleToken(idToken!!)
-
-                val credential = GoogleAuthProvider.getCredential(idToken, null)
-                requestSigInUserWithGoogleProvider(credential)
+                onGoogleResultSuccess(account)
+                //val credential = GoogleAuthProvider.getCredential(idToken, null)
+                //requestSigInUserWithGoogleProvider(credential)
             } else {
+                mLogInView.visibility = View.VISIBLE
+                mLoginAnotherProvidersView.visibility = View.VISIBLE
+                mLoadingProgresBar.visibility = View.GONE
                 // Google Sign In failed, update UI appropriately
                 Log.e(TAG, "Login Unsuccessful. ")
+                val error = GenericError()
+                error.setErrorType(ErrorType.NULL_RESPONSE)
+                error.setErrorMessage("Respuesta sin datos")
                 Toast.makeText(activity, "Login Unsuccessful", Toast.LENGTH_SHORT).show()
+                onGoogleResultFaild(error)
             }
         }
     }
@@ -131,7 +142,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
     }
 
     private fun signInWithGoogle() {
-        val signInIntent = Auth.GoogleSignInApi.getSignInIntent((activity as LoginActivity).getGoogleApiClient())
+        val signInIntent = (activity as LoginActivity).getGoogleSignInClient().signInIntent
         startActivityForResult(signInIntent, LoginActivity.RC_SIGN_IN)
     }
 
@@ -458,6 +469,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
                 if (context != null) {
                     Log.d(TAG, "save modules")
                     dataHelper.saveModules(modules)
+                    dataHelper.saveExams(exams)
                     saveUser(mUser2)
                 }
             }
@@ -584,19 +596,28 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
     /*
      * LogInActivity listeners to know google response
      */
-    override fun onGoogleResultSuccess(account: GoogleSignInAccount) {
+    fun onGoogleResultSuccess(account: GoogleSignInAccount) {
         val idToken = account.getIdToken()
         val credential = GoogleAuthProvider.getCredential(idToken, null);
         requestSigInUserWithGoogleProvider(credential)
     }
 
-    override fun onGoogleResultFaild(throwable: Throwable) {
+    fun onGoogleResultFaild(throwable: Throwable) {
         val error = throwable as GenericError
         if (error.getErrorType().equals(ErrorType.NULL_RESPONSE)) {
             Log.d(TAG, "response is null")
         } else if (error.getErrorType().equals(ErrorType.CANNOT_LOGIN)) {
             Log.d(TAG, "cannot do google login")
         }
+        (activity as LoginActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
+            override fun onComplete(task: Task<Void>) {
+                if (task.isSuccessful) {
+                    Log.d(TAG, "logout success")
+                } else {
+                    Log.d(TAG, "logout not success")
+                }
+            }
+        })
     }
 
     /*
@@ -645,6 +666,26 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
         mLogInView.visibility = View.VISIBLE
         mLoginAnotherProvidersView.visibility = View.VISIBLE
         mLoadingProgresBar.visibility = View.GONE
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+
+        (activity as LoginActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
+            override fun onComplete(task: Task<Void>) {
+                if (task.isSuccessful) {
+                    Log.d(TAG, "logout success")
+                } else {
+                    Log.d(TAG, "logout not success")
+                }
+            }
+        })
     }
 
 }
