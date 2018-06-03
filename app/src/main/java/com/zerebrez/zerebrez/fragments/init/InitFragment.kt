@@ -33,7 +33,6 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
-
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.
  * jorzet.94@gmail.com

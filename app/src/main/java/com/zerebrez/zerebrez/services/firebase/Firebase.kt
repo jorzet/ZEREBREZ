@@ -30,7 +30,6 @@ import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.models.enums.RequestType
 import com.zerebrez.zerebrez.services.database.DataHelper
-import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
 import kotlin.collections.HashMap

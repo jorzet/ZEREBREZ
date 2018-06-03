@@ -29,6 +29,7 @@ import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
  */
 
 class YouArePremiumFragment : BaseContentFragment() {
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)

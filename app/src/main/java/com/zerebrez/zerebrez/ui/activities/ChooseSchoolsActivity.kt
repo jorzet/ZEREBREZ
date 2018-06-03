@@ -24,7 +24,6 @@ import android.widget.Button
 import android.widget.ExpandableListView
 import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.gms.common.util.CrashUtils
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SelectedSchoolsListAdapter
 import com.zerebrez.zerebrez.models.Institute

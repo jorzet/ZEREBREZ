@@ -36,7 +36,7 @@ class SecundaryFragment : BaseContentFragment() {
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.secundary_fragment, container, false)
+        val rootView = inflater.inflate(R.layout.secundary_fragment, container, false)
 
         return rootView
     }

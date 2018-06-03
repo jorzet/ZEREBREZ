@@ -29,6 +29,8 @@ import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 /**
+ * This class is deprecated
+ *
  * Created by Jorge Zepeda Tinoco on 01/05/18.
  * jorzet.94@gmail.com
  */

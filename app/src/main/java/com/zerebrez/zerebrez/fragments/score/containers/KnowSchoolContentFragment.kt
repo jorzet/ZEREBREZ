@@ -30,6 +30,7 @@ import com.zerebrez.zerebrez.fragments.score.PresentationKnowSchoolFragment
  */
 
 class KnowSchoolContentFragment : BaseContentFragment() {
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)

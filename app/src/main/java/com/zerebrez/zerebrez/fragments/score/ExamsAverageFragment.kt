@@ -35,9 +35,15 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 
 class ExamsAverageFragment : BaseContentFragment() {
 
+    /*
+     * UI accessors
+     */
     private lateinit var examsAverageListView : ListView
     private lateinit var notExamsDidIt : TextView
 
+    /*
+     * Objects
+     */
     private lateinit var examsAverageListAdapter: ExamAverageListAdapterRefactor
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

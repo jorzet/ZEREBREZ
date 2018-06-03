@@ -21,7 +21,6 @@ import android.util.Log
 import com.facebook.AccessToken
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseError.*
 import com.google.firebase.auth.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.User

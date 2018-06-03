@@ -52,9 +52,6 @@ import com.zerebrez.zerebrez.ui.activities.ChooseSchoolsActivity
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.NetworkUtil
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-
-
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.

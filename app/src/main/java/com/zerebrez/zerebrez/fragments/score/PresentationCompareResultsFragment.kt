@@ -49,11 +49,17 @@ class PresentationCompareResultsFragment : BaseContentFragment() {
         return rootView
     }
 
+    /*
+     * Listener that call goExamsAverageFragment method
+     */
     private val mItIsUnderstandListener = View.OnClickListener(){
         setExamsAverageFragmentOK()
         goExamsAverageFragment()
     }
 
+    /*
+     * This method changes current fragment
+     */
     private fun goExamsAverageFragment() {
         val transaction = fragmentManager!!.beginTransaction()
         transaction.replace(R.id.compare_results_fragment_container, ExamsAverageFragment())

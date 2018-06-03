@@ -33,6 +33,9 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 
 class SchoolsAverageFragment : BaseContentFragment() {
 
+    /**
+     * UI accessors
+     */
     private lateinit var schoolAverageCanvas : SchoolAverageCanvas
     private lateinit var mNot128ExmanQuestionDitIt : TextView
 

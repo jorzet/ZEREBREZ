@@ -16,6 +16,11 @@
 
 package com.zerebrez.zerebrez.models
 
+/**
+ * Created by Jorge Zepeda Tinoco on 29/05/18.
+ * jorzet.94@gmail.com
+ */
+
 class User {
     private var email : String = ""
     private var password : String = ""

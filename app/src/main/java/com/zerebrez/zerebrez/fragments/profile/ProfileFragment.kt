@@ -44,12 +44,10 @@ import java.util.*
 import com.zerebrez.zerebrez.services.notification.NotificationScheduler
 import android.util.Log
 import android.view.KeyEvent
-import android.view.animation.AlphaAnimation
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.Auth
@@ -59,7 +57,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
-import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver

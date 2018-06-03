@@ -30,6 +30,8 @@ import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 /**
+ * This class is deprecated
+ *
  * Created by Jorge Zepeda Tinoco on 01/05/18.
  * jorzet.94@gmail.com
  */
@@ -65,7 +67,7 @@ class QuestionEquationFragment : BaseContentFragment(){
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.question_equation_fragment, container, false)!!
+        val rootView = inflater.inflate(R.layout.question_equation_fragment, container, false)!!
 
         mQuestion = rootView.findViewById(R.id.tv_question)
         mEquationList = rootView.findViewById(R.id.nslv_equation_container)

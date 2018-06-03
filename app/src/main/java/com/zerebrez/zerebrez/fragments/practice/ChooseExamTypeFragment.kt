@@ -38,7 +38,7 @@ class ChooseExamTypeFragment : BaseContentFragment() {
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.choose_exam_type_fragment, container, false)!!
+        val rootView = inflater.inflate(R.layout.choose_exam_type_fragment, container, false)!!
 
         mChocolateExam = rootView.findViewById(R.id.rl_chocolate_exam)
         mRealExam = rootView.findViewById(R.id.rl_real_exam)

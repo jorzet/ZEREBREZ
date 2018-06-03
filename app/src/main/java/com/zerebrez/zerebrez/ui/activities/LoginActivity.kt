@@ -31,27 +31,21 @@ import com.zerebrez.zerebrez.fragments.login.StartFragment
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.zerebrez.zerebrez.fragments.login.SignInFragment
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
-import android.Manifest.permission
-import android.Manifest.permission.WRITE_CALENDAR
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.zerebrez.zerebrez.fragments.init.InitFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
-
 
 /**
  * Created by Jorge Zepeda Tinoco on 27/02/18.

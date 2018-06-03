@@ -33,7 +33,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.GraphRequest
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
@@ -49,10 +48,8 @@ import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
-import android.support.annotation.NonNull
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.

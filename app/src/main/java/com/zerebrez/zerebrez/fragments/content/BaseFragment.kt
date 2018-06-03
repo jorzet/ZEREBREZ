@@ -26,7 +26,6 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
  * jorzet.94@gmail.com
  */
 
-
 open class BaseFragment : Fragment() {
 
     open fun saveUser(user : User) {

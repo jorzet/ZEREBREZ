@@ -33,7 +33,6 @@ import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
-import java.util.*
 
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.

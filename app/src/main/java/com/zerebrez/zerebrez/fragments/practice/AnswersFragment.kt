@@ -33,7 +33,7 @@ class AnswersFragment : BaseContentFragment() {
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.question_fragment, container, false)!!
+        val rootView = inflater.inflate(R.layout.question_fragment, container, false)!!
 
         return rootView
     }

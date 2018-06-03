@@ -30,6 +30,7 @@ import com.zerebrez.zerebrez.fragments.score.PresentationCompareResultsFragment
  */
 
 class CompareResultsContainerFragment : BaseContentFragment() {
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)

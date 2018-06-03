@@ -20,7 +20,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
@@ -28,10 +27,9 @@ import com.zerebrez.zerebrez.fragments.question.*
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.Question
-import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
-import com.zerebrez.zerebrez.utils.NetworkUtil
+
 
 /**
  * This class manage the UI questions showing
