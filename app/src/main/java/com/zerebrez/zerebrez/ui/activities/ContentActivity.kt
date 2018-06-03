@@ -45,7 +45,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.zerebrez.zerebrez.models.ExamScore
+import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
 
@@ -487,4 +487,45 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         Log.d(TAG, "onConnectionFailed:" + connectionResult)
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
+
+    override fun onGetModulesSucces(result: List<Module>) {
+        super.onGetModulesSucces(result)
+    }
+
+    override fun onGetModulesFail(throwable: Throwable) {
+        super.onGetModulesFail(throwable)
+    }
+
+    override fun onGetCoursesSuccess(courses: List<String>) {
+        super.onGetCoursesSuccess(courses)
+    }
+
+    override fun onGetCoursesFail(throwable: Throwable) {
+        super.onGetCoursesFail(throwable)
+    }
+
+    override fun onGetUserDataSuccess(user: User) {
+        super.onGetUserDataSuccess(user)
+    }
+
+    override fun onGetUserDataFail(throwable: Throwable) {
+        super.onGetUserDataFail(throwable)
+    }
+
+    override fun onGetExamsSuccess(exams: List<Exam>) {
+        super.onGetExamsSuccess(exams)
+    }
+
+    override fun onGetExamsFail(throwable: Throwable) {
+        super.onGetExamsFail(throwable)
+    }
+
+    override fun onGetImagesPathSuccess(images: List<Image>) {
+        super.onGetImagesPathSuccess(images)
+    }
+
+    override fun onGetImagesPathFail(throwable: Throwable) {
+        super.onGetImagesPathFail(throwable)
+    }
+
 }

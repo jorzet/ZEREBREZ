@@ -155,6 +155,78 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
+    fun requestModules() {
+        mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
+            override fun onGetModulesLoaded(result: List<Module>) {
+                onGetModulesSucces(result)
+            }
+
+            override fun onGetModulesError(throwable: Throwable) {
+                onGetModulesFail(throwable)
+            }
+        })
+    }
+
+    fun requestCourses() {
+        mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
+            override fun onGetCoursesLoaded(result: List<String>) {
+                onGetCoursesSuccess(result)
+            }
+
+            override fun onGetCoursesError(throwable: Throwable) {
+                onGetCoursesFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetUserData() {
+        mRequestManager.requestGetUserData(object : RequestManager.OnGetUserDataListener {
+            override fun onGetUserDataLoaded(user: User) {
+                onGetUserDataSuccess(user)
+            }
+
+            override fun onGetUserDataError(throwable: Throwable) {
+                onGetUserDataFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetInstitutes() {
+        mRequestManager.requestGetInstitutes(object : RequestManager.OnGetInstitutesListener {
+            override fun onGetInstitutesLoaded(institutes: List<Institute>) {
+                onGetInstitutesSuccess(institutes)
+            }
+
+            override fun onGetInstitutesError(throwable: Throwable) {
+                onGetInstitutesFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetExams() {
+        mRequestManager.requestGetExams(object : RequestManager.OnGetExamsListener {
+            override fun onGetExamsLoaded(exams: List<Exam>) {
+                onGetExamsSuccess(exams)
+            }
+
+            override fun onGetExamError(throwable: Throwable) {
+                onGetExamsFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetImagesPath() {
+        mRequestManager.requestGetImagesPath(object : RequestManager.OnGetImagesPathListener {
+            override fun onGetImagesPathLoaded(images: List<Image>) {
+                onGetImagesPathSuccess(images)
+            }
+
+            override fun onGetImagesPathError(throwable: Throwable) {
+                onGetImagesPathFail(throwable)
+            }
+        })
+    }
+
     open fun onSendAnsweredQuestionsSuccess(success : Boolean) {
     }
 
@@ -190,5 +262,78 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
     open fun onSendUserFail(throwable: Throwable) {
     }
+
+    open fun onDoLogInSuccess(success : Boolean) {
+    }
+
+    open fun onDoLogInFail(throwable: Throwable) {
+    }
+
+    open fun onUpdateUserSuccess(success: Boolean) {
+    }
+
+    open fun onUpdateUserFail(throwable: Throwable) {
+    }
+
+    open fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
+    }
+
+    open fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
+    }
+
+    open fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
+    }
+
+    open fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {
+    }
+
+    open fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {
+    }
+
+    open fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
+    }
+
+    open fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {
+    }
+
+    open fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {
+    }
+
+    open fun onGetModulesSucces(result : List<Module>) {
+    }
+
+    open fun onGetModulesFail(throwable: Throwable) {
+    }
+
+    open fun onGetCoursesSuccess(courses : List<String>) {
+    }
+
+    open fun onGetCoursesFail(throwable: Throwable) {
+    }
+
+    open fun onGetUserDataSuccess(user : User) {
+    }
+
+    open fun onGetUserDataFail(throwable: Throwable) {
+    }
+
+    open fun onGetInstitutesSuccess(institutes : List<Institute>) {
+    }
+
+    open fun onGetInstitutesFail(throwable: Throwable) {
+    }
+
+    open fun onGetExamsSuccess(exams : List<Exam>) {
+    }
+
+    open fun onGetExamsFail(throwable: Throwable) {
+    }
+
+    open fun onGetImagesPathSuccess(images : List<Image>) {
+    }
+
+    open fun onGetImagesPathFail(throwable: Throwable) {
+    }
+
 
 }

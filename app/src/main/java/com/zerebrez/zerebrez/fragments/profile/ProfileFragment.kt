@@ -447,7 +447,13 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private val mLinkWithGoogleButtonListener = View.OnClickListener {
-
+        if (NetworkUtil.isConnected(context!!)) {
+            (activity as ContentActivity).showLoading(true)
+            signInWithGoogle()
+        } else {
+            ErrorDialog.newInstance("Error", "Necesitas tener conexión a intenet para poderte conectar",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
     }
 
     private val mEditSchoolsListener = View.OnClickListener {
@@ -531,6 +537,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         intent.putExtra(SHOW_START, true)
         activity!!.startActivity(intent)
         activity!!.finish()
+    }
+
+    private fun signInWithGoogle() {
+        val signInIntent = Auth.GoogleSignInApi.getSignInIntent((activity as ContentActivity).getGoogleApiClient())
+        startActivityForResult(signInIntent, LoginActivity.RC_SIGN_IN)
     }
 
     /*
