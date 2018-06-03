@@ -143,8 +143,8 @@ class SplashActivity : BaseActivityLifeCycle() {
     private fun initNotificationService() {
         val dataHelper = DataHelper(this)
         val notifcationTime = dataHelper.getNotificationTime()
-        if (notifcationTime.equals("")) { // set default notification time at 4:00
-            dataHelper.saveNotificationTime("4:00")
+        if (notifcationTime.equals("")) { // set default notification time at 16:00
+            dataHelper.saveNotificationTime("16:00")
         } else {
 
         }

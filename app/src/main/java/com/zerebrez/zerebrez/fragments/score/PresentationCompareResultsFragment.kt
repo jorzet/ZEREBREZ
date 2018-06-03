@@ -30,7 +30,11 @@ import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
  */
 
 class PresentationCompareResultsFragment : BaseContentFragment() {
-    private lateinit var mItIsUnderstandButton : Button
+
+    /*
+     * UI accessors
+     */
+    private lateinit var mItIsUnderstandButton : View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 

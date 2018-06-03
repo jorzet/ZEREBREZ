@@ -31,14 +31,17 @@ import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 
 class PresentationQuestionFragment : BaseContentFragment() {
 
-    private lateinit var mItIsUnderstandButton : Button
+    /*
+     * UI accessors
+     */
+    private lateinit var mItIsUnderstandButton : View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.presentation_question_fragment, container, false)!!
+        val rootView = inflater.inflate(R.layout.presentation_question_fragment, container, false)!!
 
         mItIsUnderstandButton = rootView.findViewById(R.id.btn_it_is_understand)
         mItIsUnderstandButton.setOnClickListener(mItIsUnderstandedListener)

@@ -51,7 +51,10 @@
                     android:gravity="center"
                     android:hint="@string/user_email_text"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray" />
+                    android:textColorHint="@color/gray"
+                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:nextFocusForward="@+id/et_password"/>
 
                 <EditText
                     android:id="@+id/et_password"
@@ -65,7 +68,9 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray" />
+                    android:textColorHint="@color/gray"
+                    android:imeOptions="actionSend"
+                    android:singleLine="true"/>
 
                 <Button
                     android:id="@+id/btn_login"

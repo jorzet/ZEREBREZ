@@ -192,6 +192,16 @@ class DataHelper(context: Context) {
         return wrongQuestion
     }
 
+    fun saveWrongQuestion(wrongQuestions : List<Question>) {
+        if (wrongQuestions.isNotEmpty()) {
+            for (wrongQuestion in wrongQuestions) {
+                if (wrongQuestion.getWasOK()) {
+
+                }
+            }
+        }
+    }
+
     fun saveExams(exams : List<Exam>) {
         val json = JsonParcer.parceObjectListToJson(exams)
         SharedPreferencesManager(mContext).storeJsonExams(json)

@@ -175,7 +175,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
             when (mQuestionList.get(i).getSubjectType()) {
                 SubjectType.NONE -> {
-                    image.background = resources.getDrawable(R.drawable.main_icon)
+                    //image.background = resources.getDrawable(R.drawable.main_icon)
                 }
                 SubjectType.MATHEMATICS -> {
                     image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)

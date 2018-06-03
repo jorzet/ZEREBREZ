@@ -193,7 +193,9 @@ class QuestionActivity : BaseActivityLifeCycle() {
         } else if (isAnonymous) {
             saveModulesAndQuestions()
         } else {
-            if (isFromExamFragment) {
+            if (isFromWrongQuestionFragment) {
+                saveWrongQuestion()
+            } else if (isFromExamFragment) {
                 saveExamsAndQuestions()
             } else {
                 saveModulesAndQuestions()
@@ -350,6 +352,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
                 //onBackPressed()
             //}
         }
+    }
+
+    private fun saveWrongQuestion() {
+        DataHelper(baseContext).saveWrongQuestion(mQuestions)
     }
 
     override fun onSendAnsweredModulesSuccess(success: Boolean) {

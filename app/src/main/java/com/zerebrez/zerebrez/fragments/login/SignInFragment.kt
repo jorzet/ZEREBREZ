@@ -22,16 +22,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import android.widget.*
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.GraphRequest
@@ -94,6 +93,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)
         mSinginGoogleButton.setOnClickListener(mSinginGoogleButtonListener)
+        mPasswordEditText.setOnEditorActionListener(onSendFormListener)
 
         return rootView
     }
@@ -131,6 +131,20 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener,
     private fun signInWithGoogle() {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent((activity as LoginActivity).getGoogleApiClient())
         startActivityForResult(signInIntent, LoginActivity.RC_SIGN_IN)
+    }
+
+    private val onSendFormListener = object : TextView.OnEditorActionListener {
+        override fun onEditorAction(textView: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+            var action = false
+            if (actionId === EditorInfo.IME_ACTION_SEND) {
+                // hide keyboard
+                val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
+                mSinginButton.performClick()
+                action = true
+            }
+            return action
+        }
     }
 
     /*

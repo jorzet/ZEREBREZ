@@ -37,7 +37,10 @@
             android:gravity="center"
             android:textColorHint="@color/gray"
             android:textColor="@color/black"
-            android:background="@drawable/edittext_user_email_background"/>
+            android:background="@drawable/edittext_user_email_background"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:nextFocusForward="@+id/et_password"/>
 
         <EditText
             android:id="@+id/et_password"
@@ -51,7 +54,9 @@
             android:gravity="center"
             android:textColorHint="@color/gray"
             android:textColor="@color/black"
-            android:background="@drawable/edittext_password_background"/>
+            android:background="@drawable/edittext_password_background"
+            android:imeOptions="actionSend"
+            android:singleLine="true"/>
 
         <Button
             android:id="@+id/btn_login"
