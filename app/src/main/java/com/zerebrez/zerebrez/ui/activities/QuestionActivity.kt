@@ -29,6 +29,7 @@ import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.utils.FontUtil
 
 
 /**
@@ -59,8 +60,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private lateinit var mQuestiontypeText : TextView
     private lateinit var mCloseQuestion : View
     private lateinit var mNextQuestion : View
+    private lateinit var mNextQuestionText : TextView
     private lateinit var mShowExpandedQuestion : View
     private lateinit var mShowAnswer : View
+    private lateinit var mShowAnswerText : TextView
     private lateinit var mCompleteQuestionsFragmentContainer : FrameLayout
     private lateinit var mControlsBar : View
 
@@ -98,8 +101,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
         mQuestiontypeText = findViewById(R.id.tv_question_type_text)
         mCloseQuestion = findViewById(R.id.iv_close_question)
         mShowAnswer = findViewById(R.id.btn_show_answer)
+        mShowAnswerText = findViewById(R.id.btn_show_answer_text)
         mShowExpandedQuestion = findViewById(R.id.iv_show_expanded_question)
         mNextQuestion = findViewById(R.id.btn_next_question)
+        mNextQuestionText = findViewById(R.id.btn_next_question_text)
         mCompleteQuestionsFragmentContainer = findViewById(R.id.complete_question_fragment_container)
         mControlsBar = findViewById(R.id.bottom_bar)
 
@@ -112,6 +117,10 @@ class QuestionActivity : BaseActivityLifeCycle() {
         mShowAnswer.isEnabled = false
         setNextQuestionEnable(false)
         mShowExpandedQuestion.visibility = View.GONE
+
+        mModuleNumber.setTypeface(FontUtil.getNunitoRegular(baseContext))
+        mNextQuestionText.setTypeface(FontUtil.getNunitoBlack(baseContext))
+        mShowAnswerText.setTypeface(FontUtil.getNunitoBlack(baseContext))
 
         mModuleId = intent.getIntExtra(MODULE_ID, -1)
         mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
@@ -313,13 +322,13 @@ class QuestionActivity : BaseActivityLifeCycle() {
                 requestSendAnsweredModules(mModuleList)
                 requestSendAnsweredQuestions(mModuleList)
                 mModulesAndQuestionsSaved = true
-                showQuestionsCompleteFragment()
+
                 // this is called on QuestionsCompleteFragment
-                /*if (isAnonymous) {
+                if (isAnonymous) {
                     goLogInActivity()
                 } else {
-                    onBackPressed()
-                }*/
+                    showQuestionsCompleteFragment()
+                }
             //}
         }
     }
@@ -456,5 +465,16 @@ class QuestionActivity : BaseActivityLifeCycle() {
 
     fun showPaymentFragment(showPaymentFragment : Boolean) {
         this.mShowPaymentFragment = showPaymentFragment
+    }
+
+    /*
+     * This method is only used after StartFragment when user responds the first module
+     * the app is going to redirect to LoginActivity to show SingUpFragment
+     */
+    private fun goLogInActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.putExtra(SHOW_START, false)
+        this.startActivity(intent)
+        this.finish()
     }
 }

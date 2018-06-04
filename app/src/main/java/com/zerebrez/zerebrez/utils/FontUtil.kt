@@ -8,7 +8,7 @@ import java.util.*
 
 class FontUtil {
     companion object {
-        fun getNunitoBlackFont(context: Context) : Typeface{
+        fun getNunitoBlack(context: Context) : Typeface{
             val am = context.applicationContext.assets
 
             return Typeface.createFromAsset(am,

@@ -37,6 +37,7 @@ import com.zerebrez.zerebrez.models.QuestionOption
 import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
 import java.io.File
 import java.io.FileInputStream
@@ -177,7 +178,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     }
 
     private fun setOptions() {
-        mQuestion.setText("Lee atentamente")
+        mQuestion.setText("Responde")
+        mQuestion.setTypeface(FontUtil.getNunitoRegular(context!!))
         mQuestionList.adapter = optionQuestionAdapter
     }
 
