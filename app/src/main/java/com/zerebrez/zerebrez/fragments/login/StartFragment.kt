@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.fragments.init.InitFragment
@@ -31,6 +32,7 @@ import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
 
 /**
@@ -44,6 +46,7 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
     private lateinit var mGoLoginButton : Button
     private lateinit var mButtonsContainer : View
     private lateinit var mLoadingProgressBar : ProgressBar
+    private lateinit var mTextBetweenLines : TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -56,6 +59,10 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
         mGoLoginButton = rootView.findViewById(R.id.has_account)
         mButtonsContainer = rootView.findViewById(R.id.rl_buttons_container)
         mLoadingProgressBar = rootView.findViewById(R.id.pb_loading)
+        mTextBetweenLines = rootView.findViewById(R.id.text_between_lines)
+
+        mTextBetweenLines.setTypeface(FontUtil.getNunitoBold(context!!))
+        mStartButton.setTypeface(FontUtil.getNunitoRegular(context!!))
 
         mStartButton.setOnClickListener(mStartButtonListener)
         mGoLoginButton.setOnClickListener(mGoLogInButtonListener)

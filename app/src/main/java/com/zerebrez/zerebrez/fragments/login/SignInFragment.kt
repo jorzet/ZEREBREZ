@@ -50,6 +50,7 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.
@@ -71,6 +72,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mLogInView : View
     private lateinit var mLoginAnotherProvidersView : View
     private lateinit var mLoadingProgresBar : ProgressBar
+    private lateinit var mTextLoginWith : TextView
 
     /*
      * Objects
@@ -92,6 +94,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mLogInView = rootView.findViewById(R.id.rl_login_inputs)
         mLoginAnotherProvidersView = rootView.findViewById(R.id.rl_login_other_provider)
         mLoadingProgresBar = rootView.findViewById(R.id.pb_loading)
+        mTextLoginWith = rootView.findViewById(R.id.tv_login_with)
+
+        mSinginButton.setTypeface(FontUtil.getNunitoSemiBold(context!!))
+        mTextLoginWith.setTypeface(FontUtil.getNunitoBold(context!!))
+
 
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)

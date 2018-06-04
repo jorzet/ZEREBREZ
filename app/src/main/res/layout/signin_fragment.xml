@@ -28,11 +28,11 @@
             <ImageView
                 android:id="@+id/iv_gary_line1"
                 android:layout_width="250dp"
-                android:layout_height="wrap_content"
+                android:layout_height="1dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/iv_brain_key"
                 android:layout_marginTop="30dp"
-                android:src="@drawable/gray_line_icon"/>
+                android:background="@color/white"/>
 
             <RelativeLayout
                 android:id="@+id/rl_login_inputs"
@@ -45,7 +45,7 @@
                 <EditText
                     android:id="@+id/et_email"
                     android:layout_width="300dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/edittext_user_email_background"
                     android:gravity="center"
@@ -59,7 +59,7 @@
                 <EditText
                     android:id="@+id/et_password"
                     android:layout_width="300dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_below="@+id/et_email"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="1dp"
@@ -74,13 +74,14 @@
 
                 <Button
                     android:id="@+id/btn_login"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
                     android:layout_below="@+id/et_password"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="45dp"
                     android:text="I N G R E S A R"
-                    android:background="@drawable/singin_button_background" />
+                    android:textSize="18dp"
+                    android:background="@drawable/signin_button" />
 
             </RelativeLayout>
 
@@ -99,16 +100,17 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp"
-                    android:text="@string/login_with_text"
-                    android:textSize="20dp"/>
+                    android:text="INICIAR CON"
+                    android:textColor="@color/white"
+                    android:textSize="17dp"/>
 
                 <ImageView
                     android:id="@+id/iv_gary_line2"
                     android:layout_width="250dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="1dp"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@+id/tv_login_with"
-                    android:src="@drawable/gray_line_icon"/>
+                    android:background="@color/white"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
