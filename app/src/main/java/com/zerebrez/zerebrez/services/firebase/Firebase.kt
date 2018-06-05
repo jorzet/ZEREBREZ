@@ -157,7 +157,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetModules() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -228,7 +228,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun getQuestions(modules : List<Module>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -452,7 +452,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetCourses() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(COURSES_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -530,6 +530,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestSendUser(userCache : User) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -555,7 +556,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetExamScores() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(EXAM_SCORES_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -599,6 +600,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestSendAnsweredQuestions(modules: List<Module>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -630,6 +632,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestSendAnsweredModules(modules : List<Module>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -669,6 +672,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestSendAnsweredExams(exams : List<Exam>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -697,6 +701,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestSendSelectedSchools(schools : List<School>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -725,6 +730,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         val user = getCurrentUser()
         if (user != null) {
             mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
             mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -891,7 +897,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetInstitutes() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -946,7 +952,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetExams() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -995,7 +1001,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     fun requestGetImagesPath() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(IMAGES_REFERENCE)
-
+        mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
