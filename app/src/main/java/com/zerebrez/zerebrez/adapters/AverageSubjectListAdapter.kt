@@ -58,6 +58,9 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
         //averageBySubject.pb_average_by_subject.progressDrawable = gd
 
         when (currentSubject.getsubjectType()) {
+            SubjectType.ENGLISH -> {
+                //averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.geo_icon)
+            }
             SubjectType.VERBAL_HABILITY -> {
                 averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_ver_subject_icon_blue)
             }
@@ -66,9 +69,6 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
             }
             SubjectType.SPANISH -> {
                 averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.esp_subject_icon_blue)
-            }
-            SubjectType.ENGLISH -> {
-                //averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.geo_icon)
             }
             SubjectType.MATHEMATICS -> {
                 averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.mat_1_subject_icon_blue)
@@ -95,7 +95,6 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
                 averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.civ_et_subject_icon_blue)
             }
         }
-
 
         return averageBySubject
     }

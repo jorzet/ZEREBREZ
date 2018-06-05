@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/toolbar_question"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="60dp">
         <TextView
             android:id="@+id/tv_module_number"
             android:layout_width="wrap_content"
@@ -17,13 +17,13 @@
             android:layout_marginLeft="30dp"
             android:text="1"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="17sp"
             android:textStyle="bold"/>
 
         <ImageView
             android:id="@+id/iv_vertical_line"
             android:layout_width="1dp"
-            android:layout_height="60dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/tv_module_number"
             android:layout_marginLeft="30dp"
@@ -38,7 +38,7 @@
             android:layout_marginLeft="30dp"
             android:text="Módulo"
             android:textColor="@color/black"
-            android:textSize="20sp"/>
+            android:textSize="17sp"/>
 
         <RelativeLayout
             android:id="@+id/iv_close_question"
@@ -80,18 +80,19 @@
         <RelativeLayout
             android:id="@+id/btn_show_answer"
             android:layout_width="120dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:background="@drawable/show_answer_button_background">
 
             <TextView
+                android:id="@+id/btn_show_answer_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="@string/show_answer"
-                android:textSize="13sp"
+                android:text="E X P L I C A C I Ó N"
+                android:textSize="9sp"
                 android:textColor="@color/white"/>
 
         </RelativeLayout>
@@ -107,19 +108,20 @@
         <RelativeLayout
             android:id="@+id/btn_next_question"
             android:layout_width="120dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             android:background="@drawable/next_question_button_background">
 
             <TextView
+                android:id="@+id/btn_next_question_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:text="S I G U I E N T E"
-                android:textSize="13sp"
+                android:textSize="9sp"
                 android:textColor="@color/white"/>
 
         </RelativeLayout>

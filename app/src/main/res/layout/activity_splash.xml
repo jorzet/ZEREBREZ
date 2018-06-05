@@ -8,18 +8,21 @@
     tools:context=".ui.activities.SplashActivity">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash_image"/>
-
-    <TextView
-        android:id="@+id/tv_comipems"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/main_icon"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
-        android:text="@string/comipems_text"/>
+        android:src="@drawable/main_icon"/>
+
+    <ImageView
+        android:id="@+id/tv_comipems"
+        android:layout_width="200dp"
+        android:layout_height="1dp"
+        android:layout_below="@+id/main_icon"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"/>
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"

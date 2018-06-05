@@ -29,9 +29,9 @@
 
                 <ImageView
                     android:id="@+id/iv_gray_line1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/gray_line_icon"
+                    android:layout_width="300dp"
+                    android:layout_height="1dp"
+                    android:background="@color/white"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@+id/tv_question"
                     android:layout_marginTop="5dp"/>

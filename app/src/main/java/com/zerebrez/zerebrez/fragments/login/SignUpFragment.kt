@@ -51,6 +51,7 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.ChooseSchoolsActivity
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
 
 /**
@@ -78,6 +79,11 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mLogInView : View
     private lateinit var mLoginAnotherProvidersView : View
     private lateinit var mLoadingProgresBar : ProgressBar
+    private lateinit var mModuleNumberText : TextView
+    private lateinit var mHitsNumberText : TextView
+    private lateinit var mMissesNumberText : TextView
+    private lateinit var mSignupMessageText : TextView
+    private lateinit var mLoginWithText : TextView
 
     /*
      * objects
@@ -99,6 +105,18 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mLogInView = rootView.findViewById(R.id.rl_login_inputs)
         mLoginAnotherProvidersView = rootView.findViewById(R.id.rl_login_other_provider)
         mLoadingProgresBar = rootView.findViewById(R.id.pb_loading)
+
+        mModuleNumberText = rootView.findViewById(R.id.module_number)
+        mHitsNumberText = rootView.findViewById(R.id.hits_text)
+        mMissesNumberText = rootView.findViewById(R.id.misses_text)
+        mSignupMessageText = rootView.findViewById(R.id.signup_message)
+        mLoginWithText = rootView.findViewWithTag(R.id.tv_login_with)
+
+        mModuleNumberText.setTypeface(FontUtil.getNunitoSemiBold(context!!))
+        mSignupMessageText.setTypeface(FontUtil.getNunitoRegular(context!!))
+        mHitsNumberText.setTypeface(FontUtil.getNunitoSemiBold(context!!))
+        mMissesNumberText.setTypeface(FontUtil.getNunitoSemiBold(context!!))
+        mLoginWithText.setTypeface(FontUtil.getNunitoSemiBold(context!!))
 
         mSigninButton.setOnClickListener(mSigninButtonListener)
         mSigninFacebookButton.setOnClickListener(mSignInFacebookButtonListener)

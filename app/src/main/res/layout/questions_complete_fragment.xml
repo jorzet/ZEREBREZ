@@ -165,7 +165,7 @@
                 <RelativeLayout
                     android:id="@+id/btn_be_premium"
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:layout_below="@+id/tv_npremium_text_2"
@@ -174,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="3dp"
                         android:gravity="center"
                         android:text="Quiero ser premium"
                         android:textColor="@color/white"
@@ -202,7 +202,7 @@
                 <RelativeLayout
                     android:id="@+id/btn_super"
                     android:layout_width="120dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/super_button_background">

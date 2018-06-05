@@ -57,6 +57,8 @@ private const val TAG : String = "LoginActivity"
 class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFailedListener {
 
     private val SHOW_START = "show_start"
+    private val HITS_EXTRA = "hits_extra"
+    private val MISSES_EXTRA = "misses_extra"
 
     companion object {
         val RC_SIGN_IN : Int = 9001
@@ -73,6 +75,11 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mGoogleSignInClient : GoogleSignInClient
 
+    /*
+     * Sign up values
+     */
+    private var hits : Int = 0
+    private var misses : Int = 0
 
     private lateinit var mCurrentfragment : Fragment
 
@@ -103,6 +110,8 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         if (showStart) {
             showStartFragment()
         } else {
+            hits = intent.getIntExtra(HITS_EXTRA, -1)
+            misses = intent.getIntExtra(MISSES_EXTRA, -1)
             showSigUpFragment()
         }
 
@@ -235,6 +244,17 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 }
             }
         }
+    }
+
+    /*
+     * those method are called in sign up fragment
+     */
+    fun getHits() : Int {
+        return this.hits
+    }
+
+    fun getMisses() : Int {
+        return this.misses
     }
 
 }

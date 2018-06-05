@@ -13,12 +13,12 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="option_one"
-        android:textColor="@color/option_text_color"
-        android:textSize="20sp"/>
+        android:textColor="@color/white"
+        android:textSize="19sp"/>
 
     <katex.hourglass.in.mathlib.MathView
         android:id="@+id/mv_otion"
-        app:setTextColor="@color/option_text_color"
+        app:setTextColor="@color/white"
         app:setTextSize="10sp"
         app:setText="$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$$"
         android:layout_gravity="center"
