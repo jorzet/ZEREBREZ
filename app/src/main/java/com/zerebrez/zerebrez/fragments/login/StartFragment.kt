@@ -43,7 +43,7 @@ import com.zerebrez.zerebrez.utils.NetworkUtil
 class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     private lateinit var mStartButton : Button
-    private lateinit var mGoLoginButton : Button
+    private lateinit var mGoLoginButton : View
     private lateinit var mButtonsContainer : View
     private lateinit var mLoadingProgressBar : ProgressBar
     private lateinit var mTextBetweenLines : TextView

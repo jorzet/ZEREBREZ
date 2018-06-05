@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.School
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_selected_school.view.*
 
 /**
@@ -40,6 +41,7 @@ class SchoolListAdapter (schools : List<School>, context : Context) : BaseAdapte
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val schoolView = inflator.inflate(R.layout.custom_selected_school, null)
         schoolView.tv_school_name.text = currentSchool.getSchoolName()
+        schoolView.tv_school_name.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         return schoolView
     }

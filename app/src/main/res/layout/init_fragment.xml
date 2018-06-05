@@ -57,14 +57,23 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary">
 
-        <Button
+        <RelativeLayout
             android:id="@+id/btn_select"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/select_button_background"
-            android:text="@string/split_select_text"/>
+            android:background="@drawable/select_button_background">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="@string/split_select_text"
+                android:textColor="@color/white"/>
+
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

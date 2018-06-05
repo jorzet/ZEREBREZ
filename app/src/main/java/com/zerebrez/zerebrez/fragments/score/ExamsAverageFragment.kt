@@ -27,6 +27,7 @@ import com.zerebrez.zerebrez.adapters.ExamAverageListAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -55,6 +56,8 @@ class ExamsAverageFragment : BaseContentFragment() {
 
         examsAverageListView = rootView.findViewById(R.id.lv_exams_average)
         notExamsDidIt = rootView.findViewById(R.id.tv_not_exams_currently)
+
+        notExamsDidIt.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         val dataHelper = DataHelper(context!!)
         val examScores = dataHelper.getExamScores()

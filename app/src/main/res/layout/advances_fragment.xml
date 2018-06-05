@@ -36,12 +36,13 @@
                         android:src="@drawable/gray_line_icon"/>
 
                     <TextView
+                        android:id="@+id/question_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="@string/questions_text"
                         android:textColor="@color/questions_text_color"
-                        android:textSize="30sp"/>
+                        android:textSize="28sp"/>
 
                     <ImageView
                         android:layout_width="70dp"
@@ -69,6 +70,7 @@
                         android:textSize="20sp"/>
 
                     <TextView
+                        android:id="@+id/answered_questions_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_num_answered_questions"
@@ -167,7 +169,7 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/exams_text"
                     android:textColor="@color/exams_text_color"
-                    android:textSize="30sp"/>
+                    android:textSize="28sp"/>
 
                 <com.zerebrez.zerebrez.adapters.NonScrollListView
                     android:id="@+id/nslv_exams"
@@ -213,9 +215,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
+                    android:gravity="center"
                     android:text="@string/average_by_subjet"
                     android:textColor="@color/average_by_subject_text_color"
-                    android:textSize="30sp"/>
+                    android:textSize="28sp"/>
 
                 <com.zerebrez.zerebrez.adapters.NonScrollListView
                     android:id="@+id/nslv_average_by_subject"

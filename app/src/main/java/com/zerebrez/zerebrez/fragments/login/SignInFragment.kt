@@ -67,7 +67,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mEmailEditText : EditText
     private lateinit var mPasswordEditText : EditText
     private lateinit var mSinginButton : Button
-    private lateinit var mSinginFacebookButton : Button
+    private lateinit var mSinginFacebookButton : View
     private lateinit var mSinginGoogleButton : View
     private lateinit var mLogInView : View
     private lateinit var mLoginAnotherProvidersView : View

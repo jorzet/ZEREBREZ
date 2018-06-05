@@ -44,7 +44,7 @@ class InitFragment : BaseContentFragment() {
     private val ANONYMOUS_USER = "anonymous_user"
 
     private lateinit var mViewPager: ViewPager
-    private lateinit var mSelectButton : Button
+    private lateinit var mSelectButton : View
     private lateinit var secundary: Button
     private lateinit var comipems: Button
     private lateinit var loading : ProgressBar

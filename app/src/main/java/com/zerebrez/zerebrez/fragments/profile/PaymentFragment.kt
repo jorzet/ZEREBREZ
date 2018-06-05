@@ -37,8 +37,8 @@ private const val TAG : String = "PaymentFragment"
 
 class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
-    private lateinit var mIWantToBePremiumButton : Button
-    private lateinit var mGetFreeQuestionsExamsButton : Button
+    private lateinit var mIWantToBePremiumButton : View
+    private lateinit var mGetFreeQuestionsExamsButton : View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 

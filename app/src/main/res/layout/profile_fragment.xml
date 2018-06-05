@@ -92,7 +92,7 @@
                     android:textSize="15sp"
                     android:visibility="gone"/>
 
-                <Button
+                <RelativeLayout
                     android:id="@+id/btn_change_schools"
                     android:layout_width="160dp"
                     android:layout_height="35dp"
@@ -100,8 +100,17 @@
                     android:layout_marginTop="20dp"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/link_email_account_button_background"
-                    android:text="Cambiar"
-                    android:visibility="gone"/>
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/edit_schools_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="Cambiar"
+                        android:textSize="17sp"
+                        android:textColor="@color/white"/>
+                </RelativeLayout>
 
             </RelativeLayout>
 
@@ -370,6 +379,7 @@
                     android:background="@drawable/terms_and_privacy_background">
 
                     <TextView
+                        android:id="@+id/terms_and_privacy_container_text"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"

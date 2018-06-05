@@ -62,6 +62,7 @@ import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -81,6 +82,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     /*
      * UI accessors
      */
+    private lateinit var mProfileTextView: TextView
+    private lateinit var mCourseTextView: TextView
     private lateinit var mCourse : TextView
     private lateinit var mEmail : EditText
     private lateinit var mPassword : EditText
@@ -90,7 +93,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mNotification : TextView
     private lateinit var mTimeNotification : TextView
     private lateinit var mTermsAndPrivacy : View
-    private lateinit var mEditSchoolsButton : Button
+    private lateinit var mEditSchoolsButton : View
+    private lateinit var mEditSchoolsTextView : TextView
     private lateinit var mLinkEmailButton : Button
     private lateinit var mNotSelectedSchools : TextView
     private lateinit var mAllowMobileDataSwitch : Switch
@@ -99,6 +103,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mLinkWithGoogleButton : View
     private lateinit var mIsLoggedInWithFacebookImage : ImageView
     private lateinit var mIsLoggedInWithGoogleImage : ImageView
+    private lateinit var mLinktYourAccountsTextView: TextView
+    private lateinit var mTimetoNotifyTextView: TextView
+    private lateinit var mTimeTextView: TextView
+    private lateinit var mMobileDataTextView: TextView
+    private lateinit var mTermsAndPrivacyTextView: TextView
 
     /*
      * Adapters
@@ -117,6 +126,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         val rootView = inflater.inflate(R.layout.profile_fragment, container, false)!!
 
+        mProfileTextView = rootView.findViewById(R.id.tv_my_profile)
+        mCourseTextView = rootView.findViewById(R.id.tv_course_text)
         mCourse = rootView.findViewById(R.id.tv_course)
         mEmail = rootView.findViewById(R.id.et_email)
         mPassword = rootView.findViewById(R.id.et_password)
@@ -125,6 +136,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mSendEmail = rootView.findViewById(R.id.tv_support_email)
         mTermsAndPrivacy = rootView.findViewById(R.id.rl_terms_and_privacy_container)
         mEditSchoolsButton = rootView.findViewById(R.id.btn_change_schools)
+        mEditSchoolsTextView = rootView.findViewById(R.id.edit_schools_text)
         mNotSelectedSchools = rootView.findViewById(R.id.tv_not_selected_schools)
         mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
         mNotification = rootView.findViewById(R.id.tv_notification)
@@ -135,6 +147,27 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
         mIsLoggedInWithFacebookImage = rootView.findViewById(R.id.iv_is_loggedin_with_facebook)
         mIsLoggedInWithGoogleImage = rootView.findViewById(R.id.iv_is_loggedin_with_google)
+        mLinktYourAccountsTextView = rootView.findViewById(R.id.tv_link_accounts_text)
+        mTimetoNotifyTextView = rootView.findViewById(R.id.tv_time_to_notify)
+        mTimeTextView = rootView.findViewById(R.id.tv_time)
+        mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
+        mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
+
+        mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mCourse.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mNotSelectedSchools.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mEditSchoolsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mLinktYourAccountsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mLinkEmailButton.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mLogOut.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mNotification.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mTimetoNotifyTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mTimeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mTermsAndPrivacyTextView.typeface = FontUtil.getNunitoBold(context!!)
+
 
         // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)

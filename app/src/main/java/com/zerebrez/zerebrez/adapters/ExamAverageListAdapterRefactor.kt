@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.ExamScore
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_exam_average_refactor.view.*
 
 /**
@@ -47,6 +48,9 @@ class ExamAverageListAdapterRefactor(averageExams : List<ExamScore>, context : C
         examView.bc_exams_average.setExamScores(currentAverageExam.getOtherUsersScoreExam())
         examView.bc_exams_average.setUserHits(currentAverageExam.getUserScore().toInt())
         examView.bc_exams_average.setHighestScore(currentAverageExam.getTotalNumberOfQuestions().toInt())
+
+        examView.tv_exam_number.typeface = FontUtil.getNunitoBold(mContext)
+
         return examView
     }
 

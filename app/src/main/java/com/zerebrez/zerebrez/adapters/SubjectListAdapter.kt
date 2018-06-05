@@ -24,6 +24,7 @@ import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.enums.SubjectType
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_option_sobject.view.*
 
 /**
@@ -42,6 +43,7 @@ class SubjectListAdapter (subjects : List<Subject>, context : Context) : BaseAda
         val subjectView = inflator.inflate(R.layout.custom_option_sobject, null)
 
         subjectView.tv_subject_name.text = currentSubject.getsubjectType().value.toUpperCase()
+        subjectView.tv_subject_name.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         when (currentSubject.getsubjectType()) {
             SubjectType.MATHEMATICS -> {

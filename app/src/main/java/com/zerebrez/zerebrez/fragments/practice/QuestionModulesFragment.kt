@@ -35,6 +35,7 @@ import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 26/04/18.
@@ -212,6 +213,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             val number = mModuleList.get(i).getId().toString()
 
             text.text = number
+            text.typeface = FontUtil.getNunitoSemiBold(context!!)
 
             // params for module
             val param = GridLayout.LayoutParams()

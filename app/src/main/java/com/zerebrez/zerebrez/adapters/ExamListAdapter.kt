@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_option_exam.view.*
 
 /**
@@ -48,12 +49,18 @@ class ExamListAdapter (exams : List<Exam>, context : Context) : BaseAdapter() {
             examView.tv_exam.setTextColor(mContext.resources.getColor((R.color.exam_done_text_color)))
             examView.tv_correct.text = currentExam.getHits().toString()
             examView.tv_incorrect.text = currentExam.getMisses().toString()
+            examView.tv_exam.typeface = FontUtil.getNunitoRegular(mContext)
+            examView.tv_correct.typeface = FontUtil.getNunitoRegular(mContext)
+            examView.tv_incorrect.typeface = FontUtil.getNunitoRegular(mContext)
+
         } else {
             examView.rl_correct_incorrect_container.visibility = View.GONE
             examView.rl_exam_not_done_container.visibility = View.VISIBLE
             examView.iv_exam.setImageDrawable(mContext.resources.getDrawable(R.drawable.exam_icon))
             examView.tv_exam.setTextColor(mContext.resources.getColor((R.color.exam_not_done_text_color)))
             examView.tv_question_number.text = currentExam.getQuestions().size.toString()
+            examView.tv_exam.typeface = FontUtil.getNunitoRegular(mContext)
+            examView.tv_question_number.typeface = FontUtil.getNunitoRegular(mContext)
         }
 
         return examView

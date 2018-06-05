@@ -32,6 +32,7 @@ import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 25/04/18.
@@ -71,6 +72,8 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
         mSubjectList = rootView.findViewById(R.id.lv_subject_container)
         mGoToBottom = rootView.findViewById(R.id.iv_go_to_bottom)
         mNotSubjectCurrently = rootView.findViewById(R.id.tv_not_subjects_currently)
+
+        mNotSubjectCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         // TODO it is hardcoded
         val subjects = arrayListOf<Subject>()

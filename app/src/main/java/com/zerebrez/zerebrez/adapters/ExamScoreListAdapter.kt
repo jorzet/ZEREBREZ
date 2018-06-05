@@ -24,6 +24,7 @@ import android.widget.BaseAdapter
 import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_exam.view.*
 
 /**
@@ -32,6 +33,7 @@ import kotlinx.android.synthetic.main.custom_exam.view.*
  */
 
 class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter() {
+
     private val mExams: List<Exam> = exams
     private val mContext: Context = context
 
@@ -40,8 +42,14 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
 
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val examView = inflator.inflate(R.layout.custom_exam, null)
+
         examView.tv_exam_number.text = currentExam.getExamId().toString()
         examView.tv_hits_number.text = currentExam.getHits().toString()
+
+        examView.tv_exam.typeface = FontUtil.getNunitoSemiBold(mContext)
+        examView.tv_exam_number.typeface = FontUtil.getNunitoSemiBold(mContext)
+        examView.tv_hits_number.typeface = FontUtil.getNunitoSemiBold(mContext)
+        examView.tv_hits.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         // generate random color
         val color = ColorGenerator.MATERIAL.getColor(getItem(position))

@@ -24,6 +24,7 @@ import android.widget.BaseExpandableListAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Institute
 import com.zerebrez.zerebrez.models.School
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_selected_school.view.*
 import kotlinx.android.synthetic.main.custom_selected_institute.view.*
 
@@ -47,6 +48,8 @@ class SelectedSchoolsListAdapter (institutes : List<Institute>, context : Contex
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val instituteView = inflator.inflate(R.layout.custom_selected_institute, null)
         instituteView.tv_institute_name.text = institute.getInstituteName()
+        instituteView.tv_institute_name.typeface = FontUtil.getNunitoBold(mContext)
+
         if (isExpanded) {
             instituteView.tv_angle.setImageDrawable(mContext.resources.getDrawable(R.drawable.expand_less_icon))
         } else {
@@ -79,6 +82,7 @@ class SelectedSchoolsListAdapter (institutes : List<Institute>, context : Contex
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val schoolView = inflator.inflate(R.layout.custom_selected_school, null)
         schoolView.tv_school_name.text = school.getSchoolName()
+        schoolView.tv_school_name.typeface = FontUtil.getNunitoRegular(mContext)
 
         return schoolView
     }

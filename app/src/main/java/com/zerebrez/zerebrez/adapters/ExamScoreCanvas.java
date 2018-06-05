@@ -27,6 +27,7 @@ import android.util.AttributeSet;
 
 import com.zerebrez.zerebrez.R;
 import com.zerebrez.zerebrez.models.UserScoreExam;
+import com.zerebrez.zerebrez.utils.FontUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
     private Canvas canvas;
     public Paint paint;
+    private Context mContext;
 
     private int width;
     private int height;
@@ -67,6 +69,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
     public ExamScoreCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         paint = new Paint();
         paint.setTextAlign(Paint.Align.CENTER);
 
@@ -189,7 +192,6 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
             }
         }
 
-
         // draw read line
         if (userHits > usersAverageScore) {
             Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
@@ -241,6 +243,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
         paint.setColor(textColor);
         paint.setTextSize(textSize);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(text, bounds.left, bounds.top - paint.ascent(), paint);
     }
 
