@@ -160,7 +160,6 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(PRACTICE_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(ADVANCES_TAG))
-        //mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(MAIN_ICON_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(SCORE_TAG))
         mBottomTabLayout.addTab(mBottomTabLayout.newTab().setTag(PROFILE_TAG))
 

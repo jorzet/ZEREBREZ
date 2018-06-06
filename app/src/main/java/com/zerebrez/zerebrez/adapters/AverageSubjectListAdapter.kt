@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import android.graphics.drawable.GradientDrawable
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_average_by_subject.view.*
 
 /*
@@ -55,6 +56,9 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
         averageBySubject.tv_average_by_subject.text = currentSubject.getSubjectAverage().toString()
         averageBySubject.tv_average_by_subject.setTextColor(color)
         averageBySubject.pb_average_by_subject.setProgress((currentSubject.getSubjectAverage() * 10).toInt())
+
+        averageBySubject.tv_average_by_subject.typeface = FontUtil.getNunitoSemiBold(mContext)
+
         //averageBySubject.pb_average_by_subject.progressDrawable = gd
 
         when (currentSubject.getsubjectType()) {

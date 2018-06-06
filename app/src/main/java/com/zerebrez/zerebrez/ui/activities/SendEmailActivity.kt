@@ -37,8 +37,8 @@ class SendEmailActivity : BaseActivityLifeCycle() {
     private lateinit var et_email: EditText
     private lateinit var et_subject: EditText
     private lateinit var et_message: EditText
-    private lateinit var Send: Button
-    private lateinit var Attachment: Button
+    private lateinit var Send: View
+    private lateinit var Attachment: View
     private lateinit var email: String
     private lateinit var subject: String
     private lateinit var message: String

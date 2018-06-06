@@ -20,9 +20,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 25/04/18.
@@ -35,6 +36,8 @@ class PresentationCompareResultsFragment : BaseContentFragment() {
      * UI accessors
      */
     private lateinit var mItIsUnderstandButton : View
+    private lateinit var mPracticeTextView: TextView
+    private lateinit var mItIsUnderstandTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -44,6 +47,12 @@ class PresentationCompareResultsFragment : BaseContentFragment() {
         val rootView = inflater.inflate(R.layout.presentation_compare_your_results, container, false)!!
 
         mItIsUnderstandButton = rootView.findViewById(R.id.btn_it_is_understand)
+        mPracticeTextView = rootView.findViewById(R.id.text_practice_questions)
+        mItIsUnderstandTextView = rootView.findViewById(R.id.btn_it_is_understand_text)
+
+        mPracticeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mItIsUnderstandTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+
         mItIsUnderstandButton.setOnClickListener(mItIsUnderstandListener)
 
         return rootView

@@ -31,7 +31,9 @@ import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 import com.zerebrez.zerebrez.utils.NetworkUtil
+import kotlin.math.round
 
 /*
  * Created by Jorge Zepeda Tinoco on 28/04/18.
@@ -50,6 +52,10 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
      * UI accessors
      */
     private lateinit var mToolBar : Toolbar
+    private lateinit var mChooseSchoolTextView: TextView
+    private lateinit var mFirstOptionTextView: TextView
+    private lateinit var mSecondOptionTextView: TextView
+    private lateinit var mThirdOptionTextView: TextView
     private lateinit var mFirstSchoolContainer : View
     private lateinit var mSecondSchoolContainer : View
     private lateinit var mThirdSchoolContainer : View
@@ -61,7 +67,8 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private lateinit var mDropSecondSchool : ImageView
     private lateinit var mDropThirdSchool : ImageView
     private lateinit var mInstitutesSchoolList : ExpandableListView
-    private lateinit var mContinueButton : Button
+    private lateinit var mContinueButton : View
+    private lateinit var mContinueText : TextView
 
     /*
      * Adapters
@@ -101,6 +108,20 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
         mDropThirdSchool = findViewById(R.id.iv_cross_3)
         mInstitutesSchoolList = findViewById(R.id.lv_schools_list)
         mContinueButton = findViewById(R.id.btn_continue)
+        mContinueText= findViewById(R.id.text_continue)
+        mChooseSchoolTextView = findViewById(R.id.tv_choose_school_text)
+        mFirstOptionTextView = findViewById(R.id.tv_first_school)
+        mSecondOptionTextView = findViewById(R.id.tv_second_school)
+        mThirdOptionTextView = findViewById(R.id.tv_third_school)
+
+        mChooseSchoolTextView.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mFirstOptionTextView.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mSecondOptionTextView.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mThirdOptionTextView.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mFirstSchoolText.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mSecondSchoolText.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mThirdSchoolText.typeface = FontUtil.getNunitoSemiBold(baseContext)
+        mContinueText.typeface = FontUtil.getNunitoSemiBold(baseContext)
 
         mDropFirstSchool.setOnClickListener(mDropFirstSchoolListener)
         mDropSecondSchool.setOnClickListener(mDropSecondSchoolListener)
@@ -114,7 +135,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
         showContinueButton = intent.extras.getBoolean(SHOW_CONTINUE_BUTTON)
         if (showContinueButton) {
             // this is shown after signUp fragment
-            mContinueButton.setText(resources.getString(R.string.continue_text))
+            mContinueText.setText(resources.getString(R.string.continue_text))
 
         } else {
             val user = getUser()
@@ -136,7 +157,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                         }
                     }
                 }
-                mContinueButton.setText(resources.getString(R.string.ok_text))
+                mContinueText.setText(resources.getString(R.string.ok_text))
             }
         }
 

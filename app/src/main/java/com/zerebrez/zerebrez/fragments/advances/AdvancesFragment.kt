@@ -30,6 +30,7 @@ import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.
@@ -48,6 +49,10 @@ class AdvancesFragment : BaseContentFragment() {
     private lateinit var mMissesNumberTextView : TextView
     private lateinit var mNotExamsDidIt : TextView
     private lateinit var mNotAbleNow : TextView
+    private lateinit var mQuestionTextView: TextView
+    private lateinit var mAnsweredQuestionTextView: TextView
+    private lateinit var mExamsTextView: TextView
+    private lateinit var mAverageBySubjectTextView: TextView
 
     /*
      * adapters
@@ -69,6 +74,20 @@ class AdvancesFragment : BaseContentFragment() {
         mMissesNumberTextView = rootView.findViewById(R.id.tv_misses_number)
         mNotExamsDidIt = rootView.findViewById(R.id.tv_not_exams_currently)
         mNotAbleNow = rootView.findViewById(R.id.tv_not_able_now)
+        mQuestionTextView = rootView.findViewById(R.id.question_text)
+        mAnsweredQuestionTextView = rootView.findViewById(R.id.answered_questions_text)
+        mExamsTextView = rootView.findViewById(R.id.tv_exams)
+        mAverageBySubjectTextView = rootView.findViewById(R.id.tv_average_by_subject)
+
+        mQuestionTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mTotalQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mAnsweredQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mHitsNumberTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mMissesNumberTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mExamsTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mNotAbleNow.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mAverageBySubjectTextView.typeface = FontUtil.getNunitoBold(context!!)
+
 
         val user = getUser()
         if (user != null && context != null) {

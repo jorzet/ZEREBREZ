@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import com.zerebrez.zerebrez.R;
 import com.zerebrez.zerebrez.models.Institute;
 import com.zerebrez.zerebrez.models.School;
+import com.zerebrez.zerebrez.utils.FontUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
     private Canvas canvas;
     public Paint paint;
+    private Context mContext;
 
     private int width;
     private int height;
@@ -60,6 +62,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
     public SchoolAverageCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         paint = new Paint();
         paint.setTextAlign(Paint.Align.CENTER);
         mProgressBarWidth = (int) getResources().getDimension(R.dimen.average_progress_bar_widh);
@@ -181,6 +184,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         paint.setColor(textColor);
         paint.setTextSize(textSize);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(text, bounds.left, bounds.top - paint.ascent(), paint);
     }
 
@@ -209,6 +213,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         // draw text in center
         paint.setColor(textSchoolColor);
         paint.setTextSize(textSizeSchool);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
 
         /*
@@ -230,6 +235,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         // draw text in center
         paint.setColor(textHitsColor);
         paint.setTextSize(textHitsSize);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(hitsText, boundsHits.left, boundsHits.top - paint.ascent(), paint);
 
         /*
@@ -276,6 +282,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         // draw text in center
         paint.setColor(textUserHitsColor);
         paint.setTextSize(textUserHitsSize);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(userhitsText, boundsUserHits.left, boundsUserHits.top - paint.ascent(), paint);
 
         Rect secondLine = new Rect(xPos + mProgressBarWidth,

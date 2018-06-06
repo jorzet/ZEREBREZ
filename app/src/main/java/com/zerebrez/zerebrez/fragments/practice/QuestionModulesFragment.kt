@@ -31,10 +31,12 @@ import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import android.util.DisplayMetrics
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 26/04/18.
@@ -88,21 +90,12 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         if (modules == null) {
             requestModules()
         } else {
-            //val user = getUser()
 
-            //if (user != null && user.isPremiumUser()) {
-                updateModuleList(modules)
-                drawModules()
-           /* } else {
-                val freeModules = arrayListOf<Module>()
-                for (module in modules) {
-                    if (module.isFreeModule()) {
-                       freeModules.add(module)
-                    }
-                }
-                updateModuleList(freeModules)
-                drawModules()
-            }*/
+            requestModules()
+            resetValues()
+            updateModuleList(modules)
+            drawModules()
+
         }
 
         return rootView
@@ -118,21 +111,9 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         if (modules == null) {
             requestModules()
         } else {
-            val user = getUser()
-
-            //if (user != null && user.isPremiumUser()) {
-                updateModuleList(modules)
-                drawModules()
-            /*} else {
-                val freeModules = arrayListOf<Module>()
-                for (module in modules) {
-                    if (module.isFreeModule()) {
-                        freeModules.add(module)
-                    }
-                }
-                updateModuleList(freeModules)
-                drawModules()
-            }*/
+            resetValues()
+            updateModuleList(modules)
+            drawModules()
         }
     }
 
@@ -187,18 +168,6 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
 
     }
 
-    override fun onGetModulesSucces(result: List<Module>) {
-        super.onGetModulesSucces(result)
-        updateModuleList(result)
-        drawModules()
-    }
-
-    override fun onGetModulesFail(throwable: Throwable) {
-        super.onGetModulesFail(throwable)
-    }
-
-
-
     private fun drawModules() {
 
         var cnt : Int = 0
@@ -212,6 +181,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             val number = mModuleList.get(i).getId().toString()
 
             text.text = number
+            text.typeface = FontUtil.getNunitoSemiBold(context!!)
 
             // params for module
             val param = GridLayout.LayoutParams()
@@ -336,4 +306,162 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     override fun onConfirmationCancel() {
 
     }
+
+    /*
+     * Listeners that change UI when database is changed
+     */
+    override fun onGetModulesSucces(result: List<Module>) {
+        super.onGetModulesSucces(result)
+        requestGetUserData()
+    }
+
+    override fun onGetModulesFail(throwable: Throwable) {
+        super.onGetModulesFail(throwable)
+    }
+
+    override fun onGetUserDataSuccess(user: User) {
+        super.onGetUserDataSuccess(user)
+        val mUser = getUser()
+        if (mUser != null) {
+            val dataHelper = DataHelper(context!!)
+            val modules = dataHelper.getModulesAnsQuestions()
+            val exams = dataHelper.getExams()
+
+            mUser.setCourse(user.getCourse())
+            mUser.setPremiumUser(user.isPremiumUser())
+
+            if (user.getSelectedSchools().isNotEmpty()) {
+                mUser.setSelectedShools(user.getSelectedSchools())
+            }
+
+            if (user.getAnsweredModule().isNotEmpty()) {
+                for (i in 0 .. modules.size - 1) {
+                    for (module in user.getAnsweredModule()) {
+                        if (modules.get(i).getId().equals(module.getId())){
+                            modules.get(i).setAnsweredModule(true)
+                            modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
+                            modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
+                        }
+                    }
+                }
+            }
+
+            if (user.getAnsweredQuestion().isNotEmpty()) {
+                for (i in 0 .. modules.size - 1) {
+                    for (j in 0 .. modules.get(i).getQuestions().size - 1) {
+                        for (question2 in user.getAnsweredQuestion()) {
+                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
+                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
+                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
+                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (user.getAnsweredExams().isNotEmpty()) {
+                for (i in 0 .. exams.size - 1) {
+                    for (exam in user.getAnsweredExams()) {
+                        if (exams.get(i).getExamId().equals(exam.getExamId())) {
+                            exams.get(i).setAnsweredExam(true)
+                            exams.get(i).setMisses(exam.getMisses())
+                            exams.get(i).setHits(exam.getHits())
+                        }
+                    }
+                }
+            }
+
+            mUser.setSelectedShools(user.getSelectedSchools())
+
+            if (context != null) {
+                Log.d(TAG, "save modules")
+                dataHelper.saveModules(modules)
+                dataHelper.saveExams(exams)
+                saveUser(mUser)
+            }
+        } else {
+            val mUser2 = User()
+            if (context != null) {
+                val dataHelper = DataHelper(context!!)
+                val modules = dataHelper.getModulesAnsQuestions()
+                val exams = dataHelper.getExams()
+
+                mUser2.setEmail(user.getEmail())
+                mUser2.setPassword(user.getPassword())
+                mUser2.setCourse(user.getCourse())
+                mUser2.setPremiumUser(user.isPremiumUser())
+
+                if (user.getSelectedSchools().isNotEmpty()) {
+                    mUser2.setSelectedShools(user.getSelectedSchools())
+                }
+
+                if (user.getAnsweredModule().isNotEmpty()) {
+                    for (i in 0..modules.size - 1) {
+                        for (module in user.getAnsweredModule()) {
+                            if (modules.get(i).getId().equals(module.getId())) {
+                                modules.get(i).setAnsweredModule(true)
+                                modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
+                                modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
+                            }
+                        }
+                    }
+                }
+
+                if (user.getAnsweredQuestion().isNotEmpty()) {
+                    for (i in 0..modules.size - 1) {
+                        for (j in 0..modules.get(i).getQuestions().size - 1) {
+                            for (question2 in user.getAnsweredQuestion()) {
+                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
+                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
+                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
+                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (user.getAnsweredExams().isNotEmpty()) {
+                    for (i in 0 .. exams.size - 1) {
+                        for (exam in user.getAnsweredExams()) {
+                            if (exams.get(i).getExamId().equals(exam.getExamId())) {
+                                exams.get(i).setAnsweredExam(true)
+                                exams.get(i).setMisses(exam.getMisses())
+                                exams.get(i).setHits(exam.getHits())
+                            }
+                        }
+                    }
+                }
+
+                mUser2.setSelectedShools(user.getSelectedSchools())
+
+                if (context != null) {
+                    Log.d(TAG, "save modules")
+                    dataHelper.saveModules(modules)
+                    dataHelper.saveExams(exams)
+                    saveUser(mUser2)
+                }
+            }
+        }
+        requestCourses()
+    }
+
+    override fun onGetUserDataFail(throwable: Throwable) {
+        super.onGetUserDataFail(throwable)
+    }
+
+    override fun onGetCoursesSuccess(courses: List<String>) {
+        super.onGetCoursesSuccess(courses)
+        if (context != null) {
+            resetValues()
+            updateModuleList(DataHelper(context!!).getModulesAnsQuestions())
+            drawModules()
+        }
+    }
+
+    override fun onGetCoursesFail(throwable: Throwable) {
+        super.onGetCoursesFail(throwable)
+    }
+
 }

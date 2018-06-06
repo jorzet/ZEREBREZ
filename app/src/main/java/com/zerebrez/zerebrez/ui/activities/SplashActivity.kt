@@ -20,6 +20,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.login.LoginManager
@@ -49,7 +50,7 @@ class SplashActivity : BaseActivityLifeCycle() {
 
     /* UI accessors */
     private lateinit var mProgressBar : ProgressBar
-    private lateinit var mComipemsTextView : TextView
+    private lateinit var mComipemsImageView : ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +58,7 @@ class SplashActivity : BaseActivityLifeCycle() {
         setContentView(R.layout.activity_splash)
 
         mProgressBar = findViewById(R.id.pb_progressbar_init)
-        mComipemsTextView = findViewById(R.id.tv_comipems)
+        mComipemsImageView = findViewById(R.id.tv_comipems)
 
         initHandler()
     }
@@ -79,7 +80,7 @@ class SplashActivity : BaseActivityLifeCycle() {
 
     private fun showProgressBar() {
 
-        mComipemsTextView.setVisibility(View.GONE)
+        mComipemsImageView.setVisibility(View.GONE)
         mProgressBar.setVisibility(View.VISIBLE)
 
         Thread(Runnable {

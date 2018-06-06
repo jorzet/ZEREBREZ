@@ -37,7 +37,7 @@
         <RelativeLayout
             android:id="@+id/btn_it_is_understand"
             android:layout_width="160dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:layout_below="@+id/text_2"
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:text="E N T E N D I D O"
                 android:textColor="@color/white"
                 android:textSize="18sp"/>

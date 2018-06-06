@@ -25,6 +25,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -38,6 +39,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
      */
     private lateinit var schoolAverageCanvas : SchoolAverageCanvas
     private lateinit var mNot128ExmanQuestionDitIt : TextView
+    private lateinit var mComipemsYearTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -46,8 +48,12 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.school_average_fragment, container, false)!!
 
-        schoolAverageCanvas = rootView.findViewById(R.id.school_average)
+        mComipemsYearTextView = rootView.findViewById(R.id.tv_comipems_year)
         mNot128ExmanQuestionDitIt = rootView.findViewById(R.id.tv_not_128_exams_questions_currently)
+        schoolAverageCanvas = rootView.findViewById(R.id.school_average)
+
+        mComipemsYearTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mNot128ExmanQuestionDitIt.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         val dataHelper = DataHelper(context!!)
         val institutes = dataHelper.getInstitutes()

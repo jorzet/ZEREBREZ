@@ -73,8 +73,8 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     private lateinit var mEmailEditText : EditText
     private lateinit var mPasswordEditText : EditText
-    private lateinit var mSigninButton : Button
-    private lateinit var mSigninFacebookButton : Button
+    private lateinit var mSigninButton : View
+    private lateinit var mSigninFacebookButton : View
     private lateinit var mSigninGoogleButton : View
     private lateinit var mLogInView : View
     private lateinit var mLoginAnotherProvidersView : View
@@ -110,7 +110,10 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mHitsNumberText = rootView.findViewById(R.id.hits_text)
         mMissesNumberText = rootView.findViewById(R.id.misses_text)
         mSignupMessageText = rootView.findViewById(R.id.signup_message)
-        mLoginWithText = rootView.findViewWithTag(R.id.tv_login_with)
+        mLoginWithText = rootView.findViewById(R.id.tv_login_with)
+
+        mHitsNumberText.text = (activity as LoginActivity).getHits().toString()
+        mMissesNumberText.text = (activity as LoginActivity).getMisses().toString()
 
         mModuleNumberText.setTypeface(FontUtil.getNunitoSemiBold(context!!))
         mSignupMessageText.setTypeface(FontUtil.getNunitoRegular(context!!))

@@ -19,7 +19,7 @@
     </style>
 
     <style name="CustomTabTextSize" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">9sp</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
 </resources>

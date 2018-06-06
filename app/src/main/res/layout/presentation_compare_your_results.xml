@@ -43,19 +43,20 @@
     <RelativeLayout
         android:id="@+id/btn_it_is_understand"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/rl_content_text"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/it_is_understood_button_background">
         <TextView
+            android:id="@+id/btn_it_is_understand_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="3dp"
             android:gravity="center"
             android:text="@string/it_is_understood"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textColor="@color/white"/>
     </RelativeLayout>
 

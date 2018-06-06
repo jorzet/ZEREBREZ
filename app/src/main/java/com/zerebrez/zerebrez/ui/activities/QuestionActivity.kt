@@ -52,6 +52,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private val FROM_WRONG_QUESTION : String = "from_wrong_question"
     private val FROM_EXAM_FRAGMENT : String = "from_exam_fragment"
     private val SHOW_START : String = "show_start"
+    private val HITS_EXTRA = "hits_extra"
+    private val MISSES_EXTRA = "misses_extra"
 
     /*
      * UI accessors
@@ -474,6 +476,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private fun goLogInActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra(SHOW_START, false)
+        intent.putExtra(HITS_EXTRA, getCorrectQuestions())
+        intent.putExtra(MISSES_EXTRA, getIncorrectQuestion())
         this.startActivity(intent)
         this.finish()
     }

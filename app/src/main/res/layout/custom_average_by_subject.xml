@@ -9,13 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="80dp">
 
-        <ImageView
-            android:id="@+id/iv_average_by_subject"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true" />
+        <RelativeLayout
+            android:id="@+id/rl_image_by_subject_container"
+            android:layout_width="60dp"
+            android:layout_height="60dp">
+            <ImageView
+                android:id="@+id/iv_average_by_subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true" />
+        </RelativeLayout>
+
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -24,13 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_average_by_subject"
             android:layout_toStartOf="@+id/tv_average_by_subject"
-            android:layout_toRightOf="@+id/iv_average_by_subject"
-            android:layout_toEndOf="@+id/iv_average_by_subject"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_toEndOf="@+id/rl_image_by_subject_container"
             android:layout_marginEnd="20dp"
             android:progressDrawable="@drawable/custom_progress"/>
 
@@ -40,7 +41,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:text="9.3"
             android:textColor="@color/score_hits_text_color"
             android:textSize="30sp"/>

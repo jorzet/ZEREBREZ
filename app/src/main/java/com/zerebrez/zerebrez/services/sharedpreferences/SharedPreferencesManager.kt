@@ -310,8 +310,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isQuestionModuleFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(QUESTION_MODULE_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(QUESTION_MODULE_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setStudySubjectFragmentOK() {
@@ -321,8 +325,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isStudySubjectFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(STUDY_SUBJECT_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(STUDY_SUBJECT_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setStudyWrongQuestionFragmentOK() {
@@ -332,8 +340,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isStudyWrongQuestionFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(STUDY_WRONG_QUESTION_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(STUDY_WRONG_QUESTION_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setExamFragmentOK() {
@@ -343,8 +355,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isExamFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(EXAM_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(EXAM_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setAdvancesFragmentOK() {
@@ -354,8 +370,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isAdvancesfragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(ADVANCES_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(ADVANCES_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setSchoolAverageFragmentOK() {
@@ -365,8 +385,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isSchoolAverageFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(SCHOOL_AVERAGE_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(SCHOOL_AVERAGE_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setExamsAverageFragmentOK() {
@@ -376,8 +400,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isExamsAverageFragmentOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(EXAMS_AVERAGE_FRAGMENT, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(EXAMS_AVERAGE_FRAGMENT, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun setShowAnswerMessageOK() {
@@ -387,8 +415,12 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun isShowAnswerMessageOK() : Boolean {
-        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(SHOW_ANSWER_MESSAGE, false)
+        try {
+            val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(SHOW_ANSWER_MESSAGE, false)
+        } catch (exception : Exception) {
+            return false
+        }
     }
 
     fun saveGoogleToken(token : String) {
