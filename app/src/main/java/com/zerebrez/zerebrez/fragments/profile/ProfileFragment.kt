@@ -57,6 +57,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
@@ -117,7 +118,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     /*
      * Objects
      */
-    private var mSchools = arrayListOf<School>()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -189,23 +190,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mAllowNotificationsSwitch.setChecked(dataHelper.getReminderStatus());
         mTimeNotification.text = dataHelper.getNotificationTime()
 
+
+        requestGetProfileRefactor()
+
         checkProviders()
-        checkEmailAndPassword()
         checkMobileDataSate()
-
-        val user = getUser()
-        if (user != null) {
-            val mSchools = user.getSelectedSchools()
-
-            if (mSchools.isNotEmpty()) {
-                mSchoolsListAdapter = SchoolListAdapter(mSchools, context!!)
-                mSelectedSchoolsList.adapter = mSchoolsListAdapter
-                mEditSchoolsButton.visibility = View.VISIBLE
-            } else {
-                mSelectedSchoolsList.visibility = View.GONE
-                mNotSelectedSchools.visibility = View.VISIBLE
-            }
-        }
 
         return rootView
     }
@@ -243,20 +232,9 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onResume() {
         super.onResume()
 
-        val user = getUser()
-        if (user != null) {
-            val mSchools = user.getSelectedSchools()
+        requestGetProfileRefactor()
 
-            if (mSchools.isNotEmpty()) {
-                mSchoolsListAdapter = SchoolListAdapter(mSchools, context!!)
-                mSelectedSchoolsList.adapter = mSchoolsListAdapter
-            } else {
-                mSelectedSchoolsList.visibility = View.GONE
-                mNotSelectedSchools.visibility = View.VISIBLE
-            }
-        }
         checkProviders()
-        checkEmailAndPassword()
         checkMobileDataSate()
     }
 
@@ -510,40 +488,6 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
     }
 
-    private fun checkEmailAndPassword() {
-        val userFirebase = FirebaseAuth.getInstance().currentUser
-        val userCache = getUser()
-        if (userFirebase != null && userCache != null) {
-            val course = userCache.getCourse()
-            if (!course.equals("")) {
-                mCourse.text = course.toUpperCase()
-            }
-
-            val email = userCache.getEmail()
-            if (!email.equals("")) {
-                mEmail.setText(email)
-            } else {
-                mEmail.setText(userFirebase.getEmail())
-                userCache.setEmail(userFirebase.getEmail()!!)
-            }
-
-            val pass = userCache.getPassword()
-            if (!pass.equals("")) {
-                var password = ""
-                for (i in 0..pass.length) {
-                    password = password + "*"
-                }
-                mPassword.setText(password)
-            } else {
-                var password = ""
-                for (i in 0 .. 8) {
-                    password = password + "*"
-                }
-                mPassword.setText(password)
-            }
-        }
-    }
-
     private fun checkMobileDataSate() {
         if (NetworkUtil.isMobileNetworkConnected(context!!)) {
             mAllowMobileDataSwitch.isChecked = true
@@ -672,6 +616,56 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 }
             }
         })
+    }
+
+
+    override fun onGetProfileRefactorSuccess(user: User) {
+        super.onGetProfileRefactorSuccess(user)
+
+        val mSchools = user.getSelectedSchools()
+
+        requestGetUserSchools(mSchools)
+
+        val course = user.getCourse()
+        if (!course.equals("")) {
+            mCourse.text = course.toUpperCase()
+        }
+
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        if (userFirebase != null) {
+            mEmail.setText(userFirebase.getEmail())
+        }
+
+        var password = ""
+        for (i in 0 .. 8) {
+            password = password + "*"
+        }
+        mPassword.setText(password)
+
+    }
+
+    override fun onGetProfileRefactorFail(throwable: Throwable) {
+        super.onGetProfileRefactorFail(throwable)
+    }
+
+    override fun onGetUserSchoolsSuccess(schools: List<School>) {
+        super.onGetUserSchoolsSuccess(schools)
+        if (schools.isNotEmpty()) {
+            mSchoolsListAdapter = SchoolListAdapter(schools, context!!)
+            mSelectedSchoolsList.adapter = mSchoolsListAdapter
+            mEditSchoolsButton.visibility = View.VISIBLE
+        } else {
+            mEditSchoolsButton.visibility = View.GONE
+            mSelectedSchoolsList.visibility = View.GONE
+            mNotSelectedSchools.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onGetUserSchoolsFail(throwable: Throwable) {
+        super.onGetUserSchoolsFail(throwable)
+        mEditSchoolsButton.visibility = View.GONE
+        mSelectedSchoolsList.visibility = View.GONE
+        mNotSelectedSchools.visibility = View.VISIBLE
     }
 
 

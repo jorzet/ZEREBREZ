@@ -309,4 +309,144 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onGetExamScoresFail(throwable: Throwable) {
     }
+
+
+
+
+    /*
+    ********************************** FIREBASE REQUEST REFACTOR ***********************************
+     */
+
+    fun requestGetFreeModulesRefactor() {
+        mRequestManager.requestGetFreeModulesRefactor(object : RequestManager.OnGetFreeModulesRefactorListener {
+            override fun onGetFreeModulesRefactorLoaded(freeModules: List<Module>) {
+                onGetFreeModulesRefactorSuccess(freeModules)
+            }
+
+            override fun onGetFreeModulesRefactorError(throwable: Throwable) {
+               onGetFreeModulesRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetModulesRefactor() {
+        mRequestManager.requestGetModulesRefactor(object : RequestManager.OnGetModulesRefactorListener {
+            override fun onGetModulesRefactorLoaded(modules: List<Module>) {
+                onGetModulesRefactorSuccess(modules)
+            }
+
+            override fun onGetModulesRefactorError(throwable: Throwable) {
+                onGetModulesRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetAnsweredModulesAndProfileRefactor() {
+        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
+            override fun onGetAnsweredModulesAndProfileRefactorLoaded(user: User) {
+                onGetAnsweredModulesAndProfileRefactorSuccess(user)
+            }
+
+            override fun onGetAnsweredModulesAndProfileRefactorError(throwable: Throwable) {
+                onGetAnsweredModulesAndProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetFreeModulesRefactorSuccess(freeModules : List<Module>) {}
+    open fun onGetFreeModulesRefactorFail(throwable: Throwable) {}
+    open fun onGetModulesRefactorSuccess(modules : List<Module>) {}
+    open fun onGetModulesRefactorFail(throwable: Throwable) {}
+    open fun onGetAnsweredModulesAndProfileRefactorSuccess(user : User) {}
+    open fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {}
+
+    fun requestGetWrongQuestionsAndProfileRefactor() {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(object : RequestManager.OnGetWrongQuestionAndProfileListener {
+            override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
+                onGetWrongQuestionsAndProfileRefactorSuccess(user)
+            }
+
+            override fun onGetWrongQuestionsAndProfileError(throwable: Throwable) {
+                onGetWrongQuestionsAndProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetWrongQuestionsAndProfileRefactorSuccess(user : User) {}
+    open fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {}
+
+
+
+    fun requestGetFreeExamsRefactor() {
+        mRequestManager.requestGetFreeExamsRefactor(object : RequestManager.OnGetFreeExamsRefactorListener {
+            override fun onGetFreeExamsRefactorLoaded(freeExams: List<Exam>) {
+                onGetFreeExamsRefactorSuccess(freeExams)
+            }
+            override fun onGetFreeExamsRefactorError(throwable: Throwable) {
+                onGetFreeExamsRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetExamsRefactor() {
+        mRequestManager.requestGetExamsRefactor(object : RequestManager.OnGetExamsRefactorListener {
+            override fun onGetExamsRefactorLoaded(exams: List<Exam>) {
+                onGetExamsRefactorSuccess(exams)
+            }
+
+            override fun onGetExamsRefactorError(throwable: Throwable) {
+                onGetExamsRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetAnsweredExamsAndProfileRefactor() {
+        mRequestManager.requestGetAnsweredExamsAndProfileRefactor(object : RequestManager.OnGetAnsweredExamsAndProfileRefactorListener {
+            override fun onGetAnsweredExamsAndProfileRefactorLoaded(user: User) {
+                onGetAnsweredExamsAndProfileRefactorSuccess(user)
+            }
+
+            override fun onGetAnsweredExamsAndProfileRefactorError(throwable: Throwable) {
+                onGetAnsweredExamsAndProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+
+    open fun onGetFreeExamsRefactorSuccess(freeExams : List<Exam>) {}
+    open fun onGetFreeExamsRefactorFail(throwable: Throwable) {}
+    open fun onGetExamsRefactorSuccess(exams : List<Exam>) {}
+    open fun onGetExamsRefactorFail(throwable: Throwable) {}
+    open fun onGetAnsweredExamsAndProfileRefactorSuccess(user : User) {}
+    open fun onGetAnsweredExamsAndProfileRefactorFail(throwable: Throwable) {}
+
+
+    fun requestGetProfileRefactor() {
+        mRequestManager.requestGetProfileRefactor(object : RequestManager.OnGetProfileRefactorListener {
+            override fun onGetProfileRefactorLoaded(user: User) {
+                onGetProfileRefactorSuccess(user)
+            }
+
+            override fun onGetProfileRefactorError(throwable: Throwable) {
+                onGetProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetUserSchools(schools: List<School>) {
+        mRequestManager.requestGetUserSchools(schools, object : RequestManager.OnGetUserSchoolsListener {
+            override fun onGetUserSchoolsLoaded(schools: List<School>) {
+                onGetUserSchoolsSuccess(schools)
+            }
+
+            override fun onGetUserSchoolsError(throwable: Throwable) {
+                onGetUserSchoolsFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetProfileRefactorSuccess(user: User) {}
+    open fun onGetProfileRefactorFail(throwable: Throwable) {}
+    open fun onGetUserSchoolsSuccess(schools : List<School>) {}
+    open fun onGetUserSchoolsFail(throwable: Throwable) {}
 }

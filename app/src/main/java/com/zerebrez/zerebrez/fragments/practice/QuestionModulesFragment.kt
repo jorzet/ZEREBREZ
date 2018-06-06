@@ -71,6 +71,8 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
      */
     private var mTotalModules : Int = 0
     private var mModuleList = arrayListOf<Module>()
+    private var mUpdatedModules : List<Module> = arrayListOf()
+    private lateinit var mUser : User
 
 
 
@@ -85,36 +87,14 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         mCenterTableLayout = rootView.findViewById(R.id.table_center)
         mRightTableLayout = rootView.findViewById(R.id.table_right)
 
-        mDataHelper = DataHelper(context!!)
-        val modules = mDataHelper.getModulesAnsQuestions()
-        if (modules == null) {
-            requestModules()
-        } else {
-
-            requestModules()
-            resetValues()
-            updateModuleList(modules)
-            drawModules()
-
-        }
+        requestGetModulesRefactor()
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-
-        resetValues()
-
-        mDataHelper = DataHelper(context!!)
-        val modules = mDataHelper.getModulesAnsQuestions()
-        if (modules == null) {
-            requestModules()
-        } else {
-            resetValues()
-            updateModuleList(modules)
-            drawModules()
-        }
+        requestGetModulesRefactor()
     }
 
     /*
@@ -171,7 +151,6 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     private fun drawModules() {
 
         var cnt : Int = 0
-        val user = getUser()
 
         for (i in 0 .. mModuleList.size - 1) {
 
@@ -217,7 +196,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.setGravity(Gravity.CENTER)
             } else {
                 val module = mModuleList.get(i)
-                if (!module.isFreeModule() && !user!!.isPremiumUser()) {
+                if (!module.isFreeModule() && !mUser!!.isPremiumUser()) {
                     view.background = resources.getDrawable(R.drawable.not_premium_module_background)
                 } else if (module.isAnsweredModule()) {
                     view.background = resources.getDrawable(R.drawable.checked_module_background)
@@ -233,7 +212,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
                 view.setOnClickListener(View.OnClickListener {
-                    if (user!!.isPremiumUser() || module.isFreeModule()) {
+                    if (mUser!!.isPremiumUser() || module.isFreeModule()) {
                         val textView: TextView = view.findViewById(R.id.text)
                         val text: String = textView.text.toString()
                         Log.d(TAG, "onClick: number --- " + number)
@@ -308,160 +287,61 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     }
 
     /*
-     * Listeners that change UI when database is changed
+     * Firebase listeners
      */
-    override fun onGetModulesSucces(result: List<Module>) {
-        super.onGetModulesSucces(result)
-        requestGetUserData()
+    override fun onGetModulesRefactorSuccess(modules: List<Module>) {
+        super.onGetModulesRefactorSuccess(modules)
+        mUpdatedModules = modules
+        requestGetFreeModulesRefactor()
     }
 
-    override fun onGetModulesFail(throwable: Throwable) {
-        super.onGetModulesFail(throwable)
+    override fun onGetModulesRefactorFail(throwable: Throwable) {
+        super.onGetModulesRefactorFail(throwable)
+
     }
 
-    override fun onGetUserDataSuccess(user: User) {
-        super.onGetUserDataSuccess(user)
-        val mUser = getUser()
-        if (mUser != null) {
-            val dataHelper = DataHelper(context!!)
-            val modules = dataHelper.getModulesAnsQuestions()
-            val exams = dataHelper.getExams()
+    override fun onGetFreeModulesRefactorSuccess(freeModules: List<Module>) {
+        super.onGetFreeModulesRefactorSuccess(freeModules)
 
-            mUser.setCourse(user.getCourse())
-            mUser.setPremiumUser(user.isPremiumUser())
-
-            if (user.getSelectedSchools().isNotEmpty()) {
-                mUser.setSelectedShools(user.getSelectedSchools())
-            }
-
-            if (user.getAnsweredModule().isNotEmpty()) {
-                for (i in 0 .. modules.size - 1) {
-                    for (module in user.getAnsweredModule()) {
-                        if (modules.get(i).getId().equals(module.getId())){
-                            modules.get(i).setAnsweredModule(true)
-                            modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
-                            modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
-                        }
-                    }
-                }
-            }
-
-            if (user.getAnsweredQuestion().isNotEmpty()) {
-                for (i in 0 .. modules.size - 1) {
-                    for (j in 0 .. modules.get(i).getQuestions().size - 1) {
-                        for (question2 in user.getAnsweredQuestion()) {
-                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (user.getAnsweredExams().isNotEmpty()) {
-                for (i in 0 .. exams.size - 1) {
-                    for (exam in user.getAnsweredExams()) {
-                        if (exams.get(i).getExamId().equals(exam.getExamId())) {
-                            exams.get(i).setAnsweredExam(true)
-                            exams.get(i).setMisses(exam.getMisses())
-                            exams.get(i).setHits(exam.getHits())
-                        }
-                    }
-                }
-            }
-
-            mUser.setSelectedShools(user.getSelectedSchools())
-
-            if (context != null) {
-                Log.d(TAG, "save modules")
-                dataHelper.saveModules(modules)
-                dataHelper.saveExams(exams)
-                saveUser(mUser)
-            }
-        } else {
-            val mUser2 = User()
-            if (context != null) {
-                val dataHelper = DataHelper(context!!)
-                val modules = dataHelper.getModulesAnsQuestions()
-                val exams = dataHelper.getExams()
-
-                mUser2.setEmail(user.getEmail())
-                mUser2.setPassword(user.getPassword())
-                mUser2.setCourse(user.getCourse())
-                mUser2.setPremiumUser(user.isPremiumUser())
-
-                if (user.getSelectedSchools().isNotEmpty()) {
-                    mUser2.setSelectedShools(user.getSelectedSchools())
-                }
-
-                if (user.getAnsweredModule().isNotEmpty()) {
-                    for (i in 0..modules.size - 1) {
-                        for (module in user.getAnsweredModule()) {
-                            if (modules.get(i).getId().equals(module.getId())) {
-                                modules.get(i).setAnsweredModule(true)
-                                modules.get(i).setCorrectQuestions(module.getCorrectQuestions())
-                                modules.get(i).setIncorrectQuestions(module.getIncorrectQuestions())
-                            }
-                        }
-                    }
-                }
-
-                if (user.getAnsweredQuestion().isNotEmpty()) {
-                    for (i in 0..modules.size - 1) {
-                        for (j in 0..modules.get(i).getQuestions().size - 1) {
-                            for (question2 in user.getAnsweredQuestion()) {
-                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (user.getAnsweredExams().isNotEmpty()) {
-                    for (i in 0 .. exams.size - 1) {
-                        for (exam in user.getAnsweredExams()) {
-                            if (exams.get(i).getExamId().equals(exam.getExamId())) {
-                                exams.get(i).setAnsweredExam(true)
-                                exams.get(i).setMisses(exam.getMisses())
-                                exams.get(i).setHits(exam.getHits())
-                            }
-                        }
-                    }
-                }
-
-                mUser2.setSelectedShools(user.getSelectedSchools())
-
-                if (context != null) {
-                    Log.d(TAG, "save modules")
-                    dataHelper.saveModules(modules)
-                    dataHelper.saveExams(exams)
-                    saveUser(mUser2)
+        for (i in 0 .. mUpdatedModules.size - 1) {
+            for (freeModule in freeModules) {
+                if (mUpdatedModules.get(i).getId().equals(freeModule.getId())) {
+                    mUpdatedModules.get(i).setFreeModule(true)
                 }
             }
         }
-        requestCourses()
+        requestGetAnsweredModulesAndProfileRefactor()
     }
 
-    override fun onGetUserDataFail(throwable: Throwable) {
-        super.onGetUserDataFail(throwable)
+    override fun onGetFreeModulesRefactorFail(throwable: Throwable) {
+        super.onGetFreeModulesRefactorFail(throwable)
     }
 
-    override fun onGetCoursesSuccess(courses: List<String>) {
-        super.onGetCoursesSuccess(courses)
-        if (context != null) {
+    override fun onGetAnsweredModulesAndProfileRefactorSuccess(user: User) {
+        super.onGetAnsweredModulesAndProfileRefactorSuccess(user)
+
+        mUser = user
+        val answeredModules = user.getAnsweredModule()
+
+        for (i in 0 .. mUpdatedModules.size - 1) {
+            for (answeredModule in answeredModules) {
+                if (mUpdatedModules.get(i).getId().equals(answeredModule.getId())) {
+                    mUpdatedModules.get(i).setAnsweredModule(true)
+                }
+            }
+        }
+
+        if (context != null && mUpdatedModules.isNotEmpty()) {
             resetValues()
-            updateModuleList(DataHelper(context!!).getModulesAnsQuestions())
+            updateModuleList(mUpdatedModules)
             drawModules()
         }
     }
 
-    override fun onGetCoursesFail(throwable: Throwable) {
-        super.onGetCoursesFail(throwable)
+    override fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetAnsweredModulesAndProfileRefactorFail(throwable)
     }
+
+
 
 }

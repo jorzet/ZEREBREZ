@@ -29,6 +29,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
@@ -73,6 +74,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
      * Objects
      */
     private var mQuestionList = arrayListOf<Question>()
+    private var mUpdatedQuestions = arrayListOf<Question>()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -87,30 +90,21 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetWrongQuestionsAndProfileRefactor()
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetWrongQuestionsAndProfileRefactor()
+    }
+
+    private fun resetValues() {
+        mQuestionList = arrayListOf<Question>()
+        mLeftTableLayout.removeAllViews()
+        mCenterTableLayout.removeAllViews()
+        mRightTableLayout.removeAllViews()
     }
 
     private fun updateQuestionList(questions : List<Question>) {
@@ -293,5 +287,27 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
+        super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
+
+        mUser = user
+        val answeredQuestion = user.getAnsweredQuestion()
+
+        for (i in 0 .. answeredQuestion.size - 1) {
+            if (!answeredQuestion.get(i).getWasOK()) {
+                mUpdatedQuestions.add(answeredQuestion.get(i))
+            }
+        }
+
+        resetValues()
+        updateQuestionList(mUpdatedQuestions)
+        drawQuestions()
+
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
     }
 }
