@@ -29,6 +29,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
@@ -87,30 +88,21 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetUserData()
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetUserData()
+    }
+
+    fun resetValues() {
+        mQuestionList = arrayListOf<Question>()
+        mLeftTableLayout.removeAllViews()
+        mCenterTableLayout.removeAllViews()
+        mRightTableLayout.removeAllViews()
     }
 
     private fun updateQuestionList(questions : List<Question>) {
@@ -293,5 +285,98 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
+    }
+
+    override fun onGetUserDataSuccess(user: User) {
+        super.onGetUserDataSuccess(user)
+        val mUser = getUser()
+        if (mUser != null) {
+            val dataHelper = DataHelper(context!!)
+            val modules = dataHelper.getModulesAnsQuestions()
+            val exams = dataHelper.getExams()
+
+            mUser.setCourse(user.getCourse())
+            mUser.setPremiumUser(user.isPremiumUser())
+
+            if (user.getSelectedSchools().isNotEmpty()) {
+                mUser.setSelectedShools(user.getSelectedSchools())
+            }
+
+            if (user.getAnsweredQuestion().isNotEmpty()) {
+                for (i in 0..modules.size - 1) {
+                    for (j in 0..modules.get(i).getQuestions().size - 1) {
+                        for (question2 in user.getAnsweredQuestion()) {
+                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
+                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
+                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
+                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                            }
+                        }
+                    }
+                }
+            }
+
+            mUser.setSelectedShools(user.getSelectedSchools())
+
+            if (context != null) {
+                Log.d(TAG, "save modules")
+                dataHelper.saveModules(modules)
+                //dataHelper.saveExams(exams)
+                saveUser(mUser)
+                resetValues()
+                updateQuestionList(DataHelper(context!!).getWrongQuestions())
+                drawQuestions()
+            } else {
+                mMainContainer.visibility = View.GONE
+                mNotWrongQuestionsCurrently.visibility = View.VISIBLE
+            }
+        } else {
+            val mUser2 = User()
+            if (context != null) {
+                val dataHelper = DataHelper(context!!)
+                val modules = dataHelper.getModulesAnsQuestions()
+                val exams = dataHelper.getExams()
+
+                mUser2.setEmail(user.getEmail())
+                mUser2.setPassword(user.getPassword())
+                mUser2.setCourse(user.getCourse())
+                mUser2.setPremiumUser(user.isPremiumUser())
+
+                if (user.getSelectedSchools().isNotEmpty()) {
+                    mUser2.setSelectedShools(user.getSelectedSchools())
+                }
+
+                if (user.getAnsweredQuestion().isNotEmpty()) {
+                    for (i in 0..modules.size - 1) {
+                        for (j in 0..modules.get(i).getQuestions().size - 1) {
+                            for (question2 in user.getAnsweredQuestion()) {
+                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
+                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
+                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
+                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (context != null) {
+                    Log.d(TAG, "save modules")
+                    dataHelper.saveModules(modules)
+                    //dataHelper.saveExams(exams)
+                    saveUser(mUser2)
+                    resetValues()
+                    updateQuestionList(DataHelper(context!!).getWrongQuestions())
+                    drawQuestions()
+                } else {
+                    mMainContainer.visibility = View.GONE
+                    mNotWrongQuestionsCurrently.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    override fun onGetUserDataFail(throwable: Throwable) {
+        super.onGetUserDataFail(throwable)
     }
 }

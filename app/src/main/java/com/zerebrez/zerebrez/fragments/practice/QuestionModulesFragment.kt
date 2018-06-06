@@ -111,7 +111,6 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         if (modules == null) {
             requestModules()
         } else {
-            resetValues()
             updateModuleList(modules)
             drawModules()
         }
@@ -346,7 +345,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 }
             }
 
-            if (user.getAnsweredQuestion().isNotEmpty()) {
+            /*if (user.getAnsweredQuestion().isNotEmpty()) {
                 for (i in 0 .. modules.size - 1) {
                     for (j in 0 .. modules.get(i).getQuestions().size - 1) {
                         for (question2 in user.getAnsweredQuestion()) {
@@ -370,14 +369,14 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                         }
                     }
                 }
-            }
+            }*/
 
             mUser.setSelectedShools(user.getSelectedSchools())
 
             if (context != null) {
                 Log.d(TAG, "save modules")
                 dataHelper.saveModules(modules)
-                dataHelper.saveExams(exams)
+                //dataHelper.saveExams(exams)
                 saveUser(mUser)
             }
         } else {
@@ -408,7 +407,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                     }
                 }
 
-                if (user.getAnsweredQuestion().isNotEmpty()) {
+                /*if (user.getAnsweredQuestion().isNotEmpty()) {
                     for (i in 0..modules.size - 1) {
                         for (j in 0..modules.get(i).getQuestions().size - 1) {
                             for (question2 in user.getAnsweredQuestion()) {
@@ -420,9 +419,9 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                             }
                         }
                     }
-                }
+                }*/
 
-                if (user.getAnsweredExams().isNotEmpty()) {
+                /*if (user.getAnsweredExams().isNotEmpty()) {
                     for (i in 0 .. exams.size - 1) {
                         for (exam in user.getAnsweredExams()) {
                             if (exams.get(i).getExamId().equals(exam.getExamId())) {
@@ -434,12 +433,12 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                     }
                 }
 
-                mUser2.setSelectedShools(user.getSelectedSchools())
+                mUser2.setSelectedShools(user.getSelectedSchools())*/
 
                 if (context != null) {
                     Log.d(TAG, "save modules")
                     dataHelper.saveModules(modules)
-                    dataHelper.saveExams(exams)
+                    //dataHelper.saveExams(exams)
                     saveUser(mUser2)
                 }
             }
