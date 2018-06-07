@@ -412,7 +412,6 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-
     open fun onGetFreeExamsRefactorSuccess(freeExams : List<Exam>) {}
     open fun onGetFreeExamsRefactorFail(throwable: Throwable) {}
     open fun onGetExamsRefactorSuccess(exams : List<Exam>) {}
@@ -464,4 +463,48 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {}
     open fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {}
+
+    fun requestGetExamScoreRefactor() {
+        mRequestManager.requestGetExamScoreRefactor(object : RequestManager.OnGetExamScoreRefactorListener {
+            override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScore>) {
+                onGetExamScoreRefactorSuccess(examScores)
+            }
+
+            override fun onGetExamScoreRefactorError(throwable: Throwable) {
+                onGetExamScoreRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetAnsweredExamsRefactor() {
+        mRequestManager.requestAnsweredExamsRefactor(object : RequestManager.OnGetAnsweredExamsRefactorListener {
+            override fun onGetAnsweredExamsRefactorLoaded(user: User) {
+                onGetAnsweredExamsRefactorSuccess(user)
+            }
+
+            override fun onGetAnsweredExamsRefactorError(throwable: Throwable) {
+                onGetAnsweredExamsRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetExamScoreRefactorSuccess(examScores: List<ExamScore>) {}
+    open fun onGetExamScoreRefactorFail(throwable: Throwable) {}
+    open fun onGetAnsweredExamsRefactorSuccess(user: User) {}
+    open fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {}
+
+    fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
+            override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
+                onGetQuestionsByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
 }

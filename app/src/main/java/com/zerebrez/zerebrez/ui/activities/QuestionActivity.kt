@@ -138,16 +138,13 @@ class QuestionActivity : BaseActivityLifeCycle() {
                 mQuestiontypeText.text =  mQuestions.get(mCurrentQuestion).getSubjectType().value
             }
         } else if (isFromExamFragment) {
-            mQuestions = DataHelper(baseContext).getQuestionsByExamId(Integer(mExamId))
-            mModuleNumber.text = mExamId.toString()
-            mQuestiontypeText.text = "Examen"
+            requestGetQuestionsByExamIdRefactor(mExamId)
         } else {
-            mQuestions = DataHelper(baseContext).getQuestionsByModuleId(Integer(mModuleId))
-            mModuleNumber.text = mModuleId.toString()
-            mQuestiontypeText.text = "Módulo"
+            requestGetQuestionsByModuleIdRefactor(mModuleId)
+
         }
 
-        showQuestion()
+        //showQuestion()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -480,5 +477,30 @@ class QuestionActivity : BaseActivityLifeCycle() {
         intent.putExtra(MISSES_EXTRA, getIncorrectQuestion())
         this.startActivity(intent)
         this.finish()
+    }
+
+    override fun onGetQuestionsByModuleIdRefactorSuccess(questions: List<Question>) {
+        super.onGetQuestionsByModuleIdRefactorSuccess(questions)
+        mQuestions = questions
+        mModuleNumber.text = mModuleId.toString()
+        mQuestiontypeText.text = "Módulo"
+        showQuestion()
+    }
+
+    override fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {
+        super.onGetQuestionsByModuleIdRefactorFail(throwable)
+        onBackPressed()
+    }
+
+    override fun onGetQuestionsByExamIdRefactorSuccess(questions: List<Question>) {
+        super.onGetQuestionsByExamIdRefactorSuccess(questions)
+        mQuestions = questions
+        mModuleNumber.text = mExamId.toString()
+        mQuestiontypeText.text = "Examen"
+    }
+
+    override fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {
+        super.onGetQuestionsByExamIdRefactorFail(throwable)
+        onBackPressed()
     }
 }

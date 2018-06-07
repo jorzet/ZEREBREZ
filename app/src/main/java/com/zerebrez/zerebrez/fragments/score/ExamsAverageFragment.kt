@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamAverageListAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.ExamScore
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -43,9 +44,14 @@ class ExamsAverageFragment : BaseContentFragment() {
     private lateinit var notExamsDidIt : TextView
 
     /*
-     * Objects
+     * Adapter
      */
     private lateinit var examsAverageListAdapter: ExamAverageListAdapterRefactor
+
+    /*
+     * Objects
+     */
+    private lateinit var mExams : List<ExamScore>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -59,15 +65,34 @@ class ExamsAverageFragment : BaseContentFragment() {
 
         notExamsDidIt.typeface = FontUtil.getNunitoSemiBold(context!!)
 
-        val dataHelper = DataHelper(context!!)
-        val examScores = dataHelper.getExamScores()
-        val exams = dataHelper.getExams()
+
+        requestGetExamScoreRefactor()
+
+        return rootView
+    }
+
+    override fun onGetExamScoreRefactorSuccess(examScores: List<ExamScore>) {
+        super.onGetExamScoreRefactorSuccess(examScores)
+
+        mExams = examScores
+
+        requestGetAnsweredExamsRefactor()
+    }
+
+    override fun onGetExamScoreRefactorFail(throwable: Throwable) {
+        super.onGetExamScoreRefactorFail(throwable)
+    }
+
+    override fun onGetAnsweredExamsRefactorSuccess(user: User) {
+        super.onGetAnsweredExamsRefactorSuccess(user)
+
+        val exams = user.getAnsweredExams()
         val mExamsDidIt = arrayListOf<ExamScore>()
-        for (examScore in examScores) {
+        for (examScore in mExams) {
             for (exam in exams) {
-                if (exam.getExamId() == examScore.getExamScoreId() && exam.isAnsweredExam()) {
+                if (exam.getExamId().equals(examScore.getExamScoreId())) {
                     examScore.setUserScore(Integer(exam.getHits()))
-                    examScore.setTotalNumberOfQuestion(Integer(exam.getQuestions().size))
+                    examScore.setTotalNumberOfQuestion(Integer(exam.getHits() + exam.getMisses()))
                     mExamsDidIt.add(examScore)
                 }
             }
@@ -80,7 +105,13 @@ class ExamsAverageFragment : BaseContentFragment() {
             examsAverageListAdapter = ExamAverageListAdapterRefactor(mExamsDidIt, context!!)
             examsAverageListView.adapter = examsAverageListAdapter
         }
-
-        return rootView
     }
+
+    override fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {
+        super.onGetAnsweredExamsRefactorFail(throwable)
+
+        examsAverageListView.visibility = View.GONE
+        notExamsDidIt.visibility = View.VISIBLE
+    }
+
 }

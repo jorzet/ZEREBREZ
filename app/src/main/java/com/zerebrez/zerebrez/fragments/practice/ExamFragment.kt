@@ -71,7 +71,6 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     /*
      * Objects
      */
-    private var updatedExams = arrayListOf<Exam>()
     private var mUpdatedExams : List<Exam> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -98,10 +97,10 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
 
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
         Log.d(TAG, "item clicked--- position: " + position)
-        if (updatedExams.isNotEmpty()) {
+        if (mUpdatedExams.isNotEmpty()) {
             val user = getUser()
-            if (user!!.isPremiumUser() || updatedExams.get(position).isFreeExam()) {
-                val examId = updatedExams.get(position).getExamId()
+            if (user!!.isPremiumUser() || mUpdatedExams.get(position).isFreeExam()) {
+                val examId = mUpdatedExams.get(position).getExamId()
                 goQuestionActivity(examId.toInt())
             } else {
                 ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",

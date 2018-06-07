@@ -336,4 +336,38 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     }
 
 
+    /*
+     ***********************
+     */
+
+
+
+    fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
+            override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
+                onGetQuestionsByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsByExamIdRefactor(examId : Int) {
+        mRequestManager.requestGetQuestionsByExamIdRefactor(examId, object : RequestManager.OnGetQuestionsByExamIdRefactorListener {
+            override fun onGetQuestionsByExamIdRefactorLoaded(questions: List<Question>) {
+                onGetQuestionsByExamIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsByExamIdRefactorError(throwable: Throwable) {
+                onGetQuestionsByExamIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsByExamIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {}
 }

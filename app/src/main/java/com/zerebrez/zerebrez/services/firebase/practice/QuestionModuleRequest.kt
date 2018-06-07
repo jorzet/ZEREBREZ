@@ -92,10 +92,12 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                     // get question id from response
                     val list = map.get(key) as List<String>
                     for (q in list) {
-                        val question = Question()
-                        question.setQuestionId(Integer(q.replace("p","")))
-                        question.setModuleId(Integer(key.replace("m","")))
-                        questions.add(question)
+                        try {
+                            val question = Question()
+                            question.setQuestionId(Integer(q.replace("p","")))
+                            question.setModuleId(Integer(key.replace("m","")))
+                            questions.add(question)
+                        } catch (exception : Exception) {}
                     }
 
                     // set module id and question id
