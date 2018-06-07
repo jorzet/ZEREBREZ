@@ -38,7 +38,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
     }
 
     fun requestGetWrontQuestionsRefactor() {
-// Get a reference to our posts
+        // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
             mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)

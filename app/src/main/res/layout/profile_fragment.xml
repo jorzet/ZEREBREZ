@@ -67,52 +67,57 @@
                 android:src="@drawable/gray_line_icon"/>
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/rl_schoold_container"
-                android:layout_width="280dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/iv_gray_line9">
+                android:layout_below="@+id/iv_gray_line9"
+                android:orientation="vertical">
 
                 <com.zerebrez.zerebrez.adapters.NonScrollListView
                     android:id="@+id/nslv_schools_selected"
-                    android:layout_width="match_parent"
+                    android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
                 </com.zerebrez.zerebrez.adapters.NonScrollListView>
 
                 <TextView
                     android:id="@+id/tv_not_selected_schools"
-                    android:layout_width="wrap_content"
+                    android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
+                    android:gravity="center"
                     android:text="@string/not_selected_schools_text"
                     android:textColor="@color/not_selected_schools_text_color"
                     android:textSize="15sp"
                     android:visibility="gone"/>
 
                 <RelativeLayout
-                    android:id="@+id/btn_change_schools"
-                    android:layout_width="160dp"
-                    android:layout_height="35dp"
-                    android:layout_below="@+id/nslv_schools_selected"
-                    android:layout_marginTop="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/link_email_account_button_background"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/edit_schools_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:id="@+id/btn_change_schools"
+                        android:layout_width="160dp"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="20dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:text="Cambiar"
-                        android:textSize="17sp"
-                        android:textColor="@color/white"/>
-                </RelativeLayout>
-
+                        android:background="@drawable/link_email_account_button_background"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/edit_schools_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="Cambiar"
+                            android:textSize="17sp"
+                            android:textColor="@color/white"/>
+                    </RelativeLayout>
             </RelativeLayout>
+
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/iv_gary_line8"

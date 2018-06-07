@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -89,37 +90,8 @@ class AdvancesFragment : BaseContentFragment() {
         mAverageBySubjectTextView.typeface = FontUtil.getNunitoBold(context!!)
 
 
-        val user = getUser()
-        if (user != null && context != null) {
-            val modules = DataHelper(context!!).getModulesAnsQuestions()
-            var hits = 0
-            var misses = 0
-            for (module in modules) {
-                hits += module.getCorrectQuestions()
-                misses += module.getIncorrectQuestions()
-            }
-            val total = hits + misses
-            mTotalQuestionTextView.text = total.toString()
-            mHitsNumberTextView.text = hits.toString()
-            mMissesNumberTextView.text = misses.toString()
+        requestGetHitAndMissesAnsweredModulesAndExams()
 
-            val exams = DataHelper(context!!).getExams()
-            val answeredExams = arrayListOf<Exam>()
-            for (exam in exams) {
-                if (exam.isAnsweredExam()) {
-                    answeredExams.add(exam)
-                }
-            }
-
-            if (answeredExams.isEmpty()) {
-                mExamList.visibility = View.GONE
-                mNotExamsDidIt.visibility = View.VISIBLE
-            } else {
-
-                examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
-                mExamList.adapter = examScoreListAdapter
-            }
-        }
 
         // TODO it is hardcoded
         val subjects = arrayListOf<Subject>()
@@ -188,4 +160,45 @@ class AdvancesFragment : BaseContentFragment() {
 
         return rootView
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
+        super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
+
+        if (user != null && context != null) {
+            val modules = user.getAnsweredModule()
+            var hits = 0
+            var misses = 0
+            for (module in modules) {
+                hits += module.getCorrectQuestions()
+                misses += module.getIncorrectQuestions()
+            }
+            val total = hits + misses
+            mTotalQuestionTextView.text = total.toString()
+            mHitsNumberTextView.text = hits.toString()
+            mMissesNumberTextView.text = misses.toString()
+
+            val answeredExams = user.getAnsweredExams()
+
+            if (answeredExams.isEmpty()) {
+                mExamList.visibility = View.GONE
+                mNotExamsDidIt.visibility = View.VISIBLE
+            } else {
+
+                examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
+                mExamList.adapter = examScoreListAdapter
+            }
+        }
+
+    }
+
+    override fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {
+        super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
+        mExamList.visibility = View.GONE
+        mNotExamsDidIt.visibility = View.VISIBLE
+    }
+
 }

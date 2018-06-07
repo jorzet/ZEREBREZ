@@ -655,7 +655,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             mSelectedSchoolsList.adapter = mSchoolsListAdapter
             mEditSchoolsButton.visibility = View.VISIBLE
         } else {
-            mEditSchoolsButton.visibility = View.GONE
+            mEditSchoolsButton.visibility = View.VISIBLE
+            mEditSchoolsTextView.text = "Escoger"
             mSelectedSchoolsList.visibility = View.GONE
             mNotSelectedSchools.visibility = View.VISIBLE
         }
@@ -663,7 +664,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
         super.onGetUserSchoolsFail(throwable)
-        mEditSchoolsButton.visibility = View.GONE
+        mEditSchoolsButton.visibility = View.VISIBLE
+        mEditSchoolsTextView.text = "Escoger"
         mSelectedSchoolsList.visibility = View.GONE
         mNotSelectedSchools.visibility = View.VISIBLE
     }

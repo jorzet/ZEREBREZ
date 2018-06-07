@@ -21,6 +21,7 @@ import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.firebase.Firebase
+import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
 import com.zerebrez.zerebrez.services.firebase.practice.ExamsRequest
 import com.zerebrez.zerebrez.services.firebase.practice.QuestionModuleRequest
 import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
@@ -725,5 +726,30 @@ class RequestManager(activity : Activity) {
         fun onGetUserSchoolsLoaded(schools: List<School>)
         fun onGetUserSchoolsError(throwable: Throwable)
     }
+
+
+    fun requestGetHitAndMissesAnsweredQuestionsAndExams(onGetHitsAndMissesAnsweredModulesAndExamsListener: OnGetHitsAndMissesAnsweredModulesAndExamsListener) {
+        val advancesRequest = AdvancesRequest(mActivity)
+
+        advancesRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetHitsAndMissesAnsweredModulesAndExamsListener.onGetHitsAndMissesAnsweredModulesAndExamsLoaded(result as User)
+            }
+        })
+
+        advancesRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetHitsAndMissesAnsweredModulesAndExamsListener.onGetHitsAndMissesAnsweredModulesAndExamsError(result)
+            }
+        })
+
+        advancesRequest.requestGetHitAndMissesAnsweredModulesAndExams()
+    }
+
+    interface OnGetHitsAndMissesAnsweredModulesAndExamsListener {
+        fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user : User)
+        fun onGetHitsAndMissesAnsweredModulesAndExamsError(throwable: Throwable)
+    }
+
 
 }

@@ -449,4 +449,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetProfileRefactorFail(throwable: Throwable) {}
     open fun onGetUserSchoolsSuccess(schools : List<School>) {}
     open fun onGetUserSchoolsFail(throwable: Throwable) {}
+
+    fun requestGetHitAndMissesAnsweredModulesAndExams() {
+        mRequestManager.requestGetHitAndMissesAnsweredQuestionsAndExams(object : RequestManager.OnGetHitsAndMissesAnsweredModulesAndExamsListener {
+            override fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user: User) {
+                onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
+            }
+
+            override fun onGetHitsAndMissesAnsweredModulesAndExamsError(throwable: Throwable) {
+                onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {}
+    open fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {}
 }
