@@ -507,4 +507,34 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
     open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+
+    fun requestGetUserSelectedSchoolsRefactor() {
+        mRequestManager.requestGetUserSelectedSchoolsRefactor(object : RequestManager.OnGetUserSelectedSchoolsRefactorListener {
+            override fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>) {
+                onGetUserSelectedSchoolsRefactorSuccess(schools)
+            }
+
+            override fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable) {
+                onGetUserSelectedSchoolsRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetScoreLast128QuestionsExam() {
+        mRequestManager.requestGetScoreLast128QuestionsExam(object : RequestManager.OnGetScoreLast128QuestionsExamListener {
+            override fun onGetScoreLast128QuestionsExamLoaded(score : Int) {
+                onGetScoreLast128QuestionsExamSuccess(score)
+            }
+
+            override fun onGetScoreLast128QuestionsExamError(throwable: Throwable) {
+                onGetScoreLast128QuestionsExamFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetUserSelectedSchoolsRefactorSuccess(schools: List<School>) {}
+    open fun onGetUserSelectedSchoolsRefactorFail(throwable: Throwable) {}
+    open fun onGetScoreLast128QuestionsExamSuccess(score : Int) {}
+    open fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {}
+
 }

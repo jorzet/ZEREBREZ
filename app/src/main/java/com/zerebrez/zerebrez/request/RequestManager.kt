@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
 import com.zerebrez.zerebrez.services.firebase.profile.ProfileRequest
 import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
 import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
+import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
 
 /**
  * Created by Jorge Zepeda Tinoco on 28/04/18.
@@ -845,6 +846,52 @@ class RequestManager(activity : Activity) {
     interface OnGetQuestionsByExamIdRefactorListener {
         fun onGetQuestionsByExamIdRefactorLoaded(questions : List<Question>)
         fun onGetQuestionsByExamIdRefactorError(throwable: Throwable)
+    }
+
+    fun requestGetUserSelectedSchoolsRefactor(onGetUserSelectedSchoolsRefactorListener : OnGetUserSelectedSchoolsRefactorListener) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetUserSelectedSchoolsRefactorListener.onGetUserSelectedSchoolsRefactorLoaded(result as List<School>)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetUserSelectedSchoolsRefactorListener.onGetUserSelectedSchoolsRefactorError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetUserSelectedSchoolsRefactor()
+    }
+
+    fun requestGetScoreLast128QuestionsExam(onGetScoreLast128QuestionsExamListener : OnGetScoreLast128QuestionsExamListener) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetScoreLast128QuestionsExamListener.onGetScoreLast128QuestionsExamLoaded(result as Int)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetScoreLast128QuestionsExamListener.onGetScoreLast128QuestionsExamError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetScoreLast128QuestionsExam()
+    }
+
+    interface OnGetUserSelectedSchoolsRefactorListener {
+        fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>)
+        fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetScoreLast128QuestionsExamListener {
+        fun onGetScoreLast128QuestionsExamLoaded(score: Int)
+        fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
     }
 
 }

@@ -72,6 +72,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
      * Objects
      */
     private var mUpdatedExams : List<Exam> = arrayListOf()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -98,8 +99,8 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
         Log.d(TAG, "item clicked--- position: " + position)
         if (mUpdatedExams.isNotEmpty()) {
-            val user = getUser()
-            if (user!!.isPremiumUser() || mUpdatedExams.get(position).isFreeExam()) {
+            
+            if (mUser.isPremiumUser() || mUpdatedExams.get(position).isFreeExam()) {
                 val examId = mUpdatedExams.get(position).getExamId()
                 goQuestionActivity(examId.toInt())
             } else {
@@ -167,6 +168,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     override fun onGetAnsweredExamsAndProfileRefactorSuccess(user: User) {
         super.onGetAnsweredExamsAndProfileRefactorSuccess(user)
 
+        mUser = user
         val answeredExams = user.getAnsweredExams()
 
         for (i in 0 .. mUpdatedExams.size - 1) {

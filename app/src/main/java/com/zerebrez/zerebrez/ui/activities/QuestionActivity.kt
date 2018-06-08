@@ -497,6 +497,7 @@ class QuestionActivity : BaseActivityLifeCycle() {
         mQuestions = questions
         mModuleNumber.text = mExamId.toString()
         mQuestiontypeText.text = "Examen"
+        showQuestion()
     }
 
     override fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {

@@ -44,6 +44,7 @@
                     android:layout_below="@id/iv_gray_line1"
                     android:layout_marginTop="30dp"
                     android:numColumns="1"
+                    android:dividerHeight="0dp"
                     android:clickable="false">
                 </ListView>
 
