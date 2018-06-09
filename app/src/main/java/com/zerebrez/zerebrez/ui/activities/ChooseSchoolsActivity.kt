@@ -48,6 +48,11 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private val TAG : String = "ChooseSchoolsActivity"
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
 
+    companion object {
+        val UPDATE_USER_SCHOOLS : String = "update_user_schools"
+    }
+
+
     /*
      * UI accessors
      */
@@ -161,14 +166,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
         }
 
-        val dataHelper = DataHelper(baseContext)
-        val institutes = dataHelper.getInstitutes()
-
-        if (institutes.isNotEmpty()) {
-            mSelectedSchoolsListAdapter = SelectedSchoolsListAdapter(institutes, baseContext)
-            mInstitutesSchoolList.setAdapter(mSelectedSchoolsListAdapter)
-            mInstitutesSchoolList.setOnChildClickListener(onSchoolClickListener)
-        }
+        requestGetSchools()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -179,6 +177,16 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             onBackPressed()
         }
         return true
+    }
+
+    override fun onBackPressed() {
+
+        val intent = Intent()
+        intent.putExtra(UPDATE_USER_SCHOOLS, true)
+        setResult(UPDATE_USER_SCHOOLS_RESULT_CODE, intent)
+        finish()
+
+        super.onBackPressed()
     }
 
     private val mDropFirstSchoolListener = View.OnClickListener {
@@ -318,6 +326,22 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
 
     override fun onConfirmationAccept() {
         onBackPressed()
+    }
+
+
+    override fun onGetSchoolsSuccess(institutes: List<Institute>) {
+        super.onGetSchoolsSuccess(institutes)
+
+        if (institutes.isNotEmpty()) {
+            mSelectedSchoolsListAdapter = SelectedSchoolsListAdapter(institutes, baseContext)
+            mInstitutesSchoolList.setAdapter(mSelectedSchoolsListAdapter)
+            mInstitutesSchoolList.setOnChildClickListener(onSchoolClickListener)
+        }
+
+    }
+
+    override fun onGetSchoolsFail(throwable: Throwable) {
+        super.onGetSchoolsFail(throwable)
     }
 
 }

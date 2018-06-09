@@ -78,6 +78,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
     override fun onGetScoreLast128QuestionsExamSuccess(score: Int) {
         super.onGetScoreLast128QuestionsExamSuccess(score)
         schoolAverageCanvas.setUserHits(score)
+        schoolAverageCanvas.invalidate()
         mNot128ExmanQuestionDitIt.visibility = View.GONE
     }
 

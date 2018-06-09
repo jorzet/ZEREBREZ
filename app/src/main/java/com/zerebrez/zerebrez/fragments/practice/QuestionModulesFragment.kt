@@ -218,9 +218,10 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                         Log.d(TAG, "onClick: number --- " + number)
                         goQuestionActivity(Integer.parseInt(number))
                     } else {
-                        ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
+                        (activity as ContentActivity).goPaymentFragment()
+                        /*ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
                                 DialogType.OK_DIALOG, this)!!
-                                .show(fragmentManager!!, "")
+                                .show(fragmentManager!!, "")*/
                     }
                 })
 

@@ -207,7 +207,8 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onActivityResult(requestCode, resultCode, data)
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
+        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE)) {
             //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
             //if (showPayment) {
                 goPaymentFragment()
@@ -315,7 +316,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[1])
                 mTopTabLayout.getTabAt(1)!!.setText("Materias")
                 mTopTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[2])
-                mTopTabLayout.getTabAt(2)!!.setText("Erroneas")
+                mTopTabLayout.getTabAt(2)!!.setText("Erróneas")
                 mTopTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[3])
                 mTopTabLayout.getTabAt(3)!!.setText("Examenes")
             }

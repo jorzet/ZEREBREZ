@@ -61,6 +61,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -226,6 +227,10 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 Toast.makeText(activity, "Login Unsuccessful", Toast.LENGTH_SHORT).show()
                 onGoogleResultFaild(error)
             }
+        } else if (requestCode.equals(BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)) {
+            if (resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE)) {
+                onResume()
+            }
         }
     }
 
@@ -244,7 +249,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
                 try {
-                    val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val inputMethodManager = textView!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
                     mLinkEmailButton.performClick()
                     action = true
@@ -573,7 +578,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private fun goChooseSchoolsActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
-        startActivity(intent)
+        startActivityForResult(intent, BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)
     }
 
     /*
@@ -650,8 +655,15 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsSuccess(schools: List<School>) {
         super.onGetUserSchoolsSuccess(schools)
-        if (schools.isNotEmpty()) {
-            mSchoolsListAdapter = SchoolListAdapter(schools, context!!)
+        if (schools.isNotEmpty() && context != null) {
+            // save user chools to get it in next view
+
+            val user = User()
+            user.setSelectedShools(schools)
+            saveUser(user)
+
+
+            mSchoolsListAdapter = SchoolListAdapter(schools, activity!!.applicationContext)
             mSelectedSchoolsList.adapter = mSchoolsListAdapter
             mEditSchoolsButton.visibility = View.VISIBLE
         } else {

@@ -104,9 +104,10 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
                 val examId = mUpdatedExams.get(position).getExamId()
                 goQuestionActivity(examId.toInt())
             } else {
-                ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
+                (activity as ContentActivity).goPaymentFragment()
+                /*ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
                         DialogType.OK_DIALOG, this)!!
-                        .show(fragmentManager!!, "")
+                        .show(fragmentManager!!, "")*/
             }
         }
     }
@@ -182,7 +183,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
         }
 
         if (context != null && mUpdatedExams.isNotEmpty()) {
-            examListAdapter = ExamListAdapter(mUpdatedExams, context!!)
+            examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
             mExamList.adapter = examListAdapter
             mExamList.setOnItemClickListener(this)
         } else {

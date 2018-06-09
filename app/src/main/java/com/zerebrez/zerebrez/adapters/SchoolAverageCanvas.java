@@ -39,7 +39,7 @@ import java.util.List;
 
 public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImageView {
 
-    private Canvas canvas;
+    public Canvas canvas;
     public Paint paint;
     private Context mContext;
 

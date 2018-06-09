@@ -102,6 +102,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
     private fun resetValues() {
         mQuestionList = arrayListOf<Question>()
+        for (i in 0 .. mQuestionList.size - 1)
+            mQuestionList.removeAt(i)
         mLeftTableLayout.removeAllViews()
         mCenterTableLayout.removeAllViews()
         mRightTableLayout.removeAllViews()
@@ -292,19 +294,20 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
         super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
 
-        mUser = user
-        val answeredQuestion = user.getAnsweredQuestion()
+        if (context != null) {
+            mUser = user
+            val answeredQuestion = user.getAnsweredQuestion()
 
-        for (i in 0 .. answeredQuestion.size - 1) {
-            if (!answeredQuestion.get(i).getWasOK()) {
-                mUpdatedQuestions.add(answeredQuestion.get(i))
+            for (i in 0..answeredQuestion.size - 1) {
+                if (!answeredQuestion.get(i).getWasOK()) {
+                    mUpdatedQuestions.add(answeredQuestion.get(i))
+                }
             }
+
+            resetValues()
+            updateQuestionList(mUpdatedQuestions)
+            drawQuestions()
         }
-
-        resetValues()
-        updateQuestionList(mUpdatedQuestions)
-        drawQuestions()
-
     }
 
     override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {

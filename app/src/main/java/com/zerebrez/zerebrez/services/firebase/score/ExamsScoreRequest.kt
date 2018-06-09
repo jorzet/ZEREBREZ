@@ -97,14 +97,16 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
                         println(key)
                         if (key.equals(PROFILE_REFERENCE)) {
                             val profile = map.get(key) as java.util.HashMap<String, String>
-                            val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
-                            for (key4 in profile.keys) {
-                                if (key4.equals(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(key4) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                } else if (key4.equals(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(key4) as String
-                                    user.setTimeStamp(timeStamp)
+                            if (profile.containsKey(PREMIUM_KEY)) {
+                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                for (key4 in profile.keys) {
+                                    if (key4.equals(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(key4) as Boolean
+                                        user.setPremiumUser(isPremium)
+                                    } else if (key4.equals(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(key4) as String
+                                        user.setTimeStamp(timeStamp)
+                                    }
                                 }
                             }
 

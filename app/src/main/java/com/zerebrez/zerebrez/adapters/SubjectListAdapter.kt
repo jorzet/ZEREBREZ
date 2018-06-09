@@ -43,7 +43,7 @@ class SubjectListAdapter (subjects : List<Subject>, context : Context) : BaseAda
         val subjectView = inflator.inflate(R.layout.custom_option_sobject, null)
 
         subjectView.tv_subject_name.text = currentSubject.getsubjectType().value.toUpperCase()
-        subjectView.tv_subject_name.typeface = FontUtil.getNunitoSemiBold(mContext)
+        subjectView.tv_subject_name.typeface = FontUtil.getNunitoRegular(mContext)
 
         when (currentSubject.getsubjectType()) {
             SubjectType.MATHEMATICS -> {

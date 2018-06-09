@@ -1,0 +1,91 @@
+package com.zerebrez.zerebrez.services.firebase.profile
+
+import android.app.Activity
+import android.util.Log
+import com.google.firebase.database.*
+import com.zerebrez.zerebrez.models.Institute
+import com.zerebrez.zerebrez.models.School
+import com.zerebrez.zerebrez.services.firebase.Engagement
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+
+private const val TAG: String = "SchoolsRequest"
+
+class SchoolsRequest(activity: Activity) : Engagement(activity) {
+
+    private val INSTITUTES_REFERENCE : String = "schools/comipems"
+
+    private val INSTITUTE_NAME_KEY : String = "name"
+    private val SCHOOL_NAME_KEY : String = "name"
+    private val SCHOOL_SCORE_KEY : String = "score"
+
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
+
+    private val mActivity : Activity = activity
+    private lateinit var mFirebaseDatabase: DatabaseReference
+    private var mFirebaseInstance: FirebaseDatabase
+
+    init {
+        mFirebaseInstance = FirebaseDatabase.getInstance()
+        if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
+            mFirebaseInstance.setPersistenceEnabled(true)
+            SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
+        }
+    }
+
+    fun requestGetSchools() {
+        // Get a reference to our posts
+        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                val map = (post as HashMap<String, HashMap<Any, Any>>)
+                val mInstitutes = arrayListOf<Institute>()
+
+                Log.d(TAG, post.toString())
+
+                for (key in map.keys) {
+                    println(key)
+                    val institute = Institute()
+                    institute.setInstituteId(Integer(key.replace(INSTITUTE_TAG,"")))
+                    val instituteHash = map.get(key) as HashMap<String, String>
+                    for (key2 in instituteHash.keys) {
+                        if (key2.equals("schoolsList")) {
+                            val schools = arrayListOf<School>()
+                            val schoolsHash = instituteHash.get(key2) as HashMap<String, String>
+                            for (key3 in schoolsHash.keys) {
+                                val school = School()
+                                school.setSchoolId(Integer(key3.replace(SCHOOL_TAG,"")))
+
+                                val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                for (key4 in schoolDataHash.keys) {
+                                    if (key4.equals(SCHOOL_NAME_KEY)) {
+                                        school.setSchoolName(schoolDataHash.get(key4).toString())
+                                    } else if (key4.equals(SCHOOL_SCORE_KEY)) {
+                                        school.setHitsNumber((schoolDataHash.get(key4) as java.lang.Long).toInt())
+                                    }
+                                }
+                                schools.add(school)
+                            }
+                            institute.setSchools(schools)
+                        } else if (key2.equals(INSTITUTE_NAME_KEY)) {
+                            institute.setInstituteName(instituteHash.get(key2).toString())
+                        }
+                    }
+                    mInstitutes.add(institute)
+                }
+
+                onRequestListenerSucces.onSuccess(mInstitutes)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
+    }
+
+}

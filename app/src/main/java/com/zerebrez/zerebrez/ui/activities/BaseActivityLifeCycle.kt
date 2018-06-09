@@ -37,6 +37,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
         val SHOW_PAYMENT_FRAGMENT_RESULT_CODE : Int = 4
+        val RC_CHOOSE_SCHOOL : Int = 5
+        val UPDATE_USER_SCHOOLS_RESULT_CODE = 6
     }
 
     private lateinit var mRequestManager : RequestManager
@@ -370,4 +372,19 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
     open fun onGetQuestionsByExamIdRefactorSuccess(questions : List<Question>) {}
     open fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {}
+
+    fun requestGetSchools() {
+        mRequestManager.requestGetSchools(object : RequestManager.OnGetSchoolsListener {
+            override fun onGetSchoolsLoaded(institutes: List<Institute>) {
+                onGetSchoolsSuccess(institutes)
+            }
+
+            override fun onGetSchoolsError(throwable: Throwable) {
+                onGetSchoolsFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
+    open fun onGetSchoolsFail(throwable: Throwable) {}
 }

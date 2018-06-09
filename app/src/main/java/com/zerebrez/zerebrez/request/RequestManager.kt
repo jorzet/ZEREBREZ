@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.services.firebase.practice.ExamsRequest
 import com.zerebrez.zerebrez.services.firebase.practice.QuestionModuleRequest
 import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
 import com.zerebrez.zerebrez.services.firebase.profile.ProfileRequest
+import com.zerebrez.zerebrez.services.firebase.profile.SchoolsRequest
 import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
 import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
 import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
@@ -892,6 +893,29 @@ class RequestManager(activity : Activity) {
     interface OnGetScoreLast128QuestionsExamListener {
         fun onGetScoreLast128QuestionsExamLoaded(score: Int)
         fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
+    }
+
+    fun requestGetSchools(onGetSchoolsListener : OnGetSchoolsListener) {
+        val schoolsRequest = SchoolsRequest(mActivity)
+
+        schoolsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetSchoolsListener.onGetSchoolsLoaded(result as List<Institute>)
+            }
+        })
+
+        schoolsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetSchoolsListener.onGetSchoolsError(result)
+            }
+        })
+
+        schoolsRequest.requestGetSchools()
+    }
+
+    interface OnGetSchoolsListener {
+        fun onGetSchoolsLoaded(institutes : List<Institute>)
+        fun onGetSchoolsError(throwable: Throwable)
     }
 
 }
