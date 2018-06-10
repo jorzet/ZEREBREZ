@@ -168,13 +168,15 @@ class AdvancesFragment : BaseContentFragment() {
     override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
-        if (user != null && context != null) {
-            val modules = user.getAnsweredModule()
+        if (context != null) {
+            val questions = user.getAnsweredQuestion()
             var hits = 0
             var misses = 0
-            for (module in modules) {
-                hits += module.getCorrectQuestions()
-                misses += module.getIncorrectQuestions()
+            for (question in questions) {
+                if (question.getWasOK())
+                    hits ++
+                else
+                    misses ++
             }
             val total = hits + misses
             mTotalQuestionTextView.text = total.toString()

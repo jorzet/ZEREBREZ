@@ -208,7 +208,8 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
-                !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE)) {
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
             //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
             //if (showPayment) {
                 goPaymentFragment()
@@ -431,9 +432,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     }
 
     fun startDownloadImages() {
-        this.startService(Intent(this, DownloadImages::class.java))
-        Log.i(TAG, "Started download service **********************")
-        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+        try {
+            this.startService(Intent(this, DownloadImages::class.java))
+            Log.i(TAG, "Started download service **********************")
+            this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+        } catch (exception : Exception) {}
     }
 
     fun stopDownloadImagesService() {

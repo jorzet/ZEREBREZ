@@ -24,8 +24,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import com.zerebrez.zerebrez.utils.FontUtil
+import java.util.*
 
 private const val TAG : String = "QuestionsCompleteFragment"
 
@@ -45,10 +48,15 @@ class QuestionsCompleteFragment : BaseContentFragment() {
      * UI accessors
      */
     private lateinit var mQuestionTypeText : TextView
+    private lateinit var mNumAnsweedQuestions : TextView
     private lateinit var mHitsNumber : TextView
     private lateinit var mMissesNumber : TextView
     private lateinit var mBePremiumButton : View
+    private lateinit var mBePremiumButtonText : TextView
+    private lateinit var mBePremiumText1 : TextView
+    private lateinit var mBePremiumText2 : TextView
     private lateinit var mSuperButton : View
+    private lateinit var mSuperButtonText : TextView
     private lateinit var mBePremiumContainer : View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -59,11 +67,27 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         val rootView = inflater.inflate(R.layout.questions_complete_fragment, container, false)
 
         mQuestionTypeText = rootView.findViewById(R.id.tv_question_type_text)
+        mNumAnsweedQuestions = rootView.findViewById(R.id.tv_num_answered_questions)
         mHitsNumber = rootView.findViewById(R.id.tv_hits_number)
         mMissesNumber = rootView.findViewById(R.id.tv_misses_number)
         mBePremiumButton = rootView.findViewById(R.id.btn_be_premium)
+        mBePremiumButtonText = rootView.findViewById(R.id.btn_be_premium_text)
+        mBePremiumText1 = rootView.findViewById(R.id.tv_premium_text_1)
+        mBePremiumText2 = rootView.findViewById(R.id.tv_premium_text_2)
         mSuperButton = rootView.findViewById(R.id.btn_super)
+        mSuperButtonText = rootView.findViewById(R.id.btn_super_text)
         mBePremiumContainer = rootView.findViewById(R.id.rl_be_premium_container)
+
+
+        mQuestionTypeText.typeface = FontUtil.getNunitoRegular(context!!)
+        mNumAnsweedQuestions.typeface = FontUtil.getNunitoRegular(context!!)
+        mHitsNumber.typeface = FontUtil.getNunitoRegular(context!!)
+        mMissesNumber.typeface = FontUtil.getNunitoRegular(context!!)
+        mBePremiumButtonText.typeface = FontUtil.getNunitoRegular(context!!)
+        mBePremiumText1.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mBePremiumText2.typeface = FontUtil.getNunitoRegular(context!!)
+        mSuperButtonText.typeface = FontUtil.getNunitoRegular(context!!)
+
 
         val isAfterExam = (activity as QuestionActivity).areExamsAndQuestionsSaved()
         val isAfterModules = (activity as QuestionActivity).areModulesAndQuestionsSaved()
@@ -71,6 +95,8 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
         mHitsNumber.text = (activity as QuestionActivity).getCorrectQuestions().toString()
         mMissesNumber.text = (activity as QuestionActivity).getIncorrectQuestion().toString()
+
+
 
         if (isAfterModules) {
             val moduleId = (activity as QuestionActivity).getModuleId()
@@ -82,12 +108,8 @@ class QuestionsCompleteFragment : BaseContentFragment() {
             mQuestionTypeText.text = "Incorrectas"
         }
 
-        val user = getUser()
-        if (user != null) {
-            if (user.isPremiumUser() || (activity as QuestionActivity).isAnonymousUser()) {
-                mBePremiumContainer.visibility = View.GONE
-            }
-        }
+        mBePremiumContainer.visibility = View.GONE
+        requestGetUserTips()
 
         mBePremiumButton.setOnClickListener(mBePremiumButtonListener)
         mSuperButton.setOnClickListener(mSuperButtonListener)
@@ -118,6 +140,39 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         intent.putExtra(SHOW_START, false)
         this.startActivity(intent)
         activity!!.finish()
+    }
+
+    override fun onGetUserTipsSuccess(user: User) {
+        super.onGetUserTipsSuccess(user)
+
+        if (user.isPremiumUser()) {
+            requestGetTips()
+        } else {
+            mBePremiumContainer.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onGetUserTipdFail(throwable: Throwable) {
+        super.onGetUserTipdFail(throwable)
+        mBePremiumContainer.visibility = View.VISIBLE
+    }
+
+    override fun onGetTipsSuccess(tips: List<String>) {
+        super.onGetTipsSuccess(tips)
+
+        val rand = Random()
+        val randomTip = tips.get(rand.nextInt(tips.size))
+
+        mBePremiumText1.text = "Recomendacón"
+        mBePremiumText2.text = randomTip
+        mBePremiumContainer.visibility = View.VISIBLE
+        mBePremiumButton.visibility = View.GONE
+
+    }
+
+    override fun ongetTipsFail(throwable: Throwable) {
+        super.ongetTipsFail(throwable)
+        mBePremiumContainer.visibility = View.VISIBLE
     }
 
 }

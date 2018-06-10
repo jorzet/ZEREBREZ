@@ -1,3 +1,19 @@
+/*
+ * Copyright [2018] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.question
 
 import android.app.Activity
@@ -21,11 +37,21 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
     private val COMIPEMS_QUESTIONS_REFERENCE : String = "questions/comipems"
     private val MODULES_REFERENCE : String = "modules/comipems"
     private val EXAMS_REFERENCE : String = "exams/comipems"
+    private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
+    private val USERS_REFERENCE : String = "users"
+
+    private val IS_PREMIUM_KEY : String = "isPremium"
+    private val TIMESTAMP_KEY : String = "timeStamp"
+    private val PREMIUM_KEY : String = "premium"
+    private val IS_CORRECT_KEY : String = "isCorrect"
+    private val SUBJECT_KEY : String = "subject"
+    private val CHOOSEN_OPTION_KEY : String = "chosenOption"
 
     private lateinit var mQuestions : List<Question>
     private var mGotQuestions = arrayListOf<Question>()
     private var mCurrentQuestion : Int = 0
     private var mQuestionSize : Int = 0
+    private var mLastWrongQuestion : Boolean = false
 
     private val mActivity : Activity = activity
     private lateinit var mFirebaseDatabase: DatabaseReference
@@ -40,7 +66,7 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
     }
 
     fun requestGetQuestionsByModuleId(moduleId : Int) {
-// Get a reference to our posts
+        // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE + "/m" + moduleId)
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
@@ -126,8 +152,16 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetWrongQuestionsByQuestionId(wringQuestionId : Int) {
+    fun requestGetWrongQuestionsByQuestionId(wrongQuestionIds : List<Question>) {
 
+        if (wrongQuestionIds.isNotEmpty()) {
+            mQuestionSize = wrongQuestionIds.size
+            mQuestions = wrongQuestionIds
+            requestGetQuestion()
+        } else {
+            val error = GenericError()
+            onRequestLietenerFailed.onFailed(error)
+        }
     }
 
     private fun requestGetQuestion() {
@@ -333,8 +367,9 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
 
     fun getQuestions(questions: List<Question>) {
         val updatedQuestions = arrayListOf<Question>()
-        for (question in questions) {
-            for (i in 0 .. mQuestions.size - 1) {
+
+        for (i in 0 .. mQuestions.size - 1) {
+            for (question in questions) {
                 if (mQuestions.get(i).getQuestionId().equals(question.getQuestionId())) {
                     updatedQuestions.add(question)
                 }

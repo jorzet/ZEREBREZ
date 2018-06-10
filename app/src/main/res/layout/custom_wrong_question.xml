@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/width_row"
     android:layout_height="@dimen/height_row"
-    android:background="@drawable/checked_module_background"
+    android:background="@drawable/unchecked_module_background"
     android:padding="20dp"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true">

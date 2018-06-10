@@ -640,13 +640,6 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         if (userFirebase != null) {
             mEmail.setText(userFirebase.getEmail())
         }
-
-        var password = ""
-        for (i in 0 .. 8) {
-            password = password + "*"
-        }
-        mPassword.setText(password)
-
     }
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {

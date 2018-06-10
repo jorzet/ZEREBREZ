@@ -603,22 +603,22 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     }
 
-    fun requestSendAnsweredQuestions(modules: List<Module>) {
+    fun requestSendAnsweredQuestions(questions: List<Question>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            for (module in modules) {
-                for (question in module.getQuestions()) {
-                    if (!question.getOptionChoosed().equals("")) {
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
-                    }
+
+            for (question in questions) {
+                if (!question.getOptionChoosed().equals("")) {
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
                 }
             }
+
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {

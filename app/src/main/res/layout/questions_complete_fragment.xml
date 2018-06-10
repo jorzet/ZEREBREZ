@@ -33,7 +33,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Módulo 1"
-                        android:textColor="@color/questions_text_color"
+                        android:textColor="@color/percentage_line_color"
                         android:textSize="30sp"/>
 
                 </RelativeLayout>
@@ -144,17 +144,21 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:gravity="center"
                     android:text="¡Se te acaban las preguntas!"
                     android:textColor="@color/exams_text_color"
-                    android:textSize="25sp"/>
+                    android:textSize="23sp"/>
 
                 <TextView
-                    android:id="@+id/tv_npremium_text_2"
+                    android:id="@+id/tv_premium_text_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_premium_text_1"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
                     android:text="¡No te quedes sin estudiar!"
@@ -168,9 +172,10 @@
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:layout_below="@+id/tv_npremium_text_2"
+                    android:layout_below="@+id/tv_premium_text_2"
                     android:background="@drawable/be_premium_button_background">
                     <TextView
+                        android:id="@+id/btn_be_premium_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
@@ -207,6 +212,7 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/super_button_background">
                     <TextView
+                        android:id="@+id/btn_super_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"

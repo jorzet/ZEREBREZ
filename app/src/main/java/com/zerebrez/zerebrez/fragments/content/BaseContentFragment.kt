@@ -537,4 +537,34 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetScoreLast128QuestionsExamSuccess(score : Int) {}
     open fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {}
 
+    fun requestGetUserTips() {
+        mRequestManager.requestGetUserTips(object : RequestManager.OnGetUserTipsListener {
+            override fun onGetUserTipsLoaded(user: User) {
+                onGetUserTipsSuccess(user)
+            }
+
+            override fun onGetUserTipsError(throwable: Throwable) {
+                onGetUserTipdFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetTips() {
+        mRequestManager.requestGetTips(object : RequestManager.OnGetTipsListener {
+            override fun onGetTipsLoaded(tips: List<String>) {
+                onGetTipsSuccess(tips)
+            }
+
+            override fun onGetTipsError(throwable: Throwable) {
+                ongetTipsFail(throwable)
+            }
+        })
+    }
+
+
+    open fun onGetUserTipsSuccess(user: User) {}
+    open fun onGetUserTipdFail(throwable: Throwable) {}
+    open fun onGetTipsSuccess(tips: List<String>) {}
+    open fun ongetTipsFail(throwable: Throwable) {}
+
 }

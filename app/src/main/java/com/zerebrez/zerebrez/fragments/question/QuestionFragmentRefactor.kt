@@ -29,6 +29,7 @@ import android.widget.ListView
 import android.widget.TextView
 //import com.nishant.math.MathView // uncomment if is needed
 import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.adapters.OptionQuestionAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Image
@@ -60,7 +61,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     /*
      * UI accessors
      */
-    private lateinit var mQuestionList : ListView
+    private lateinit var mQuestionList : NonScrollListView
     private lateinit var mQuestion : TextView
     private lateinit var mOptionA : View
     private lateinit var mOptionB : View
@@ -128,6 +129,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             val images = question!!.getImages()
 
             var realSize = 0
+            var textSize = 0
+
             if (texts.size > equations.size && texts.size > images.size)
                 realSize = texts.size
 
@@ -144,6 +147,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(texts.get(i))
                     questionOption.setQuestionType(QuestionType.TEXT)
                     mSortOptions.add(questionOption)
+                    textSize += texts.get(i).length
                 }
 
                 if (equations.size > i) {
@@ -151,6 +155,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(equations.get(i))
                     questionOption.setQuestionType(QuestionType.EQUATION)
                     mSortOptions.add(questionOption)
+                    textSize += equations.get(i).length
                 }
 
                 if (images.size > i) {
@@ -159,10 +164,11 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(nameInStorage)
                     questionOption.setQuestionType(QuestionType.IMAGE)
                     mSortOptions.add(questionOption)
+                    textSize += 200
                 }
             }
 
-            if (realSize >= 4 ) {
+            if (realSize >= 3 || textSize > 250 ) {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(true)
             } else {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(false)
@@ -381,7 +387,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         try {
             var bitmap: Bitmap? = null
             val mainPath = Environment.getExternalStorageDirectory().toString()
-            val f = File(mainPath + "/zerebrez/" + path)
+            val f = File("zerebrez/" + path)
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
 

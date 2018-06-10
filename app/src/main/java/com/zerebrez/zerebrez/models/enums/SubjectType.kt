@@ -27,7 +27,7 @@ enum class SubjectType constructor(val value : String)  {
     MATHEMATICAL_HABILITY("Habilidad Matematica"),
     SPANISH("Español"),
     ENGLISH("Ingles"),
-    MATHEMATICS("Matematicas"),
+    MATHEMATICS("Matemáticas"),
     CHEMISTRY("Química"),
     PHYSICS("Física"),
     BIOLOGY("Biología"),

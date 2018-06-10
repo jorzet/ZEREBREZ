@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
 import com.zerebrez.zerebrez.services.firebase.profile.ProfileRequest
 import com.zerebrez.zerebrez.services.firebase.profile.SchoolsRequest
 import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
+import com.zerebrez.zerebrez.services.firebase.question.TipsRequest
 import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
 import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
 
@@ -96,7 +97,7 @@ class RequestManager(activity : Activity) {
         firebase.requestSendUser(user)
     }
 
-    fun requestSendAnsweredQuestions(modules: List<Module>, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
+    fun requestSendAnsweredQuestions(questions: List<Question>, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -111,7 +112,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredQuestions(modules)
+        firebase.requestSendAnsweredQuestions(questions)
     }
 
     fun requestSendAnsweredModules(modules : List<Module>, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
@@ -839,6 +840,24 @@ class RequestManager(activity : Activity) {
         questionsRequest.requestGetQuestionsByExamId(examId)
     }
 
+    fun requestGetWrongQuestionsByQuestionIdRefactor(wrongQuestions : List<Question>, onGetWrongQuestionsByQuestionIdRefactorListener : OnGetWrongQuestionsByQuestionIdRefactorListener) {
+        val questionsRequest = QuestionsRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetWrongQuestionsByQuestionIdRefactorListener.onGetWrongQuestionsByQuestionIdRefactorLoaded(result as List<Question>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetWrongQuestionsByQuestionIdRefactorListener.onGetWrongQuestionsByQuestionIdRefactorError(result)
+            }
+        })
+
+        questionsRequest.requestGetWrongQuestionsByQuestionId(wrongQuestions)
+    }
+
     interface OnGetQuestionsByModuleIdRefactorListener {
         fun onGetQuestionsByModuleIdRefactorLoaded(questions : List<Question>)
         fun onGetQuestionsByModuleIdRefactorError(throwable: Throwable)
@@ -847,6 +866,11 @@ class RequestManager(activity : Activity) {
     interface OnGetQuestionsByExamIdRefactorListener {
         fun onGetQuestionsByExamIdRefactorLoaded(questions : List<Question>)
         fun onGetQuestionsByExamIdRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetWrongQuestionsByQuestionIdRefactorListener {
+        fun onGetWrongQuestionsByQuestionIdRefactorLoaded(questions : List<Question>)
+        fun onGetWrongQuestionsByQuestionIdRefactorError(throwable: Throwable)
     }
 
     fun requestGetUserSelectedSchoolsRefactor(onGetUserSelectedSchoolsRefactorListener : OnGetUserSelectedSchoolsRefactorListener) {
@@ -916,6 +940,54 @@ class RequestManager(activity : Activity) {
     interface OnGetSchoolsListener {
         fun onGetSchoolsLoaded(institutes : List<Institute>)
         fun onGetSchoolsError(throwable: Throwable)
+    }
+
+
+
+    fun requestGetUserTips(OnGetUserTipsListener : OnGetUserTipsListener) {
+        val tipsRequest = TipsRequest(mActivity)
+
+        tipsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                OnGetUserTipsListener.onGetUserTipsLoaded(result as User)
+            }
+        })
+
+        tipsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                OnGetUserTipsListener.onGetUserTipsError(result)
+            }
+        })
+
+        tipsRequest.requestGetUserTips()
+    }
+
+    fun requestGetTips(OnGetTipsListener : OnGetTipsListener) {
+        val tipsRequest = TipsRequest(mActivity)
+
+        tipsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                OnGetTipsListener.onGetTipsLoaded(result as List<String>)
+            }
+        })
+
+        tipsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                OnGetTipsListener.onGetTipsError(result)
+            }
+        })
+
+        tipsRequest.requestGetTips()
+    }
+
+    interface OnGetUserTipsListener {
+        fun onGetUserTipsLoaded(user: User)
+        fun onGetUserTipsError(throwable: Throwable)
+    }
+
+    interface OnGetTipsListener {
+        fun onGetTipsLoaded(tips : List<String>)
+        fun onGetTipsError(throwable: Throwable)
     }
 
 }
