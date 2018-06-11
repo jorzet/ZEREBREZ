@@ -194,18 +194,20 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     override fun onBackPressed() {
-        if (mShowPaymentFragment) {
-            val intent = Intent()
-            intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
-            setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
-            finish()
-        } else if (isFromWrongQuestionFragment) {
-            val intent = Intent()
-            intent.putExtra(UPDATE_WRONG_QUESTIONS, true)
-            setResult(UPDATE_WRONG_QUESTIONS_RESULT_CODE, intent)
-            finish()
-        }
-        super.onBackPressed()
+        try {
+            if (mShowPaymentFragment) {
+                val intent = Intent()
+                intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
+                setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
+                finish()
+            } else if (isFromWrongQuestionFragment) {
+                val intent = Intent()
+                intent.putExtra(UPDATE_WRONG_QUESTIONS, true)
+                setResult(UPDATE_WRONG_QUESTIONS_RESULT_CODE, intent)
+                finish()
+            }
+            super.onBackPressed()
+        } catch (exception: Exception) {}
     }
 
     private val mCloseQuestionListener = View.OnClickListener {
@@ -350,61 +352,51 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * This method save the current module and its own questions
      */
     private fun saveModulesAndQuestions() {
-        mModuleList = DataHelper(baseContext).getModulesAnsQuestions()
-        for (j in 0 .. mModuleList.size - 1) {
-            if (mModuleList.get(j).getId().equals(Integer(mModuleId))) {
-                mModuleList.get(j).setAnsweredModule(true)
-                mModuleList.get(j).setQuestions(mQuestions)
-                mModuleList.get(j).setCorrectQuestions(mCorrectQuestions)
-                mModuleList.get(j).setIncorrectQuestions(mIncorrectQiestions)
-            }
-        }
-        if (mModuleList.isNotEmpty()) {
-            DataHelper(baseContext).saveModules(mModuleList)
 
-            //if (NetworkUtil.isConnected(baseContext)) {
-            //    requestSendAnsweredModules(mModuleList)
-            //} else {
-                requestSendAnsweredModules(mModuleList)
-                requestSendAnsweredQuestions(mQuestions)
-                mModulesAndQuestionsSaved = true
+        //if (NetworkUtil.isConnected(baseContext)) {
+        //    requestSendAnsweredModules(mModuleList)
+        //} else {
+        val module = Module()
+        module.setId(Integer(mModuleId))
+        module.setAnsweredModule(true)
+        module.setQuestions(mQuestions)
+        module.setCorrectQuestions(mCorrectQuestions)
+        module.setIncorrectQuestions(mIncorrectQiestions)
 
-                // this is called on QuestionsCompleteFragment
-                if (isAnonymous) {
-                    goLogInActivity()
-                } else {
-                    showQuestionsCompleteFragment()
-                }
-            //}
+        requestSendAnsweredModules(module)
+        requestSendAnsweredQuestions(mQuestions)
+        mModulesAndQuestionsSaved = true
+
+        // this is called on QuestionsCompleteFragment
+        if (isAnonymous) {
+            goLogInActivity()
+        } else {
+            showQuestionsCompleteFragment()
         }
+
+
     }
 
     private fun saveExamsAndQuestions() {
-        mExamList = DataHelper(baseContext).getExams()
-        for (j in 0 .. mExamList.size - 1) {
-            if (mExamList.get(j).getExamId().equals(Integer(mExamId))) {
-                mExamList.get(j).setQuestions(mQuestions)
-                mExamList.get(j).setHits(mCorrectQuestions)
-                mExamList.get(j).setMisses(mIncorrectQiestions)
-                mExamList.get(j).setAnsweredExam(true)
-                DataHelper(baseContext).saveLastExamDidIt(mExamList.get(j))
-            }
-        }
-        if (mExamList.isNotEmpty()) {
-            // update local data
-            DataHelper(baseContext).saveExams(mExamList)
 
-            // send data
-            //if (NetworkUtil.isConnected(baseContext)) {
-            //    requestSendAnsweredExams(mExamList)
-            //} else {
-                requestSendAnsweredExams(mExamList)
-                mExamAnsQuestionsSaved = true
-                showQuestionsCompleteFragment()
-                // this is called on QuestionsCompleteFragment
-                //onBackPressed()
-            //}
-        }
+        // send data
+        //if (NetworkUtil.isConnected(baseContext)) {
+        //    requestSendAnsweredExams(mExamList)
+        //} else {
+        val exam = Exam()
+        exam.setExamId(Integer(mExamId))
+        exam.setQuestions(mQuestions)
+        exam.setHits(mCorrectQuestions)
+        exam.setMisses(mIncorrectQiestions)
+        exam.setAnsweredExam(true)
+
+            requestSendAnsweredExams(exam)
+            mExamAnsQuestionsSaved = true
+            showQuestionsCompleteFragment()
+            // this is called on QuestionsCompleteFragment
+            //onBackPressed()
+        //}
+
     }
 
     private fun saveWrongQuestion() {

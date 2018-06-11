@@ -654,7 +654,33 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             val user = User()
             user.setSelectedShools(schools)
             saveUser(user)
+            val updatedSchools = arrayListOf<School>()
 
+            if (schools.isEmpty()) {
+                val school1 = School()
+                val school2 = School()
+                val school3 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+                school3.setSchoolName("Sin opción")
+                updatedSchools.add(school3)
+            } else if (schools.size == 1) {
+                updatedSchools.add(schools.get(0))
+                val school1 = School()
+                val school2 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+            } else if (schools.size == 2) {
+                updatedSchools.add(schools.get(0))
+                updatedSchools.add(schools.get(1))
+                val school1 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+            }
 
             mSchoolsListAdapter = SchoolListAdapter(schools, activity!!.applicationContext)
             mSelectedSchoolsList.adapter = mSchoolsListAdapter

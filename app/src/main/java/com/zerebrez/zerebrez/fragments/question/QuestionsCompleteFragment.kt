@@ -163,7 +163,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         val rand = Random()
         val randomTip = tips.get(rand.nextInt(tips.size))
 
-        mBePremiumText1.text = "Recomendacón"
+        mBePremiumText1.text = "Recomendación"
         mBePremiumText2.text = randomTip
         mBePremiumContainer.visibility = View.VISIBLE
         mBePremiumButton.visibility = View.GONE

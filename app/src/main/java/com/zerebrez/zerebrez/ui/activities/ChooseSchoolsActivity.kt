@@ -181,12 +181,14 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
 
     override fun onBackPressed() {
 
-        val intent = Intent()
-        intent.putExtra(UPDATE_USER_SCHOOLS, true)
-        setResult(UPDATE_USER_SCHOOLS_RESULT_CODE, intent)
-        finish()
+        try {
+            val intent = Intent()
+            intent.putExtra(UPDATE_USER_SCHOOLS, true)
+            setResult(UPDATE_USER_SCHOOLS_RESULT_CODE, intent)
+            finish()
 
-        super.onBackPressed()
+            super.onBackPressed()
+        } catch (exception: Exception) {}
     }
 
     private val mDropFirstSchoolListener = View.OnClickListener {

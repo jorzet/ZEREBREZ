@@ -46,6 +46,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.zerebrez.zerebrez.fragments.init.InitFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
+import android.app.ActivityManager
+
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -222,10 +225,22 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
 
     open fun startDownloadImages() {
         try {
-            this.startService(Intent(this, DownloadImages::class.java))
-            Log.i(TAG, "Started download service **********************")
-            this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            if (!isMyServiceRunning(DownloadImages::class.java)) {
+                this.startService(Intent(this, DownloadImages::class.java))
+                Log.i(TAG, "Started download service **********************")
+                this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            }
         } catch (exception : Exception) {}
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun stopDownloadImagesService() {

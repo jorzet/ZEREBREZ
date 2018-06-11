@@ -16,6 +16,8 @@
 
 package com.zerebrez.zerebrez.fragments.login
 
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -119,9 +121,9 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
             dataHelper.saveSessionData(true)
             dataHelper.saveImagesPath(images)
 
-            if (!dataHelper.areImagesDownloaded()) {
+            //if (!dataHelper.areImagesDownloaded()) {
                 (activity as LoginActivity).startDownloadImages()
-            }
+            //}
         }
 
     }

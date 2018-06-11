@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.ui.activities
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -197,10 +198,10 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onStart() {
         super.onStart()
-        val dataHelper = DataHelper(this)
-        if (!dataHelper.areImagesDownloaded()) {
+        //val dataHelper = DataHelper(this)
+        //if (!dataHelper.areImagesDownloaded()) {
             startDownloadImages()
-        }
+        //}
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -433,10 +434,22 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     fun startDownloadImages() {
         try {
-            this.startService(Intent(this, DownloadImages::class.java))
-            Log.i(TAG, "Started download service **********************")
-            this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            if (!isMyServiceRunning(DownloadImages::class.java)) {
+                this.startService(Intent(this, DownloadImages::class.java))
+                Log.i(TAG, "Started download service **********************")
+                //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            }
         } catch (exception : Exception) {}
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun stopDownloadImagesService() {

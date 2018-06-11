@@ -86,24 +86,26 @@ class ExamsAverageFragment : BaseContentFragment() {
     override fun onGetAnsweredExamsRefactorSuccess(user: User) {
         super.onGetAnsweredExamsRefactorSuccess(user)
 
-        val exams = user.getAnsweredExams()
-        val mExamsDidIt = arrayListOf<ExamScore>()
-        for (examScore in mExams) {
-            for (exam in exams) {
-                if (exam.getExamId().equals(examScore.getExamScoreId())) {
-                    examScore.setUserScore(Integer(exam.getHits()))
-                    examScore.setTotalNumberOfQuestion(Integer(exam.getHits() + exam.getMisses()))
-                    mExamsDidIt.add(examScore)
+        if (context != null) {
+            val exams = user.getAnsweredExams()
+            val mExamsDidIt = arrayListOf<ExamScore>()
+            for (examScore in mExams) {
+                for (exam in exams) {
+                    if (exam.getExamId().equals(examScore.getExamScoreId())) {
+                        examScore.setUserScore(Integer(exam.getHits()))
+                        examScore.setTotalNumberOfQuestion(Integer(exam.getHits() + exam.getMisses()))
+                        mExamsDidIt.add(examScore)
+                    }
                 }
             }
-        }
 
-        if (mExamsDidIt.isEmpty()) {
-            examsAverageListView.visibility = View.GONE
-            notExamsDidIt.visibility = View.VISIBLE
-        } else {
-            examsAverageListAdapter = ExamAverageListAdapterRefactor(mExamsDidIt, context!!)
-            examsAverageListView.adapter = examsAverageListAdapter
+            if (mExamsDidIt.isEmpty()) {
+                examsAverageListView.visibility = View.GONE
+                notExamsDidIt.visibility = View.VISIBLE
+            } else {
+                examsAverageListAdapter = ExamAverageListAdapterRefactor(mExamsDidIt, context!!)
+                examsAverageListView.adapter = examsAverageListAdapter
+            }
         }
     }
 

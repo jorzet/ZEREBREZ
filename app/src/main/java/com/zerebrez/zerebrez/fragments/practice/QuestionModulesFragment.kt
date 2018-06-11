@@ -196,7 +196,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.setGravity(Gravity.CENTER)
             } else {
                 val module = mModuleList.get(i)
-                if (!module.isFreeModule() && !mUser!!.isPremiumUser()) {
+                if (!module.isFreeModule() && !mUser.isPremiumUser()) {
                     view.background = resources.getDrawable(R.drawable.not_premium_module_background)
                 } else if (module.isAnsweredModule()) {
                     view.background = resources.getDrawable(R.drawable.checked_module_background)
@@ -212,7 +212,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
                 view.setOnClickListener(View.OnClickListener {
-                    if (mUser!!.isPremiumUser() || module.isFreeModule()) {
+                    if (mUser.isPremiumUser() || module.isFreeModule()) {
                         val textView: TextView = view.findViewById(R.id.text)
                         val text: String = textView.text.toString()
                         Log.d(TAG, "onClick: number --- " + number)

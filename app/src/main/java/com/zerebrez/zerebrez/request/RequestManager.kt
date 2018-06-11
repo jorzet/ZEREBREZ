@@ -115,7 +115,7 @@ class RequestManager(activity : Activity) {
         firebase.requestSendAnsweredQuestions(questions)
     }
 
-    fun requestSendAnsweredModules(modules : List<Module>, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
+    fun requestSendAnsweredModules(module : Module, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -130,10 +130,10 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredModules(modules)
+        firebase.requestSendAnsweredModules(module)
     }
 
-    fun requestSendAnsweredExams(exams: List<Exam>, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
+    fun requestSendAnsweredExams(exam: Exam, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -148,7 +148,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredExams(exams)
+        firebase.requestSendAnsweredExams(exam)
     }
 
     fun requestSendSelectedSchools(schools: List<School>, onSendSelectedSchoolsListener: OnSendSelectedSchoolsListener) {

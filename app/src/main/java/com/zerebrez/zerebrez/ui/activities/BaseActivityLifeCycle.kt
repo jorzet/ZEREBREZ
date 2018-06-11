@@ -99,8 +99,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredModules(modules : List<Module>) {
-        mRequestManager.requestSendAnsweredModules(modules, object : RequestManager.OnSendAnsweredModulesListener {
+    fun requestSendAnsweredModules(module : Module) {
+        mRequestManager.requestSendAnsweredModules(module, object : RequestManager.OnSendAnsweredModulesListener {
             override fun onSendAnsweredModulesLoaded(success: Boolean) {
                 onSendAnsweredModulesSuccess(success)
             }
@@ -111,8 +111,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredExams(exams : List<Exam>) {
-        mRequestManager.requestSendAnsweredExams(exams, object : RequestManager.OnSendAnsweredExamsListener {
+    fun requestSendAnsweredExams(exam : Exam) {
+        mRequestManager.requestSendAnsweredExams(exam, object : RequestManager.OnSendAnsweredExamsListener {
             override fun onSendAnsweredExamsLoaded(success: Boolean) {
                 onSendAnsweredExamsSuccess(success)
             }

@@ -20,7 +20,7 @@
     <string name="split_secundary_text">S E C U N D A R I A</string>
 
     <string name="select_text">SELECCIONAR</string>
-    <string name="split_select_text">S E L E C C I O N A R</string>
+    <string name="split_select_text">  S E L E C C I O N A R  </string>
 
     <string name="init">Pequeños módulos \n con preguntas de todas \n las materias</string>
     <string name="it_is_understood">ENTENDIDO</string>
@@ -68,7 +68,7 @@
     <string name="become_premium_user_text">¡Vuélvete PREMIUM!</string>
     <string name="exams_number_text">10 examénes</string>
     <string name="questions_number_text">3239 preguntas</string>
-    <string name="get_all_exams_and_questions_text">Y obtén gratis todas las preguntas y exámenes que se agreguen!</string>
+    <string name="get_all_exams_and_questions_text">Y obtén gratis todos los módulos y examenes que se agreguen !por solo $99¡</string>
     <string name="i_want_to_be_premium_text">QUIERO SER PREMIUM</string>
     <string name="get_free_exams_and_questions_text">OBTÉN GRATIS EXÁMENES Y PREGUNTAS</string>
     <string name="you_have_acces_of_all_contents_text">¡Tienes acceso a todo el contenido!</string>
