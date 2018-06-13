@@ -298,6 +298,8 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
 
     override fun onGetModulesRefactorFail(throwable: Throwable) {
         super.onGetModulesRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
 
     }
 
@@ -316,31 +318,40 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
 
     override fun onGetFreeModulesRefactorFail(throwable: Throwable) {
         super.onGetFreeModulesRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredModulesAndProfileRefactorSuccess(user: User) {
         super.onGetAnsweredModulesAndProfileRefactorSuccess(user)
 
-        mUser = user
-        val answeredModules = user.getAnsweredModule()
+        if (context != null) {
+            mUser = user
+            saveUser(user)
+            val answeredModules = user.getAnsweredModule()
 
-        for (i in 0 .. mUpdatedModules.size - 1) {
-            for (answeredModule in answeredModules) {
-                if (mUpdatedModules.get(i).getId().equals(answeredModule.getId())) {
-                    mUpdatedModules.get(i).setAnsweredModule(true)
+            for (i in 0..mUpdatedModules.size - 1) {
+                for (answeredModule in answeredModules) {
+                    if (mUpdatedModules.get(i).getId().equals(answeredModule.getId())) {
+                        mUpdatedModules.get(i).setAnsweredModule(true)
+                    }
                 }
             }
-        }
 
-        if (context != null && mUpdatedModules.isNotEmpty()) {
-            resetValues()
-            updateModuleList(mUpdatedModules)
-            drawModules()
+            if (mUpdatedModules.isNotEmpty()) {
+                resetValues()
+                updateModuleList(mUpdatedModules)
+                drawModules()
+            }
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {
         super.onGetAnsweredModulesAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 

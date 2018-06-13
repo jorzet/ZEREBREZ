@@ -95,7 +95,7 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                     Log.d(TAG, token.toString())
                     val user = User()
                     user.setPremiumUser(true)
-                    user.setTimeStamp(System.currentTimeMillis().toString())
+                    user.setTimeStamp(System.currentTimeMillis())
                     saveUser(user)
                     requestSendUser(user)
 

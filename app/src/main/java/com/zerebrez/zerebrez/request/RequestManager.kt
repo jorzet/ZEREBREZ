@@ -79,6 +79,24 @@ class RequestManager(activity : Activity) {
         firebase.requestUpdateUser(user)
     }
 
+    fun requestUpdateUserPassword(user : User, onUpdateUserPasswordListener : OnUpdateUserPasswordListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onUpdateUserPasswordListener.onUpdateUserPasswordLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onUpdateUserPasswordListener.onUpdateUserPasswordError(result)
+            }
+        })
+
+        firebase.requestUpdateUserPassword(user)
+    }
+
     fun requestSendUser(user: User, onSendUserListener : OnSendUserListener) {
         val firebase = Firebase(mActivity)
 
@@ -400,6 +418,11 @@ class RequestManager(activity : Activity) {
     interface OnUpdateUserListener {
         fun onUpdateUserLoaded(success : Boolean)
         fun onUpdateUserError(throwable: Throwable)
+    }
+
+    interface OnUpdateUserPasswordListener {
+        fun onUpdateUserPasswordLoaded(success: Boolean)
+        fun onUpdateUserPasswordError(throwable: Throwable)
     }
 
     interface OnSendUserListener {

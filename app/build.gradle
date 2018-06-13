@@ -9,7 +9,7 @@ android {
         config {
             keyAlias 'zerebrez_key2'
             keyPassword 'Audilemans8-'
-            storeFile file('/Users/jorge/Documents/Projects/zerebres/zerebrez_key')
+            storeFile file('/Users/Usuario/Documents/Projects/Zerebrez/zerebrez_key')
             storePassword 'zerebrez'
         }
     }

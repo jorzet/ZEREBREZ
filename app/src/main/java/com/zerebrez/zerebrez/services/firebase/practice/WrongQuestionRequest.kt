@@ -82,7 +82,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                                 }
 
                                 if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as String
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
                                     user.setTimeStamp(timeStamp)
                                 }
                             }

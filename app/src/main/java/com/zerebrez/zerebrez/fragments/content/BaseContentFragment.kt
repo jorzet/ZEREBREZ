@@ -567,4 +567,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetTipsSuccess(tips: List<String>) {}
     open fun ongetTipsFail(throwable: Throwable) {}
 
+    fun requestUpdateUserPassword(user : User) {
+        mRequestManager.requestUpdateUserPassword(user, object : RequestManager.OnUpdateUserPasswordListener {
+            override fun onUpdateUserPasswordLoaded(success: Boolean) {
+                onUpdateUserPasswordSuccess(success)
+            }
+
+            override fun onUpdateUserPasswordError(throwable: Throwable) {
+                onUpdateUserPasswordFail(throwable)
+            }
+        })
+    }
+
+    open fun onUpdateUserPasswordSuccess(success: Boolean) {}
+    open fun onUpdateUserPasswordFail(throwable: Throwable) {}
+
 }

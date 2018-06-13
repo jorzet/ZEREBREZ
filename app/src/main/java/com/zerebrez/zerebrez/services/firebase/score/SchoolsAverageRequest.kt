@@ -96,7 +96,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                             }
 
                             if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                val timeStamp = premiumHash.get(TIMESTAMP_KEY) as String
+                                val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
                                 user.setTimeStamp(timeStamp)
                             }
 
@@ -215,7 +215,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                                         val isPremium = premiumHash.get(key4) as Boolean
                                         user.setPremiumUser(isPremium)
                                     } else if (key4.equals(TIMESTAMP_KEY)) {
-                                        val timeStamp = premiumHash.get(key4) as String
+                                        val timeStamp = premiumHash.get(key4) as Long
                                         user.setTimeStamp(timeStamp)
                                     }
                                 }

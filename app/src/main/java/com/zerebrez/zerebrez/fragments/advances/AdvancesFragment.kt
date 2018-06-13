@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -88,7 +89,6 @@ class AdvancesFragment : BaseContentFragment() {
         mExamsTextView.typeface = FontUtil.getNunitoBold(context!!)
         mNotAbleNow.typeface = FontUtil.getNunitoSemiBold(context!!)
         mAverageBySubjectTextView.typeface = FontUtil.getNunitoBold(context!!)
-
 
         requestGetHitAndMissesAnsweredModulesAndExams()
 
@@ -169,6 +169,7 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
         if (context != null) {
+            saveUser(user)
             val questions = user.getAnsweredQuestion()
             var hits = 0
             var misses = 0
@@ -194,6 +195,8 @@ class AdvancesFragment : BaseContentFragment() {
                 mExamList.adapter = examScoreListAdapter
             }
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
 
     }
 
@@ -201,6 +204,8 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
         mExamList.visibility = View.GONE
         mNotExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 }

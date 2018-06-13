@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -62,6 +63,8 @@ class PresentationKnowSchoolFragment : BaseContentFragment() {
     }
 
     private val mItIsUnderstandListener = View.OnClickListener(){
+        if (activity != null)
+            (activity as ContentActivity).showLoading(true)
         setSchoolAverageFragmentOK()
         goSchoolAverageFragment()
     }

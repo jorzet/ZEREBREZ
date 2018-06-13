@@ -164,37 +164,46 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
 
     override fun onGetFreeExamsRefactorFail(throwable: Throwable) {
         super.onGetFreeExamsRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredExamsAndProfileRefactorSuccess(user: User) {
         super.onGetAnsweredExamsAndProfileRefactorSuccess(user)
 
-        mUser = user
-        val answeredExams = user.getAnsweredExams()
+        if (context != null) {
+            mUser = user
+            saveUser(user)
+            val answeredExams = user.getAnsweredExams()
 
-        for (i in 0 .. mUpdatedExams.size - 1) {
-            for (answeredExam in answeredExams) {
-                if (mUpdatedExams.get(i).getExamId().equals(answeredExam.getExamId())) {
-                    mUpdatedExams.get(i).setAnsweredExam(true)
-                    mUpdatedExams.get(i).setHits(answeredExam.getHits())
-                    mUpdatedExams.get(i).setMisses(answeredExam.getMisses())
+            for (i in 0..mUpdatedExams.size - 1) {
+                for (answeredExam in answeredExams) {
+                    if (mUpdatedExams.get(i).getExamId().equals(answeredExam.getExamId())) {
+                        mUpdatedExams.get(i).setAnsweredExam(true)
+                        mUpdatedExams.get(i).setHits(answeredExam.getHits())
+                        mUpdatedExams.get(i).setMisses(answeredExam.getMisses())
+                    }
                 }
             }
-        }
 
-        if (context != null && mUpdatedExams.isNotEmpty()) {
-            examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
-            mExamList.adapter = examListAdapter
-            mExamList.setOnItemClickListener(this)
-        } else {
-            mNotExamsCurrentlyTextView.visibility = View.VISIBLE
-            mExamList.visibility = View.GONE
+            if (mUpdatedExams.isNotEmpty()) {
+                examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
+                mExamList.adapter = examListAdapter
+                mExamList.setOnItemClickListener(this)
+            } else {
+                mNotExamsCurrentlyTextView.visibility = View.VISIBLE
+                mExamList.visibility = View.GONE
 
+            }
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredExamsAndProfileRefactorFail(throwable: Throwable) {
         super.onGetAnsweredExamsAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 }

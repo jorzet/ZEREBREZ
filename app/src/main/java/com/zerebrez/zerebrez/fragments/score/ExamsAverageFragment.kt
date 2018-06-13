@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -81,6 +82,8 @@ class ExamsAverageFragment : BaseContentFragment() {
 
     override fun onGetExamScoreRefactorFail(throwable: Throwable) {
         super.onGetExamScoreRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredExamsRefactorSuccess(user: User) {
@@ -88,6 +91,7 @@ class ExamsAverageFragment : BaseContentFragment() {
 
         if (context != null) {
             val exams = user.getAnsweredExams()
+            saveUser(user)
             val mExamsDidIt = arrayListOf<ExamScore>()
             for (examScore in mExams) {
                 for (exam in exams) {
@@ -107,6 +111,8 @@ class ExamsAverageFragment : BaseContentFragment() {
                 examsAverageListView.adapter = examsAverageListAdapter
             }
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {
@@ -114,6 +120,8 @@ class ExamsAverageFragment : BaseContentFragment() {
 
         examsAverageListView.visibility = View.GONE
         notExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 }
