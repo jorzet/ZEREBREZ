@@ -41,7 +41,12 @@ class SchoolListAdapter (schools : List<School>, context : Context) : BaseAdapte
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val schoolView = inflator.inflate(R.layout.custom_selected_school, null)
         schoolView.tv_school_name.text = currentSchool.getSchoolName()
-        schoolView.tv_school_name.typeface = FontUtil.getNunitoSemiBold(mContext)
+
+        if (position.equals(0)) {
+            schoolView.tv_school_name.typeface = FontUtil.getNunitoBold(mContext)
+        } else {
+            schoolView.tv_school_name.typeface = FontUtil.getNunitoSemiBold(mContext)
+        }
 
         return schoolView
     }

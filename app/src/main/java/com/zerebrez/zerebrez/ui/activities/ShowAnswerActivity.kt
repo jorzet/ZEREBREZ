@@ -108,11 +108,13 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     }
 
     override fun onBackPressed() {
-        val intent = Intent()
-        intent.putExtra(SET_CHECKED_TAG, true)
-        setResult(SHOW_ANSWER_RESULT_CODE, intent)
-        finish()
-        super.onBackPressed()
+        try {
+            val intent = Intent()
+            intent.putExtra(SET_CHECKED_TAG, true)
+            setResult(SHOW_ANSWER_RESULT_CODE, intent)
+            finish()
+            super.onBackPressed()
+        } catch (exception: Exception) {}
     }
 
     private val mItIsUnderstoodButtonListener = View.OnClickListener {

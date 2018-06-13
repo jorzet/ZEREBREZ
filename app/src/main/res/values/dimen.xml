@@ -38,6 +38,7 @@
     <dimen name="line_average_progress_bar_width">2dp</dimen>
     <dimen name="text_top_width">30dp</dimen>
     <dimen name="text_top_size">15sp</dimen>
+    <dimen name="text_school_size">10sp</dimen>
 
     <!--school score canvas-->
     <dimen name="hits_width">30dp</dimen>

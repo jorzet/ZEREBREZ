@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_option_exam.view.*
 
@@ -31,9 +32,10 @@ import kotlinx.android.synthetic.main.custom_option_exam.view.*
  * jorzet.94@gmail.com
  */
 
-class ExamListAdapter (exams : List<Exam>, context : Context) : BaseAdapter() {
+class ExamListAdapter (user : User, exams : List<Exam>, context : Context) : BaseAdapter() {
     private val mExams: List<Exam> = exams
     private val mContext: Context = context
+    private val mUser : User = user
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val currentExam = getItem(position) as Exam
@@ -61,6 +63,11 @@ class ExamListAdapter (exams : List<Exam>, context : Context) : BaseAdapter() {
             examView.tv_question_number.text = currentExam.getQuestions().size.toString()
             examView.tv_exam.typeface = FontUtil.getNunitoRegular(mContext)
             examView.tv_question_number.typeface = FontUtil.getNunitoRegular(mContext)
+
+            if (!mUser.isPremiumUser() && !currentExam.isFreeExam()) {
+                examView.tv_question_number.setTextColor(mContext.resources.getColor(R.color.exam_not_done_text_color))
+                examView.question_text.setTextColor(mContext.resources.getColor(R.color.exam_not_done_text_color))
+            }
         }
 
         return examView

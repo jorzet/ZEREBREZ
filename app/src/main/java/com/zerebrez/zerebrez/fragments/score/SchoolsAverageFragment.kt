@@ -24,6 +24,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -55,18 +56,36 @@ class SchoolsAverageFragment : BaseContentFragment() {
         mComipemsYearTextView.typeface = FontUtil.getNunitoBold(context!!)
         mNot128ExmanQuestionDitIt.typeface = FontUtil.getNunitoSemiBold(context!!)
 
-        val dataHelper = DataHelper(context!!)
-        val institutes = dataHelper.getInstitutes()
-        val schools = getUser()!!.getSelectedSchools()
-        /*if (institutes.isNotEmpty()) {
-            schoolAverageCanvas.setInstitutes(institutes)
-        }*/
-
-        if (schools.isNotEmpty()) {
-            schoolAverageCanvas.setSchools(schools)
-            schoolAverageCanvas.setUserHits(1)
-        }
+        requestGetUserSelectedSchoolsRefactor()
 
         return rootView
     }
+
+    override fun onGetUserSelectedSchoolsRefactorSuccess(schools: List<School>) {
+        super.onGetUserSelectedSchoolsRefactorSuccess(schools)
+
+        if (schools.isNotEmpty()) {
+            schoolAverageCanvas.setSchools(schools)
+            //schoolAverageCanvas.setUserHits(1)
+            requestGetScoreLast128QuestionsExam()
+        }
+    }
+
+    override fun onGetUserSelectedSchoolsRefactorFail(throwable: Throwable) {
+        super.onGetUserSelectedSchoolsRefactorFail(throwable)
+    }
+
+    override fun onGetScoreLast128QuestionsExamSuccess(score: Int) {
+        super.onGetScoreLast128QuestionsExamSuccess(score)
+        schoolAverageCanvas.setUserHits(score)
+        schoolAverageCanvas.invalidate()
+        mNot128ExmanQuestionDitIt.visibility = View.GONE
+    }
+
+    override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {
+        super.onGetScoreLast128QuestionsExamFail(throwable)
+        schoolAverageCanvas.setUserHits(1)
+        mNot128ExmanQuestionDitIt.visibility = View.VISIBLE
+    }
+
 }

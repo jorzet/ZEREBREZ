@@ -1,3 +1,19 @@
+/*
+ * Copyright [2018] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.profile
 
 import android.app.Activity
@@ -64,15 +80,17 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
                     val profile = map.get(PROFILE_KEY) as HashMap<String, String>
                     for (key2 in profile.keys) {
                         if (key2.equals(PREMIUM_KEY)) {
-                            val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
-                            for (key4 in profile.keys) {
-                                if (key4.equals(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(key4) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                } else if (key4.equals(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(key4) as String
-                                    user.setTimeStamp(timeStamp)
-                                }
+
+                            val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+
+                            if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                user.setPremiumUser(isPremium)
+                            }
+
+                            if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                val timeStamp = premiumHash.get(TIMESTAMP_KEY) as String
+                                user.setTimeStamp(timeStamp)
                             }
 
                         } else if (key2.equals(COURSE_KEY)) {

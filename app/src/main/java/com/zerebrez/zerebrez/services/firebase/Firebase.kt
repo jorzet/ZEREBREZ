@@ -540,9 +540,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
+            if (!userCache.getCourse().equals("")) {
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
+            }
             userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
             userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {
@@ -603,22 +606,22 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     }
 
-    fun requestSendAnsweredQuestions(modules: List<Module>) {
+    fun requestSendAnsweredQuestions(questions: List<Question>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            for (module in modules) {
-                for (question in module.getQuestions()) {
-                    if (!question.getOptionChoosed().equals("")) {
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
-                        userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
-                    }
+
+            for (question in questions) {
+                if (!question.getOptionChoosed().equals("")) {
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
                 }
             }
+
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {
@@ -635,29 +638,29 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestSendAnsweredModules(modules : List<Module>) {
+    fun requestSendAnsweredModules(module : Module) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            for (module in modules) {
-                if (module.isAnsweredModule()) {
-                    var correct = 0
-                    var incorrect = 0
-                    for (question in module.getQuestions()) {
-                        if (question.getWasOK()) {
-                            correct++
-                        } else {
-                            incorrect++
-                        }
-                    }
 
-                    userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
-                    userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
+            if (module.isAnsweredModule()) {
+                var correct = 0
+                var incorrect = 0
+                for (question in module.getQuestions()) {
+                    if (question.getWasOK()) {
+                        correct++
+                    } else {
+                        incorrect++
+                    }
                 }
+
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
             }
+
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {
@@ -675,19 +678,19 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     }
 
 
-    fun requestSendAnsweredExams(exams : List<Exam>) {
+    fun requestSendAnsweredExams(exam : Exam) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            for (exam in exams) {
-                if (exam.isAnsweredExam()) {
-                    userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
-                    userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
-                }
+
+            if (exam.isAnsweredExam()) {
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
             }
+
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
                     if (task.isComplete) {

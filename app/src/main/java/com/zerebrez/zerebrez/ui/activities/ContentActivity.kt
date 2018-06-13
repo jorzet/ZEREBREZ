@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.ui.activities
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -197,17 +198,19 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onStart() {
         super.onStart()
-        val dataHelper = DataHelper(this)
-        if (!dataHelper.areImagesDownloaded()) {
+        //val dataHelper = DataHelper(this)
+        //if (!dataHelper.areImagesDownloaded()) {
             startDownloadImages()
-        }
+        //}
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
+        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
             //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
             //if (showPayment) {
                 goPaymentFragment()
@@ -315,7 +318,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[1])
                 mTopTabLayout.getTabAt(1)!!.setText("Materias")
                 mTopTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[2])
-                mTopTabLayout.getTabAt(2)!!.setText("Erroneas")
+                mTopTabLayout.getTabAt(2)!!.setText("Erróneas")
                 mTopTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[3])
                 mTopTabLayout.getTabAt(3)!!.setText("Examenes")
             }
@@ -430,9 +433,23 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     }
 
     fun startDownloadImages() {
-        this.startService(Intent(this, DownloadImages::class.java))
-        Log.i(TAG, "Started download service **********************")
-        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+        try {
+            if (!isMyServiceRunning(DownloadImages::class.java)) {
+                this.startService(Intent(this, DownloadImages::class.java))
+                Log.i(TAG, "Started download service **********************")
+                //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            }
+        } catch (exception : Exception) {}
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun stopDownloadImagesService() {

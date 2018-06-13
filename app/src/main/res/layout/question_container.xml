@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
-            android:text="1"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="17sp"
             android:textStyle="bold"/>
@@ -36,7 +36,7 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/iv_vertical_line"
             android:layout_marginLeft="30dp"
-            android:text="Módulo"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="17sp"/>
 
@@ -55,11 +55,24 @@
 
     </RelativeLayout>
 
+    <ProgressBar
+        android:id="@+id/pb_questions_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_below="@+id/toolbar_question"
+        android:indeterminate="false"
+        android:maxHeight="10dip"
+        android:minHeight="10dip"
+        android:progress="0"
+        android:progressDrawable="@drawable/greenprogress" />
+
+
     <FrameLayout
         android:id="@+id/question_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_question"
+        android:layout_below="@+id/pb_questions_progress"
         android:layout_above="@+id/bottom_bar">
     </FrameLayout>
 
@@ -127,5 +140,25 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/progressBarHolder"
+        android:animateLayoutChanges="true"
+        android:alpha="0.4"
+        android:background="#000000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/white"/>
+
+    </FrameLayout>
 
 </RelativeLayout>

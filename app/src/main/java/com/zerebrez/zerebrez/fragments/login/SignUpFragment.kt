@@ -305,6 +305,11 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     override fun onUpdateUserFail(throwable: Throwable) {
         super.onUpdateUserFail(throwable)
+
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+
         val error = throwable
         if (error is FirebaseError) {
             val firebaseError = error as FirebaseError
@@ -450,10 +455,11 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
-            mLogInView.visibility = View.VISIBLE
-            mLoginAnotherProvidersView.visibility = View.VISIBLE
-            mLoadingProgresBar.visibility = View.GONE
         }
+
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
 
         val error = throwable
         if (error is FirebaseError) {
@@ -489,10 +495,11 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
-            mLogInView.visibility = View.VISIBLE
-            mLoginAnotherProvidersView.visibility = View.VISIBLE
-            mLoadingProgresBar.visibility = View.GONE
         }
+
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
 
         val error = throwable
         if (error is FirebaseError) {

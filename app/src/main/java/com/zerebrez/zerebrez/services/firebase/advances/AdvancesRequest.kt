@@ -1,3 +1,19 @@
+/*
+ * Copyright [2018] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.advances
 
 import android.app.Activity
@@ -5,7 +21,9 @@ import android.util.Log
 import com.google.firebase.database.*
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Module
+import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.HashMap
@@ -62,39 +80,76 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                         println(key)
                         if (key.equals(PROFILE_REFERENCE)) {
                             val profile = map.get(key) as HashMap<String, String>
-                            val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
-                            for (key4 in profile.keys) {
-                                if (key4.equals(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(key4) as Boolean
+                            if (profile.containsKey(PREMIUM_KEY)) {
+                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
                                     user.setPremiumUser(isPremium)
-                                } else if (key4.equals(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(key4) as String
+                                }
+
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as String
                                     user.setTimeStamp(timeStamp)
                                 }
                             }
 
-                        }  else if (key.equals(ANSWERED_MODULE_KEY)) {
-                            val answeredModules = map.get(key) as HashMap<String, String>
-                            val modules = arrayListOf<Module>()
-
-                            for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
-                                val module = Module()
-                                module.setId(Integer(key2.replace("m","")))
-
-                                for (key3 in moduleAnswered.keys) {
-                                    if (key3.equals(INCORRECT_KEY)) {
-                                        val incorrectQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
-                                        module.setIncorrectQuestions(incorrectQuestions)
-                                    } else if (key3.equals(CORRECT_KEY)) {
-                                        val correctQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
-                                        module.setCorrectQuestions(correctQuestions)
+                        }  else if (key.equals(ANSWERED_QUESTION_REFERENCE)) {
+                            val answeredQuestions = map.get(key) as HashMap<String, String>
+                            val questions = arrayListOf<Question>()
+                            for (key2 in answeredQuestions.keys) {
+                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+                                val question = Question()
+                                question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
+                                for (key3 in questionAnswered.keys) {
+                                    if (key3.equals(SUBJECT_KEY)) {
+                                        val subject = questionAnswered.get(key3)
+                                        when (subject) {
+                                            SubjectType.VERBAL_HABILITY.value -> {
+                                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                            }
+                                            SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                            }
+                                            SubjectType.MATHEMATICS.value -> {
+                                                question.setSubjectType(SubjectType.MATHEMATICS)
+                                            }
+                                            SubjectType.SPANISH.value -> {
+                                                question.setSubjectType(SubjectType.SPANISH)
+                                            }
+                                            SubjectType.BIOLOGY.value -> {
+                                                question.setSubjectType(SubjectType.BIOLOGY)
+                                            }
+                                            SubjectType.CHEMISTRY.value -> {
+                                                question.setSubjectType(SubjectType.CHEMISTRY)
+                                            }
+                                            SubjectType.PHYSICS.value -> {
+                                                question.setSubjectType(SubjectType.PHYSICS)
+                                            }
+                                            SubjectType.GEOGRAPHY.value -> {
+                                                question.setSubjectType(SubjectType.GEOGRAPHY)
+                                            }
+                                            SubjectType.UNIVERSAL_HISTORY.value -> {
+                                                question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                                            }
+                                            SubjectType.MEXICO_HISTORY.value -> {
+                                                question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                            }
+                                            SubjectType.FCE.value -> {
+                                                question.setSubjectType(SubjectType.FCE)
+                                            }
+                                        }
+                                    } else if (key3.equals(IS_CORRECT_KEY)) {
+                                        val isCorrect = questionAnswered.get(key3) as Boolean
+                                        question.setWasOK(isCorrect)
+                                    } else if (key3.equals(CHOOSEN_OPTION_KEY)) {
+                                        val chosenOption = questionAnswered.get(key3).toString()
+                                        question.setOptionChoosed(chosenOption)
                                     }
                                 }
-
-                                modules.add(module)
+                                questions.add(question)
                             }
-                            user.setAnsweredModules(modules)
+                            user.setAnsweredQuestions(questions)
                         } else if (key.equals(ANSWERED_EXAM_KEY)) {
                             val answeredExams = map.get(key) as HashMap<String, String>
                             val exams = arrayListOf<Exam>()

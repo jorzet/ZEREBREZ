@@ -33,7 +33,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Módulo 1"
-                        android:textColor="@color/questions_text_color"
+                        android:textColor="@color/percentage_line_color"
                         android:textSize="30sp"/>
 
                 </RelativeLayout>
@@ -144,17 +144,21 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:gravity="center"
                     android:text="¡Se te acaban las preguntas!"
                     android:textColor="@color/exams_text_color"
-                    android:textSize="25sp"/>
+                    android:textSize="23sp"/>
 
                 <TextView
-                    android:id="@+id/tv_npremium_text_2"
+                    android:id="@+id/tv_premium_text_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_premium_text_1"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
                     android:text="¡No te quedes sin estudiar!"
@@ -165,12 +169,13 @@
                 <RelativeLayout
                     android:id="@+id/btn_be_premium"
                     android:layout_width="200dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:layout_below="@+id/tv_npremium_text_2"
+                    android:layout_below="@+id/tv_premium_text_2"
                     android:background="@drawable/be_premium_button_background">
                     <TextView
+                        android:id="@+id/btn_be_premium_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
@@ -202,11 +207,12 @@
                 <RelativeLayout
                     android:id="@+id/btn_super"
                     android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/super_button_background">
                     <TextView
+                        android:id="@+id/btn_super_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
@@ -222,6 +228,12 @@
 
             <RelativeLayout
                 android:layout_below="@+id/rl_average_by_subject_container"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_below="@+id/rl_super_container"
                 android:layout_width="match_parent"
                 android:layout_height="40dp">
             </RelativeLayout>

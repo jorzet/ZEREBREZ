@@ -1,3 +1,19 @@
+/*
+ * Copyright [2018] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.practice
 
 import android.app.Activity
@@ -21,7 +37,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
-    private val CORRECT_KEY : String = "isCorrect"
+    private val IS_CORRECT_KEY : String = "isCorrect"
     private val SUBJECT_KEY : String = "subject"
     private val CHOOSEN_OPTION_KEY : String = "chosenOption"
 
@@ -57,13 +73,16 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                         println(key)
                         if (key.equals(PROFILE_REFERENCE)) {
                             val profile = map.get(key) as HashMap<String, String>
-                            val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
-                            for (key4 in profile.keys) {
-                                if (key4.equals(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(key4) as Boolean
+                            if (profile.containsKey(PREMIUM_KEY)) {
+                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
                                     user.setPremiumUser(isPremium)
-                                } else if (key4.equals(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(key4) as String
+                                }
+
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as String
                                     user.setTimeStamp(timeStamp)
                                 }
                             }
@@ -113,7 +132,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                                                 question.setSubjectType(SubjectType.FCE)
                                             }
                                         }
-                                    } else if (key3.equals(CORRECT_KEY)) {
+                                    } else if (key3.equals(IS_CORRECT_KEY)) {
                                         val isCorrect = questionAnswered.get(key3) as Boolean
                                         question.setWasOK(isCorrect)
                                     } else if (key3.equals(CHOOSEN_OPTION_KEY)) {

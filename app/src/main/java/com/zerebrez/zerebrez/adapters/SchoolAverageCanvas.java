@@ -39,7 +39,7 @@ import java.util.List;
 
 public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImageView {
 
-    private Canvas canvas;
+    public Canvas canvas;
     public Paint paint;
     private Context mContext;
 
@@ -51,6 +51,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     private int mTextTopWidth;
 
     private int mTextTopSize;
+    private int mTextSchoolSize;
 
     private int maxHits = 128; // 128 question per exam in mexico
 
@@ -70,6 +71,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         mTextTopWidth = (int) getResources().getDimension(R.dimen.text_top_width);
 
         mTextTopSize = (int) getResources().getDimension(R.dimen.text_top_size);
+        mTextSchoolSize = (int) getResources().getDimension(R.dimen.text_school_size);
 
     }
 
@@ -130,7 +132,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         for (int i = 0; i < mSchools.size(); i++) {
             drawSchoolAndHits(mSchools.get(i).getSchoolName(),
                     mSchools.get(i).getHitsNumber(),
-                    mTextTopSize,
+                    mTextSchoolSize,
                     mTextTopSize,
                     getResources().getColor(R.color.school_text_color),
                     getResources().getColor(R.color.hits_text_color),

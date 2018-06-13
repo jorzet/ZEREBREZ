@@ -99,7 +99,8 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
 
     private fun downloadToLocalFile(imageName : String) {
         val storage = FirebaseStorage.getInstance()
-        val fileRef = storage.getReference().child("android/images/test/${imageName}")
+        Log.d(DownloadImages.TAG,"start download: "+ imageName)
+        val fileRef = storage.getReference().child("ios/images/2x/${imageName}")
         if (fileRef != null) {
             try {
                 val localFile: File = File.createTempFile("images", "jpg")
@@ -118,22 +119,25 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
                             }
                             Log.d(DownloadImages.TAG,"saving image: ${imageName}")
                             val file = File(path + "/zerebrez/", imageName) // the File to save , append increasing numeric counter to prevent files from getting overwritten.
-                            fOut = FileOutputStream(file)
+                            if (!file.exists()) {
+                                fOut = FileOutputStream(file)
 
-                            val pictureBitmap = bmp // obtaining the Bitmap
-                            pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut) // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
-                            fOut.flush() // Not really required
-                            fOut.close() // do not forget to close the stream
+                                val pictureBitmap = bmp // obtaining the Bitmap
+                                pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut) // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                                fOut.flush() // Not really required
+                                fOut.close() // do not forget to close the stream
 
-                            MediaStore.Images.Media.insertImage(mContext.contentResolver, file.getAbsolutePath(), file.getName(), file.getName())
+                                MediaStore.Images.Media.insertImage(mContext.contentResolver, file.getAbsolutePath(), file.getName(), file.getName())
 
-                            Log.d(DownloadImages.TAG,"image ${imageName} saved")
-                            mDownloadComplete = true
-                            mErrorOccurred = false
+                                Log.d(DownloadImages.TAG, "image ${imageName} saved")
+                                mDownloadComplete = true
+                                mErrorOccurred = false
+                            }
                         }
                         .addOnFailureListener { exception ->
                             mErrorOccurred = true
-
+                            Log.d(DownloadImages.TAG, "an error occurred while downliading images: " + exception.stackTrace)
+                            exception.printStackTrace()
                         }
                         .addOnProgressListener { taskSnapshot ->
                             // progress percentage
