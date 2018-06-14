@@ -195,7 +195,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     override fun onBackPressed() {
         try {
-            if (mShowPaymentFragment) {
+            if (isAnonymous) {
+                goLogInActivityStartFragment()
+            } else if (mShowPaymentFragment) {
                 val intent = Intent()
                 intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
                 setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)

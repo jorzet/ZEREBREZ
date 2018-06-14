@@ -120,9 +120,9 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(true)
             dataHelper.saveImagesPath(images)
-
+            goInitFragment()
             //if (!dataHelper.areImagesDownloaded()) {
-                (activity as LoginActivity).startDownloadImages()
+                //(activity as LoginActivity).startDownloadImages()
             //}
         }
 

@@ -207,10 +207,10 @@
                 <RelativeLayout
                     android:id="@+id/btn_super"
                     android:layout_width="120dp"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/super_button_background">
+                    android:background="@drawable/blue_background_button">
                     <TextView
                         android:id="@+id/btn_super_text"
                         android:layout_width="wrap_content"

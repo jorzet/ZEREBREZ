@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.adapters.InitViewPager
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 /**
@@ -49,7 +50,7 @@ class InitFragment : BaseContentFragment() {
     private lateinit var comipems: Button
     private lateinit var loading : ProgressBar
 
-    private var mCourses : List<String> = arrayListOf()
+    private var mCourses : List<String> = arrayListOf<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -181,7 +182,8 @@ class InitFragment : BaseContentFragment() {
             user.setUUID(userFirebase.uid)
         }
         saveUser(user)
-        goQuestionActivity()
+        (activity as LoginActivity).startDownloadImages()
+        //goQuestionActivity()
     }
 
     private fun goQuestionActivity() {

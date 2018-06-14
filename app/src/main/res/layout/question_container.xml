@@ -96,7 +96,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:background="@drawable/oranage_button">
+            android:background="@drawable/show_answer_button_background">
 
             <TextView
                 android:id="@+id/btn_show_answer_text"
@@ -125,7 +125,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:background="@drawable/blue_background_button">
+            android:background="@drawable/next_question_button_background">
 
             <TextView
                 android:id="@+id/btn_next_question_text"

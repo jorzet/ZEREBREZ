@@ -62,6 +62,8 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
     private val SHOW_START = "show_start"
     private val HITS_EXTRA = "hits_extra"
     private val MISSES_EXTRA = "misses_extra"
+    private val MODULE_ID = "module_id"
+    private val ANONYMOUS_USER = "anonymous_user"
 
     companion object {
         val RC_SIGN_IN : Int = 9001
@@ -223,12 +225,14 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 
-    open fun startDownloadImages() {
+    fun startDownloadImages() {
         try {
             if (!isMyServiceRunning(DownloadImages::class.java)) {
                 this.startService(Intent(this, DownloadImages::class.java))
                 Log.i(TAG, "Started download service **********************")
                 this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            } else {
+                goQuestionActivity()
             }
         } catch (exception : Exception) {}
     }
@@ -248,7 +252,8 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Log.i(TAG, "Stopped service ***************************")
         val dataHelper = DataHelper(this)
         dataHelper.setImagesDownloaded(true)
-        showInitFragment()
+        goQuestionActivity()
+        //showInitFragment()
     }
 
     private val br = object : BroadcastReceiver() {
@@ -261,6 +266,14 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 }
             }
         }
+    }
+
+    private fun goQuestionActivity() {
+        val intent = Intent(this, QuestionActivity::class.java)
+        intent.putExtra(MODULE_ID, 1) // show first module
+        intent.putExtra(ANONYMOUS_USER, true)
+        startActivity(intent)
+        finish()
     }
 
     /*

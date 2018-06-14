@@ -21,6 +21,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -125,6 +126,40 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mImagesPath = dataHelper.getImagesPath()
 
         if (question != null) {
+
+            if (question!!.getQuestionType().equals(QuestionType.EQUATION.toString())) {
+                if (activity != null)
+                    (activity as QuestionActivity).showLoading(true)
+                mOptionA.isEnabled = false
+                mOptionB.isEnabled = false
+                mOptionC.isEnabled = false
+                mOptionD.isEnabled = false
+
+                var TIME_DELAY : Long = 0
+                if (android.os.Build.VERSION.SDK_INT <= 22){
+                    TIME_DELAY = 7000
+                } else{
+                    TIME_DELAY = 3000
+                }
+
+                Handler().postDelayed(object : Runnable {
+                    override fun run() {
+                        if (activity != null)
+                            (activity as QuestionActivity).showLoading(false)
+                        mOptionA.isEnabled = true
+                        mOptionB.isEnabled = true
+                        mOptionC.isEnabled = true
+                        mOptionD.isEnabled = true
+                    }
+                }, TIME_DELAY)
+
+            } else {
+                mOptionA.isEnabled = true
+                mOptionB.isEnabled = true
+                mOptionC.isEnabled = true
+                mOptionD.isEnabled = true
+            }
+
             val mSortOptions = arrayListOf<QuestionOption>()
 
             val texts = question!!.getText()
@@ -264,6 +299,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mOptionB.setOnClickListener(this)
         mOptionC.setOnClickListener(this)
         mOptionD.setOnClickListener(this)
+    }
+
+    fun setListeners() {
+
     }
 
     override fun onClick(view: View?) {
