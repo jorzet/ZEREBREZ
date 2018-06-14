@@ -62,7 +62,10 @@ class SplashActivity : BaseActivityLifeCycle() {
         mProgressBar = findViewById(R.id.pb_progressbar_init)
         mComipemsImageView = findViewById(R.id.tv_comipems)
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        } catch (exception : Exception) {}
+
 
         initHandler()
     }

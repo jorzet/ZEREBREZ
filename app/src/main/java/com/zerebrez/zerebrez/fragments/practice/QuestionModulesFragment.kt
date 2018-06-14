@@ -251,10 +251,12 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     }
 
     private fun resetValues() {
-        mModuleList = arrayListOf<Module>()
-        mLeftTableLayout.removeAllViews()
-        mCenterTableLayout.removeAllViews()
-        mRightTableLayout.removeAllViews()
+        try {
+            mModuleList = arrayListOf<Module>()
+            mLeftTableLayout.removeAllViews()
+            mCenterTableLayout.removeAllViews()
+            mRightTableLayout.removeAllViews()
+        } catch (exception : Exception) {}
     }
 
     fun convertPixelsToDp(px: Float, context: Context): Float {

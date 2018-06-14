@@ -38,7 +38,7 @@ class CompareResultsContainerFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.compare_results_container, container, false)!!
 
-        val transaction = fragmentManager!!.beginTransaction()
+        val transaction = childFragmentManager.beginTransaction()
         transaction.replace(R.id.compare_results_fragment_container, PresentationCompareResultsFragment())
         transaction.commit()
 

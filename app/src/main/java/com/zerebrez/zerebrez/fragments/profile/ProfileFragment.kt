@@ -751,20 +751,21 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
         super.onGetUserSchoolsFail(throwable)
+        if (context != null) {
+            val updatedSchools = arrayListOf<School>()
+            val school1 = School()
+            val school2 = School()
+            val school3 = School()
+            school1.setSchoolName("Sin opción")
+            updatedSchools.add(school1)
+            school2.setSchoolName("Sin opción")
+            updatedSchools.add(school2)
+            school3.setSchoolName("Sin opción")
+            updatedSchools.add(school3)
 
-        val updatedSchools = arrayListOf<School>()
-        val school1 = School()
-        val school2 = School()
-        val school3 = School()
-        school1.setSchoolName("Sin opción")
-        updatedSchools.add(school1)
-        school2.setSchoolName("Sin opción")
-        updatedSchools.add(school2)
-        school3.setSchoolName("Sin opción")
-        updatedSchools.add(school3)
-
-        mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
-        mSelectedSchoolsList.adapter = mSchoolsListAdapter
+            mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+            mSelectedSchoolsList.adapter = mSchoolsListAdapter
+        }
 
         mEditSchoolsButton.visibility = View.VISIBLE
         mEditSchoolsTextView.text = "Escoger"
