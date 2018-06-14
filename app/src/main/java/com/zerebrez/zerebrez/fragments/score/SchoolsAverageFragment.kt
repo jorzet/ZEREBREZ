@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -73,6 +74,8 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
     override fun onGetUserSelectedSchoolsRefactorFail(throwable: Throwable) {
         super.onGetUserSelectedSchoolsRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetScoreLast128QuestionsExamSuccess(score: Int) {
@@ -80,12 +83,16 @@ class SchoolsAverageFragment : BaseContentFragment() {
         schoolAverageCanvas.setUserHits(score)
         schoolAverageCanvas.invalidate()
         mNot128ExmanQuestionDitIt.visibility = View.GONE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {
         super.onGetScoreLast128QuestionsExamFail(throwable)
         schoolAverageCanvas.setUserHits(1)
         mNot128ExmanQuestionDitIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 }

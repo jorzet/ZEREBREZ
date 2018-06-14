@@ -218,7 +218,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 //val credential = GoogleAuthProvider.getCredential(idToken, null)
                 //requestSigInUserWithGoogleProvider(credential)
             } else {
-                (activity as ContentActivity).showLoading(false)
+                if (activity != null)
+                    (activity as ContentActivity).showLoading(false)
                 // Google Sign In failed, update UI appropriately
                 Log.e(TAG, "Login Unsuccessful. ")
                 val error = GenericError()
@@ -334,25 +335,17 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         val user = getUser()
         if (user != null) {
             //check if has account changes
-            var hasChangesAccount = false
-            if (!mEmail.text.toString().equals(user.getEmail())) {
-                user.setEmail(mEmail.text.toString())
-                hasChangesAccount = true
-            }
-            if (!mPassword.text.toString().equals(user.getPassword())) {
+            if (!mPassword.text.toString().equals("")) {
                 user.setPassword(mPassword.text.toString())
-                hasChangesAccount = true
-            }
 
-            // send request just if has email or password changes
-            if (hasChangesAccount) {
-                requestUpdateUser(user)
-            }
+                if (activity != null)
+                    (activity as ContentActivity).showLoading(true)
 
-            // check has account changes or profile changes
-            if (hasChangesAccount) {
+                requestUpdateUserPassword(user)
+
                 saveUser(user)
             }
+
         }
     }
 
@@ -627,23 +620,28 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onGetProfileRefactorSuccess(user: User) {
         super.onGetProfileRefactorSuccess(user)
 
-        val mSchools = user.getSelectedSchools()
+        if (context != null) {
+            saveUser(user)
+            val mSchools = user.getSelectedSchools()
 
-        requestGetUserSchools(mSchools)
+            requestGetUserSchools(mSchools)
 
-        val course = user.getCourse()
-        if (!course.equals("")) {
-            mCourse.text = course.toUpperCase()
-        }
+            val course = user.getCourse()
+            if (!course.equals("")) {
+                mCourse.text = course.toUpperCase()
+            }
 
-        val userFirebase = FirebaseAuth.getInstance().currentUser
-        if (userFirebase != null) {
-            mEmail.setText(userFirebase.getEmail())
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                mEmail.setText(userFirebase.getEmail())
+            }
         }
     }
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
         super.onGetProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetUserSchoolsSuccess(schools: List<School>) {
@@ -691,6 +689,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             mSelectedSchoolsList.visibility = View.GONE
             mNotSelectedSchools.visibility = View.VISIBLE
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
@@ -699,7 +699,36 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mEditSchoolsTextView.text = "Escoger"
         mSelectedSchoolsList.visibility = View.GONE
         mNotSelectedSchools.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
+
+    override fun onUpdateUserPasswordSuccess(success: Boolean) {
+        super.onUpdateUserPasswordSuccess(success)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+
+        mPassword.setText("")
+
+        ErrorDialog.newInstance("Tu contraseña fue cambiambiada",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+    }
+
+    override fun onUpdateUserPasswordFail(throwable: Throwable) {
+        super.onUpdateUserPasswordFail(throwable)
+
+        val error = throwable
+        if (error is FirebaseError) {
+            val firebaseError = error as FirebaseError
+            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        } else {
+            ErrorDialog.newInstance("Error", "No se pudo cambiar la contraseña",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
 
 }

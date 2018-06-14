@@ -762,7 +762,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                             val isPremium = premiumHash.get(key4) as Boolean
                                             user.setPremiumUser(isPremium)
                                         } else if (key4.equals(TIMESTAMP_KEY)) {
-                                            val timeStamp = premiumHash.get(key4) as String
+                                            val timeStamp = premiumHash.get(key4) as Long
                                             user.setTimeStamp(timeStamp)
                                         }
                                     }
@@ -1185,6 +1185,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 //onRequestLietenerFailed.onFailed(databaseError.toException())
             }
         })
+    }
+
+    fun requestUpdateUserPassword(user : User) {
+        requestChangeUserPassword(user)
     }
 
 }

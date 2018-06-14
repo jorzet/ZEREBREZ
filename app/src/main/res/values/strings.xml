@@ -129,7 +129,7 @@ Cero anuncios bannner de terceros. No permitimos publicidad por parte de tercero
 Nuevas maneras de usar WhatsApp. Exploraremos maneras para que tú y diferentes comercios puedan comunicarse usando WhatsApp, por ejemplo con información de pedidos, transacciones y citas; notificaciones de entrega y envío; actualizaciones de producto y servicio; y mercadotecnia en general. Por ejemplo, puedes recibir información sobre el estado de un vuelo para un viaje próximo, un recibo de algo que compraste o una notificación sobre la fecha de una entrega. Los mensajes de mercadotecnia podrían incluir una oferta de algo que quizás te interese. No queremos que recibas mensajes no solicitados, es por eso que, al igual que con todos tus mensajes, puedes administrar estas comunicaciones y respetaremos las opciones que elijas.
 Tus opciones. Si eres un usuario actual, tendrás la opción de elegir que la información de tu cuenta WhatsApp no sea compartida con Facebook para mejorar tu experiencia con la publicidad y los productos en Facebook. Los usuarios que acepten nuestros Términos y Política de Privacidad actualizados, tendrán 30 días adicionales para tomar esta decisión yendo a Ajustes > Cuenta.
 </string>
-    <string name="url_terms_and_privacy">https://www.zerebrez.com/terms.html</string>
+    <string name="url_terms_and_privacy">https://www.zerebrez.com/privacy.html</string>
 
     <!--select schools fragment-->
     <string name="select_your_school_text">Elige tus tres opciones</string>

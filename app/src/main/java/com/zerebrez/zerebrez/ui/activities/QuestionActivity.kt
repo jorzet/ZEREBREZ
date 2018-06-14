@@ -218,7 +218,11 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     this)!!
                     .show(supportFragmentManager, "")
         } else {
-            onBackPressed()
+            if (isAnonymous) {
+                goLogInActivityStartFragment()
+            } else {
+                onBackPressed()
+            }
         }
     }
 
@@ -520,6 +524,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         this.finish()
     }
 
+    private fun goLogInActivityStartFragment() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.putExtra(SHOW_START, true)
+        this.startActivity(intent)
+        this.finish()
+    }
+
     override fun onGetQuestionsByModuleIdRefactorSuccess(questions: List<Question>) {
         super.onGetQuestionsByModuleIdRefactorSuccess(questions)
         mQuestions = questions
@@ -589,7 +600,11 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     override fun onConfirmationAccept() {
-        onBackPressed()
+        if (isAnonymous) {
+            goLogInActivityStartFragment()
+        } else {
+            onBackPressed()
+        }
     }
 
 }

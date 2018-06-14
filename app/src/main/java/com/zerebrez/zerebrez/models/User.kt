@@ -33,7 +33,7 @@ class User {
     private var answeredExams : List<Exam> = arrayListOf()
     private var selectedSchools : List<School> = arrayListOf()
     private var premiumUser : Boolean = false
-    private var timestamp : String = "0"
+    private var timestamp : Long = 0
 
     constructor(email: String, password: String) {
         this.email = email
@@ -134,11 +134,11 @@ class User {
         return email.equals("") && password.equals("")
     }
 
-    fun setTimeStamp(timestamp : String) {
+    fun setTimeStamp(timestamp : Long) {
         this.timestamp = timestamp
     }
 
-    fun getTimestamp() : String {
+    fun getTimestamp() : Long {
         return this.timestamp
     }
 }

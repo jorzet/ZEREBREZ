@@ -33,6 +33,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 /**
@@ -302,6 +303,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
         if (context != null) {
             mUser = user
+            saveUser(user)
             val answeredQuestion = user.getAnsweredQuestion()
 
             for (i in 0..answeredQuestion.size - 1) {
@@ -314,9 +316,13 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             updateQuestionList(mUpdatedQuestions)
             drawQuestions()
         }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
         super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 }

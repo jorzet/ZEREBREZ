@@ -278,10 +278,18 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
         override fun onTabSelected(tab: TabLayout.Tab?) {
             when(tab!!.position) {
-                0 -> {currentTab = NodeType.PRACTICE}
-                1 -> {currentTab = NodeType.ADVANCES}
-                2 -> {currentTab = NodeType.SCORE/* this node is the brain key icon */}
-                3 -> {currentTab = NodeType.PROFILE}
+                0 -> {
+                    currentTab = NodeType.PRACTICE
+                }
+                1 -> {
+                    currentTab = NodeType.ADVANCES
+                }
+                2 -> {
+                    currentTab = NodeType.SCORE/* this node is the brain key icon */
+                }
+                3 -> {
+                    currentTab = NodeType.PROFILE
+                }
             }
 
             // Draw top TabLayout icons

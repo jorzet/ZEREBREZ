@@ -540,7 +540,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             param = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    0.3f)
+                    0.18f)
 
         } else {
             param = LinearLayout.LayoutParams(
