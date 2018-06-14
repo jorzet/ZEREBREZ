@@ -259,6 +259,8 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             }
             try {
                 mTopTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.gray_soft))
+                mTopTabLayout.setTabTextColors(resources.getColor(R.color.tab_text_top_color_unselected),
+                        resources.getColor(R.color.tab_text_top_color_selected))
             } catch (exception : Exception) {}
         }
     }

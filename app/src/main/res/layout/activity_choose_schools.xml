@@ -65,13 +65,19 @@
                     android:textColor="@color/exams_text_color2"
                     android:textSize="20sp"/>
 
-                <ImageView
+                <RelativeLayout
                     android:id="@+id/iv_cross_1"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/cross_circle_icon"/>
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/cross_circle_icon"/>
+                </RelativeLayout>
 
             </RelativeLayout>
 
@@ -103,13 +109,19 @@
                     android:textColor="@color/exams_text_color2"
                     android:textSize="20sp"/>
 
-                <ImageView
+                <RelativeLayout
                     android:id="@+id/iv_cross_2"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/cross_circle_icon"/>
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/cross_circle_icon"/>
+                </RelativeLayout>
 
             </RelativeLayout>
 
@@ -142,13 +154,19 @@
                     android:textColor="@color/exams_text_color2"
                     android:textSize="20sp"/>
 
-                <ImageView
+                <RelativeLayout
                     android:id="@+id/iv_cross_3"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/cross_circle_icon"/>
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/cross_circle_icon"/>
+                </RelativeLayout>
 
             </RelativeLayout>
 

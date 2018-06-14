@@ -222,6 +222,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         } else {
             if (isAnonymous) {
                 goLogInActivityStartFragment()
+                //onBackPressed()
             } else {
                 onBackPressed()
             }

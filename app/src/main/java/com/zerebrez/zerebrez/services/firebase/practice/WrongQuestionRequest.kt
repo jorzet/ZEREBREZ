@@ -47,10 +47,10 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
 
     init {
         mFirebaseInstance = FirebaseDatabase.getInstance()
-        if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-            mFirebaseInstance.setPersistenceEnabled(true)
-            SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        }
+        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
+        //    mFirebaseInstance.setPersistenceEnabled(true)
+        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
+        //}
     }
 
     fun requestGetWrontQuestionsRefactor() {

@@ -126,7 +126,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int starts = progressHeight - (((startHit) * progressHeight) / maxHits);
 
         // draw progress bar
-        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, starts);
+        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight);
 
 
         for (int i = 0; i < mSchools.size(); i++) {
@@ -201,7 +201,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw school name
          */
         // fake ractangle where text going to center
-        Rect areaRectSchool = new Rect(leftSchool, yPos - 25, rightSchool, yPos + 25);
+        Rect areaRectSchool = new Rect(leftSchool, yPos - 10, rightSchool, yPos + 10);
         // draw the background style (pure color or image)
         paint.setColor(getResources().getColor(R.color.background));
         canvas.drawRect(areaRectSchool, paint);
@@ -222,7 +222,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw school hits
          */
         // fake ractangle where text going to center
-        Rect areaRectHits = new Rect(leftHits, yPos - 25, rightHits, yPos + 25);
+        Rect areaRectHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
         // draw the background style (pure color or image)
         paint.setColor(getResources().getColor(R.color.background));
         canvas.drawRect(areaRectHits, paint);
@@ -269,7 +269,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw user hits
          */
         // fake ractangle where text going to center
-        Rect areaRectuserHits = new Rect(leftHits, yPos - 25, rightHits, yPos + 25);
+        Rect areaRectuserHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
         // draw the background style (pure color or image)
         paint.setColor(getResources().getColor(R.color.background));
         canvas.drawRect(areaRectuserHits, paint);

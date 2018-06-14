@@ -320,7 +320,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/iv_gary_line6"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
@@ -345,14 +345,14 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/iv_gary_line6"
                     android:layout_marginTop="30dp"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"/>-->
 
                 <ImageView
                     android:id="@+id/iv_gary_line5"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/sw_allow_mobile_data"
+                    android:layout_below="@+id/sw_allow_notification"
                     android:layout_marginTop="30dp"
                     android:src="@drawable/gray_line_icon"/>
 

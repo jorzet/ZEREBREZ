@@ -67,7 +67,7 @@ class PresentationQuestionFragment : BaseContentFragment() {
     }
 
     private fun goQuestionModulesFragment() {
-        val transaction = fragmentManager!!.beginTransaction()
+        val transaction = childFragmentManager.beginTransaction()
         transaction.replace(R.id.questions_fragment_container, QuestionModulesFragment())
         transaction.commit()
     }

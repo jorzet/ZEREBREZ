@@ -67,8 +67,10 @@ class PresentationStudyBySubjectTopicFragment : BaseContentFragment() {
     }
 
     private fun goStudySubjectFragment() {
-        val transaction = fragmentManager!!.beginTransaction()
-        transaction.replace(R.id.study_subject_fragment_container, StudySubjectFragment())
-        transaction.commit()
+        try {
+            val transaction = childFragmentManager.beginTransaction()
+            transaction.replace(R.id.study_subject_fragment_container, StudySubjectFragment())
+            transaction.commit()
+        } catch (exception : Exception) {}
     }
 }

@@ -38,7 +38,7 @@ class QuestionContainerFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.questions_container, container, false)!!
 
-        val transaction = fragmentManager!!.beginTransaction()
+        val transaction = childFragmentManager.beginTransaction()
         transaction.replace(R.id.questions_fragment_container, PresentationQuestionFragment())
         transaction.commit()
 

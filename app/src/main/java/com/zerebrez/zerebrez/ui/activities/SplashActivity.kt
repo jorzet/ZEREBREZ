@@ -26,6 +26,7 @@ import android.widget.TextView
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -60,6 +61,8 @@ class SplashActivity : BaseActivityLifeCycle() {
 
         mProgressBar = findViewById(R.id.pb_progressbar_init)
         mComipemsImageView = findViewById(R.id.tv_comipems)
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         initHandler()
     }

@@ -68,9 +68,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private lateinit var mFirstSchoolText : TextView
     private lateinit var mSecondSchoolText : TextView
     private lateinit var mThirdSchoolText : TextView
-    private lateinit var mDropFirstSchool : ImageView
-    private lateinit var mDropSecondSchool : ImageView
-    private lateinit var mDropThirdSchool : ImageView
+    private lateinit var mDropFirstSchool : View
+    private lateinit var mDropSecondSchool : View
+    private lateinit var mDropThirdSchool : View
     private lateinit var mInstitutesSchoolList : ExpandableListView
     private lateinit var mContinueButton : View
     private lateinit var mContinueText : TextView

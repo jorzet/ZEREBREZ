@@ -93,10 +93,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     init {
         mFirebaseInstance = FirebaseDatabase.getInstance()
-        if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-            mFirebaseInstance.setPersistenceEnabled(true)
-            SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        }
+        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
+        //    mFirebaseInstance.setPersistenceEnabled(true)
+        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
+        //}
     }
 
     /*
@@ -714,6 +714,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
+            val dbNode = mFirebaseDatabase.child(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE)
+            dbNode.setValue(null)
+
             for (i in 0 .. schools.size - 1) {
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + INSTITUTION_ID, "institute" + schools.get(i).getInstituteId())
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + SCHOOL_ID, "school" + schools.get(i).getSchoolId())

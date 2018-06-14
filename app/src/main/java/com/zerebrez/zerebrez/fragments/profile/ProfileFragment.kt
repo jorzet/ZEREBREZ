@@ -140,7 +140,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mEditSchoolsButton = rootView.findViewById(R.id.btn_change_schools)
         mEditSchoolsTextView = rootView.findViewById(R.id.edit_schools_text)
         mNotSelectedSchools = rootView.findViewById(R.id.tv_not_selected_schools)
-        mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
+        //mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
         mNotification = rootView.findViewById(R.id.tv_notification)
         mTimeNotification = rootView.findViewById(R.id.tv_time)
         mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
@@ -152,7 +152,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mLinktYourAccountsTextView = rootView.findViewById(R.id.tv_link_accounts_text)
         mTimetoNotifyTextView = rootView.findViewById(R.id.tv_time_to_notify)
         mTimeTextView = rootView.findViewById(R.id.tv_time)
-        mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
+        //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
@@ -167,7 +167,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mNotification.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTimetoNotifyTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTimeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTermsAndPrivacyTextView.typeface = FontUtil.getNunitoBold(context!!)
 
 
@@ -181,7 +181,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mSendEmail.setOnClickListener(mSendEmailListener)
         mNotification.setOnClickListener(mNotificationListener)
 
-        mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
+        //mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
         mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
         mLinkEmailButton.setOnEditorActionListener(onSendFormListener)
 
@@ -195,7 +195,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         requestGetProfileRefactor()
 
         checkProviders()
-        checkMobileDataSate()
+        //checkMobileDataSate()
 
         return rootView
     }
@@ -241,7 +241,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         requestGetProfileRefactor()
 
         checkProviders()
-        checkMobileDataSate()
+        //checkMobileDataSate()
     }
 
     private val onSendFormListener = object : TextView.OnEditorActionListener {
@@ -289,10 +289,64 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private val mLogOutListener = View.OnClickListener {
+
+        var ok1 = false
+        var ok2 = false
+        var ok3 = false
+        var ok4 = false
+        var ok5 = false
+        var ok6 = false
+        var ok7 = false
+
+        if (SharedPreferencesManager(context!!).isQuestionModuleFragmentOK()) {
+            ok1 = true
+        }
+        if (SharedPreferencesManager(context!!).isStudySubjectFragmentOK()) {
+            ok2 = true
+        }
+        if (SharedPreferencesManager(context!!).isStudyWrongQuestionFragmentOK()) {
+            ok3 = true
+        }
+        if (SharedPreferencesManager(context!!).isExamFragmentOK()) {
+            ok4 = true
+        }
+        if (SharedPreferencesManager(context!!).isAdvancesfragmentOK()) {
+            ok5 = true
+        }
+        if (SharedPreferencesManager(context!!).isAdvancesfragmentOK()) {
+            ok6 = true
+        }
+        if (SharedPreferencesManager(context!!).isExamsAverageFragmentOK()) {
+            ok7 = true
+        }
+
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()
         SharedPreferencesManager(context!!).setPersistanceDataEnable(true)
         LoginManager.getInstance().logOut()
+
+        if (ok1) {
+            setQuestionModuleFragmentOK()
+        }
+        if (ok2) {
+            setStudySubjectFragmentOK()
+        }
+        if (ok3) {
+            setStudyWrongQuestionFragmentOK()
+        }
+        if (ok4) {
+            setExamFragmentOK()
+        }
+        if (ok5) {
+            setAdvancesFragmentOK()
+        }
+        if (ok6) {
+            setSchoolAverageFragmentOK()
+        }
+        if (ok7) {
+            setExamsAverageFragmentOK()
+        }
+
         goLogInActivity()
     }
 
@@ -488,9 +542,9 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     private fun checkMobileDataSate() {
         if (NetworkUtil.isMobileNetworkConnected(context!!)) {
-            mAllowMobileDataSwitch.isChecked = true
+            //mAllowMobileDataSwitch.isChecked = true
         } else {
-            mAllowMobileDataSwitch.isChecked = false
+            //mAllowMobileDataSwitch.isChecked = false
         }
     }
 
@@ -498,12 +552,12 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         if (checked) {
             MyNetworkUtil.getInstance().setMobileDataEnabled(context!!, true)
             MyNetworkUtil.getInstance().setWifiEnable(context!!, false)
-            mAllowMobileDataSwitch.isChecked = true
+            //mAllowMobileDataSwitch.isChecked = true
 
         } else {
             MyNetworkUtil.getInstance().setMobileDataEnabled(context!!, false)
             MyNetworkUtil.getInstance().setWifiEnable(context!!, true)
-            mAllowMobileDataSwitch.isChecked = false
+            //mAllowMobileDataSwitch.isChecked = false
         }
     }
 
@@ -678,9 +732,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 val school1 = School()
                 school1.setSchoolName("Sin opción")
                 updatedSchools.add(school1)
+            } else {
+                updatedSchools.addAll(schools)
             }
 
-            mSchoolsListAdapter = SchoolListAdapter(schools, activity!!.applicationContext)
+            mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
             mSelectedSchoolsList.adapter = mSchoolsListAdapter
             mEditSchoolsButton.visibility = View.VISIBLE
         } else {
@@ -695,6 +751,21 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
         super.onGetUserSchoolsFail(throwable)
+
+        val updatedSchools = arrayListOf<School>()
+        val school1 = School()
+        val school2 = School()
+        val school3 = School()
+        school1.setSchoolName("Sin opción")
+        updatedSchools.add(school1)
+        school2.setSchoolName("Sin opción")
+        updatedSchools.add(school2)
+        school3.setSchoolName("Sin opción")
+        updatedSchools.add(school3)
+
+        mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+        mSelectedSchoolsList.adapter = mSchoolsListAdapter
+
         mEditSchoolsButton.visibility = View.VISIBLE
         mEditSchoolsTextView.text = "Escoger"
         mSelectedSchoolsList.visibility = View.GONE

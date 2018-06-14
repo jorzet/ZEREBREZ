@@ -67,6 +67,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
         if (schools.isNotEmpty()) {
             schoolAverageCanvas.setSchools(schools)
+            schoolAverageCanvas.invalidate()
             //schoolAverageCanvas.setUserHits(1)
             requestGetScoreLast128QuestionsExam()
         }
@@ -90,6 +91,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
     override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {
         super.onGetScoreLast128QuestionsExamFail(throwable)
         schoolAverageCanvas.setUserHits(1)
+        schoolAverageCanvas.invalidate()
         mNot128ExmanQuestionDitIt.visibility = View.VISIBLE
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
