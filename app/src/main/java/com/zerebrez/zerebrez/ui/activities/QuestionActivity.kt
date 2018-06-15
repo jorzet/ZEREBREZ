@@ -398,6 +398,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         exam.setAnsweredExam(true)
 
             requestSendAnsweredExams(exam)
+            requestSendAnsweredQuestions(mQuestions)
             mExamAnsQuestionsSaved = true
             showQuestionsCompleteFragment()
             // this is called on QuestionsCompleteFragment
