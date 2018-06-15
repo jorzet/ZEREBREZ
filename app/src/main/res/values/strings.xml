@@ -101,7 +101,7 @@
     <string name="answered_questions_text">contestadas</string>
     <string name="exams_text">Exámenes</string>
     <string name="exam_text">EXAMEN</string>
-    <string name="hits_text">aciertos</string>
+    <string name="hits_text">aciertos de </string>
     <string name="average_by_subjet">Promedio por materia</string>
 
     <!--score fragment-->
