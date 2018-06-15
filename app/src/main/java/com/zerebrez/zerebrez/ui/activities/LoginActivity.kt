@@ -47,7 +47,8 @@ import com.zerebrez.zerebrez.fragments.init.InitFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
 import android.app.ActivityManager
-
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
 
 
 /**
@@ -121,8 +122,23 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         }
 
         // request SMS permissions
-        ActivityCompat.requestPermissions(this, arrayOf( Manifest.permission.WRITE_EXTERNAL_STORAGE),1);
-        ActivityCompat.requestPermissions(this, arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE),1);
+        if (!isWriteStoragePermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+        if (!isReadStoragePermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
+        }
+    }
+
+    /*
+     * Check if we have Write and Read storage permission
+     */
+    fun isWriteStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReadStoragePermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -163,6 +179,26 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 // Google Sign In failed
                 Log.e(TAG, "Google Sign In failed.")
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }
+        } else {
+            Toast.makeText(this, "Tienes que dar permisos para descargar las images y poderlas ver en el dispositivo", Toast.LENGTH_LONG).show();
+        }
+
+
+        if (requestCode == 2) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }
+        } else {
+            Toast.makeText(this, "Tienes que dar permisos para descargar las images y poderlas ver en el dispositivo", Toast.LENGTH_LONG).show();
         }
     }
 

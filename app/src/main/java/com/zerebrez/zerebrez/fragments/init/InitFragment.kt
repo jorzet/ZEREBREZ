@@ -16,8 +16,12 @@
 
 package com.zerebrez.zerebrez.fragments.init
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
@@ -39,7 +43,7 @@ import com.zerebrez.zerebrez.ui.activities.QuestionActivity
  * jorzet.94@gmail.com
  */
 
-class InitFragment : BaseContentFragment() {
+class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val MODULE_ID = "module_id"
     private val ANONYMOUS_USER = "anonymous_user"
@@ -182,8 +186,25 @@ class InitFragment : BaseContentFragment() {
             user.setUUID(userFirebase.uid)
         }
         saveUser(user)
-        (activity as LoginActivity).startDownloadImages()
+
+        if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
+            (activity as LoginActivity).startDownloadImages()
+        } else {
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        }
         //goQuestionActivity()
+    }
+
+    /*
+     * Check if we have Write and Read storage permission
+     */
+    fun isWriteStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReadStoragePermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun goQuestionActivity() {

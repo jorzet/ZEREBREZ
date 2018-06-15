@@ -16,11 +16,13 @@
 
 package com.zerebrez.zerebrez.ui.activities
 
+import android.Manifest
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.TabLayout
@@ -34,6 +36,8 @@ import com.zerebrez.zerebrez.adapters.ScoreViewPager
 import com.zerebrez.zerebrez.models.enums.NodeType
 import com.zerebrez.zerebrez.utils.ImagesUtil
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
@@ -200,8 +204,25 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onStart()
         //val dataHelper = DataHelper(this)
         //if (!dataHelper.areImagesDownloaded()) {
+
+        if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
             startDownloadImages()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        }
         //}
+    }
+
+    /*
+     * Check if we have Write and Read storage permission
+     */
+    fun isWriteStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReadStoragePermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

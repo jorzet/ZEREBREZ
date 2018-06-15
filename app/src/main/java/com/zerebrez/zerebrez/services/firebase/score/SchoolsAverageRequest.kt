@@ -145,36 +145,54 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
         if (schools.isNotEmpty()) {
             mUserSchoolsSize = schools.size
             mUserSchools = schools
-            requestSchool(schools.get(mCurrentSchool)) // request the first school
+            requestSchool(mUserSchools) // request the first school
         }
     }
 
-    private fun requestSchool(school: School) {
+    private fun requestSchool(schools: List<School>) {
         // Get a reference to our posts
-        val ref = INSTITUTES_REFERENCE + "/institute" + school.getInstituteId().toString() + "/schoolsList/school" + school.getSchoolId()
-        mFirebaseDatabase = mFirebaseInstance.getReference(ref)
+        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
+                val userSchools = arrayListOf<School>()
+
                 if (post != null) {
-                    val map = (post as HashMap<String, String>)
 
-                    Log.d(TAG, post.toString())
+                    val institutesHash = post as HashMap<String, String>
 
-                    mUserSchools.get(mCurrentSchool).setSchoolName(map.get("name").toString())
-                    mUserSchools.get(mCurrentSchool).setHitsNumber((map.get("score") as java.lang.Long).toInt())
+                    for (school in schools) {
+                        if (institutesHash.containsKey("institute" + school.getInstituteId().toString())) {
+                            val instituteHash = institutesHash.get("institute" + school.getInstituteId().toString()) as HashMap<String, String>
+                            school.setInstituteName(instituteHash.get("name") as String)
 
-                    mSchools.add(mUserSchools.get(mCurrentSchool))
-
-                    if (mCurrentSchool == (mUserSchoolsSize - 1)) {
-                        onRequestListenerSucces.onSuccess(mSchools)
-                    } else {
-                        mCurrentSchool++
-                        requestSchool(mUserSchools.get(mCurrentSchool))
+                            val schoolsHash = instituteHash.get("schoolsList") as HashMap<String, String>
+                            for (key3 in schoolsHash.keys) {
+                                if (school.getSchoolId().equals(Integer(key3.replace("school", "")))) {
+                                    val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                    for (key4 in schoolDataHash.keys) {
+                                        if (key4.equals("name")) {
+                                            school.setSchoolName(schoolDataHash.get("name").toString())
+                                        } else if (key4.equals("score")) {
+                                            school.setHitsNumber((schoolDataHash.get("score") as java.lang.Long).toInt())
+                                        }
+                                    }
+                                    userSchools.add(school)
+                                }
+                            }
+                        }
                     }
+
+                    if (userSchools.isNotEmpty()) {
+                        onRequestListenerSucces.onSuccess(userSchools)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
+
                 } else {
                     val error = GenericError()
                     onRequestLietenerFailed.onFailed(error)

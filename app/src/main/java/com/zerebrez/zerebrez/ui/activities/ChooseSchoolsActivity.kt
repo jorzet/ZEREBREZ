@@ -151,13 +151,13 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                 if (mSchools.isNotEmpty()) {
                     for (i in 0..mSchools.size - 1) {
                         if (i == 0) {
-                            mFirstSchoolText.text = mSchools.get(i).getSchoolName()
+                            mFirstSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mFirstSchoolContainer.visibility = View.VISIBLE
                         } else if (i == 1) {
-                            mSecondSchoolText.text = mSchools.get(i).getSchoolName()
+                            mSecondSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mSecondSchoolContainer.visibility = View.VISIBLE
                         } else if (i == 2) {
-                            mThirdSchoolText.text = mSchools.get(i).getSchoolName()
+                            mThirdSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mThirdSchoolContainer.visibility = View.VISIBLE
                         }
                     }
@@ -238,6 +238,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             val school = mSelectedSchoolsListAdapter.getChild(groupPosition, childPosition) as School
             val institute = mSelectedSchoolsListAdapter.getGroup(groupPosition) as Institute
             school.setInstituteId(institute.getInstituteId())
+            school.setInstituteName(institute.getInstituteName())
             onSchoolSelected(school)
             hasChanges = true
             return false
@@ -254,15 +255,15 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
         }
         if (mSchools.size < 3 && !moreThanOne) {
             if (mFirstSchoolText.text.equals("")) {
-                mFirstSchoolText.text = school.getSchoolName()
+                mFirstSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mFirstSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             } else if (mSecondSchoolText.text.equals("")) {
-                mSecondSchoolText.text = school.getSchoolName()
+                mSecondSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mSecondSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             } else if (mThirdSchoolText.text.equals("")) {
-                mThirdSchoolText.text = school.getSchoolName()
+                mThirdSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mThirdSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             }
@@ -275,15 +276,25 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
 
     private val mContinueListener = View.OnClickListener {
         if (NetworkUtil.isConnected(baseContext)) {
-            requestSendSelectedSchools(mSchools)
-        } else {
-            requestSendSelectedSchools(mSchools)
-            val user = getUser()
-            if (user != null) {
-                user.setSelectedShools(mSchools)
-                saveUser(user)
+            if (mSchools.isNotEmpty()) {
+                requestSendSelectedSchools(mSchools)
+            } else {
+                ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
+                        DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
             }
-            onBackPressed()
+        } else {
+            if (mSchools.isNotEmpty()) {
+                requestSendSelectedSchools(mSchools)
+                val user = getUser()
+                if (user != null) {
+                    user.setSelectedShools(mSchools)
+                    saveUser(user)
+                }
+                onBackPressed()
+            } else {
+                ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
+                        DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
+            }
         }
     }
 

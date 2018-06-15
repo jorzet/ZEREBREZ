@@ -341,9 +341,11 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             }
 
             if (mUpdatedModules.isNotEmpty()) {
-                resetValues()
-                updateModuleList(mUpdatedModules)
-                drawModules()
+                try {
+                    resetValues()
+                    updateModuleList(mUpdatedModules)
+                    drawModules()
+                } catch (exception : Exception) {}
             }
         }
         if (activity != null)

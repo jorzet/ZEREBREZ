@@ -125,12 +125,9 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int startHit = (getChartStart() - 10) < 0 ? 0 : getChartStart() - 10;
         int starts = progressHeight - (((startHit) * progressHeight) / maxHits);
 
-        // draw progress bar
-        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight);
-
 
         for (int i = 0; i < mSchools.size(); i++) {
-            drawSchoolAndHits(mSchools.get(i).getSchoolName(),
+            drawSchoolAndHits(mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName(),
                     mSchools.get(i).getHitsNumber(),
                     mTextSchoolSize,
                     mTextTopSize,
@@ -141,6 +138,9 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         drawUserHits(userHits, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
                 width - 250, width - 50);
+
+        // draw progress bar
+        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight);
     }
 
     @Override

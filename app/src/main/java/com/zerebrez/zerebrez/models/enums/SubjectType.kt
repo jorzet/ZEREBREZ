@@ -34,5 +34,5 @@ enum class SubjectType constructor(val value : String)  {
     GEOGRAPHY("Geografía"),
     MEXICO_HISTORY("Historia de México"),
     UNIVERSAL_HISTORY("Historia Universal"),
-    FCE("FCE");
+    FCE("Formación cívica y ética");
 }
