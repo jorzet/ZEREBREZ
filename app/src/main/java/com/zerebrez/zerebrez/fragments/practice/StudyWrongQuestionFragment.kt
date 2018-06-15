@@ -107,12 +107,17 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         }
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
         requestGetWrongQuestionsAndProfileRefactor()
-    }*/
+    }
 
     private fun resetValues() {
+        mWrongQuestionsId.clear()
+        mWrongQuestionsId = arrayListOf()
+
+        mUpdatedQuestions.clear()
+        mUpdatedQuestions = arrayListOf()
         mQuestionList.clear()
         mQuestionList = arrayListOf()
         mLeftTableLayout.removeAllViews()
@@ -214,9 +219,6 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             } else {
                 val currentQuestion = mQuestionList.get(i)
                 when (currentQuestion.getSubjectType()) {
-                    SubjectType.NONE -> {
-                        //image.background = resources.getDrawable(R.drawable.main_icon)
-                    }
                     SubjectType.MATHEMATICS -> {
                         image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                     }
@@ -249,6 +251,9 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                     }
                     SubjectType.FCE -> {
                         image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                    }
+                    SubjectType.NONE -> {
+                        //image.background = resources.getDrawable(R.drawable.main_icon)
                     }
                 }
 
@@ -305,14 +310,13 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             mUser = user
             saveUser(user)
             val answeredQuestion = user.getAnsweredQuestion()
-
+            resetValues()
             for (i in 0..answeredQuestion.size - 1) {
                 if (!answeredQuestion.get(i).getWasOK()) {
                     mUpdatedQuestions.add(answeredQuestion.get(i))
                 }
             }
 
-            resetValues()
             updateQuestionList(mUpdatedQuestions)
             drawQuestions()
         }

@@ -186,15 +186,17 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
                 }
             }
 
-            if (mUpdatedExams.isNotEmpty()) {
-                examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
-                mExamList.adapter = examListAdapter
-                mExamList.setOnItemClickListener(this)
-            } else {
-                mNotExamsCurrentlyTextView.visibility = View.VISIBLE
-                mExamList.visibility = View.GONE
+            try {
+                if (mUpdatedExams.isNotEmpty()) {
+                    examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
+                    mExamList.adapter = examListAdapter
+                    mExamList.setOnItemClickListener(this)
+                } else {
+                    mNotExamsCurrentlyTextView.visibility = View.VISIBLE
+                    mExamList.visibility = View.GONE
 
-            }
+                }
+            } catch (exception : Exception) {}
         }
         if (activity != null)
             (activity as ContentActivity).showLoading(false)

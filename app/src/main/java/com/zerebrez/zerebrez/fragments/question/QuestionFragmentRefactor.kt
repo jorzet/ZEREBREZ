@@ -149,7 +149,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionD.isEnabled = false
 
                 var TIME_DELAY : Long = 0
-                if (android.os.Build.VERSION.SDK_INT <= 22){
+                if (android.os.Build.VERSION.SDK_INT <= 22) {
                     TIME_DELAY = 7000
                 } else{
                     TIME_DELAY = 3000
