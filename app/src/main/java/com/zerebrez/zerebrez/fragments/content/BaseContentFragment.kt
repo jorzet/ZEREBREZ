@@ -461,8 +461,22 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
+    fun requestGetAverageSubjects() {
+        mRequestManager.requestGetAverageSubjects(object : RequestManager.OnGetAverageSubjectsListener {
+            override fun onGetAverageSubjectsLoaded(subjects: List<Subject>) {
+                onGetAverageSubjectsSuccess(subjects)
+            }
+
+            override fun onGetAverageSubjectsError(throwable: Throwable) {
+                onGetAverageSubjectsFail(throwable)
+            }
+        })
+    }
+
     open fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {}
     open fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {}
+    open fun onGetAverageSubjectsSuccess(subjects : List<Subject>) {}
+    open fun onGetAverageSubjectsFail(throwable: Throwable) {}
 
     fun requestGetExamScoreRefactor() {
         mRequestManager.requestGetExamScoreRefactor(object : RequestManager.OnGetExamScoreRefactorListener {

@@ -774,9 +774,32 @@ class RequestManager(activity : Activity) {
         advancesRequest.requestGetHitAndMissesAnsweredModulesAndExams()
     }
 
+    fun requestGetAverageSubjects(onGetAverageSubjectsListener: OnGetAverageSubjectsListener) {
+        val advancesRequest = AdvancesRequest(mActivity)
+
+        advancesRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetAverageSubjectsListener.onGetAverageSubjectsLoaded(result as List<Subject>)
+            }
+        })
+
+        advancesRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetAverageSubjectsListener.onGetAverageSubjectsError(result)
+            }
+        })
+
+        advancesRequest.requestGetAverageSubjects()
+    }
+
     interface OnGetHitsAndMissesAnsweredModulesAndExamsListener {
         fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user : User)
         fun onGetHitsAndMissesAnsweredModulesAndExamsError(throwable: Throwable)
+    }
+
+    interface OnGetAverageSubjectsListener {
+        fun onGetAverageSubjectsLoaded(subjects : List<Subject>)
+        fun onGetAverageSubjectsError(throwable: Throwable)
     }
 
 

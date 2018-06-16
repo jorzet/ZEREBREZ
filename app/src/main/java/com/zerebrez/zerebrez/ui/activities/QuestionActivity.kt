@@ -595,6 +595,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         }
     }
 
+    fun enableDisableAnswerButton(showButton: Boolean) {
+        mShowAnswer.isEnabled = showButton
+    }
+
     override fun onConfirmationCancel() {
 
     }

@@ -73,33 +73,23 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
     }
 
     private val mStartButtonListener : View.OnClickListener = View.OnClickListener {
+        goInitFragment()
+        /*if (NetworkUtil.isConnected(context!!)) {
 
-        if (NetworkUtil.isConnected(context!!)) {
+            //mButtonsContainer.visibility = View.GONE
+            //mLoadingProgressBar.visibility = View.VISIBLE
 
-            mButtonsContainer.visibility = View.GONE
-            mLoadingProgressBar.visibility = View.VISIBLE
-
-            requestLogIn(null)
+            //requestLogIn(null)
         } else {
             ErrorDialog.newInstance("Error", "Necesitas tener conexión a intenet para poder iniciar",
                     DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
-        }
+        }*/
     }
 
     private val mGoLogInButtonListener : View.OnClickListener = View.OnClickListener {
         goSingInFragment()
     }
 
-    override fun onDoLogInSuccess(success: Boolean) {
-        super.onDoLogInSuccess(success)
-        requestModules()
-    }
-
-    override fun onDoLogInFail(throwable: Throwable) {
-        super.onDoLogInFail(throwable)
-        mButtonsContainer.visibility = View.VISIBLE
-        mLoadingProgressBar.visibility = View.GONE
-    }
 
     override fun onGetModulesSucces(result: List<Module>) {
         super.onGetModulesSucces(result)

@@ -401,6 +401,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         }
 
         if (activity != null) {
+            (activity as LoginActivity).startDownloadImages()
             goChooseSchoolActivity()
         }
     }

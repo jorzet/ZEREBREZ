@@ -147,9 +147,11 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.isEnabled = false
                 mOptionC.isEnabled = false
                 mOptionD.isEnabled = false
+                if (activity != null)
+                    (activity as QuestionActivity).enableDisableAnswerButton(false)
 
                 var TIME_DELAY : Long = 0
-                if (android.os.Build.VERSION.SDK_INT <= 22) {
+                if (android.os.Build.VERSION.SDK_INT <= 22){
                     TIME_DELAY = 7000
                 } else{
                     TIME_DELAY = 3000
@@ -157,8 +159,12 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
                 Handler().postDelayed(object : Runnable {
                     override fun run() {
-                        if (activity != null)
+                        if (activity != null) {
                             (activity as QuestionActivity).showLoading(false)
+                            if (question!!.hasStepByStep()) {
+                                (activity as QuestionActivity).enableDisableAnswerButton(true)
+                            }
+                        }
                         mOptionA.isEnabled = true
                         mOptionB.isEnabled = true
                         mOptionC.isEnabled = true

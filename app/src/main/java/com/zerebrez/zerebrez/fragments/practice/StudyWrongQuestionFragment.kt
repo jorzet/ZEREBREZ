@@ -305,23 +305,25 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
     override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
         super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
+        try {
+            if (context != null) {
+                mUser = user
+                saveUser(user)
+                val answeredQuestion = user.getAnsweredQuestion()
 
-        if (context != null) {
-            mUser = user
-            saveUser(user)
-            val answeredQuestion = user.getAnsweredQuestion()
-            resetValues()
-            for (i in 0..answeredQuestion.size - 1) {
-                if (!answeredQuestion.get(i).getWasOK()) {
-                    mUpdatedQuestions.add(answeredQuestion.get(i))
+                resetValues()
+                for (i in 0..answeredQuestion.size - 1) {
+                    if (!answeredQuestion.get(i).getWasOK()) {
+                        mUpdatedQuestions.add(answeredQuestion.get(i))
+                    }
                 }
-            }
 
-            updateQuestionList(mUpdatedQuestions)
-            drawQuestions()
-        }
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+                updateQuestionList(mUpdatedQuestions)
+                drawQuestions()
+            }
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        } catch (exception : Exception) {}
     }
 
     override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {

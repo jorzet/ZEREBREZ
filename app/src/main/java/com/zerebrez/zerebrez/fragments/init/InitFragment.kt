@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.InitViewPager
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
@@ -63,19 +64,19 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
 
         val rootView = inflater.inflate(R.layout.init_fragment, container, false)!!
 
-        mViewPager = rootView.findViewById(R.id.viewPager)
+        //mViewPager = rootView.findViewById(R.id.viewPager)
         mSelectButton = rootView.findViewById(R.id.btn_select)
-        secundary = rootView.findViewById(R.id.btn1)
-        comipems = rootView.findViewById(R.id.btn2)
-        loading = rootView.findViewById(R.id.pb_loading)
+        //secundary = rootView.findViewById(R.id.btn1)
+        //comipems = rootView.findViewById(R.id.btn2)
+        loading = rootView.findViewById(R.id.loading)
 
         mSelectButton.setOnClickListener(mSelectButtonListener)
-        secundary.setOnClickListener(secundaryListener)
-        comipems.setOnClickListener(comipemsListener)
+        //secundary.setOnClickListener(secundaryListener)
+        //comipems.setOnClickListener(comipemsListener)
 
-        requestGetExams()
+        //requestGetExams()
 
-        loading.visibility = View.VISIBLE
+        //loading.visibility = View.VISIBLE
 
         return rootView
     }
@@ -179,7 +180,11 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
 
     private val mSelectButtonListener : View.OnClickListener = View.OnClickListener {
 
-        val user = User()
+        mSelectButton.visibility = View.GONE
+        loading.visibility = View.VISIBLE
+        requestLogIn(null)
+
+        /*val user = User()
         user.setCourse(mCourses.get(mViewPager.currentItem))
         val userFirebase = FirebaseAuth.getInstance().currentUser
         if (userFirebase != null) {
@@ -188,12 +193,51 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
         saveUser(user)
 
         if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
-            (activity as LoginActivity).startDownloadImages()
+            //(activity as LoginActivity).startDownloadImages()
         } else {
             ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
             ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
         }
-        //goQuestionActivity()
+        goQuestionActivity()*/
+    }
+
+    override fun onDoLogInSuccess(success: Boolean) {
+        super.onDoLogInSuccess(success)
+        val user = User()
+        user.setCourse("comipems")
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        if (userFirebase != null) {
+            user.setUUID(userFirebase.uid)
+        }
+        saveUser(user)
+        requestGetImagesPath()
+    }
+
+    override fun onDoLogInFail(throwable: Throwable) {
+        super.onDoLogInFail(throwable)
+        mSelectButton.visibility = View.VISIBLE
+        loading.visibility = View.GONE
+    }
+
+    override fun onGetImagesPathSuccess(images: List<Image>) {
+        super.onGetImagesPathSuccess(images)
+
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(true)
+            dataHelper.saveImagesPath(images)
+            goQuestionActivity()
+            //if (!dataHelper.areImagesDownloaded()) {
+            //(activity as LoginActivity).startDownloadImages()
+            //}
+        }
+
+    }
+
+    override fun onGetImagesPathFail(throwable: Throwable) {
+        super.onGetImagesPathFail(throwable)
+        mSelectButton.visibility = View.VISIBLE
+        loading.visibility = View.GONE
     }
 
     /*

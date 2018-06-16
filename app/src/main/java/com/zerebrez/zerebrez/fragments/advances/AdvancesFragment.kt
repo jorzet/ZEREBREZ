@@ -92,13 +92,137 @@ class AdvancesFragment : BaseContentFragment() {
 
         requestGetHitAndMissesAnsweredModulesAndExams()
 
+        requestGetAverageSubjects()
+
+        return rootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
+        super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
+
+        if (context != null) {
+            saveUser(user)
+            val questions = user.getAnsweredQuestion()
+            var hits = 0
+            var misses = 0
+            for (question in questions) {
+                if (question.getWasOK())
+                    hits ++
+                else
+                    misses ++
+            }
+            val total = hits + misses
+            mTotalQuestionTextView.text = total.toString()
+            mHitsNumberTextView.text = hits.toString()
+            mMissesNumberTextView.text = misses.toString()
+
+            val answeredExams = user.getAnsweredExams()
+
+            if (answeredExams.isEmpty()) {
+                mExamList.visibility = View.GONE
+                mNotExamsDidIt.visibility = View.VISIBLE
+            } else {
+
+                examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
+                mExamList.adapter = examScoreListAdapter
+            }
+        }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+
+    }
+
+    override fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {
+        super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
+        mExamList.visibility = View.GONE
+        mNotExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetAverageSubjectsSuccess(subjects2: List<Subject>) {
+        super.onGetAverageSubjectsSuccess(subjects2)
+
+        if (subjects2.isEmpty()) {
+            // TODO it is hardcoded
+            val subjects = arrayListOf<Subject>()
+
+            val subject1 = Subject()
+            subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
+            subject1.setSubjectAverage(0.0)
+            subjects.add(subject1)
+
+            val subject2 = Subject()
+            subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+            subject2.setSubjectAverage(0.0)
+            subjects.add(subject2)
+
+            val subject3 = Subject()
+            subject3.setSubjectType(SubjectType.SPANISH)
+            subject3.setSubjectAverage(0.0)
+            subjects.add(subject3)
+
+            val subject4 = Subject()
+            subject4.setSubjectType(SubjectType.MATHEMATICS)
+            subject4.setSubjectAverage(0.0)
+            subjects.add(subject4)
+
+            val subject5 = Subject()
+            subject5.setSubjectType(SubjectType.CHEMISTRY)
+            subject5.setSubjectAverage(0.0)
+            subjects.add(subject5)
+
+
+            val subject6 = Subject()
+            subject6.setSubjectType(SubjectType.PHYSICS)
+            subject6.setSubjectAverage(0.0)
+            subjects.add(subject6)
+
+            val subject7 = Subject()
+            subject7.setSubjectType(SubjectType.BIOLOGY)
+            subject7.setSubjectAverage(0.0)
+            subjects.add(subject7)
+
+            val subject8 = Subject()
+            subject8.setSubjectType(SubjectType.GEOGRAPHY)
+            subject8.setSubjectAverage(0.0)
+            subjects.add(subject8)
+
+            val subject9 = Subject()
+            subject9.setSubjectType(SubjectType.MEXICO_HISTORY)
+            subject9.setSubjectAverage(0.0)
+            subjects.add(subject9)
+
+            val subject10 = Subject()
+            subject10.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+            subject10.setSubjectAverage(0.0)
+            subjects.add(subject10)
+
+            val subject11 = Subject()
+            subject11.setSubjectType(SubjectType.FCE)
+            subject11.setSubjectAverage(0.0)
+            subjects.add(subject11)
+        } else {
+            averageSubjectListAdapter = AverageSubjectListAdapter(subjects2, context!!)
+            mAverageSubjectList.adapter = averageSubjectListAdapter
+        }
+    }
+
+    override fun onGetAverageSubjectsFail(throwable: Throwable) {
+        super.onGetAverageSubjectsFail(throwable)
 
         // TODO it is hardcoded
         val subjects = arrayListOf<Subject>()
+
         val subject1 = Subject()
         subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
         subject1.setSubjectAverage(0.0)
         subjects.add(subject1)
+
         val subject2 = Subject()
         subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
         subject2.setSubjectAverage(0.0)
@@ -157,55 +281,6 @@ class AdvancesFragment : BaseContentFragment() {
             averageSubjectListAdapter = AverageSubjectListAdapter(subjects, context!!)
             mAverageSubjectList.adapter = averageSubjectListAdapter
         }
-
-        return rootView
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
-        super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
-
-        if (context != null) {
-            saveUser(user)
-            val questions = user.getAnsweredQuestion()
-            var hits = 0
-            var misses = 0
-            for (question in questions) {
-                if (question.getWasOK())
-                    hits ++
-                else
-                    misses ++
-            }
-            val total = hits + misses
-            mTotalQuestionTextView.text = total.toString()
-            mHitsNumberTextView.text = hits.toString()
-            mMissesNumberTextView.text = misses.toString()
-
-            val answeredExams = user.getAnsweredExams()
-
-            if (answeredExams.isEmpty()) {
-                mExamList.visibility = View.GONE
-                mNotExamsDidIt.visibility = View.VISIBLE
-            } else {
-
-                examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
-                mExamList.adapter = examScoreListAdapter
-            }
-        }
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
-
-    }
-
-    override fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {
-        super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
-        mExamList.visibility = View.GONE
-        mNotExamsDidIt.visibility = View.VISIBLE
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
     }
 
 }

@@ -47,7 +47,7 @@ class FontUtil {
             val am = context.applicationContext.assets
 
             return Typeface.createFromAsset(am,
-                    String.format(Locale.US, "fonts/%s", "Nunito-Regular.ttf"))
+                    String.format(Locale.US, "fonts/%s", "Nunito-Light.ttf"))
         }
     }
 }

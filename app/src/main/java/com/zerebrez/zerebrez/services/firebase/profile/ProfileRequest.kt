@@ -76,49 +76,54 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
                         val map = (post as HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
-                        val user = User()
+                        if (map.containsKey(PROFILE_KEY)) {
+                            val user = User()
+                            val profile = map.get(PROFILE_KEY) as HashMap<String, String>
+                            for (key2 in profile.keys) {
+                                if (key2.equals(PREMIUM_KEY)) {
 
-                        val profile = map.get(PROFILE_KEY) as HashMap<String, String>
-                        for (key2 in profile.keys) {
-                            if (key2.equals(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
-
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                }
-
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-
-                            } else if (key2.equals(COURSE_KEY)) {
-                                val course = profile.get(key2).toString()
-                                user.setCourse(course)
-                            } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
-                                val selectedSchools = profile.get(key2) as ArrayList<Any>
-                                val schools = arrayListOf<School>()
-                                Log.d(TAG, "profile data ------ " + selectedSchools.size)
-                                for (i in 0..selectedSchools.size - 1) {
-                                    val institute = selectedSchools.get(i) as HashMap<String, String>
-                                    val school = School()
-                                    if (institute.containsKey(INSTITUTE_ID_KEY)) {
-                                        school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
                                     }
 
-                                    if (institute.containsKey(SCHOOL_ID_KEY)) {
-                                        school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG, "")))
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
                                     }
-                                    schools.add(school)
+
+                                } else if (key2.equals(COURSE_KEY)) {
+                                    val course = profile.get(key2).toString()
+                                    user.setCourse(course)
+                                } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
+                                    val selectedSchools = profile.get(key2) as ArrayList<Any>
+                                    val schools = arrayListOf<School>()
+                                    Log.d(TAG, "profile data ------ " + selectedSchools.size)
+                                    for (i in 0..selectedSchools.size - 1) {
+                                        val institute = selectedSchools.get(i) as HashMap<String, String>
+                                        val school = School()
+                                        if (institute.containsKey(INSTITUTE_ID_KEY)) {
+                                            school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))
+                                        }
+
+                                        if (institute.containsKey(SCHOOL_ID_KEY)) {
+                                            school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG, "")))
+                                        }
+                                        schools.add(school)
+                                    }
+                                    user.setSelectedShools(schools)
                                 }
-                                user.setSelectedShools(schools)
                             }
-                        }
 
-                        Log.d(TAG, "profile data ------ " + user.getUUID())
-                        onRequestListenerSucces.onSuccess(user)
+
+                            Log.d(TAG, "profile data ------ " + user.getUUID())
+                            onRequestListenerSucces.onSuccess(user)
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)

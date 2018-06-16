@@ -288,7 +288,7 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Log.i(TAG, "Stopped service ***************************")
         val dataHelper = DataHelper(this)
         dataHelper.setImagesDownloaded(true)
-        goQuestionActivity()
+        //goQuestionActivity()
         //showInitFragment()
     }
 

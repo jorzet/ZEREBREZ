@@ -4,13 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/comipems_background"
+    android:layout_above="@id/footer">
 
+    <ImageView
+        android:id="@+id/iv_comipems_icon"
+        android:layout_width="@dimen/comipems_image_width"
+        android:layout_height="@dimen/comipems_image_height"
+        android:src="@drawable/comipems_init_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
-    <RelativeLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_comipems_icon"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/split_comipems_text"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="35dp"/>
+</RelativeLayout>
+
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/footer">
-        <!-- ViewPager -->
+
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
@@ -26,7 +50,7 @@
             android:visibility="gone"/>
     </RelativeLayout>
 
-    <!-- Footer -->
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -48,7 +72,7 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/rounded_button_unselected" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
     <RelativeLayout
         android:id="@+id/footer"
@@ -56,6 +80,13 @@
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary">
+
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/btn_select"

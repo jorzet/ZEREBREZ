@@ -19,10 +19,8 @@ package com.zerebrez.zerebrez.services.firebase.advances
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
-import com.zerebrez.zerebrez.models.Exam
-import com.zerebrez.zerebrez.models.Module
-import com.zerebrez.zerebrez.models.Question
-import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -175,6 +173,256 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                     }
                     Log.d(TAG, "user data ------ " + user.getUUID())
                     onRequestListenerSucces.onSuccess(user)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    println("The read failed: " + databaseError.code)
+                    onRequestLietenerFailed.onFailed(databaseError.toException())
+                }
+            })
+        }
+    }
+
+    fun requestGetAverageSubjects() {
+// Get a reference to our posts
+        val user = getCurrentUser()
+        if (user != null) {
+            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase.keepSynced(true)
+
+            // Attach a listener to read the data at our posts reference
+            mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                    val post = dataSnapshot.getValue()
+                    if (post != null) {
+
+
+
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
+
+                        val subjects = arrayListOf<Subject>()
+
+                        val verbalHability = Subject()
+                        verbalHability.setSubjectType(SubjectType.VERBAL_HABILITY)
+                        var verbalHabylityOK = 0
+                        var verbalHabylityTotal = 0
+
+                        val mathematicalHability = Subject()
+                        mathematicalHability.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                        var mathematicalHabilityOK = 0
+                        var mathematicalHabilityTotal = 0
+
+                        val spanish = Subject()
+                        spanish.setSubjectType(SubjectType.SPANISH)
+                        var spanishOK = 0
+                        var spanishTotal = 0
+
+                        val mathematics = Subject()
+                        mathematics.setSubjectType(SubjectType.MATHEMATICS)
+                        var mathematicsOK = 0
+                        var mathematicsTotal = 0
+
+                        val chemistry = Subject()
+                        chemistry.setSubjectType(SubjectType.CHEMISTRY)
+                        var chemistryOK = 0
+                        var chemistryTotal = 0
+
+                        val physics = Subject()
+                        physics.setSubjectType(SubjectType.PHYSICS)
+                        var physicsOK = 0
+                        var physicsTotal = 0
+
+                        val biology = Subject()
+                        biology.setSubjectType(SubjectType.BIOLOGY)
+                        var biologyOK = 0
+                        var biologyTotal = 0
+
+                        val geography = Subject()
+                        geography.setSubjectType(SubjectType.GEOGRAPHY)
+                        var geographyOK = 0
+                        var geographyTotal = 0
+
+                        val mexicoHistory = Subject()
+                        mexicoHistory.setSubjectType(SubjectType.MEXICO_HISTORY)
+                        var mexicoHistoryOK = 0
+                        var mexicoHistoryTotal = 0
+
+                        val universalHistory = Subject()
+                        universalHistory.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                        var universalHistoryOK = 0
+                        var universalHistoryTotal = 0
+
+                        val FCE = Subject()
+                        FCE.setSubjectType(SubjectType.FCE)
+                        var FCEOK = 0
+                        var FCETotal = 0
+
+                        if (map.containsKey(ANSWERED_QUESTION_REFERENCE)) {
+                            val answeredQuestions = map.get(ANSWERED_QUESTION_REFERENCE) as HashMap<String, String>
+                            val questions = arrayListOf<Question>()
+                            for (key2 in answeredQuestions.keys) {
+                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+
+                                if (questionAnswered.containsKey(SUBJECT_KEY)) {
+                                    val subjectType = questionAnswered.get(SUBJECT_KEY)
+                                    when (subjectType) {
+                                        SubjectType.VERBAL_HABILITY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                verbalHabylityTotal++
+                                                if (isCorrect) verbalHabylityOK++
+                                            }
+                                        }
+                                        SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                mathematicalHabilityTotal++
+                                                if (isCorrect) mathematicalHabilityOK++
+                                            }
+                                        }
+                                        SubjectType.MATHEMATICS.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                mathematicsTotal++
+                                                if (isCorrect) mathematicsOK++
+                                            }
+                                        }
+                                        SubjectType.SPANISH.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                spanishTotal++
+                                                if (isCorrect) spanishOK++
+                                            }
+                                        }
+                                        SubjectType.BIOLOGY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                biologyTotal++
+                                                if (isCorrect) biologyOK++
+                                            }
+                                        }
+                                        SubjectType.CHEMISTRY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                chemistryTotal++
+                                                if (isCorrect) chemistryOK++
+                                            }
+                                        }
+                                        SubjectType.PHYSICS.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                physicsTotal++
+                                                if (isCorrect) physicsOK++
+                                            }
+                                        }
+                                        SubjectType.GEOGRAPHY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                geographyTotal++
+                                                if (isCorrect) geographyOK++
+                                            }
+                                        }
+                                        SubjectType.UNIVERSAL_HISTORY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                universalHistoryTotal++
+                                                if (isCorrect) universalHistoryOK++
+                                            }
+                                        }
+                                        SubjectType.MEXICO_HISTORY.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                mexicoHistoryTotal++
+                                                if (isCorrect) mexicoHistoryOK++
+                                            }
+                                        }
+                                        SubjectType.FCE.value -> {
+                                            if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
+                                                val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
+                                                FCETotal++
+                                                if (isCorrect) FCEOK++
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                        if (!verbalHabylityTotal.equals(0))
+                            verbalHability.setSubjectAverage(((verbalHabylityOK*10)/verbalHabylityTotal).toDouble())
+                        else
+                            verbalHability.setSubjectAverage(0.0)
+                        subjects.add(verbalHability)
+
+                        if (!mathematicalHabilityTotal.equals(0))
+                            mathematicalHability.setSubjectAverage(((mathematicalHabilityOK*10)/mathematicalHabilityTotal).toDouble())
+                        else
+                            mathematicalHability.setSubjectAverage(0.0)
+                        subjects.add(mathematicalHability)
+
+                        if (!spanishTotal.equals(0))
+                            spanish.setSubjectAverage(((spanishOK*10)/spanishTotal).toDouble())
+                        else
+                            spanish.setSubjectAverage(0.0)
+                        subjects.add(spanish)
+
+                        if (!mathematicsTotal.equals(0))
+                            mathematics.setSubjectAverage(((mathematicsOK*10)/mathematicsTotal).toDouble())
+                        else
+                            mathematics.setSubjectAverage(0.0)
+                        subjects.add(mathematics)
+
+                        if (!chemistryTotal.equals(0))
+                            chemistry.setSubjectAverage(((chemistryOK*10)/chemistryTotal).toDouble())
+                        else
+                            chemistry.setSubjectAverage(0.0)
+                        subjects.add(chemistry)
+
+                        if (!physicsTotal.equals(0.0))
+                            physics.setSubjectAverage(((physicsOK*10)/physicsTotal).toDouble())
+                        else
+                            physics.setSubjectAverage(0.0)
+                        subjects.add(physics)
+
+                        if (!biologyTotal.equals(0))
+                            biology.setSubjectAverage(((biologyOK*10)/biologyTotal).toDouble())
+                        else
+                            biology.setSubjectAverage(0.0)
+                        subjects.add(biology)
+
+                        if (!geographyTotal.equals(0))
+                            geography.setSubjectAverage(((geographyOK*10)/geographyTotal).toDouble())
+                        else
+                            geography.setSubjectAverage(0.0)
+                        subjects.add(geography)
+
+                        if (!mexicoHistoryTotal.equals(0))
+                            mexicoHistory.setSubjectAverage(((mexicoHistoryOK*10)/mexicoHistoryTotal).toDouble())
+                        else
+                            mexicoHistory.setSubjectAverage(0.0)
+                        subjects.add(mexicoHistory)
+
+                        if (!universalHistoryTotal.equals(0))
+                            universalHistory.setSubjectAverage(((universalHistoryOK*10)/universalHistoryTotal).toDouble())
+                        else
+                            universalHistory.setSubjectAverage(0.0)
+                        subjects.add(universalHistory)
+
+                        if (!FCETotal.equals(0))
+                            FCE.setSubjectAverage(((FCEOK*10)/FCETotal).toDouble())
+                        else
+                            FCE.setSubjectAverage(0.0)
+                        subjects.add(FCE)
+
+                        onRequestListenerSucces.onSuccess(subjects)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
