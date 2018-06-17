@@ -16,19 +16,19 @@
 
 package com.zerebrez.zerebrez.fragments.question
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 //import com.nishant.math.MathView // uncomment if is needed
 import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.adapters.OptionQuestionAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Image
@@ -39,8 +39,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
-import java.io.File
-import java.io.FileInputStream
+import android.widget.ScrollView
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/05/18.
@@ -60,7 +59,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     /*
      * UI accessors
      */
-    private lateinit var mQuestionList : ListView
+    private lateinit var mQuestionList : NonScrollListView
     private lateinit var mQuestion : TextView
     private lateinit var mOptionA : View
     private lateinit var mOptionB : View
@@ -79,6 +78,11 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     private lateinit var mImageAnswerC : ImageView
     private lateinit var mImageAnswerD : ImageView
     private lateinit var mQuestionContainerView : LinearLayout
+    private lateinit var mQuestionsScrolView : ScrollView
+    private lateinit var mOptionATextView: TextView
+    private lateinit var mOptionBTextView: TextView
+    private lateinit var mOptionCTextView: TextView
+    private lateinit var mOptionDTextView: TextView
 
     /*
      * Adapter
@@ -115,12 +119,60 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mImageAnswerC = rootView.findViewById(R.id.iv_answer_c)
         mImageAnswerD = rootView.findViewById(R.id.iv_answer_d)
         mQuestionContainerView = rootView.findViewById(R.id.ll_question_container)
+        mQuestionsScrolView = rootView.findViewById(R.id.questions_scroll)
+        mOptionATextView = rootView.findViewById(R.id.tv_option_a)
+        mOptionBTextView = rootView.findViewById(R.id.tv_option_b)
+        mOptionCTextView = rootView.findViewById(R.id.tv_option_c)
+        mOptionDTextView = rootView.findViewById(R.id.tv_option_d)
+
+        //mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         question = (activity as QuestionActivity).getQuestion()
         val dataHelper = DataHelper(context!!)
         mImagesPath = dataHelper.getImagesPath()
 
         if (question != null) {
+
+            if (question!!.getQuestionType().equals(QuestionType.EQUATION.toString())) {
+                if (activity != null)
+                    (activity as QuestionActivity).showLoading(true)
+                mOptionA.isEnabled = false
+                mOptionB.isEnabled = false
+                mOptionC.isEnabled = false
+                mOptionD.isEnabled = false
+                if (activity != null)
+                    (activity as QuestionActivity).enableDisableAnswerButton(false)
+
+                var TIME_DELAY : Long = 0
+                if (android.os.Build.VERSION.SDK_INT <= 22){
+                    TIME_DELAY = 7000
+                } else{
+                    TIME_DELAY = 3000
+                }
+
+                Handler().postDelayed({
+                    if (activity != null) {
+                        (activity as QuestionActivity).showLoading(false)
+                        if (question!!.hasStepByStep()) {
+                            (activity as QuestionActivity).enableDisableAnswerButton(true)
+                        }
+                    }
+                    mOptionA.isEnabled = true
+                    mOptionB.isEnabled = true
+                    mOptionC.isEnabled = true
+                    mOptionD.isEnabled = true
+                }, TIME_DELAY)
+
+            } else {
+                mOptionA.isEnabled = true
+                mOptionB.isEnabled = true
+                mOptionC.isEnabled = true
+                mOptionD.isEnabled = true
+            }
+
             val mSortOptions = arrayListOf<QuestionOption>()
 
             val texts = question!!.getText()
@@ -128,6 +180,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             val images = question!!.getImages()
 
             var realSize = 0
+            var textSize = 0
+
             if (texts.size > equations.size && texts.size > images.size)
                 realSize = texts.size
 
@@ -144,6 +198,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(texts.get(i))
                     questionOption.setQuestionType(QuestionType.TEXT)
                     mSortOptions.add(questionOption)
+                    textSize += texts.get(i).length
                 }
 
                 if (equations.size > i) {
@@ -151,6 +206,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(equations.get(i))
                     questionOption.setQuestionType(QuestionType.EQUATION)
                     mSortOptions.add(questionOption)
+                    textSize += equations.get(i).length
                 }
 
                 if (images.size > i) {
@@ -159,10 +215,11 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     questionOption.setQuestion(nameInStorage)
                     questionOption.setQuestionType(QuestionType.IMAGE)
                     mSortOptions.add(questionOption)
+                    textSize += 200
                 }
             }
 
-            if (realSize >= 4 ) {
+            if (realSize >= 3 || textSize > 250 ) {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(true)
             } else {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(false)
@@ -179,7 +236,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
     private fun setOptions() {
         mQuestion.setText("Responde")
-        mQuestion.setTypeface(FontUtil.getNunitoRegular(context!!))
+        //mQuestion.setTypeface(FontUtil.getNunitoRegular(context!!))
         mQuestionList.adapter = optionQuestionAdapter
     }
 
@@ -190,6 +247,12 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mTextAnswerB.setText(question!!.getOptionTwo())
                 mTextAnswerC.setText(question!!.getOptionThree())
                 mTextAnswerD.setText(question!!.getOptionFour())
+
+                //mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
+
                 mTextAnswerA.visibility = View.VISIBLE
                 mTextAnswerB.visibility = View.VISIBLE
                 mTextAnswerC.visibility = View.VISIBLE
@@ -257,6 +320,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mOptionD.setOnClickListener(this)
     }
 
+    fun setListeners() {
+
+    }
+
     override fun onClick(view: View?) {
         val answer = question!!.getAnswer()
 
@@ -266,21 +333,37 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     OPTION_A -> {
                         mOptionA.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("a", true)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_B -> {
                         mOptionA.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionB.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("a", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_C -> {
                         mOptionA.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionC.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("a", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                     OPTION_D -> {
                         mOptionA.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionD.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("a", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                 }
                 mOptionA.setOnClickListener(null)
@@ -295,20 +378,36 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         mOptionB.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionA.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("b", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_B -> {
                         mOptionB.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("b", true)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_C -> {
                         mOptionB.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionC.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("b", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                     OPTION_D -> {
                         mOptionC.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionD.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("b", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                 }
                 mOptionA.setOnClickListener(null)
@@ -323,20 +422,36 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         mOptionC.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionA.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("c", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_B -> {
                         mOptionC.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionB.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("c", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_C -> {
                         mOptionC.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("c", true)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                     OPTION_D -> {
                         mOptionC.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionD.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("c", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                 }
                 mOptionA.setOnClickListener(null)
@@ -351,20 +466,37 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         mOptionD.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionA.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("d", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_B -> {
                         mOptionD.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionB.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("d", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                        }, 100L)
                     }
                     OPTION_C -> {
                         mOptionD.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionC.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("d", false)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
                     }
                     OPTION_D -> {
                         mOptionD.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("d", true)
+                        mQuestionsScrolView.postDelayed(Runnable {
+                            //replace this line to scroll up or down
+                            mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                        }, 100L)
+
                     }
                 }
                 mOptionA.setOnClickListener(null)
@@ -379,13 +511,13 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
     fun getBitmap(path: String): Bitmap? {
         try {
+
             var bitmap: Bitmap? = null
-            val mainPath = Environment.getExternalStorageDirectory().toString()
-            val f = File(mainPath + "/zerebrez/" + path)
+            val f = context!!.openFileInput(path)
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
 
-            bitmap = BitmapFactory.decodeStream(FileInputStream(f), null, options)
+            bitmap = BitmapFactory.decodeStream(f, null, options)
             return bitmap
         } catch (e: Exception) {
             e.printStackTrace()
@@ -414,6 +546,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 (activity as QuestionActivity).setQuestionAnswer("a", false)
+                mQuestionsScrolView.postDelayed(Runnable {
+                    //replace this line to scroll up or down
+                    mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                }, 100L)
             }
             OPTION_B -> {
                 mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
@@ -421,6 +557,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 (activity as QuestionActivity).setQuestionAnswer("b", false)
+                mQuestionsScrolView.postDelayed(Runnable {
+                    //replace this line to scroll up or down
+                    mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
+                }, 100L)
             }
             OPTION_C -> {
                 mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
@@ -428,6 +568,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionC.background = resources.getDrawable(R.drawable.show_answer_option_background)
                 mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 (activity as QuestionActivity).setQuestionAnswer("c", false)
+                mQuestionsScrolView.postDelayed(Runnable {
+                    //replace this line to scroll up or down
+                    mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                }, 100L)
             }
             OPTION_D -> {
                 mOptionA.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
@@ -435,6 +579,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                 mOptionD.background = resources.getDrawable(R.drawable.show_answer_option_background)
                 (activity as QuestionActivity).setQuestionAnswer("d", false)
+                mQuestionsScrolView.postDelayed(Runnable {
+                    //replace this line to scroll up or down
+                    mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
+                }, 100L)
             }
         }
         mOptionA.setOnClickListener(null)
@@ -450,7 +598,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             param = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    0.3f)
+                    0.18f)
 
         } else {
             param = LinearLayout.LayoutParams(
@@ -458,7 +606,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f)
         }
-        mQuestionContainerView.setLayoutParams(param)
+        mQuestionContainerView.layoutParams = param
     }
 
 }

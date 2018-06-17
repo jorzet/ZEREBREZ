@@ -38,7 +38,7 @@ class KnowSchoolContentFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.know_school_container, container, false)!!
 
-        val transaction = fragmentManager!!.beginTransaction()
+        val transaction = childFragmentManager.beginTransaction()
         transaction.replace(R.id.know_school_fragment_container, PresentationKnowSchoolFragment())
         transaction.commit()
 

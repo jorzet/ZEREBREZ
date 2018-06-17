@@ -23,6 +23,8 @@
         android:layout_below="@+id/tv_answer_text"
         android:layout_above="@id/btn_it_is_understand"
         android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="30dp"
         android:numColumns="1"
         android:clickable="false">
@@ -31,19 +33,19 @@
 
     <RelativeLayout
         android:id="@+id/btn_it_is_understand"
-        android:layout_width="160dp"
+        android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/text_2"
-        android:background="@drawable/it_is_understood_button_background">
+        android:background="@drawable/green_button">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="3dp"
-            android:text="E N T E N D I D O"
+            android:layout_marginTop="5dp"
+            android:text="  E N T E N D I D O  "
             android:textColor="@color/white"
             android:textSize="18sp"/>
 

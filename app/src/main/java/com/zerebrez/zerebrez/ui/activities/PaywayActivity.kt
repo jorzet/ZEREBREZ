@@ -25,6 +25,7 @@ import android.view.View
 import com.google.android.gms.wallet.*
 
 import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import java.util.*
@@ -92,13 +93,12 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                     val paymentData = PaymentData.getFromIntent(data!!)
                     val token = paymentData!!.paymentMethodToken!!.token
                     Log.d(TAG, token.toString())
-                    val user = getUser()
-                    if (user != null) {
-                        user.setPremiumUser(true)
-                        user.setTimeStamp(System.currentTimeMillis().toString())
-                        saveUser(user)
-                        requestSendUser(user)
-                    }
+                    val user = User()
+                    user.setPremiumUser(true)
+                    user.setTimeStamp(System.currentTimeMillis())
+                    saveUser(user)
+                    requestSendUser(user)
+
                 }
                 Activity.RESULT_CANCELED -> {
                     // Do nothing.
@@ -119,13 +119,13 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
             }
 
         }
-        /*val user = getUser()
-        if (user != null) {
-            user.setPremiumUser(true)
-            user.setTimeStamp(System.currentTimeMillis().toString())
-            saveUser(user)
-            requestSendUser(user)
-        }*/
+
+        /*val user = User()
+        user.setPremiumUser(true)
+        user.setTimeStamp(System.currentTimeMillis().toString())
+        saveUser(user)
+        requestSendUser(user)*/
+
     }
 
     private fun createPaymentDataRequest(): PaymentDataRequest? {
@@ -133,8 +133,8 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                 .setTransactionInfo(
                         TransactionInfo.newBuilder()
                                 .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                                .setTotalPrice("100.00")
-                                .setCurrencyCode("MX")
+                                .setTotalPrice("99.00")
+                                .setCurrencyCode("MXN")
                                 .build())
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)

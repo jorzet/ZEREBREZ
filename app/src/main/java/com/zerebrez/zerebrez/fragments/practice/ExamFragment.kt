@@ -29,6 +29,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
@@ -70,7 +71,8 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     /*
      * Objects
      */
-    var updatedExams = arrayListOf<Exam>()
+    private var mUpdatedExams : List<Exam> = arrayListOf()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -82,80 +84,30 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
         mExamList = rootView.findViewById(R.id.lv_exam_container)
         mNotExamsCurrentlyTextView = rootView.findViewById(R.id.tv_not_exams_currently)
 
-
-        mDataHelper = DataHelper(context!!)
-        val exams = mDataHelper.getExams()
-        if (exams.isEmpty()) {
-            mExamList.visibility = View.GONE
-            mNotExamsCurrentlyTextView.visibility = View.VISIBLE
-        } else {
-            val freeExams = mDataHelper.getFreeExams()
-            updatedExams = arrayListOf<Exam>()
-            val user = getUser()
-            //if (user != null && user.isPremiumUser()) {
-                updatedExams.addAll(exams)
-            /*} else {
-                if (freeExams.isNotEmpty()) {
-                    for (freeExam in freeExams) {
-                        for (exam in exams) {
-                            if (exam.getExamId().equals(freeExam.getExamId())) {
-                                updatedExams.add(exam)
-                            }
-                        }
-                    }
-                }
-            }*/
-
-            examListAdapter = ExamListAdapter(updatedExams, context!!)
-            mExamList.adapter = examListAdapter
-            mExamList.setOnItemClickListener(this)
-        }
+        requestGetExamsRefactor()
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-        mDataHelper = DataHelper(context!!)
-        val exams = mDataHelper.getExams()
-        if (exams.isEmpty()) {
-            mExamList.visibility = View.GONE
-            mNotExamsCurrentlyTextView.visibility = View.VISIBLE
-        } else {
-            val freeExams = mDataHelper.getFreeExams()
-            updatedExams = arrayListOf<Exam>()
-            val user = getUser()
-            //if (user != null && user.isPremiumUser()) {
-                updatedExams.addAll(exams)
-            /*} else {
-                if (freeExams.isNotEmpty()) {
-                    for (freeExam in freeExams) {
-                        for (exam in exams) {
-                            if (exam.getExamId().equals(freeExam.getExamId())) {
-                                updatedExams.add(exam)
-                            }
-                        }
-                    }
-                }
-            }*/
 
-            examListAdapter = ExamListAdapter(updatedExams, context!!)
-            mExamList.adapter = examListAdapter
-        }
+        requestGetExamsRefactor()
 
     }
 
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
         Log.d(TAG, "item clicked--- position: " + position)
-        if (updatedExams.isNotEmpty()) {
-            val user = getUser()
-            if (user!!.isPremiumUser() || updatedExams.get(position).isFreeExam()) {
-                val examId = updatedExams.get(position).getExamId()
+        if (mUpdatedExams.isNotEmpty()) {
+            
+            if (mUser.isPremiumUser() || mUpdatedExams.get(position).isFreeExam()) {
+                val examId = mUpdatedExams.get(position).getExamId()
                 goQuestionActivity(examId.toInt())
             } else {
-                ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
+                (activity as ContentActivity).goPaymentFragment()
+                /*ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
                         DialogType.OK_DIALOG, this)!!
-                        .show(fragmentManager!!, "")
+                        .show(fragmentManager!!, "")*/
             }
         }
     }
@@ -180,6 +132,80 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     }
 
     override fun onConfirmationCancel() {
+    }
+
+    /*
+     * Firebase listeners
+     */
+    override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
+        super.onGetExamsRefactorSuccess(exams)
+        mUpdatedExams = exams
+        requestGetFreeExamsRefactor()
+    }
+
+    override fun onGetExamsRefactorFail(throwable: Throwable) {
+        super.onGetExamsRefactorFail(throwable)
+    }
+
+    override fun onGetFreeExamsRefactorSuccess(freeExams: List<Exam>) {
+        super.onGetFreeExamsRefactorSuccess(freeExams)
+
+
+        for (i in 0 .. mUpdatedExams.size - 1) {
+            for (freeModule in freeExams) {
+                if (mUpdatedExams.get(i).getExamId().equals(freeModule.getExamId())) {
+                    mUpdatedExams.get(i).setFreeExam(true)
+                }
+            }
+        }
+
+        requestGetAnsweredExamsAndProfileRefactor()
+    }
+
+    override fun onGetFreeExamsRefactorFail(throwable: Throwable) {
+        super.onGetFreeExamsRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetAnsweredExamsAndProfileRefactorSuccess(user: User) {
+        super.onGetAnsweredExamsAndProfileRefactorSuccess(user)
+
+        if (context != null) {
+            mUser = user
+            saveUser(user)
+            val answeredExams = user.getAnsweredExams()
+
+            for (i in 0..mUpdatedExams.size - 1) {
+                for (answeredExam in answeredExams) {
+                    if (mUpdatedExams.get(i).getExamId().equals(answeredExam.getExamId())) {
+                        mUpdatedExams.get(i).setAnsweredExam(true)
+                        mUpdatedExams.get(i).setHits(answeredExam.getHits())
+                        mUpdatedExams.get(i).setMisses(answeredExam.getMisses())
+                    }
+                }
+            }
+
+            try {
+                if (mUpdatedExams.isNotEmpty()) {
+                    examListAdapter = ExamListAdapter(mUser, mUpdatedExams, context!!)
+                    mExamList.adapter = examListAdapter
+                    mExamList.setOnItemClickListener(this)
+                } else {
+                    mNotExamsCurrentlyTextView.visibility = View.VISIBLE
+                    mExamList.visibility = View.GONE
+
+                }
+            } catch (exception : Exception) {}
+        }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetAnsweredExamsAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetAnsweredExamsAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
 }

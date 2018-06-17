@@ -16,10 +16,13 @@
 
 package com.zerebrez.zerebrez.ui.activities
 
+import android.Manifest
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.TabLayout
@@ -33,6 +36,8 @@ import com.zerebrez.zerebrez.adapters.ScoreViewPager
 import com.zerebrez.zerebrez.models.enums.NodeType
 import com.zerebrez.zerebrez.utils.ImagesUtil
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
@@ -197,17 +202,36 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onStart() {
         super.onStart()
-        val dataHelper = DataHelper(this)
-        if (!dataHelper.areImagesDownloaded()) {
+        //val dataHelper = DataHelper(this)
+        //if (!dataHelper.areImagesDownloaded()) {
+
+        if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
             startDownloadImages()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
         }
+        //}
+    }
+
+    /*
+     * Check if we have Write and Read storage permission
+     */
+    fun isWriteStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReadStoragePermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
+        if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE) &&
+                !resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
             //val showPayment = data!!.getBooleanExtra(SHOW_PAYMENT_FRAGMENT, false)
             //if (showPayment) {
                 goPaymentFragment()
@@ -256,6 +280,8 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             }
             try {
                 mTopTabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.gray_soft))
+                mTopTabLayout.setTabTextColors(resources.getColor(R.color.tab_text_top_color_unselected),
+                        resources.getColor(R.color.tab_text_top_color_selected))
             } catch (exception : Exception) {}
         }
     }
@@ -275,10 +301,18 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
         override fun onTabSelected(tab: TabLayout.Tab?) {
             when(tab!!.position) {
-                0 -> {currentTab = NodeType.PRACTICE}
-                1 -> {currentTab = NodeType.ADVANCES}
-                2 -> {currentTab = NodeType.SCORE/* this node is the brain key icon */}
-                3 -> {currentTab = NodeType.PROFILE}
+                0 -> {
+                    currentTab = NodeType.PRACTICE
+                }
+                1 -> {
+                    currentTab = NodeType.ADVANCES
+                }
+                2 -> {
+                    currentTab = NodeType.SCORE/* this node is the brain key icon */
+                }
+                3 -> {
+                    currentTab = NodeType.PROFILE
+                }
             }
 
             // Draw top TabLayout icons
@@ -315,7 +349,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[1])
                 mTopTabLayout.getTabAt(1)!!.setText("Materias")
                 mTopTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[2])
-                mTopTabLayout.getTabAt(2)!!.setText("Erroneas")
+                mTopTabLayout.getTabAt(2)!!.setText("Erróneas")
                 mTopTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[3])
                 mTopTabLayout.getTabAt(3)!!.setText("Examenes")
             }
@@ -430,9 +464,23 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     }
 
     fun startDownloadImages() {
-        this.startService(Intent(this, DownloadImages::class.java))
-        Log.i(TAG, "Started download service **********************")
-        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+        try {
+            if (!isMyServiceRunning(DownloadImages::class.java)) {
+                this.startService(Intent(this, DownloadImages::class.java))
+                Log.i(TAG, "Started download service **********************")
+                //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            }
+        } catch (exception : Exception) {}
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun stopDownloadImagesService() {

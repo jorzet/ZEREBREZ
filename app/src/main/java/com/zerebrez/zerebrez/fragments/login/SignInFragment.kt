@@ -279,7 +279,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
         saveUser(mUser)
-        requestModules()
+        requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onDoLogInFail(throwable: Throwable) {
@@ -630,7 +632,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
         super.onSignInUserWithFacebookProviderSuccess(success)
         Log.d(TAG, "login with facebook success")
-        requestModules()
+        requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
@@ -660,7 +664,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
-        requestModules()
+        requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {

@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -59,13 +60,17 @@ class PresentationStudyBySubjectTopicFragment : BaseContentFragment() {
     }
 
     private val mItIsUnderstandedListener = View.OnClickListener(){
+        if (activity != null)
+            (activity as ContentActivity).showLoading(true)
         setStudySubjectFragmentOK()
         goStudySubjectFragment()
     }
 
     private fun goStudySubjectFragment() {
-        val transaction = fragmentManager!!.beginTransaction()
-        transaction.replace(R.id.study_subject_fragment_container, StudySubjectFragment())
-        transaction.commit()
+        try {
+            val transaction = fragmentManager!!.beginTransaction()
+            transaction.replace(R.id.study_subject_fragment_container, StudySubjectFragment())
+            transaction.commit()
+        } catch (exception : Exception) {}
     }
 }

@@ -27,12 +27,12 @@ enum class SubjectType constructor(val value : String)  {
     MATHEMATICAL_HABILITY("Habilidad Matematica"),
     SPANISH("Español"),
     ENGLISH("Ingles"),
-    MATHEMATICS("Matematicas"),
+    MATHEMATICS("Matemáticas"),
     CHEMISTRY("Química"),
     PHYSICS("Física"),
     BIOLOGY("Biología"),
     GEOGRAPHY("Geografía"),
     MEXICO_HISTORY("Historia de México"),
     UNIVERSAL_HISTORY("Historia Universal"),
-    FCE("FCE");
+    FCE("Formación cívica y ética");
 }

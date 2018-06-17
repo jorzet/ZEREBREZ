@@ -57,9 +57,11 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -117,7 +119,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     /*
      * Objects
      */
-    private var mSchools = arrayListOf<School>()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -138,7 +140,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mEditSchoolsButton = rootView.findViewById(R.id.btn_change_schools)
         mEditSchoolsTextView = rootView.findViewById(R.id.edit_schools_text)
         mNotSelectedSchools = rootView.findViewById(R.id.tv_not_selected_schools)
-        mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
+        //mAllowMobileDataSwitch = rootView.findViewById(R.id.sw_allow_mobile_data)
         mNotification = rootView.findViewById(R.id.tv_notification)
         mTimeNotification = rootView.findViewById(R.id.tv_time)
         mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
@@ -150,7 +152,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mLinktYourAccountsTextView = rootView.findViewById(R.id.tv_link_accounts_text)
         mTimetoNotifyTextView = rootView.findViewById(R.id.tv_time_to_notify)
         mTimeTextView = rootView.findViewById(R.id.tv_time)
-        mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
+        //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
@@ -165,7 +167,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mNotification.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTimetoNotifyTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTimeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTermsAndPrivacyTextView.typeface = FontUtil.getNunitoBold(context!!)
 
 
@@ -179,7 +181,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mSendEmail.setOnClickListener(mSendEmailListener)
         mNotification.setOnClickListener(mNotificationListener)
 
-        mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
+        //mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
         mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
         mLinkEmailButton.setOnEditorActionListener(onSendFormListener)
 
@@ -189,23 +191,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mAllowNotificationsSwitch.setChecked(dataHelper.getReminderStatus());
         mTimeNotification.text = dataHelper.getNotificationTime()
 
+
+        requestGetProfileRefactor()
+
         checkProviders()
-        checkEmailAndPassword()
-        checkMobileDataSate()
-
-        val user = getUser()
-        if (user != null) {
-            val mSchools = user.getSelectedSchools()
-
-            if (mSchools.isNotEmpty()) {
-                mSchoolsListAdapter = SchoolListAdapter(mSchools, context!!)
-                mSelectedSchoolsList.adapter = mSchoolsListAdapter
-                mEditSchoolsButton.visibility = View.VISIBLE
-            } else {
-                mSelectedSchoolsList.visibility = View.GONE
-                mNotSelectedSchools.visibility = View.VISIBLE
-            }
-        }
+        //checkMobileDataSate()
 
         return rootView
     }
@@ -228,7 +218,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 //val credential = GoogleAuthProvider.getCredential(idToken, null)
                 //requestSigInUserWithGoogleProvider(credential)
             } else {
-                (activity as ContentActivity).showLoading(false)
+                if (activity != null)
+                    (activity as ContentActivity).showLoading(false)
                 // Google Sign In failed, update UI appropriately
                 Log.e(TAG, "Login Unsuccessful. ")
                 val error = GenericError()
@@ -237,27 +228,20 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 Toast.makeText(activity, "Login Unsuccessful", Toast.LENGTH_SHORT).show()
                 onGoogleResultFaild(error)
             }
+        } else if (requestCode.equals(BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)) {
+            if (resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE)) {
+                onResume()
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        val user = getUser()
-        if (user != null) {
-            val mSchools = user.getSelectedSchools()
+        requestGetProfileRefactor()
 
-            if (mSchools.isNotEmpty()) {
-                mSchoolsListAdapter = SchoolListAdapter(mSchools, context!!)
-                mSelectedSchoolsList.adapter = mSchoolsListAdapter
-            } else {
-                mSelectedSchoolsList.visibility = View.GONE
-                mNotSelectedSchools.visibility = View.VISIBLE
-            }
-        }
         checkProviders()
-        checkEmailAndPassword()
-        checkMobileDataSate()
+        //checkMobileDataSate()
     }
 
     private val onSendFormListener = object : TextView.OnEditorActionListener {
@@ -266,7 +250,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             if (actionId.equals(EditorInfo.IME_ACTION_SEND)) {
                 // hide keyboard
                 try {
-                    val inputMethodManager = textView!!.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val inputMethodManager = textView!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
                     mLinkEmailButton.performClick()
                     action = true
@@ -305,10 +289,64 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private val mLogOutListener = View.OnClickListener {
+
+        var ok1 = false
+        var ok2 = false
+        var ok3 = false
+        var ok4 = false
+        var ok5 = false
+        var ok6 = false
+        var ok7 = false
+
+        if (SharedPreferencesManager(context!!).isQuestionModuleFragmentOK()) {
+            ok1 = true
+        }
+        if (SharedPreferencesManager(context!!).isStudySubjectFragmentOK()) {
+            ok2 = true
+        }
+        if (SharedPreferencesManager(context!!).isStudyWrongQuestionFragmentOK()) {
+            ok3 = true
+        }
+        if (SharedPreferencesManager(context!!).isExamFragmentOK()) {
+            ok4 = true
+        }
+        if (SharedPreferencesManager(context!!).isAdvancesfragmentOK()) {
+            ok5 = true
+        }
+        if (SharedPreferencesManager(context!!).isAdvancesfragmentOK()) {
+            ok6 = true
+        }
+        if (SharedPreferencesManager(context!!).isExamsAverageFragmentOK()) {
+            ok7 = true
+        }
+
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()
         SharedPreferencesManager(context!!).setPersistanceDataEnable(true)
         LoginManager.getInstance().logOut()
+
+        if (ok1) {
+            setQuestionModuleFragmentOK()
+        }
+        if (ok2) {
+            setStudySubjectFragmentOK()
+        }
+        if (ok3) {
+            setStudyWrongQuestionFragmentOK()
+        }
+        if (ok4) {
+            setExamFragmentOK()
+        }
+        if (ok5) {
+            setAdvancesFragmentOK()
+        }
+        if (ok6) {
+            setSchoolAverageFragmentOK()
+        }
+        if (ok7) {
+            setExamsAverageFragmentOK()
+        }
+
         goLogInActivity()
     }
 
@@ -351,25 +389,17 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         val user = getUser()
         if (user != null) {
             //check if has account changes
-            var hasChangesAccount = false
-            if (!mEmail.text.toString().equals(user.getEmail())) {
-                user.setEmail(mEmail.text.toString())
-                hasChangesAccount = true
-            }
-            if (!mPassword.text.toString().equals(user.getPassword())) {
+            if (!mPassword.text.toString().equals("")) {
                 user.setPassword(mPassword.text.toString())
-                hasChangesAccount = true
-            }
 
-            // send request just if has email or password changes
-            if (hasChangesAccount) {
-                requestUpdateUser(user)
-            }
+                if (activity != null)
+                    (activity as ContentActivity).showLoading(true)
 
-            // check has account changes or profile changes
-            if (hasChangesAccount) {
+                requestUpdateUserPassword(user)
+
                 saveUser(user)
             }
+
         }
     }
 
@@ -510,45 +540,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
     }
 
-    private fun checkEmailAndPassword() {
-        val userFirebase = FirebaseAuth.getInstance().currentUser
-        val userCache = getUser()
-        if (userFirebase != null && userCache != null) {
-            val course = userCache.getCourse()
-            if (!course.equals("")) {
-                mCourse.text = course.toUpperCase()
-            }
-
-            val email = userCache.getEmail()
-            if (!email.equals("")) {
-                mEmail.setText(email)
-            } else {
-                mEmail.setText(userFirebase.getEmail())
-                userCache.setEmail(userFirebase.getEmail()!!)
-            }
-
-            val pass = userCache.getPassword()
-            if (!pass.equals("")) {
-                var password = ""
-                for (i in 0..pass.length) {
-                    password = password + "*"
-                }
-                mPassword.setText(password)
-            } else {
-                var password = ""
-                for (i in 0 .. 8) {
-                    password = password + "*"
-                }
-                mPassword.setText(password)
-            }
-        }
-    }
-
     private fun checkMobileDataSate() {
         if (NetworkUtil.isMobileNetworkConnected(context!!)) {
-            mAllowMobileDataSwitch.isChecked = true
+            //mAllowMobileDataSwitch.isChecked = true
         } else {
-            mAllowMobileDataSwitch.isChecked = false
+            //mAllowMobileDataSwitch.isChecked = false
         }
     }
 
@@ -556,12 +552,12 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         if (checked) {
             MyNetworkUtil.getInstance().setMobileDataEnabled(context!!, true)
             MyNetworkUtil.getInstance().setWifiEnable(context!!, false)
-            mAllowMobileDataSwitch.isChecked = true
+            //mAllowMobileDataSwitch.isChecked = true
 
         } else {
             MyNetworkUtil.getInstance().setMobileDataEnabled(context!!, false)
             MyNetworkUtil.getInstance().setWifiEnable(context!!, true)
-            mAllowMobileDataSwitch.isChecked = false
+            //mAllowMobileDataSwitch.isChecked = false
         }
     }
 
@@ -629,7 +625,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private fun goChooseSchoolsActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
-        startActivity(intent)
+        startActivityForResult(intent, BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)
     }
 
     /*
@@ -674,5 +670,141 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         })
     }
 
+
+    override fun onGetProfileRefactorSuccess(user: User) {
+        super.onGetProfileRefactorSuccess(user)
+
+        if (context != null) {
+            saveUser(user)
+            val mSchools = user.getSelectedSchools()
+
+            requestGetUserSchools(mSchools)
+
+            val course = user.getCourse()
+            if (!course.equals("")) {
+                mCourse.text = course.toUpperCase()
+            }
+
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                mEmail.setText(userFirebase.getEmail())
+            }
+        }
+    }
+
+    override fun onGetProfileRefactorFail(throwable: Throwable) {
+        super.onGetProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetUserSchoolsSuccess(schools: List<School>) {
+        super.onGetUserSchoolsSuccess(schools)
+        if (schools.isNotEmpty() && context != null) {
+            // save user chools to get it in next view
+
+            val user = User()
+            user.setSelectedShools(schools)
+            saveUser(user)
+            val updatedSchools = arrayListOf<School>()
+
+            if (schools.isEmpty()) {
+                val school1 = School()
+                val school2 = School()
+                val school3 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+                school3.setSchoolName("Sin opción")
+                updatedSchools.add(school3)
+            } else if (schools.size == 1) {
+                updatedSchools.add(schools.get(0))
+                val school1 = School()
+                val school2 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+            } else if (schools.size == 2) {
+                updatedSchools.add(schools.get(0))
+                updatedSchools.add(schools.get(1))
+                val school1 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+            } else {
+                updatedSchools.addAll(schools)
+            }
+
+            mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+            mSelectedSchoolsList.adapter = mSchoolsListAdapter
+            mEditSchoolsButton.visibility = View.VISIBLE
+        } else {
+            mEditSchoolsButton.visibility = View.VISIBLE
+            mEditSchoolsTextView.text = "Escoger"
+            mSelectedSchoolsList.visibility = View.GONE
+            mNotSelectedSchools.visibility = View.VISIBLE
+        }
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetUserSchoolsFail(throwable: Throwable) {
+        super.onGetUserSchoolsFail(throwable)
+        if (context != null) {
+            val updatedSchools = arrayListOf<School>()
+            val school1 = School()
+            val school2 = School()
+            val school3 = School()
+            school1.setSchoolName("Sin opción")
+            updatedSchools.add(school1)
+            school2.setSchoolName("Sin opción")
+            updatedSchools.add(school2)
+            school3.setSchoolName("Sin opción")
+            updatedSchools.add(school3)
+
+            mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+            mSelectedSchoolsList.adapter = mSchoolsListAdapter
+        }
+
+        mEditSchoolsButton.visibility = View.VISIBLE
+        mEditSchoolsTextView.text = "Escoger"
+        mSelectedSchoolsList.visibility = View.GONE
+        mNotSelectedSchools.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+
+    override fun onUpdateUserPasswordSuccess(success: Boolean) {
+        if (context != null) {
+            super.onUpdateUserPasswordSuccess(success)
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+
+            mPassword.setText("")
+
+            ErrorDialog.newInstance("Tu contraseña fue cambiambiada",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
+    }
+
+    override fun onUpdateUserPasswordFail(throwable: Throwable) {
+        super.onUpdateUserPasswordFail(throwable)
+
+        if (context != null) {
+            val error = throwable
+            if (error is FirebaseError) {
+                val firebaseError = error as FirebaseError
+                ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            } else {
+                ErrorDialog.newInstance("Error", "No se pudo cambiar la contraseña",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            }
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        }
+    }
 
 }

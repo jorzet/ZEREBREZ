@@ -25,6 +25,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -60,13 +62,19 @@ class SplashActivity : BaseActivityLifeCycle() {
         mProgressBar = findViewById(R.id.pb_progressbar_init)
         mComipemsImageView = findViewById(R.id.tv_comipems)
 
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        } catch (exception : Exception) {}
+
+
         initHandler()
     }
 
     private fun initHandler() {
         Handler().postDelayed(object : Runnable {
             override fun run() {
-                if (FirebaseAuth.getInstance().currentUser != null && checkSessionData()) {
+                val user = FirebaseAuth.getInstance().currentUser
+                if (user != null && checkSessionData() && !user.isAnonymous) {
                     goContentActivity()
                 } else {
                     LoginManager.getInstance().logOut()
@@ -88,7 +96,8 @@ class SplashActivity : BaseActivityLifeCycle() {
                 mProgressBar.setProgress(updateProgress())
 
             // if user is logged show ContentActivity else show LogInActivity
-            if (FirebaseAuth.getInstance().currentUser != null && checkSessionData()) {
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null && checkSessionData() && !user.isAnonymous) {
                 goContentActivity()
             } else {
                 LoginManager.getInstance().logOut()

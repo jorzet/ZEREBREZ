@@ -157,6 +157,56 @@ abstract class Engagement constructor(activity: Activity) : AbstractPendingReque
         }
     }
 
+    protected fun requestChangeUserPassword(user : User) {
+        mAuth = FirebaseAuth.getInstance()
+
+        if (mAuth.currentUser != null) {
+            mAuth.currentUser!!.updatePassword(user.getPassword()).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User password address updated.");
+                        onRequestListenerSucces.onSuccess(task.isSuccessful)
+                    } else {
+                        Log.d(TAG, "LoginError.");
+                        if (task.exception is FirebaseAuthUserCollisionException) {
+                            val exception = task.exception as FirebaseAuthUserCollisionException
+                            val error = FirebaseError()
+                            if (exception.errorCode.equals("ERROR_INVALID_EMAIL")){
+                                error.setErrorType(LoginErrorType.INVALID_EMAIL)
+                            } else if (exception.errorCode.equals("ERROR_INVALID_CREDENTIAL")){
+                                error.setErrorType(LoginErrorType.INVALID_CREDENTIAL)
+                            } else if (exception.errorCode.equals("ERROR_WRONG_PASSWORD")){
+                                error.setErrorType(LoginErrorType.WRONG_PASSWORD)
+                            } else if (exception.errorCode.equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")) {
+                                error.setErrorType(LoginErrorType.ACCOUNT_EXIST_WITH_DIFFERENT_CREDENTIAL)
+                            } else if (exception.errorCode.equals("ERROR_USER_DISABLED")){
+                                error.setErrorType(LoginErrorType.USER_DISABLED)
+                            } else if (exception.errorCode.equals("ERROR_EMAIL_ALREADY_IN_USE")){
+                                error.setErrorType(LoginErrorType.EMAIL_ADLREADY_IN_USE)
+                            } else if (exception.errorCode.equals("ERROR_WEAK_PASSWORD")){
+                                error.setErrorType(LoginErrorType.WEAK_PASSWORD)
+                            } else if (exception.errorCode.equals("ERROR_USER_NOT_FOUND")){
+                                error.setErrorType(LoginErrorType.USER_NOT_FOUND)
+                            } else if (exception.errorCode.equals("ERROR_CREDENTIAL_ALREADY_IN_USE")){
+                                error.setErrorType(LoginErrorType.ERROR_CREDENTIAL_ALREADY_IN_USE)
+                            } else {
+                                error.setErrorType(LoginErrorType.DEFAULT)
+                            }
+
+                            onRequestLietenerFailed.onFailed(error)
+                        } else {
+                            val error = GenericError()
+                            error.setErrorType(ErrorType.PASSWORD_NOT_UPDATED)
+                            onRequestLietenerFailed.onFailed(error)
+                        }
+                    }
+                }
+            })
+        } else {
+
+        }
+    }
+
     fun requestSignInWithFacebookProvider(token : AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 

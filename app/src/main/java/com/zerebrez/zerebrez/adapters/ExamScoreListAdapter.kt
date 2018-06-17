@@ -44,12 +44,15 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
         val examView = inflator.inflate(R.layout.custom_exam, null)
 
         examView.tv_exam_number.text = currentExam.getExamId().toString()
-        examView.tv_hits_number.text = currentExam.getHits().toString()
+        if (currentExam.getHits().equals(1)) {
+            examView.tv_hits_number.text = currentExam.getHits().toString() + " acierto de " + (currentExam.getHits() + currentExam.getMisses())
+        } else {
+            examView.tv_hits_number.text = currentExam.getHits().toString() + " aciertos de " + (currentExam.getHits() + currentExam.getMisses())
+        }
 
         examView.tv_exam.typeface = FontUtil.getNunitoSemiBold(mContext)
         examView.tv_exam_number.typeface = FontUtil.getNunitoSemiBold(mContext)
         examView.tv_hits_number.typeface = FontUtil.getNunitoSemiBold(mContext)
-        examView.tv_hits.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         // generate random color
         val color = ColorGenerator.MATERIAL.getColor(getItem(position))

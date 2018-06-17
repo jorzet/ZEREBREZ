@@ -28,10 +28,7 @@ import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import java.io.*
 
 /**
  * Created by Jorge Zepeda Tinoco on 06/05/18.
@@ -99,7 +96,8 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
 
     private fun downloadToLocalFile(imageName : String) {
         val storage = FirebaseStorage.getInstance()
-        val fileRef = storage.getReference().child("android/images/test/${imageName}")
+        Log.d(DownloadImages.TAG,"start download: "+ imageName)
+        val fileRef = storage.getReference().child("ios/images/2x/${imageName}")
         if (fileRef != null) {
             try {
                 val localFile: File = File.createTempFile("images", "jpg")
@@ -108,8 +106,15 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
                         .addOnSuccessListener {
                             Log.d(DownloadImages.TAG,"download complete")
                             val bmp = BitmapFactory.decodeFile(localFile.absolutePath)
+                            val stream = ByteArrayOutputStream()
+                            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                            //val filee = File(mContext.filesDir, imageName)
+                            mContext.openFileOutput(imageName, Context.MODE_PRIVATE).use {
+                                it.write(stream.toByteArray())
+                            }
                             // Assume block needs to be inside a Try/Catch block.
-                            val path = Environment.getExternalStorageDirectory().toString()
+                            /*val path = Environment.getExternalStorageDirectory().toString()
                             var fOut: OutputStream? = null
                             //Create Folder
                             val folder = File(Environment.getExternalStorageDirectory().toString() + "/zerebrez/")
@@ -118,22 +123,25 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
                             }
                             Log.d(DownloadImages.TAG,"saving image: ${imageName}")
                             val file = File(path + "/zerebrez/", imageName) // the File to save , append increasing numeric counter to prevent files from getting overwritten.
-                            fOut = FileOutputStream(file)
+                            if (!file.exists()) {
+                                fOut = FileOutputStream(file)
 
-                            val pictureBitmap = bmp // obtaining the Bitmap
-                            pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut) // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
-                            fOut.flush() // Not really required
-                            fOut.close() // do not forget to close the stream
+                                val pictureBitmap = bmp // obtaining the Bitmap
+                                pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut) // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                                fOut.flush() // Not really required
+                                fOut.close() // do not forget to close the stream
 
-                            MediaStore.Images.Media.insertImage(mContext.contentResolver, file.getAbsolutePath(), file.getName(), file.getName())
+                                MediaStore.Images.Media.insertImage(mContext.contentResolver, file.getAbsolutePath(), file.getName(), file.getName())
 
-                            Log.d(DownloadImages.TAG,"image ${imageName} saved")
-                            mDownloadComplete = true
-                            mErrorOccurred = false
+                                Log.d(DownloadImages.TAG, "image ${imageName} saved")
+                                mDownloadComplete = true
+                                mErrorOccurred = false
+                            }*/
                         }
                         .addOnFailureListener { exception ->
                             mErrorOccurred = true
-
+                            Log.d(DownloadImages.TAG, "an error occurred while downliading images: " + exception.stackTrace)
+                            exception.printStackTrace()
                         }
                         .addOnProgressListener { taskSnapshot ->
                             // progress percentage

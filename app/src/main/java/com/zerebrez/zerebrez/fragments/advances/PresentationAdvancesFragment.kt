@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -59,6 +60,8 @@ class PresentationAdvancesFragment : BaseContentFragment() {
     }
 
     private val mItIsUnderstandedListener = View.OnClickListener(){
+        if (activity != null)
+            (activity as ContentActivity).showLoading(true)
         setAdvancesFragmentOK()
         goAdvancesFragment()
     }

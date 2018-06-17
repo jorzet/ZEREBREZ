@@ -38,9 +38,11 @@ class StudySubjectContainerFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.study_subject_container, container, false)!!
 
-        val transaction = fragmentManager!!.beginTransaction()
-        transaction.replace(R.id.study_subject_fragment_container, PresentationStudyBySubjectTopicFragment())
-        transaction.commit()
+        try {
+            val transaction = childFragmentManager.beginTransaction()
+            transaction.replace(R.id.study_subject_fragment_container, PresentationStudyBySubjectTopicFragment())
+            transaction.commit()
+        } catch (exception : Exception) {}
 
         return rootView
     }

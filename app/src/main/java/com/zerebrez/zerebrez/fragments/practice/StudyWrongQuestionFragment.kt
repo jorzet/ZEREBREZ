@@ -29,9 +29,11 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 
 /**
@@ -49,6 +51,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     private val QUESTION_ID : String = "question_id"
     private val ANONYMOUS_USER : String = "anonymous_user"
     private val FROM_WRONG_QUESTION : String = "from_wrong_question"
+    private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
 
     /*
      * UI accessors
@@ -73,6 +76,9 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
      * Objects
      */
     private var mQuestionList = arrayListOf<Question>()
+    private var mUpdatedQuestions = arrayListOf<Question>()
+    private var mWrongQuestionsId = arrayListOf<Int>()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -87,30 +93,36 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetWrongQuestionsAndProfileRefactor()
 
         return rootView
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode.equals(BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)) {
+            if (resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
+                requestGetWrongQuestionsAndProfileRefactor()
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        mDataHelper = DataHelper(context!!)
-        val wrongQuestions = mDataHelper.getWrongQuestions()
-        if (wrongQuestions.isEmpty()) {
-            mMainContainer.visibility = View.GONE
-            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-        } else {
-            updateQuestionList(wrongQuestions)
-            drawQuestions()
-        }
+        requestGetWrongQuestionsAndProfileRefactor()
+    }
+
+    private fun resetValues() {
+        mWrongQuestionsId.clear()
+        mWrongQuestionsId = arrayListOf()
+
+        mUpdatedQuestions.clear()
+        mUpdatedQuestions = arrayListOf()
+        mQuestionList.clear()
+        mQuestionList = arrayListOf()
+        mLeftTableLayout.removeAllViews()
+        mCenterTableLayout.removeAllViews()
+        mRightTableLayout.removeAllViews()
     }
 
     private fun updateQuestionList(questions : List<Question>) {
@@ -172,52 +184,6 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
             val number = mQuestionList.get(i).getQuestionId().toString()
 
-            when (mQuestionList.get(i).getSubjectType()) {
-                SubjectType.NONE -> {
-                    //image.background = resources.getDrawable(R.drawable.main_icon)
-                }
-                SubjectType.MATHEMATICS -> {
-                    image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
-                }
-                SubjectType.SPANISH -> {
-                    image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
-                }
-                SubjectType.VERBAL_HABILITY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
-                }
-                SubjectType.MATHEMATICAL_HABILITY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
-                }
-                SubjectType.BIOLOGY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
-                }
-                SubjectType.CHEMISTRY -> {
-                    image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
-                }
-                SubjectType.PHYSICS -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
-                }
-                SubjectType.GEOGRAPHY -> {
-                    image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
-                }
-                SubjectType.MEXICO_HISTORY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
-                }
-                SubjectType.UNIVERSAL_HISTORY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
-                }
-                SubjectType.FCE -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                }
-            }
-
             // params for module
             val param = GridLayout.LayoutParams()
 
@@ -251,6 +217,46 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
             } else {
+                val currentQuestion = mQuestionList.get(i)
+                when (currentQuestion.getSubjectType()) {
+                    SubjectType.MATHEMATICS -> {
+                        image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                    }
+                    SubjectType.SPANISH -> {
+                        image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                    }
+                    SubjectType.VERBAL_HABILITY -> {
+                        image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                    }
+                    SubjectType.MATHEMATICAL_HABILITY -> {
+                        image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
+                    }
+                    SubjectType.BIOLOGY -> {
+                        image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
+                    }
+                    SubjectType.CHEMISTRY -> {
+                        image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
+                    }
+                    SubjectType.PHYSICS -> {
+                        image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
+                    }
+                    SubjectType.GEOGRAPHY -> {
+                        image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
+                    }
+                    SubjectType.MEXICO_HISTORY -> {
+                        image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
+                    }
+                    SubjectType.UNIVERSAL_HISTORY -> {
+                        image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
+                    }
+                    SubjectType.FCE -> {
+                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                    }
+                    SubjectType.NONE -> {
+                        //image.background = resources.getDrawable(R.drawable.main_icon)
+                    }
+                }
+
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()
                 param.bottomMargin = 2
@@ -258,6 +264,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
+                mWrongQuestionsId.add(currentQuestion.getQuestionId().toInt())
                 view.setOnClickListener(View.OnClickListener {
                     Log.d(TAG, "onClick: number --- " + number)
                     goQuestionActivity(Integer.parseInt(number))
@@ -292,6 +299,36 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(QUESTION_ID, questionId)
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
+        intent.putExtra(WRONG_QUESTIONS_LIST, mWrongQuestionsId)
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
+        super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
+        try {
+            if (context != null) {
+                mUser = user
+                saveUser(user)
+                val answeredQuestion = user.getAnsweredQuestion()
+
+                resetValues()
+                for (i in 0..answeredQuestion.size - 1) {
+                    if (!answeredQuestion.get(i).getWasOK()) {
+                        mUpdatedQuestions.add(answeredQuestion.get(i))
+                    }
+                }
+
+                updateQuestionList(mUpdatedQuestions)
+                drawQuestions()
+            }
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        } catch (exception : Exception) {}
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 }

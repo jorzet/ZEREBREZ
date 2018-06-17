@@ -46,27 +46,29 @@ class DownloadImages: Service() {
         super.onCreate()
 
         // get images from data base
-        val dataHelper = DataHelper(this)
-        mImages = dataHelper.getImagesPath()
+        try {
+            val dataHelper = DataHelper(this)
+            mImages = dataHelper.getImagesPath()
 
-        // instance download image task and set listeners
-        val downloadImageTask = DownloadImageTask(this)
+            // instance download image task and set listeners
+            val downloadImageTask = DownloadImageTask(this)
 
-        downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
-            override fun onSuccess(result: Any) {
-                bi.putExtra(DOWNLOAD_COMPLETE, true)
-                sendBroadcast(bi)
-            }
-        })
+            downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
+                override fun onSuccess(result: Any) {
+                    bi.putExtra(DOWNLOAD_COMPLETE, true)
+                    sendBroadcast(bi)
+                }
+            })
 
-        downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
-            override fun onFailed(result: Throwable) {
-                bi.putExtra(DOWNLOAD_COMPLETE, false)
-                sendBroadcast(bi)
-            }
-        })
+            downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
+                override fun onFailed(result: Throwable) {
+                    bi.putExtra(DOWNLOAD_COMPLETE, false)
+                    sendBroadcast(bi)
+                }
+            })
 
-        downloadImageTask.execute(mImages)
+            downloadImageTask.execute(mImages)
+        } catch (exception : Exception) {}
 
     }
 

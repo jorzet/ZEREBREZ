@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -142,6 +143,9 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
             mSubjectList.setOnItemClickListener(this)
             mGoToBottom.setOnClickListener(mGoToBottomListener)
         }
+
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
 
         return rootView
     }

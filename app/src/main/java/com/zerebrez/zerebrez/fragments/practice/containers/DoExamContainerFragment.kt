@@ -38,7 +38,7 @@ class DoExamContainerFragment : BaseContentFragment() {
 
         val rootView = inflater.inflate(R.layout.do_exam_container, container, false)!!
 
-        val transaction = fragmentManager!!.beginTransaction()
+        val transaction = childFragmentManager.beginTransaction()
         transaction.replace(R.id.do_exam_fragment_container, PresentationReadyToDoCompleteExamFragment())
         transaction.commit()
 

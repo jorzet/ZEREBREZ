@@ -46,6 +46,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.zerebrez.zerebrez.fragments.init.InitFragment
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
+import android.app.ActivityManager
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -59,6 +63,8 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
     private val SHOW_START = "show_start"
     private val HITS_EXTRA = "hits_extra"
     private val MISSES_EXTRA = "misses_extra"
+    private val MODULE_ID = "module_id"
+    private val ANONYMOUS_USER = "anonymous_user"
 
     companion object {
         val RC_SIGN_IN : Int = 9001
@@ -116,8 +122,23 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         }
 
         // request SMS permissions
-        ActivityCompat.requestPermissions(this, arrayOf( Manifest.permission.WRITE_EXTERNAL_STORAGE),1);
-        ActivityCompat.requestPermissions(this, arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE),1);
+        if (!isWriteStoragePermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+        if (!isReadStoragePermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
+        }
+    }
+
+    /*
+     * Check if we have Write and Read storage permission
+     */
+    fun isWriteStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReadStoragePermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -158,6 +179,26 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 // Google Sign In failed
                 Log.e(TAG, "Google Sign In failed.")
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }
+        } else {
+            Toast.makeText(this, "Tienes que dar permisos para descargar las images y poderlas ver en el dispositivo", Toast.LENGTH_LONG).show();
+        }
+
+
+        if (requestCode == 2) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }
+        } else {
+            Toast.makeText(this, "Tienes que dar permisos para descargar las images y poderlas ver en el dispositivo", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -220,10 +261,26 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 
-    open fun startDownloadImages() {
-        this.startService(Intent(this, DownloadImages::class.java))
-        Log.i(TAG, "Started download service **********************")
-        this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+    fun startDownloadImages() {
+        try {
+            if (!isMyServiceRunning(DownloadImages::class.java)) {
+                this.startService(Intent(this, DownloadImages::class.java))
+                Log.i(TAG, "Started download service **********************")
+                this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+            } else {
+                goQuestionActivity()
+            }
+        } catch (exception : Exception) {}
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun stopDownloadImagesService() {
@@ -231,7 +288,8 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Log.i(TAG, "Stopped service ***************************")
         val dataHelper = DataHelper(this)
         dataHelper.setImagesDownloaded(true)
-        showInitFragment()
+        //goQuestionActivity()
+        //showInitFragment()
     }
 
     private val br = object : BroadcastReceiver() {
@@ -244,6 +302,14 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
                 }
             }
         }
+    }
+
+    private fun goQuestionActivity() {
+        val intent = Intent(this, QuestionActivity::class.java)
+        intent.putExtra(MODULE_ID, 1) // show first module
+        intent.putExtra(ANONYMOUS_USER, true)
+        startActivity(intent)
+        finish()
     }
 
     /*

@@ -48,6 +48,11 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private val TAG : String = "ChooseSchoolsActivity"
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
 
+    companion object {
+        val UPDATE_USER_SCHOOLS : String = "update_user_schools"
+    }
+
+
     /*
      * UI accessors
      */
@@ -63,9 +68,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private lateinit var mFirstSchoolText : TextView
     private lateinit var mSecondSchoolText : TextView
     private lateinit var mThirdSchoolText : TextView
-    private lateinit var mDropFirstSchool : ImageView
-    private lateinit var mDropSecondSchool : ImageView
-    private lateinit var mDropThirdSchool : ImageView
+    private lateinit var mDropFirstSchool : View
+    private lateinit var mDropSecondSchool : View
+    private lateinit var mDropThirdSchool : View
     private lateinit var mInstitutesSchoolList : ExpandableListView
     private lateinit var mContinueButton : View
     private lateinit var mContinueText : TextView
@@ -146,13 +151,13 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                 if (mSchools.isNotEmpty()) {
                     for (i in 0..mSchools.size - 1) {
                         if (i == 0) {
-                            mFirstSchoolText.text = mSchools.get(i).getSchoolName()
+                            mFirstSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mFirstSchoolContainer.visibility = View.VISIBLE
                         } else if (i == 1) {
-                            mSecondSchoolText.text = mSchools.get(i).getSchoolName()
+                            mSecondSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mSecondSchoolContainer.visibility = View.VISIBLE
                         } else if (i == 2) {
-                            mThirdSchoolText.text = mSchools.get(i).getSchoolName()
+                            mThirdSchoolText.text = mSchools.get(i).getInstituteName() + " " + mSchools.get(i).getSchoolName()
                             mThirdSchoolContainer.visibility = View.VISIBLE
                         }
                     }
@@ -161,14 +166,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
         }
 
-        val dataHelper = DataHelper(baseContext)
-        val institutes = dataHelper.getInstitutes()
-
-        if (institutes.isNotEmpty()) {
-            mSelectedSchoolsListAdapter = SelectedSchoolsListAdapter(institutes, baseContext)
-            mInstitutesSchoolList.setAdapter(mSelectedSchoolsListAdapter)
-            mInstitutesSchoolList.setOnChildClickListener(onSchoolClickListener)
-        }
+        requestGetSchools()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -179,6 +177,18 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             onBackPressed()
         }
         return true
+    }
+
+    override fun onBackPressed() {
+
+        try {
+            val intent = Intent()
+            intent.putExtra(UPDATE_USER_SCHOOLS, true)
+            setResult(UPDATE_USER_SCHOOLS_RESULT_CODE, intent)
+            finish()
+
+            super.onBackPressed()
+        } catch (exception: Exception) {}
     }
 
     private val mDropFirstSchoolListener = View.OnClickListener {
@@ -228,6 +238,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             val school = mSelectedSchoolsListAdapter.getChild(groupPosition, childPosition) as School
             val institute = mSelectedSchoolsListAdapter.getGroup(groupPosition) as Institute
             school.setInstituteId(institute.getInstituteId())
+            school.setInstituteName(institute.getInstituteName())
             onSchoolSelected(school)
             hasChanges = true
             return false
@@ -244,15 +255,15 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
         }
         if (mSchools.size < 3 && !moreThanOne) {
             if (mFirstSchoolText.text.equals("")) {
-                mFirstSchoolText.text = school.getSchoolName()
+                mFirstSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mFirstSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             } else if (mSecondSchoolText.text.equals("")) {
-                mSecondSchoolText.text = school.getSchoolName()
+                mSecondSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mSecondSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             } else if (mThirdSchoolText.text.equals("")) {
-                mThirdSchoolText.text = school.getSchoolName()
+                mThirdSchoolText.text = school.getInstituteName() + " " + school.getSchoolName()
                 mThirdSchoolContainer.visibility = View.VISIBLE
                 mSchools.add(school)
             }
@@ -265,15 +276,25 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
 
     private val mContinueListener = View.OnClickListener {
         if (NetworkUtil.isConnected(baseContext)) {
-            requestSendSelectedSchools(mSchools)
-        } else {
-            requestSendSelectedSchools(mSchools)
-            val user = getUser()
-            if (user != null) {
-                user.setSelectedShools(mSchools)
-                saveUser(user)
+            if (mSchools.isNotEmpty()) {
+                requestSendSelectedSchools(mSchools)
+            } else {
+                ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
+                        DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
             }
-            onBackPressed()
+        } else {
+            if (mSchools.isNotEmpty()) {
+                requestSendSelectedSchools(mSchools)
+                val user = getUser()
+                if (user != null) {
+                    user.setSelectedShools(mSchools)
+                    saveUser(user)
+                }
+                onBackPressed()
+            } else {
+                ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
+                        DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
+            }
         }
     }
 
@@ -318,6 +339,22 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
 
     override fun onConfirmationAccept() {
         onBackPressed()
+    }
+
+
+    override fun onGetSchoolsSuccess(institutes: List<Institute>) {
+        super.onGetSchoolsSuccess(institutes)
+
+        if (institutes.isNotEmpty()) {
+            mSelectedSchoolsListAdapter = SelectedSchoolsListAdapter(institutes, baseContext)
+            mInstitutesSchoolList.setAdapter(mSelectedSchoolsListAdapter)
+            mInstitutesSchoolList.setOnChildClickListener(onSchoolClickListener)
+        }
+
+    }
+
+    override fun onGetSchoolsFail(throwable: Throwable) {
+        super.onGetSchoolsFail(throwable)
     }
 
 }

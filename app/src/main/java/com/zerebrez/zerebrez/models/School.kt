@@ -25,6 +25,7 @@ class School {
     private var instituteId : Integer = Integer(0)
     private var schoolId : Integer = Integer(0)
     private var schoolName : String = ""
+    private var instituteName : String = ""
     private var hitsNumber : Int = 0
 
     fun setInstituteId(instituteId : Integer) {
@@ -57,5 +58,13 @@ class School {
 
     fun getHitsNumber() : Int {
         return this.hitsNumber
+    }
+
+    fun setInstituteName(instituteName : String) {
+        this.instituteName = instituteName
+    }
+
+    fun getInstituteName() : String {
+        return this.instituteName
     }
 }
