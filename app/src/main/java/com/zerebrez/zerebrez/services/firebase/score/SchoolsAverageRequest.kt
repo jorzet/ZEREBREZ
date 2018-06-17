@@ -177,7 +177,9 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                                         if (key4.equals("name")) {
                                             school.setSchoolName(schoolDataHash.get("name").toString())
                                         } else if (key4.equals("score")) {
-                                            school.setHitsNumber((schoolDataHash.get("score") as java.lang.Long).toInt())
+                                            try {
+                                                school.setHitsNumber((schoolDataHash.get("score") as java.lang.Long).toInt())
+                                            } catch (exception : Exception) {}
                                         }
                                     }
                                     userSchools.add(school)

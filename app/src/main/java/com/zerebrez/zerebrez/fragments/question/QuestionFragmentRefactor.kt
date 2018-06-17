@@ -39,11 +39,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
-import java.io.File
-import java.io.FileInputStream
 import android.widget.ScrollView
-
-
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/05/18.
@@ -129,10 +125,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mOptionCTextView = rootView.findViewById(R.id.tv_option_c)
         mOptionDTextView = rootView.findViewById(R.id.tv_option_d)
 
-        mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         question = (activity as QuestionActivity).getQuestion()
         val dataHelper = DataHelper(context!!)
@@ -157,19 +153,17 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     TIME_DELAY = 3000
                 }
 
-                Handler().postDelayed(object : Runnable {
-                    override fun run() {
-                        if (activity != null) {
-                            (activity as QuestionActivity).showLoading(false)
-                            if (question!!.hasStepByStep()) {
-                                (activity as QuestionActivity).enableDisableAnswerButton(true)
-                            }
+                Handler().postDelayed({
+                    if (activity != null) {
+                        (activity as QuestionActivity).showLoading(false)
+                        if (question!!.hasStepByStep()) {
+                            (activity as QuestionActivity).enableDisableAnswerButton(true)
                         }
-                        mOptionA.isEnabled = true
-                        mOptionB.isEnabled = true
-                        mOptionC.isEnabled = true
-                        mOptionD.isEnabled = true
                     }
+                    mOptionA.isEnabled = true
+                    mOptionB.isEnabled = true
+                    mOptionC.isEnabled = true
+                    mOptionD.isEnabled = true
                 }, TIME_DELAY)
 
             } else {
@@ -242,7 +236,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
     private fun setOptions() {
         mQuestion.setText("Responde")
-        mQuestion.setTypeface(FontUtil.getNunitoRegular(context!!))
+        //mQuestion.setTypeface(FontUtil.getNunitoRegular(context!!))
         mQuestionList.adapter = optionQuestionAdapter
     }
 
@@ -254,10 +248,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mTextAnswerC.setText(question!!.getOptionThree())
                 mTextAnswerD.setText(question!!.getOptionFour())
 
-                mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
 
                 mTextAnswerA.visibility = View.VISIBLE
                 mTextAnswerB.visibility = View.VISIBLE
@@ -517,13 +511,13 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
     fun getBitmap(path: String): Bitmap? {
         try {
+
             var bitmap: Bitmap? = null
-            val mainPath = Environment.getExternalStorageDirectory().toString()
-            val f = File(mainPath + "/zerebrez/" + path)
+            val f = context!!.openFileInput(path)
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
 
-            bitmap = BitmapFactory.decodeStream(FileInputStream(f), null, options)
+            bitmap = BitmapFactory.decodeStream(f, null, options)
             return bitmap
         } catch (e: Exception) {
             e.printStackTrace()
@@ -612,7 +606,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f)
         }
-        mQuestionContainerView.setLayoutParams(param)
+        mQuestionContainerView.layoutParams = param
     }
 
 }

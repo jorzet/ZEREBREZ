@@ -22,11 +22,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.activities.PaywayActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -39,6 +41,8 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     private lateinit var mIWantToBePremiumButton : View
     private lateinit var mGetFreeQuestionsExamsButton : View
+    private lateinit var mIWantToBePremiumButtonTextView: TextView
+    private lateinit var mGetFreeQuestionsExamsButtonTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -49,6 +53,11 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         mIWantToBePremiumButton = rootView.findViewById(R.id.btn_be_premium)
         mGetFreeQuestionsExamsButton = rootView.findViewById(R.id.btn_get_free_exams_questions)
+        mIWantToBePremiumButtonTextView = rootView.findViewById(R.id.btn_be_premium_text)
+        mGetFreeQuestionsExamsButtonTextView = rootView.findViewById(R.id.btn_get_free_exams_questions_text)
+
+        mIWantToBePremiumButtonTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mGetFreeQuestionsExamsButtonTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         mIWantToBePremiumButton.setOnClickListener(mIWantToBePremiumListener)
         mGetFreeQuestionsExamsButton.setOnClickListener(mGetFreeQuestionsExamsListener)

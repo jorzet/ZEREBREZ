@@ -152,7 +152,7 @@
 
                         <ImageView
                             android:id="@+id/iv_answer_a"
-                            android:layout_width="wrap_content"
+                            android:layout_width="150dp"
                             android:layout_height="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
@@ -233,7 +233,7 @@
 
                         <ImageView
                             android:id="@+id/iv_answer_b"
-                            android:layout_width="wrap_content"
+                            android:layout_width="150dp"
                             android:layout_height="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
@@ -313,7 +313,7 @@
 
                         <ImageView
                             android:id="@+id/iv_answer_c"
-                            android:layout_width="wrap_content"
+                            android:layout_width="150dp"
                             android:layout_height="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
@@ -395,7 +395,7 @@
 
                         <ImageView
                             android:id="@+id/iv_answer_d"
-                            android:layout_width="wrap_content"
+                            android:layout_width="150dp"
                             android:layout_height="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"

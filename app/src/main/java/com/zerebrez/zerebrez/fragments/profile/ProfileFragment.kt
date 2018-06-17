@@ -777,30 +777,34 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
 
     override fun onUpdateUserPasswordSuccess(success: Boolean) {
-        super.onUpdateUserPasswordSuccess(success)
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+        if (context != null) {
+            super.onUpdateUserPasswordSuccess(success)
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
 
-        mPassword.setText("")
+            mPassword.setText("")
 
-        ErrorDialog.newInstance("Tu contraseña fue cambiambiada",
-                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            ErrorDialog.newInstance("Tu contraseña fue cambiambiada",
+                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        }
     }
 
     override fun onUpdateUserPasswordFail(throwable: Throwable) {
         super.onUpdateUserPasswordFail(throwable)
 
-        val error = throwable
-        if (error is FirebaseError) {
-            val firebaseError = error as FirebaseError
-            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
-        } else {
-            ErrorDialog.newInstance("Error", "No se pudo cambiar la contraseña",
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        if (context != null) {
+            val error = throwable
+            if (error is FirebaseError) {
+                val firebaseError = error as FirebaseError
+                ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            } else {
+                ErrorDialog.newInstance("Error", "No se pudo cambiar la contraseña",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            }
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
         }
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
     }
 
 }

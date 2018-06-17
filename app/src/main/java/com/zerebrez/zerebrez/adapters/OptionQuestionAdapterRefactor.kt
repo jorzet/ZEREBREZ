@@ -36,7 +36,7 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
         when (currentOption.getQuestionType()) {
             QuestionType.TEXT -> {
                 optionView.tv_option.text = currentOption.getQuestion()
-                optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
+                //optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
                 optionView.tv_option.visibility = View.VISIBLE
                 optionView.mv_otion.visibility = View.GONE
                 optionView.iv_option.visibility = View.GONE
@@ -75,13 +75,13 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
 
     fun getBitmap(path: String): Bitmap? {
         try {
+
             var bitmap: Bitmap? = null
-            val mainPath = Environment.getExternalStorageDirectory().toString()
-            val f = File(mainPath + "/zerebrez/" +path)
+            val f = mContext.openFileInput(path)
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
 
-            bitmap = BitmapFactory.decodeStream(FileInputStream(f), null, options)
+            bitmap = BitmapFactory.decodeStream(f, null, options)
             return bitmap
         } catch (e: Exception) {
             e.printStackTrace()

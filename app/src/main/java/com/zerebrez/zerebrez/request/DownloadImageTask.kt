@@ -28,10 +28,7 @@ import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import java.io.*
 
 /**
  * Created by Jorge Zepeda Tinoco on 06/05/18.
@@ -109,8 +106,15 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
                         .addOnSuccessListener {
                             Log.d(DownloadImages.TAG,"download complete")
                             val bmp = BitmapFactory.decodeFile(localFile.absolutePath)
+                            val stream = ByteArrayOutputStream()
+                            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                            //val filee = File(mContext.filesDir, imageName)
+                            mContext.openFileOutput(imageName, Context.MODE_PRIVATE).use {
+                                it.write(stream.toByteArray())
+                            }
                             // Assume block needs to be inside a Try/Catch block.
-                            val path = Environment.getExternalStorageDirectory().toString()
+                            /*val path = Environment.getExternalStorageDirectory().toString()
                             var fOut: OutputStream? = null
                             //Create Folder
                             val folder = File(Environment.getExternalStorageDirectory().toString() + "/zerebrez/")
@@ -132,7 +136,7 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
                                 Log.d(DownloadImages.TAG, "image ${imageName} saved")
                                 mDownloadComplete = true
                                 mErrorOccurred = false
-                            }
+                            }*/
                         }
                         .addOnFailureListener { exception ->
                             mErrorOccurred = true

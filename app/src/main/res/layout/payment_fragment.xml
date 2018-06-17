@@ -102,27 +102,48 @@
             </RelativeLayout>
 
 
-            <Button
+            <RelativeLayout
                 android:id="@+id/btn_be_premium"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/rl_payment_text_image_container"
                 android:layout_marginTop="30dp"
-                android:text="@string/i_want_to_be_premium_text"
-                android:textSize="12sp"
-                android:background="@drawable/be_premium_button_background" />
+                android:background="@drawable/green_button" >
 
-            <Button
+                <TextView
+                    android:id="@+id/btn_be_premium_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/i_want_to_be_premium_text"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/btn_get_free_exams_questions"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/btn_be_premium"
                 android:layout_marginTop="30dp"
-                android:text="@string/get_free_exams_and_questions_text"
-                android:textSize="12sp"
-                android:background="@drawable/get_free_exams_questions_button_backgrond" />
+                android:background="@drawable/oranage_button" >
+
+                <TextView
+                    android:id="@+id/btn_get_free_exams_questions_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="@string/get_free_exams_and_questions_text"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 </ScrollView>
