@@ -287,8 +287,8 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
         var index = -1
 
         for (i in 0 .. exams.size - 1) {
-            val totalQuestions = (exams.get(i).getHits() + exams.get(i).getMisses())
-            if (totalQuestions.equals(EXAM_128_QUESTIONS)) {
+            val totalQuestions = (exams.get(i).getHits().toInt() + exams.get(i).getMisses().toInt())
+            if (totalQuestions.equals(EXAM_128_QUESTIONS) ||totalQuestions >= 120 ) {
                 index = i
             }
         }

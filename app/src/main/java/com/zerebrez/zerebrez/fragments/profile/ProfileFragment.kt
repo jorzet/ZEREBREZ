@@ -189,7 +189,15 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         val dataHelper = DataHelper(context!!)
 
         mAllowNotificationsSwitch.setChecked(dataHelper.getReminderStatus());
-        mTimeNotification.text = dataHelper.getNotificationTime()
+
+        val time = dataHelper.getNotificationTime()
+        if (time.equals("")) {
+            mTimeNotification.text = "16:00"
+            dataHelper.saveNotificationTime("16:00")
+        } else {
+            mTimeNotification.text = time
+        }
+
 
 
         requestGetProfileRefactor()
@@ -784,7 +792,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
             mPassword.setText("")
 
-            ErrorDialog.newInstance("Tu contraseña fue cambiambiada",
+            ErrorDialog.newInstance("Tu contraseña fue cambiada",
                     DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
         }
     }
