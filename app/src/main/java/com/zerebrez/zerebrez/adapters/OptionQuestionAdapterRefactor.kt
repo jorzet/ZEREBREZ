@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.os.Environment
 import com.zerebrez.zerebrez.utils.FontUtil
+import kotlinx.android.synthetic.main.custom_init_question.view.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -23,40 +24,49 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
     private val mIsAnswer : Boolean = isAnswer
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val currentOption = getItem(position) as QuestionOption
-
+        val optionView: View
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val optionView : View
-        if (mIsAnswer) {
-            optionView = inflator.inflate(R.layout.custom_answer_refactor, null)
+
+        if (position == 0 && !mIsAnswer) {
+            optionView = inflator.inflate(R.layout.custom_init_question, null)
+            optionView.tv_question.typeface = FontUtil.getNunitoRegular(mContext)
         } else {
-            optionView = inflator.inflate(R.layout.custom_question_refactor, null)
+
+            val currentOption : QuestionOption
+
+            if (mIsAnswer) {
+                optionView = inflator.inflate(R.layout.custom_answer_refactor, null)
+                currentOption = getItem(position) as QuestionOption
+            } else {
+                optionView = inflator.inflate(R.layout.custom_question_refactor, null)
+                currentOption = getItem(position - 1) as QuestionOption
+            }
+
+            when (currentOption.getQuestionType()) {
+                QuestionType.TEXT -> {
+                    optionView.tv_option.text = currentOption.getQuestion()
+                    optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
+                    optionView.tv_option.visibility = View.VISIBLE
+                    optionView.mv_otion.visibility = View.GONE
+                    optionView.iv_option.visibility = View.GONE
+                }
+                QuestionType.EQUATION -> {
+                    //optionView.mv_otion.text = "$$"+currentOption.getQuestion()+"$$"
+                    optionView.mv_otion.setDisplayText("$$" + currentOption.getQuestion() + "$$")
+                    optionView.tv_option.visibility = View.GONE
+                    optionView.mv_otion.visibility = View.VISIBLE
+                    optionView.iv_option.visibility = View.GONE
+                }
+
+                QuestionType.IMAGE -> {
+                    optionView.iv_option.setImageBitmap(getBitmap(currentOption.getQuestion()))
+                    optionView.tv_option.visibility = View.GONE
+                    optionView.mv_otion.visibility = View.GONE
+                    optionView.iv_option.visibility = View.VISIBLE
+                }
+            }
+
         }
-
-        when (currentOption.getQuestionType()) {
-            QuestionType.TEXT -> {
-                optionView.tv_option.text = currentOption.getQuestion()
-                //optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
-                optionView.tv_option.visibility = View.VISIBLE
-                optionView.mv_otion.visibility = View.GONE
-                optionView.iv_option.visibility = View.GONE
-            }
-            QuestionType.EQUATION -> {
-                //optionView.mv_otion.text = "$$"+currentOption.getQuestion()+"$$"
-                optionView.mv_otion.setDisplayText("$$"+currentOption.getQuestion()+"$$")
-                optionView.tv_option.visibility = View.GONE
-                optionView.mv_otion.visibility = View.VISIBLE
-                optionView.iv_option.visibility = View.GONE
-            }
-
-            QuestionType.IMAGE -> {
-                optionView.iv_option.setImageBitmap(getBitmap(currentOption.getQuestion()))
-                optionView.tv_option.visibility = View.GONE
-                optionView.mv_otion.visibility = View.GONE
-                optionView.iv_option.visibility = View.VISIBLE
-            }
-        }
-
 
         return optionView
     }
@@ -70,7 +80,10 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
     }
 
     override fun getCount(): Int {
-        return mQuestionOption.size
+        if (mIsAnswer) {
+            return mQuestionOption.size
+        }
+        return mQuestionOption.size + 1
     }
 
     fun getBitmap(path: String): Bitmap? {

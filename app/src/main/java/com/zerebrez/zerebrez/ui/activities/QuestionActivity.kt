@@ -184,8 +184,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                if (currentFragment is QuestionFragmentRefactor)
+                if (currentFragment is QuestionFragmentRefactor) {
                     (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
+                }
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
