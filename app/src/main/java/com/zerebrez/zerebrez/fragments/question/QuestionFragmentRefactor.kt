@@ -412,7 +412,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                         }, 100L)
                     }
                     OPTION_D -> {
-                        mOptionC.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
+                        mOptionB.background = resources.getDrawable(R.drawable.answer_wrong_option_background)
                         mOptionD.background = resources.getDrawable(R.drawable.answer_correct_option_background)
                         (activity as QuestionActivity).setQuestionAnswer("b", false)
                         isAnswered = true

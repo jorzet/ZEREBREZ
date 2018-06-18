@@ -25,6 +25,8 @@ import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.HashMap
+import java.text.Normalizer
+
 
 private const val TAG: String = "AdvancesRequest"
 
@@ -101,39 +103,39 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                 question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
                                 for (key3 in questionAnswered.keys) {
                                     if (key3.equals(SUBJECT_KEY)) {
-                                        val subject = questionAnswered.get(key3)
+                                        val subject = limpiarTexto(questionAnswered.get(key3))
                                         when (subject) {
-                                            SubjectType.VERBAL_HABILITY.value -> {
+                                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
                                                 question.setSubjectType(SubjectType.VERBAL_HABILITY)
                                             }
-                                            SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
                                                 question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
                                             }
-                                            SubjectType.MATHEMATICS.value -> {
+                                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
                                                 question.setSubjectType(SubjectType.MATHEMATICS)
                                             }
-                                            SubjectType.SPANISH.value -> {
+                                            limpiarTexto(SubjectType.SPANISH.value) -> {
                                                 question.setSubjectType(SubjectType.SPANISH)
                                             }
-                                            SubjectType.BIOLOGY.value -> {
+                                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
                                                 question.setSubjectType(SubjectType.BIOLOGY)
                                             }
-                                            SubjectType.CHEMISTRY.value -> {
+                                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
                                                 question.setSubjectType(SubjectType.CHEMISTRY)
                                             }
-                                            SubjectType.PHYSICS.value -> {
+                                            limpiarTexto(SubjectType.PHYSICS.value) -> {
                                                 question.setSubjectType(SubjectType.PHYSICS)
                                             }
-                                            SubjectType.GEOGRAPHY.value -> {
+                                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
                                                 question.setSubjectType(SubjectType.GEOGRAPHY)
                                             }
-                                            SubjectType.UNIVERSAL_HISTORY.value -> {
+                                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
                                                 question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
                                             }
-                                            SubjectType.MEXICO_HISTORY.value -> {
+                                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
                                                 question.setSubjectType(SubjectType.MEXICO_HISTORY)
                                             }
-                                            SubjectType.FCE.value -> {
+                                            limpiarTexto(SubjectType.FCE.value) -> {
                                                 question.setSubjectType(SubjectType.FCE)
                                             }
                                         }
@@ -266,79 +268,79 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                 val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
 
                                 if (questionAnswered.containsKey(SUBJECT_KEY)) {
-                                    val subjectType = questionAnswered.get(SUBJECT_KEY)
+                                    val subjectType = limpiarTexto(questionAnswered.get(SUBJECT_KEY))
                                     when (subjectType) {
-                                        SubjectType.VERBAL_HABILITY.value -> {
+                                        limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 verbalHabylityTotal++
                                                 if (isCorrect) verbalHabylityOK++
                                             }
                                         }
-                                        SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                        limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 mathematicalHabilityTotal++
                                                 if (isCorrect) mathematicalHabilityOK++
                                             }
                                         }
-                                        SubjectType.MATHEMATICS.value -> {
+                                        limpiarTexto(SubjectType.MATHEMATICS.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 mathematicsTotal++
                                                 if (isCorrect) mathematicsOK++
                                             }
                                         }
-                                        SubjectType.SPANISH.value -> {
+                                        limpiarTexto(SubjectType.SPANISH.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 spanishTotal++
                                                 if (isCorrect) spanishOK++
                                             }
                                         }
-                                        SubjectType.BIOLOGY.value -> {
+                                        limpiarTexto(SubjectType.BIOLOGY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 biologyTotal++
                                                 if (isCorrect) biologyOK++
                                             }
                                         }
-                                        SubjectType.CHEMISTRY.value -> {
+                                        limpiarTexto(SubjectType.CHEMISTRY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 chemistryTotal++
                                                 if (isCorrect) chemistryOK++
                                             }
                                         }
-                                        SubjectType.PHYSICS.value -> {
+                                        limpiarTexto(SubjectType.PHYSICS.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 physicsTotal++
                                                 if (isCorrect) physicsOK++
                                             }
                                         }
-                                        SubjectType.GEOGRAPHY.value -> {
+                                        limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 geographyTotal++
                                                 if (isCorrect) geographyOK++
                                             }
                                         }
-                                        SubjectType.UNIVERSAL_HISTORY.value -> {
+                                        limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 universalHistoryTotal++
                                                 if (isCorrect) universalHistoryOK++
                                             }
                                         }
-                                        SubjectType.MEXICO_HISTORY.value -> {
+                                        limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 mexicoHistoryTotal++
                                                 if (isCorrect) mexicoHistoryOK++
                                             }
                                         }
-                                        SubjectType.FCE.value -> {
+                                        limpiarTexto(SubjectType.FCE.value) -> {
                                             if (questionAnswered.containsKey(IS_CORRECT_KEY)) {
                                                 val isCorrect = questionAnswered.get(IS_CORRECT_KEY) as Boolean
                                                 FCETotal++
@@ -431,6 +433,21 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                 }
             })
         }
+    }
+
+    fun limpiarTexto(cadena: String?): String? {
+        var limpio: String? = null
+        if (cadena != null) {
+            var valor: String = cadena
+            valor = valor.toUpperCase()
+            // Normalizar texto para eliminar acentos, dieresis, cedillas y tildes
+            limpio = Normalizer.normalize(valor, Normalizer.Form.NFD)
+            // Quitar caracteres no ASCII excepto la enie, interrogacion que abre, exclamacion que abre, grados, U con dieresis.
+            limpio = limpio!!.replace("[^\\p{ASCII}(N\u0303)(n\u0303)(\u00A1)(\u00BF)(\u00B0)(U\u0308)(u\u0308)]".toRegex(), "")
+            // Regresar a la forma compuesta, para poder comparar la enie con la tabla de valores
+            limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
+        }
+        return limpio
     }
 
 }

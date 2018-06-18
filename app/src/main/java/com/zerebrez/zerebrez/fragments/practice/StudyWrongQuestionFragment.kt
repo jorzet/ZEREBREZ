@@ -35,6 +35,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import java.text.Normalizer
 
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.
@@ -218,41 +219,45 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.setGravity(Gravity.CENTER)
             } else {
                 val currentQuestion = mQuestionList.get(i)
-                when (currentQuestion.getSubjectType()) {
-                    SubjectType.MATHEMATICS -> {
+                val subject = limpiarTexto(currentQuestion.getSubjectType().value)
+                when (subject) {
+                    limpiarTexto(SubjectType.MATHEMATICS.value) -> {
                         image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                     }
-                    SubjectType.SPANISH -> {
+                    limpiarTexto(SubjectType.SPANISH.value) -> {
                         image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                     }
-                    SubjectType.VERBAL_HABILITY -> {
+                    limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
                         image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
                     }
-                    SubjectType.MATHEMATICAL_HABILITY -> {
+                    limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
                         image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
                     }
-                    SubjectType.BIOLOGY -> {
+                    limpiarTexto(SubjectType.BIOLOGY.value) -> {
                         image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
                     }
-                    SubjectType.CHEMISTRY -> {
+                    limpiarTexto(SubjectType.CHEMISTRY.value) -> {
                         image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
                     }
-                    SubjectType.PHYSICS -> {
+                    limpiarTexto(SubjectType.PHYSICS.value) -> {
                         image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
                     }
-                    SubjectType.GEOGRAPHY -> {
+                    limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
                         image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
                     }
-                    SubjectType.MEXICO_HISTORY -> {
+                    limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
                         image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
                     }
-                    SubjectType.UNIVERSAL_HISTORY -> {
+                    limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
                         image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
                     }
-                    SubjectType.FCE -> {
+                    limpiarTexto(SubjectType.FCE.value) -> {
                         image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                     }
-                    SubjectType.NONE -> {
+                    limpiarTexto(SubjectType.FCE2.value) -> {
+                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.NONE.value) -> {
                         //image.background = resources.getDrawable(R.drawable.main_icon)
                     }
                 }
@@ -330,5 +335,20 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
+    }
+
+    fun limpiarTexto(cadena: String?): String? {
+        var limpio: String? = null
+        if (cadena != null) {
+            var valor: String = cadena
+            valor = valor.toUpperCase()
+            // Normalizar texto para eliminar acentos, dieresis, cedillas y tildes
+            limpio = Normalizer.normalize(valor, Normalizer.Form.NFD)
+            // Quitar caracteres no ASCII excepto la enie, interrogacion que abre, exclamacion que abre, grados, U con dieresis.
+            limpio = limpio!!.replace("[^\\p{ASCII}(N\u0303)(n\u0303)(\u00A1)(\u00BF)(\u00B0)(U\u0308)(u\u0308)]".toRegex(), "")
+            // Regresar a la forma compuesta, para poder comparar la enie con la tabla de valores
+            limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
+        }
+        return limpio
     }
 }

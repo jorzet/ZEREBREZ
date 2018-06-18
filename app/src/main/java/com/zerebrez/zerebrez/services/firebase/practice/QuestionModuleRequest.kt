@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.services.firebase.practice
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.User
@@ -161,55 +162,60 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
-                    Log.d(TAG, "user data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
 
-                    val user = User()
-                    for ( key in map.keys) {
-                        println(key)
-                        if (key.equals(PROFILE_REFERENCE)) {
-                            val profile = map.get(key) as HashMap<String, String>
-                            if (profile.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
+                        val user = User()
+                        for (key in map.keys) {
+                            println(key)
+                            if (key.equals(PROFILE_REFERENCE)) {
+                                val profile = map.get(key) as HashMap<String, String>
+                                if (profile.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                }
-
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-
-                            }
-
-                        } else if (key.equals(ANSWERED_MODULED_REFERENCE)) {
-                            val answeredModules = map.get(key) as HashMap<String, String>
-                            val modules = arrayListOf<Module>()
-
-                            for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
-                                val module = Module()
-                                module.setId(Integer(key2.replace("m","")))
-
-                                for (key3 in moduleAnswered.keys) {
-                                    if (key3.equals("incorrect")) {
-                                        val incorrectQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
-                                        module.setIncorrectQuestions(incorrectQuestions)
-                                    } else if (key3.equals("correct")) {
-                                        val correctQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
-                                        module.setCorrectQuestions(correctQuestions)
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
                                     }
+
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
+                                    }
+
                                 }
 
-                                modules.add(module)
+                            } else if (key.equals(ANSWERED_MODULED_REFERENCE)) {
+                                val answeredModules = map.get(key) as HashMap<String, String>
+                                val modules = arrayListOf<Module>()
+
+                                for (key2 in answeredModules.keys) {
+                                    val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                    val module = Module()
+                                    module.setId(Integer(key2.replace("m", "")))
+
+                                    for (key3 in moduleAnswered.keys) {
+                                        if (key3.equals("incorrect")) {
+                                            val incorrectQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
+                                            module.setIncorrectQuestions(incorrectQuestions)
+                                        } else if (key3.equals("correct")) {
+                                            val correctQuestions = (moduleAnswered.get(key3) as java.lang.Long).toInt()
+                                            module.setCorrectQuestions(correctQuestions)
+                                        }
+                                    }
+
+                                    modules.add(module)
+                                }
+                                user.setAnsweredModules(modules)
                             }
-                            user.setAnsweredModules(modules)
                         }
+                        Log.d(TAG, "user data ------ " + user.getUUID())
+                        onRequestListenerSucces.onSuccess(user)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
                     }
-                    Log.d(TAG, "user data ------ " + user.getUUID())
-                    onRequestListenerSucces.onSuccess(user)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
