@@ -24,6 +24,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import java.text.Normalizer
 import java.util.HashMap
 
 private const val TAG: String = "WrongQuestionRequest"
@@ -96,40 +97,43 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                                 question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
                                 for (key3 in questionAnswered.keys) {
                                     if (key3.equals(SUBJECT_KEY)) {
-                                        val subject = questionAnswered.get(key3)
+                                        val subject = limpiarTexto(questionAnswered.get(key3))
                                         when (subject) {
-                                            SubjectType.VERBAL_HABILITY.value -> {
+                                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
                                                 question.setSubjectType(SubjectType.VERBAL_HABILITY)
                                             }
-                                            SubjectType.MATHEMATICAL_HABILITY.value -> {
+                                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
                                                 question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
                                             }
-                                            SubjectType.MATHEMATICS.value -> {
+                                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
                                                 question.setSubjectType(SubjectType.MATHEMATICS)
                                             }
-                                            SubjectType.SPANISH.value -> {
+                                            limpiarTexto(SubjectType.SPANISH.value) -> {
                                                 question.setSubjectType(SubjectType.SPANISH)
                                             }
-                                            SubjectType.BIOLOGY.value -> {
+                                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
                                                 question.setSubjectType(SubjectType.BIOLOGY)
                                             }
-                                            SubjectType.CHEMISTRY.value -> {
+                                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
                                                 question.setSubjectType(SubjectType.CHEMISTRY)
                                             }
-                                            SubjectType.PHYSICS.value -> {
+                                            limpiarTexto(SubjectType.PHYSICS.value) -> {
                                                 question.setSubjectType(SubjectType.PHYSICS)
                                             }
-                                            SubjectType.GEOGRAPHY.value -> {
+                                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
                                                 question.setSubjectType(SubjectType.GEOGRAPHY)
                                             }
-                                            SubjectType.UNIVERSAL_HISTORY.value -> {
+                                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
                                                 question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
                                             }
-                                            SubjectType.MEXICO_HISTORY.value -> {
+                                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
                                                 question.setSubjectType(SubjectType.MEXICO_HISTORY)
                                             }
-                                            SubjectType.FCE.value -> {
+                                            limpiarTexto(SubjectType.FCE.value) -> {
                                                 question.setSubjectType(SubjectType.FCE)
+                                            }
+                                            limpiarTexto(SubjectType.FCE2.value) -> {
+                                                question.setSubjectType(SubjectType.FCE2)
                                             }
                                         }
                                     } else if (key3.equals(IS_CORRECT_KEY)) {
@@ -155,5 +159,20 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                 }
             })
         }
+    }
+
+    fun limpiarTexto(cadena: String?): String? {
+        var limpio: String? = null
+        if (cadena != null) {
+            var valor: String = cadena
+            valor = valor.toUpperCase()
+            // Normalizar texto para eliminar acentos, dieresis, cedillas y tildes
+            limpio = Normalizer.normalize(valor, Normalizer.Form.NFD)
+            // Quitar caracteres no ASCII excepto la enie, interrogacion que abre, exclamacion que abre, grados, U con dieresis.
+            limpio = limpio!!.replace("[^\\p{ASCII}(N\u0303)(n\u0303)(\u00A1)(\u00BF)(\u00B0)(U\u0308)(u\u0308)]".toRegex(), "")
+            // Regresar a la forma compuesta, para poder comparar la enie con la tabla de valores
+            limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
+        }
+        return limpio
     }
 }

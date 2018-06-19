@@ -184,8 +184,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                if (currentFragment is QuestionFragmentRefactor)
+                if (currentFragment is QuestionFragmentRefactor) {
                     (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
+                }
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
@@ -214,11 +215,19 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     private val mCloseQuestionListener = View.OnClickListener {
         if (mCurrentQuestion > 0) {
-            ErrorDialog.newInstance("¿Seguro que quieres salir?",
-                    "Perderás los avances.",
-                    DialogType.YES_NOT_DIALOG,
-                    this)!!
-                    .show(supportFragmentManager, "")
+            if (isFromWrongQuestionFragment) {
+                if (isAnonymous) {
+                    goLogInActivityStartFragment()
+                } else {
+                    onBackPressed()
+                }
+            } else {
+                ErrorDialog.newInstance("¿Seguro que quieres salir?",
+                        "Perderás los avances.",
+                        DialogType.YES_NOT_DIALOG,
+                        this)!!
+                        .show(supportFragmentManager, "")
+            }
         } else {
             if (isAnonymous) {
                 goLogInActivityStartFragment()
@@ -248,6 +257,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
+            if (isFromWrongQuestionFragment) {
+                requestSendAnsweredQuestions(mQuestions)
+            }
             showQuestion()
             mCurrentQuestion++
         } else if (isAnonymous) {

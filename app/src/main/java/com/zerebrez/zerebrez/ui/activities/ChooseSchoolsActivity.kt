@@ -248,7 +248,8 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private fun onSchoolSelected(school: School) {
         var moreThanOne = false
         for (i in 0 .. mSchools.size - 1) {
-            if (mSchools.get(i).getSchoolId().equals(school.getSchoolId())) {
+            if (mSchools.get(i).getSchoolId().equals(school.getSchoolId()) &&
+                    mSchools.get(i).getInstituteId().equals(school.getInstituteId())) {
                 moreThanOne = true
                 break
             }
