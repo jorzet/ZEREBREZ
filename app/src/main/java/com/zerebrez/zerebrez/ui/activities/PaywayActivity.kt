@@ -197,8 +197,12 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
     }
 
     private val mGooglePayViewListener = View.OnClickListener {
+        ErrorDialog.newInstance("Metodo de pago no disponible",
+                DialogType.OK_DIALOG ,this)!!
+                .show(supportFragmentManager, "paywayNotAllow")
 
         //isReadyToPay()
+        /*
         val request = createPaymentDataRequest()
         if (request != null) {
             AutoResolveHelper.resolveTask(
@@ -207,7 +211,7 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                     // LOAD_PAYMENT_DATA_REQUEST_CODE is a constant value
                     // you define.
                     LOAD_PAYMENT_DATA_REQUEST_CODE)
-        }
+        }*/
     }
 
     private val mMercadoPagoViewListener = View.OnClickListener {
