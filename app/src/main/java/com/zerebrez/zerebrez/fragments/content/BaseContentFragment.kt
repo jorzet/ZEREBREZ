@@ -596,4 +596,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onUpdateUserPasswordSuccess(success: Boolean) {}
     open fun onUpdateUserPasswordFail(throwable: Throwable) {}
 
+    fun requestGetUserWithFacebook() {
+        mRequestManager.requestGetUserWithFacebook(object : RequestManager.OnGetUserWithFacebookListener {
+            override fun onGetUserWithFacebookLoaded(user: User) {
+                onGetUserWithFacebookSuccess(user)
+            }
+
+            override fun onGetUserWithFacebookError(throwable: Throwable) {
+                onGetUserWithFacebookFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetUserWithFacebookSuccess(user: User) {}
+    open fun onGetUserWithFacebookFail(throwable: Throwable) {}
+
 }

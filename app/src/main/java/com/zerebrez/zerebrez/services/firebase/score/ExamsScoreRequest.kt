@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.services.firebase.score
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.models.User
@@ -62,28 +63,33 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mExamScores = arrayListOf<ExamScore>()
+                if (post != null) {
+                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val mExamScores = arrayListOf<ExamScore>()
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                for (key in map.keys) {
-                    println(key)
-                    val obj = map.get(key) as HashMap<String, Any>
-                    val examScore = ExamScore()
-                    examScore.setExamScoreId(Integer(key.replace("e","")))
-                    val mUserScoreExams = arrayListOf<UserScoreExam>()
-                    for (key2 in obj.keys) {
-                        val userScoreExam = UserScoreExam()
-                        userScoreExam.setUserUUDI(key2)
-                        userScoreExam.setScore(Integer(obj.get(key2).toString()))
-                        mUserScoreExams.add(userScoreExam)
+                    for (key in map.keys) {
+                        println(key)
+                        val obj = map.get(key) as HashMap<String, Any>
+                        val examScore = ExamScore()
+                        examScore.setExamScoreId(Integer(key.replace("e", "")))
+                        val mUserScoreExams = arrayListOf<UserScoreExam>()
+                        for (key2 in obj.keys) {
+                            val userScoreExam = UserScoreExam()
+                            userScoreExam.setUserUUDI(key2)
+                            userScoreExam.setScore(Integer(obj.get(key2).toString()))
+                            mUserScoreExams.add(userScoreExam)
+                        }
+                        examScore.setOtherUsersScoreExam(mUserScoreExams)
+                        mExamScores.add(examScore)
                     }
-                    examScore.setOtherUsersScoreExam(mUserScoreExams)
-                    mExamScores.add(examScore)
-                }
 
-                onRequestListenerSucces.onSuccess(mExamScores)
+                    onRequestListenerSucces.onSuccess(mExamScores)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -105,53 +111,58 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as java.util.HashMap<String, String>)
-                    Log.d(TAG, "user data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as java.util.HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
 
-                    val user = User()
-                    for ( key in map.keys) {
-                        println(key)
-                        if (key.equals(PROFILE_REFERENCE)) {
-                            val profile = map.get(key) as java.util.HashMap<String, String>
-                            if (profile.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        val user = User()
+                        for (key in map.keys) {
+                            println(key)
+                            if (key.equals(PROFILE_REFERENCE)) {
+                                val profile = map.get(key) as java.util.HashMap<String, String>
+                                if (profile.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                }
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
+                                    }
 
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-                            }
-
-                        } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                            val answeredExams = map.get(key) as java.util.HashMap<String, String>
-                            val exams = arrayListOf<Exam>()
-                            for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
-                                val exam = Exam()
-                                exam.setExamId(Integer(key2.replace("e","")))
-
-                                for (key3 in examAnswered.keys) {
-                                    if (key3.equals(INCORRECT_KEY)) {
-                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setMisses(incorrectQuestions)
-                                    } else if (key3.equals(CORRECT_KEY)) {
-                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setHits(correctQuestions)
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
                                     }
                                 }
 
-                                exams.add(exam)
+                            } else if (key.equals(ANSWERED_EXAM_KEY)) {
+                                val answeredExams = map.get(key) as java.util.HashMap<String, String>
+                                val exams = arrayListOf<Exam>()
+                                for (key2 in answeredExams.keys) {
+                                    val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
+                                    val exam = Exam()
+                                    exam.setExamId(Integer(key2.replace("e", "")))
+
+                                    for (key3 in examAnswered.keys) {
+                                        if (key3.equals(INCORRECT_KEY)) {
+                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setMisses(incorrectQuestions)
+                                        } else if (key3.equals(CORRECT_KEY)) {
+                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setHits(correctQuestions)
+                                        }
+                                    }
+
+                                    exams.add(exam)
+                                }
+                                user.setAnsweredExams(exams)
                             }
-                            user.setAnsweredExams(exams)
                         }
+                        Log.d(TAG, "user data ------ " + user.getUUID())
+                        onRequestListenerSucces.onSuccess(user)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
                     }
-                    Log.d(TAG, "user data ------ " + user.getUUID())
-                    onRequestListenerSucces.onSuccess(user)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {

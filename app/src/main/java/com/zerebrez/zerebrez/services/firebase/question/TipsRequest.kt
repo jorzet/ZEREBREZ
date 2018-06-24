@@ -62,30 +62,35 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
-                    Log.d(TAG, "profile data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "profile data ------ " + map.size)
 
-                    val user = User()
+                        val user = User()
 
-                    val profile = map.get(PROFILE_KEY) as HashMap<String, String>
-                    for (key2 in profile.keys) {
-                        if (key2.equals(PREMIUM_KEY)) {
-                            val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        val profile = map.get(PROFILE_KEY) as HashMap<String, String>
+                        for (key2 in profile.keys) {
+                            if (key2.equals(PREMIUM_KEY)) {
+                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                            if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                user.setPremiumUser(isPremium)
-                            }
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                    user.setPremiumUser(isPremium)
+                                }
 
-                            if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                user.setTimeStamp(timeStamp)
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                    user.setTimeStamp(timeStamp)
+                                }
                             }
                         }
-                    }
 
-                    Log.d(TAG, "profile data ------ " + user.getUUID())
-                    onRequestListenerSucces.onSuccess(user)
+                        Log.d(TAG, "profile data ------ " + user.getUUID())
+                        onRequestListenerSucces.onSuccess(user)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {

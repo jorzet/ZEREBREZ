@@ -72,109 +72,114 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
-                    Log.d(TAG, "user data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
 
-                    val user = User()
-                    for ( key in map.keys) {
-                        println(key)
-                        if (key.equals(PROFILE_REFERENCE)) {
-                            val profile = map.get(key) as HashMap<String, String>
-                            if (profile.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        val user = User()
+                        for (key in map.keys) {
+                            println(key)
+                            if (key.equals(PROFILE_REFERENCE)) {
+                                val profile = map.get(key) as HashMap<String, String>
+                                if (profile.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
+                                    }
+
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
+                                    }
                                 }
 
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-                            }
-
-                        }  else if (key.equals(ANSWERED_QUESTION_REFERENCE)) {
-                            val answeredQuestions = map.get(key) as HashMap<String, String>
-                            val questions = arrayListOf<Question>()
-                            for (key2 in answeredQuestions.keys) {
-                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
-                                val question = Question()
-                                question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
-                                for (key3 in questionAnswered.keys) {
-                                    if (key3.equals(SUBJECT_KEY)) {
-                                        val subject = limpiarTexto(questionAnswered.get(key3))
-                                        when (subject) {
-                                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                            } else if (key.equals(ANSWERED_QUESTION_REFERENCE)) {
+                                val answeredQuestions = map.get(key) as HashMap<String, String>
+                                val questions = arrayListOf<Question>()
+                                for (key2 in answeredQuestions.keys) {
+                                    val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+                                    val question = Question()
+                                    question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
+                                    for (key3 in questionAnswered.keys) {
+                                        if (key3.equals(SUBJECT_KEY)) {
+                                            val subject = limpiarTexto(questionAnswered.get(key3))
+                                            when (subject) {
+                                                limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                                                    question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                                }
+                                                limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                                                    question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                                }
+                                                limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                                                    question.setSubjectType(SubjectType.MATHEMATICS)
+                                                }
+                                                limpiarTexto(SubjectType.SPANISH.value) -> {
+                                                    question.setSubjectType(SubjectType.SPANISH)
+                                                }
+                                                limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                                                    question.setSubjectType(SubjectType.BIOLOGY)
+                                                }
+                                                limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                                                    question.setSubjectType(SubjectType.CHEMISTRY)
+                                                }
+                                                limpiarTexto(SubjectType.PHYSICS.value) -> {
+                                                    question.setSubjectType(SubjectType.PHYSICS)
+                                                }
+                                                limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                                                    question.setSubjectType(SubjectType.GEOGRAPHY)
+                                                }
+                                                limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                                                    question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                                                }
+                                                limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                                                    question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                                }
+                                                limpiarTexto(SubjectType.FCE.value) -> {
+                                                    question.setSubjectType(SubjectType.FCE)
+                                                }
                                             }
-                                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-                                            }
-                                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                                                question.setSubjectType(SubjectType.MATHEMATICS)
-                                            }
-                                            limpiarTexto(SubjectType.SPANISH.value) -> {
-                                                question.setSubjectType(SubjectType.SPANISH)
-                                            }
-                                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                                                question.setSubjectType(SubjectType.BIOLOGY)
-                                            }
-                                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                                                question.setSubjectType(SubjectType.CHEMISTRY)
-                                            }
-                                            limpiarTexto(SubjectType.PHYSICS.value) -> {
-                                                question.setSubjectType(SubjectType.PHYSICS)
-                                            }
-                                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                                                question.setSubjectType(SubjectType.GEOGRAPHY)
-                                            }
-                                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                                                question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-                                            }
-                                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                                                question.setSubjectType(SubjectType.MEXICO_HISTORY)
-                                            }
-                                            limpiarTexto(SubjectType.FCE.value) -> {
-                                                question.setSubjectType(SubjectType.FCE)
-                                            }
+                                        } else if (key3.equals(IS_CORRECT_KEY)) {
+                                            val isCorrect = questionAnswered.get(key3) as Boolean
+                                            question.setWasOK(isCorrect)
+                                        } else if (key3.equals(CHOOSEN_OPTION_KEY)) {
+                                            val chosenOption = questionAnswered.get(key3).toString()
+                                            question.setOptionChoosed(chosenOption)
                                         }
-                                    } else if (key3.equals(IS_CORRECT_KEY)) {
-                                        val isCorrect = questionAnswered.get(key3) as Boolean
-                                        question.setWasOK(isCorrect)
-                                    } else if (key3.equals(CHOOSEN_OPTION_KEY)) {
-                                        val chosenOption = questionAnswered.get(key3).toString()
-                                        question.setOptionChoosed(chosenOption)
                                     }
+                                    questions.add(question)
                                 }
-                                questions.add(question)
-                            }
-                            user.setAnsweredQuestions(questions)
-                        } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                            val answeredExams = map.get(key) as HashMap<String, String>
-                            val exams = arrayListOf<Exam>()
-                            for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
-                                val exam = Exam()
-                                exam.setExamId(Integer(key2.replace("e","")))
+                                user.setAnsweredQuestions(questions)
+                            } else if (key.equals(ANSWERED_EXAM_KEY)) {
+                                val answeredExams = map.get(key) as HashMap<String, String>
+                                val exams = arrayListOf<Exam>()
+                                for (key2 in answeredExams.keys) {
+                                    val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                    val exam = Exam()
+                                    exam.setExamId(Integer(key2.replace("e", "")))
 
-                                for (key3 in examAnswered.keys) {
-                                    if (key3.equals(INCORRECT_KEY)) {
-                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setMisses(incorrectQuestions)
-                                    } else if (key3.equals(CORRECT_KEY)) {
-                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setHits(correctQuestions)
+                                    for (key3 in examAnswered.keys) {
+                                        if (key3.equals(INCORRECT_KEY)) {
+                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setMisses(incorrectQuestions)
+                                        } else if (key3.equals(CORRECT_KEY)) {
+                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setHits(correctQuestions)
+                                        }
                                     }
-                                }
 
-                                exams.add(exam)
+                                    exams.add(exam)
+                                }
+                                user.setAnsweredExams(exams)
                             }
-                            user.setAnsweredExams(exams)
                         }
+                        Log.d(TAG, "user data ------ " + user.getUUID())
+                        onRequestListenerSucces.onSuccess(user)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
                     }
-                    Log.d(TAG, "user data ------ " + user.getUUID())
-                    onRequestListenerSucces.onSuccess(user)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -354,67 +359,67 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                             }
                         }
 
-                        if (!verbalHabylityTotal.equals(0))
+                        if (!verbalHabylityTotal.equals(0) && verbalHabylityTotal != 0)
                             verbalHability.setSubjectAverage(((verbalHabylityOK*10)/verbalHabylityTotal).toDouble())
                         else
                             verbalHability.setSubjectAverage(0.0)
                         subjects.add(verbalHability)
 
-                        if (!mathematicalHabilityTotal.equals(0))
+                        if (!mathematicalHabilityTotal.equals(0) && mathematicalHabilityTotal != 0)
                             mathematicalHability.setSubjectAverage(((mathematicalHabilityOK*10)/mathematicalHabilityTotal).toDouble())
                         else
                             mathematicalHability.setSubjectAverage(0.0)
                         subjects.add(mathematicalHability)
 
-                        if (!spanishTotal.equals(0))
+                        if (!spanishTotal.equals(0) && spanishTotal != 0)
                             spanish.setSubjectAverage(((spanishOK*10)/spanishTotal).toDouble())
                         else
                             spanish.setSubjectAverage(0.0)
                         subjects.add(spanish)
 
-                        if (!mathematicsTotal.equals(0))
+                        if (!mathematicsTotal.equals(0) && mathematicsTotal != 0)
                             mathematics.setSubjectAverage(((mathematicsOK*10)/mathematicsTotal).toDouble())
                         else
                             mathematics.setSubjectAverage(0.0)
                         subjects.add(mathematics)
 
-                        if (!chemistryTotal.equals(0))
+                        if (!chemistryTotal.equals(0) && chemistryTotal != 0)
                             chemistry.setSubjectAverage(((chemistryOK*10)/chemistryTotal).toDouble())
                         else
                             chemistry.setSubjectAverage(0.0)
                         subjects.add(chemistry)
 
-                        if (!physicsTotal.equals(0.0))
+                        if (!physicsTotal.equals(0) && physicsTotal != 0)
                             physics.setSubjectAverage(((physicsOK*10)/physicsTotal).toDouble())
                         else
                             physics.setSubjectAverage(0.0)
                         subjects.add(physics)
 
-                        if (!biologyTotal.equals(0))
+                        if (!biologyTotal.equals(0) && biologyTotal != 0)
                             biology.setSubjectAverage(((biologyOK*10)/biologyTotal).toDouble())
                         else
                             biology.setSubjectAverage(0.0)
                         subjects.add(biology)
 
-                        if (!geographyTotal.equals(0))
+                        if (!geographyTotal.equals(0) && geographyTotal != 0)
                             geography.setSubjectAverage(((geographyOK*10)/geographyTotal).toDouble())
                         else
                             geography.setSubjectAverage(0.0)
                         subjects.add(geography)
 
-                        if (!mexicoHistoryTotal.equals(0))
+                        if (!mexicoHistoryTotal.equals(0) && mexicoHistoryTotal != 0)
                             mexicoHistory.setSubjectAverage(((mexicoHistoryOK*10)/mexicoHistoryTotal).toDouble())
                         else
                             mexicoHistory.setSubjectAverage(0.0)
                         subjects.add(mexicoHistory)
 
-                        if (!universalHistoryTotal.equals(0))
+                        if (!universalHistoryTotal.equals(0) && universalHistoryTotal != 0)
                             universalHistory.setSubjectAverage(((universalHistoryOK*10)/universalHistoryTotal).toDouble())
                         else
                             universalHistory.setSubjectAverage(0.0)
                         subjects.add(universalHistory)
 
-                        if (!FCETotal.equals(0))
+                        if (!FCETotal.equals(0) && FCETotal != 0)
                             FCE.setSubjectAverage(((FCEOK*10)/FCETotal).toDouble())
                         else
                             FCE.setSubjectAverage(0.0)

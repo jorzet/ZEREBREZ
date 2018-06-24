@@ -130,10 +130,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mOptionCTextView = rootView.findViewById(R.id.tv_option_c)
         mOptionDTextView = rootView.findViewById(R.id.tv_option_d)
 
-        mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        //mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         question = (activity as QuestionActivity).getQuestion()
         val dataHelper = DataHelper(context!!)
@@ -252,10 +252,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mTextAnswerC.setText(question!!.getOptionThree())
                 mTextAnswerD.setText(question!!.getOptionFour())
 
-                mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
-                mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
+                //mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
 
                 mTextAnswerA.visibility = View.VISIBLE
                 mTextAnswerB.visibility = View.VISIBLE

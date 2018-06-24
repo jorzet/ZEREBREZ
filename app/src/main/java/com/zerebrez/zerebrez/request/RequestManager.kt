@@ -20,6 +20,7 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.services.firebase.CheckUserWithFacebookRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
 import com.zerebrez.zerebrez.services.firebase.practice.ExamsRequest
@@ -1034,6 +1035,29 @@ class RequestManager(activity : Activity) {
     interface OnGetTipsListener {
         fun onGetTipsLoaded(tips : List<String>)
         fun onGetTipsError(throwable: Throwable)
+    }
+
+    fun requestGetUserWithFacebook(onGetUserWithFacebookListener : OnGetUserWithFacebookListener) {
+        val checkUserWithFacebookRequest = CheckUserWithFacebookRequest(mActivity)
+
+        checkUserWithFacebookRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetUserWithFacebookListener.onGetUserWithFacebookLoaded(result as User)
+            }
+        })
+
+        checkUserWithFacebookRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetUserWithFacebookListener.onGetUserWithFacebookError(result)
+            }
+        })
+
+        checkUserWithFacebookRequest.requestGetUserWithFacebook()
+    }
+
+    interface OnGetUserWithFacebookListener {
+        fun onGetUserWithFacebookLoaded(user: User)
+        fun onGetUserWithFacebookError(throwable: Throwable)
     }
 
 }

@@ -80,51 +80,56 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
-                    Log.d(TAG, "profile data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "profile data ------ " + map.size)
 
-                    val user = User()
+                        val user = User()
 
-                    val profile = map.get(PROFILE_KEY) as HashMap<String, String>
-                    for (key2 in profile.keys) {
-                        if (key2.equals(PREMIUM_KEY)) {
-                            val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        val profile = map.get(PROFILE_KEY) as HashMap<String, String>
+                        for (key2 in profile.keys) {
+                            if (key2.equals(PREMIUM_KEY)) {
+                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                            if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                user.setPremiumUser(isPremium)
-                            }
-
-                            if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                user.setTimeStamp(timeStamp)
-                            }
-
-                        } else if (key2.equals(COURSE_KEY)) {
-                            val course = profile.get(key2).toString()
-                            user.setCourse(course)
-                        } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
-                            val selectedSchools = profile.get(key2) as ArrayList<Any>
-                            val schools = arrayListOf<School>()
-                            Log.d(TAG, "profile data ------ " + selectedSchools.size)
-                            for (i in 0 .. selectedSchools.size - 1) {
-                                val institute = selectedSchools.get(i) as HashMap<String ,String>
-                                val school = School()
-                                if (institute.containsKey(INSTITUTE_ID_KEY)) {
-                                    school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG,"")))
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                    user.setPremiumUser(isPremium)
                                 }
 
-                                if (institute.containsKey(SCHOOL_ID_KEY)) {
-                                    school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG,"")))
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                    user.setTimeStamp(timeStamp)
                                 }
-                                schools.add(school)
+
+                            } else if (key2.equals(COURSE_KEY)) {
+                                val course = profile.get(key2).toString()
+                                user.setCourse(course)
+                            } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
+                                val selectedSchools = profile.get(key2) as ArrayList<Any>
+                                val schools = arrayListOf<School>()
+                                Log.d(TAG, "profile data ------ " + selectedSchools.size)
+                                for (i in 0..selectedSchools.size - 1) {
+                                    val institute = selectedSchools.get(i) as HashMap<String, String>
+                                    val school = School()
+                                    if (institute.containsKey(INSTITUTE_ID_KEY)) {
+                                        school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))
+                                    }
+
+                                    if (institute.containsKey(SCHOOL_ID_KEY)) {
+                                        school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG, "")))
+                                    }
+                                    schools.add(school)
+                                }
+                                user.setSelectedShools(schools)
                             }
-                            user.setSelectedShools(schools)
                         }
-                    }
 
-                    if (user.getSelectedSchools().isNotEmpty()) {
-                        requestGetUserSchools(user.getSelectedSchools())
+                        if (user.getSelectedSchools().isNotEmpty()) {
+                            requestGetUserSchools(user.getSelectedSchools())
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -220,53 +225,58 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as java.util.HashMap<String, String>)
-                    Log.d(TAG, "user data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as java.util.HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
 
-                    val user = User()
-                    for ( key in map.keys) {
-                        println(key)
-                        if (key.equals(PROFILE_REFERENCE)) {
-                            val profile = map.get(key) as java.util.HashMap<String, String>
-                            if (profile.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
-                                for (key4 in profile.keys) {
-                                    if (key4.equals(IS_PREMIUM_KEY)) {
-                                        val isPremium = premiumHash.get(key4) as Boolean
-                                        user.setPremiumUser(isPremium)
-                                    } else if (key4.equals(TIMESTAMP_KEY)) {
-                                        val timeStamp = premiumHash.get(key4) as Long
-                                        user.setTimeStamp(timeStamp)
-                                    }
-                                }
-                            }
-
-                        } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                            val answeredExams = map.get(key) as java.util.HashMap<String, String>
-                            val exams = arrayListOf<Exam>()
-                            for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
-                                val exam = Exam()
-                                exam.setExamId(Integer(key2.replace("e","")))
-
-                                for (key3 in examAnswered.keys) {
-                                    if (key3.equals(INCORRECT_KEY)) {
-                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setMisses(incorrectQuestions)
-                                    } else if (key3.equals(CORRECT_KEY)) {
-                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setHits(correctQuestions)
+                        val user = User()
+                        for (key in map.keys) {
+                            println(key)
+                            if (key.equals(PROFILE_REFERENCE)) {
+                                val profile = map.get(key) as java.util.HashMap<String, String>
+                                if (profile.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    for (key4 in profile.keys) {
+                                        if (key4.equals(IS_PREMIUM_KEY)) {
+                                            val isPremium = premiumHash.get(key4) as Boolean
+                                            user.setPremiumUser(isPremium)
+                                        } else if (key4.equals(TIMESTAMP_KEY)) {
+                                            val timeStamp = premiumHash.get(key4) as Long
+                                            user.setTimeStamp(timeStamp)
+                                        }
                                     }
                                 }
 
-                                exams.add(exam)
+                            } else if (key.equals(ANSWERED_EXAM_KEY)) {
+                                val answeredExams = map.get(key) as java.util.HashMap<String, String>
+                                val exams = arrayListOf<Exam>()
+                                for (key2 in answeredExams.keys) {
+                                    val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
+                                    val exam = Exam()
+                                    exam.setExamId(Integer(key2.replace("e", "")))
+
+                                    for (key3 in examAnswered.keys) {
+                                        if (key3.equals(INCORRECT_KEY)) {
+                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setMisses(incorrectQuestions)
+                                        } else if (key3.equals(CORRECT_KEY)) {
+                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setHits(correctQuestions)
+                                        }
+                                    }
+
+                                    exams.add(exam)
+                                }
+                                user.setAnsweredExams(exams)
                             }
-                            user.setAnsweredExams(exams)
                         }
-                    }
 
-                    if (user.getAnsweredExams().isNotEmpty()) {
-                        checkIfUserHas128Questionexams(user.getAnsweredExams())
+                        if (user.getAnsweredExams().isNotEmpty()) {
+                            checkIfUserHas128Questionexams(user.getAnsweredExams())
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)

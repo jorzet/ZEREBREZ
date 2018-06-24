@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.services.firebase.practice
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.User
@@ -64,19 +65,24 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val list = (post as List<String>)
+                if (post != null) {
+                    val list = (post as List<String>)
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                val mFreeExamList = arrayListOf<Exam>()
+                    val mFreeExamList = arrayListOf<Exam>()
 
-                for (m in list) {
-                    val exam = Exam()
-                    exam.setExamId(Integer(m.replace("e", "")))
-                    mFreeExamList.add(exam)
+                    for (m in list) {
+                        val exam = Exam()
+                        exam.setExamId(Integer(m.replace("e", "")))
+                        mFreeExamList.add(exam)
+                    }
+
+                    onRequestListenerSucces.onSuccess(mFreeExamList)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
                 }
-
-                onRequestListenerSucces.onSuccess(mFreeExamList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -95,51 +101,56 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mExams = arrayListOf<Exam>()
+                if (post != null) {
+                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val mExams = arrayListOf<Exam>()
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                /*
+                    /*
                  * mapping map to module object
                  */
-                for ( key in map.keys) {
-                    println(key)
-                    val exam = Exam()
-                    val questions = arrayListOf<Question>()
+                    for (key in map.keys) {
+                        println(key)
+                        val exam = Exam()
+                        val questions = arrayListOf<Question>()
 
-                    // get question id from response
-                    val list = map.get(key) as List<String>
-                    for (q in list) {
-                        val question = Question()
-                        question.setQuestionId(Integer(q.replace("p","")))
-                        questions.add(question)
+                        // get question id from response
+                        val list = map.get(key) as List<String>
+                        for (q in list) {
+                            val question = Question()
+                            question.setQuestionId(Integer(q.replace("p", "")))
+                            questions.add(question)
+                        }
+
+                        // set module id and question id
+                        exam.setExamId(Integer(key.replace("e", "")))
+                        exam.setQuestions(questions)
+
+                        // add module to list
+                        mExams.add(exam)
                     }
 
-                    // set module id and question id
-                    exam.setExamId(Integer(key.replace("e","")))
-                    exam.setQuestions(questions)
-
-                    // add module to list
-                    mExams.add(exam)
-                }
-
-                /*
+                    /*
                   * sort module list because service doesn't return it in order
                   */
-                Collections.sort(mExams, object : Comparator<Exam> {
-                    override fun compare(o1: Exam, o2: Exam): Int {
-                        return extractInt(o1) - extractInt(o2)
-                    }
+                    Collections.sort(mExams, object : Comparator<Exam> {
+                        override fun compare(o1: Exam, o2: Exam): Int {
+                            return extractInt(o1) - extractInt(o2)
+                        }
 
-                    internal fun extractInt(s: Exam): Int {
-                        val num = s.getExamId().toString()
-                        // return 0 if no digits found
-                        return if (num.isEmpty()) 0 else Integer.parseInt(num)
-                    }
-                })
+                        internal fun extractInt(s: Exam): Int {
+                            val num = s.getExamId().toString()
+                            // return 0 if no digits found
+                            return if (num.isEmpty()) 0 else Integer.parseInt(num)
+                        }
+                    })
 
-                onRequestListenerSucces.onSuccess(mExams)
+                    onRequestListenerSucces.onSuccess(mExams)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -161,53 +172,58 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
-                    Log.d(TAG, "user data ------ " + map.size)
+                    if (post != null) {
+                        val map = (post as HashMap<String, String>)
+                        Log.d(TAG, "user data ------ " + map.size)
 
-                    val user = User()
-                    for ( key in map.keys) {
-                        println(key)
-                        if (key.equals(PROFILE_REFERENCE)) {
-                            val profile = map.get(key) as HashMap<String, String>
-                            if (profile.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        val user = User()
+                        for (key in map.keys) {
+                            println(key)
+                            if (key.equals(PROFILE_REFERENCE)) {
+                                val profile = map.get(key) as HashMap<String, String>
+                                if (profile.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
-                                }
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
+                                    }
 
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-                            }
-
-                        } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                            val answeredExams = map.get(key) as HashMap<String, String>
-                            val exams = arrayListOf<Exam>()
-                            for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
-                                val exam = Exam()
-                                exam.setExamId(Integer(key2.replace("e","")))
-
-                                for (key3 in examAnswered.keys) {
-                                    if (key3.equals(INCORRECT_KEY)) {
-                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setMisses(incorrectQuestions)
-                                    } else if (key3.equals(CORRECT_KEY)) {
-                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                        exam.setHits(correctQuestions)
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
                                     }
                                 }
 
-                                exams.add(exam)
+                            } else if (key.equals(ANSWERED_EXAM_KEY)) {
+                                val answeredExams = map.get(key) as HashMap<String, String>
+                                val exams = arrayListOf<Exam>()
+                                for (key2 in answeredExams.keys) {
+                                    val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                    val exam = Exam()
+                                    exam.setExamId(Integer(key2.replace("e", "")))
+
+                                    for (key3 in examAnswered.keys) {
+                                        if (key3.equals(INCORRECT_KEY)) {
+                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setMisses(incorrectQuestions)
+                                        } else if (key3.equals(CORRECT_KEY)) {
+                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            exam.setHits(correctQuestions)
+                                        }
+                                    }
+
+                                    exams.add(exam)
+                                }
+                                user.setAnsweredExams(exams)
                             }
-                            user.setAnsweredExams(exams)
                         }
+                        Log.d(TAG, "user data ------ " + user.getUUID())
+                        onRequestListenerSucces.onSuccess(user)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
                     }
-                    Log.d(TAG, "user data ------ " + user.getUUID())
-                    onRequestListenerSucces.onSuccess(user)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {

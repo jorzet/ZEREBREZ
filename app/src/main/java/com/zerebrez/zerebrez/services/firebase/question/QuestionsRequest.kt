@@ -75,27 +75,32 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as List<String>)
+                if (post != null) {
+                    val map = (post as List<String>)
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                /*
-                 * mapping map to module object
-                 */
+                    /*
+                     * mapping map to module object
+                     */
 
-                val questions = arrayListOf<Question>()
+                    val questions = arrayListOf<Question>()
 
-                // get question id from response
-                for (q in map) {
-                    val question = Question()
-                    question.setQuestionId(Integer(q.replace("p","")))
-                    questions.add(question)
-                }
+                    // get question id from response
+                    for (q in map) {
+                        val question = Question()
+                        question.setQuestionId(Integer(q.replace("p", "")))
+                        questions.add(question)
+                    }
 
-                if (questions.isNotEmpty()) {
-                    mQuestionSize = questions.size
-                    mQuestions = questions
-                    requestGetQuestion()
+                    if (questions.isNotEmpty()) {
+                        mQuestionSize = questions.size
+                        mQuestions = questions
+                        requestGetQuestion()
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
                 } else {
                     val error = GenericError()
                     onRequestLietenerFailed.onFailed(error)
@@ -119,26 +124,31 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as List<String>)
+                if (post != null) {
+                    val map = (post as List<String>)
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                /*
+                    /*
                  * mapping map to module object
                  */
-                val questions = arrayListOf<Question>()
+                    val questions = arrayListOf<Question>()
 
-                // get question id from response
-                for (q in map) {
-                    val question = Question()
-                    question.setQuestionId(Integer(q.replace("p","")))
-                    questions.add(question)
-                }
+                    // get question id from response
+                    for (q in map) {
+                        val question = Question()
+                        question.setQuestionId(Integer(q.replace("p", "")))
+                        questions.add(question)
+                    }
 
-                if (questions.isNotEmpty()) {
-                    mQuestionSize = questions.size
-                    mQuestions = questions
-                    requestGetQuestion()
+                    if (questions.isNotEmpty()) {
+                        mQuestionSize = questions.size
+                        mQuestions = questions
+                        requestGetQuestion()
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
                 } else {
                     val error = GenericError()
                     onRequestLietenerFailed.onFailed(error)
@@ -174,192 +184,196 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mQuestions = arrayListOf<Question>()
+                if (post != null) {
+                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val mQuestions = arrayListOf<Question>()
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                /*
+                    /*
                  * mapping map to module object
                  */
-                for ( key in map.keys) {
-                    println(key)
+                    for (key in map.keys) {
+                        println(key)
 
-                    val question = Question()
-                    // getting question id
-                    val questionId = Integer(key.replace("p",""))
-                    question.setQuestionId(questionId)
+                        val question = Question()
+                        // getting question id
+                        val questionId = Integer(key.replace("p", ""))
+                        question.setQuestionId(questionId)
 
-                    //getting values
-                    // get text value
-                    val json = JSONObject(map.get(key))
-                    if (json.has("text")) {
-                        Log.d(TAG,"json has text value ------")
-                        val texts = json.getJSONArray("text")
-                        val text = arrayListOf<String>()
-                        for (i in 0 .. texts.length() - 1) {
-                            text.add(texts.get(i).toString())
+                        //getting values
+                        // get text value
+                        val json = JSONObject(map.get(key))
+                        if (json.has("text")) {
+                            Log.d(TAG, "json has text value ------")
+                            val texts = json.getJSONArray("text")
+                            val text = arrayListOf<String>()
+                            for (i in 0..texts.length() - 1) {
+                                text.add(texts.get(i).toString())
+                            }
+
+                            question.setText(text)
+                        } else {
+                            Log.d(TAG, "json has not text value ******  " + json.toString())
                         }
 
-                        question.setText(text)
-                    } else {
-                        Log.d(TAG,"json has not text value ******  " + json.toString())
-                    }
+                        if (json.has("equation")) {
+                            Log.d(TAG, "json has text value ------")
+                            val equations = json.getJSONArray("equation")
+                            val equation = arrayListOf<String>()
+                            for (i in 0..equations.length() - 1) {
+                                equation.add(equations.get(i).toString())
+                            }
 
-                    if (json.has("equation")) {
-                        Log.d(TAG,"json has text value ------")
-                        val equations = json.getJSONArray("equation")
-                        val equation = arrayListOf<String>()
-                        for (i in 0 .. equations.length() - 1) {
-                            equation.add(equations.get(i).toString())
+                            question.setEquations(equation)
+                        } else {
+                            Log.d(TAG, "json has not equation value ******  " + json.toString())
                         }
 
-                        question.setEquations(equation)
-                    } else {
-                        Log.d(TAG,"json has not equation value ******  " + json.toString())
-                    }
+                        if (json.has("image")) {
+                            Log.d(TAG, "json has text value ------")
+                            val images = json.getJSONArray("image")
+                            val image = arrayListOf<String>()
+                            for (i in 0..images.length() - 1) {
+                                image.add(images.get(i).toString())
+                            }
 
-                    if (json.has("image")) {
-                        Log.d(TAG,"json has text value ------")
-                        val images = json.getJSONArray("image")
-                        val image = arrayListOf<String>()
-                        for (i in 0 .. images.length() - 1) {
-                            image.add(images.get(i).toString())
+                            question.setImages(image)
+                        } else {
+                            Log.d(TAG, "json has not image value ******  " + json.toString())
                         }
 
-                        question.setImages(image)
-                    } else {
-                        Log.d(TAG,"json has not image value ******  " + json.toString())
-                    }
-
-                    /*
+                        /*
                      * here it is get the step by step
                      */
-                    if (json.has("stepByStepText")) {
-                        Log.d(TAG,"json has text value ------")
-                        val texts = json.getJSONArray("stepByStepText")
-                        val stepByStepText = arrayListOf<String>()
-                        for (i in 0 .. texts.length() - 1) {
-                            stepByStepText.add(texts.get(i).toString())
+                        if (json.has("stepByStepText")) {
+                            Log.d(TAG, "json has text value ------")
+                            val texts = json.getJSONArray("stepByStepText")
+                            val stepByStepText = arrayListOf<String>()
+                            for (i in 0..texts.length() - 1) {
+                                stepByStepText.add(texts.get(i).toString())
+                            }
+
+                            question.setStepByStepText(stepByStepText)
+                        } else {
+                            Log.d(TAG, "json has not text value ******  " + json.toString())
                         }
 
-                        question.setStepByStepText(stepByStepText)
-                    } else {
-                        Log.d(TAG,"json has not text value ******  " + json.toString())
-                    }
+                        if (json.has("stepByStepEquation")) {
+                            Log.d(TAG, "json has text value ------")
+                            val equations = json.getJSONArray("stepByStepEquation")
+                            val stepByStepEquation = arrayListOf<String>()
+                            for (i in 0..equations.length() - 1) {
+                                stepByStepEquation.add(equations.get(i).toString())
+                            }
 
-                    if (json.has("stepByStepEquation")) {
-                        Log.d(TAG,"json has text value ------")
-                        val equations = json.getJSONArray("stepByStepEquation")
-                        val stepByStepEquation = arrayListOf<String>()
-                        for (i in 0 .. equations.length() - 1) {
-                            stepByStepEquation.add(equations.get(i).toString())
+                            question.setStepByStepEquations(stepByStepEquation)
+                        } else {
+                            Log.d(TAG, "json has not equation value ******  " + json.toString())
                         }
 
-                        question.setStepByStepEquations(stepByStepEquation)
-                    } else {
-                        Log.d(TAG,"json has not equation value ******  " + json.toString())
-                    }
+                        if (json.has("stepByStepImage")) {
+                            Log.d(TAG, "json has text value ------")
+                            val images = json.getJSONArray("stepByStepImage")
+                            val stepByStepImage = arrayListOf<String>()
+                            for (i in 0..images.length() - 1) {
+                                stepByStepImage.add(images.get(i).toString())
+                            }
 
-                    if (json.has("stepByStepImage")) {
-                        Log.d(TAG,"json has text value ------")
-                        val images = json.getJSONArray("stepByStepImage")
-                        val stepByStepImage = arrayListOf<String>()
-                        for (i in 0 .. images.length() - 1) {
-                            stepByStepImage.add(images.get(i).toString())
+                            question.setStepByStepImages(stepByStepImage)
+                        } else {
+                            Log.d(TAG, "json has not image value ******  " + json.toString())
                         }
 
-                        question.setStepByStepImages(stepByStepImage)
-                    } else {
-                        Log.d(TAG,"json has not image value ******  " + json.toString())
-                    }
 
-
-                    /*
+                        /*
                      * Here it is get the subjects
                      */
-                    if (json.has("subject")) {
-                        val subject = limpiarTexto(json.getString("subject"))
-                        when (subject) {
-                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
-                            }
-                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-                            }
-                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                                question.setSubjectType(SubjectType.MATHEMATICS)
-                            }
-                            limpiarTexto(SubjectType.SPANISH.value) -> {
-                                question.setSubjectType(SubjectType.SPANISH)
-                            }
-                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                                question.setSubjectType(SubjectType.BIOLOGY)
-                            }
-                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                                question.setSubjectType(SubjectType.CHEMISTRY)
-                            }
-                            limpiarTexto(SubjectType.PHYSICS.value) -> {
-                                question.setSubjectType(SubjectType.PHYSICS)
-                            }
-                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                                question.setSubjectType(SubjectType.GEOGRAPHY)
-                            }
-                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                                question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-                            }
-                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                                question.setSubjectType(SubjectType.MEXICO_HISTORY)
-                            }
-                            limpiarTexto(SubjectType.FCE.value) -> {
-                                question.setSubjectType(SubjectType.FCE)
-                            }
-                            limpiarTexto(SubjectType.FCE2.value) -> {
-                                question.setSubjectType(SubjectType.FCE2)
+                        if (json.has("subject")) {
+                            val subject = limpiarTexto(json.getString("subject"))
+                            when (subject) {
+                                limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                                    question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                }
+                                limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                                    question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                }
+                                limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                                    question.setSubjectType(SubjectType.MATHEMATICS)
+                                }
+                                limpiarTexto(SubjectType.SPANISH.value) -> {
+                                    question.setSubjectType(SubjectType.SPANISH)
+                                }
+                                limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                                    question.setSubjectType(SubjectType.BIOLOGY)
+                                }
+                                limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                                    question.setSubjectType(SubjectType.CHEMISTRY)
+                                }
+                                limpiarTexto(SubjectType.PHYSICS.value) -> {
+                                    question.setSubjectType(SubjectType.PHYSICS)
+                                }
+                                limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                                    question.setSubjectType(SubjectType.GEOGRAPHY)
+                                }
+                                limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                                    question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                                }
+                                limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                                    question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                }
+                                limpiarTexto(SubjectType.FCE.value) -> {
+                                    question.setSubjectType(SubjectType.FCE)
+                                }
+                                limpiarTexto(SubjectType.FCE2.value) -> {
+                                    question.setSubjectType(SubjectType.FCE2)
+                                }
                             }
                         }
+
+                        if (json.has("answer")) {
+                            val answer = json.getString("answer")
+                            question.setAnswer(answer)
+                        }
+
+                        val mapOptionText = map.get(key)
+                        var optionText = JSONArray()
+
+                        if (json.has("optionsEquation")) {
+                            optionText = json.getJSONArray("optionsEquation")
+                            question.setQuestionType(QuestionType.EQUATION.toString())
+                        } else if (json.has("optionsImage")) {
+                            optionText = json.getJSONArray("optionsImage")
+                            question.setQuestionType(QuestionType.IMAGE.toString())
+                        } else if (json.has("optionsText")) {
+                            optionText = json.getJSONArray("optionsText")
+                            question.setQuestionType(QuestionType.TEXT.toString())
+                        }
+
+                        if (optionText.length() > 0)
+                            question.setOptionOne(optionText.get(0).toString())
+                        if (optionText.length() > 1)
+                            question.setOptionTwo(optionText.get(1).toString())
+                        if (optionText.length() > 2)
+                            question.setOptionThree(optionText.get(2).toString())
+                        if (optionText.length() > 3)
+                            question.setOptionFour(optionText.get(3).toString())
+
+
+                        if (json.has("year")) {
+                            val year = json.getString("year")
+                            question.setYear(year)
+                        }
+
+                        mQuestions.add(question)
+
                     }
 
-                    if (json.has("answer")) {
-                        val answer = json.getString("answer")
-                        question.setAnswer(answer)
-                    }
-
-                    val mapOptionText = map.get(key)
-                    var optionText = JSONArray()
-
-                    if (json.has("optionsEquation")) {
-                        optionText = json.getJSONArray("optionsEquation")
-                        question.setQuestionType(QuestionType.EQUATION.toString())
-                    } else if(json.has("optionsImage")) {
-                        optionText = json.getJSONArray("optionsImage")
-                        question.setQuestionType(QuestionType.IMAGE.toString())
-                    } else if (json.has("optionsText")){
-                        optionText = json.getJSONArray("optionsText")
-                        question.setQuestionType(QuestionType.TEXT.toString())
-                    }
-
-                    if (optionText.length() > 0)
-                        question.setOptionOne(optionText.get(0).toString())
-                    if (optionText.length() > 1)
-                        question.setOptionTwo(optionText.get(1).toString())
-                    if (optionText.length() > 2)
-                        question.setOptionThree(optionText.get(2).toString())
-                    if (optionText.length() > 3)
-                        question.setOptionFour(optionText.get(3).toString())
-
-
-                    if (json.has("year")) {
-                        val year = json.getString("year")
-                        question.setYear(year)
-                    }
-
-                    mQuestions.add(question)
-
+                    getQuestions(mQuestions)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
                 }
-
-                getQuestions(mQuestions)
-
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
