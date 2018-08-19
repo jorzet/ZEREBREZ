@@ -24,11 +24,19 @@ import android.util.Log
 import android.view.View
 import com.google.android.gms.wallet.*
 
+import com.android.vending.billing.IInAppBillingService;
+
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import java.util.*
+import android.os.IBinder
+import android.content.ComponentName
+import android.content.Context
+import android.content.ServiceConnection
+
+
 
 /*
 * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -56,6 +64,20 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
      */
     private lateinit var mPaymentsClient: PaymentsClient
 
+
+    // ProductID
+    private val productID = "android.test.purchased"
+    private var mService: IInAppBillingService? = null
+    private val mServiceConn = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName) {
+            mService = null
+        }
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            mService = IInAppBillingService.Stub.asInterface(service)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
@@ -78,11 +100,26 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                         .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                         .build())
 
+
+        // Bind Service
+        val serviceIntent = Intent("com.android.vending.billing.InAppBillingService.BIND")
+        serviceIntent.setPackage("com.android.vending")
+        bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onDestroy() {
+        // Unbind Service
+        if (mService != null)
+            unbindService(mServiceConn);
+
+        super.onDestroy();
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -160,8 +197,12 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
     }
 
     private val mGooglePayViewListener = View.OnClickListener {
+        ErrorDialog.newInstance("Metodo de pago no disponible",
+                DialogType.OK_DIALOG ,this)!!
+                .show(supportFragmentManager, "paywayNotAllow")
 
         //isReadyToPay()
+        /*
         val request = createPaymentDataRequest()
         if (request != null) {
             AutoResolveHelper.resolveTask(
@@ -170,7 +211,7 @@ class PaywayActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListene
                     // LOAD_PAYMENT_DATA_REQUEST_CODE is a constant value
                     // you define.
                     LOAD_PAYMENT_DATA_REQUEST_CODE)
-        }
+        }*/
     }
 
     private val mMercadoPagoViewListener = View.OnClickListener {

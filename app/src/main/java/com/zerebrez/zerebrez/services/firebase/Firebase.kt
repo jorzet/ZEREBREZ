@@ -579,18 +579,22 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
                 for (key in map.keys) {
                     println(key)
-                    val obj = map.get(key) as HashMap<String, Any>
-                    val examScore = ExamScore()
-                    examScore.setExamScoreId(Integer(key.replace("e","")))
-                    val mUserScoreExams = arrayListOf<UserScoreExam>()
-                    for (key2 in obj.keys) {
-                        val userScoreExam = UserScoreExam()
-                        userScoreExam.setUserUUDI(key2)
-                        userScoreExam.setScore(Integer(obj.get(key2).toString()))
-                        mUserScoreExams.add(userScoreExam)
+                    if (!key.equals("processedData")) {
+                        val obj = map.get(key) as HashMap<String, Any>
+                        val examScore = ExamScore()
+                        examScore.setExamScoreId(Integer(key.replace("e", "")))
+                        val mUserScoreExams = arrayListOf<UserScoreExam>()
+                        for (key2 in obj.keys) {
+                            val userScoreExam = UserScoreExam()
+                            userScoreExam.setUserUUDI(key2)
+                            userScoreExam.setScore(Integer(obj.get(key2).toString()))
+                            mUserScoreExams.add(userScoreExam)
+                        }
+                        examScore.setOtherUsersScoreExam(mUserScoreExams)
+                        mExamScores.add(examScore)
+                    } else {
+
                     }
-                    examScore.setOtherUsersScoreExam(mUserScoreExams)
-                    mExamScores.add(examScore)
                 }
 
                 onRequestListenerSucces.onSuccess(mExamScores)

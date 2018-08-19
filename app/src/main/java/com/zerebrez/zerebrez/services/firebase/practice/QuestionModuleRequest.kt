@@ -62,19 +62,24 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val list = (post as List<String>)
+                if (post != null) {
+                    val list = (post as List<String>)
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                val mFreeModuleList = arrayListOf<Module>()
+                    val mFreeModuleList = arrayListOf<Module>()
 
-                for (m in list) {
-                    val module = Module()
-                    module.setId(Integer(m.replace("m", "")))
-                    mFreeModuleList.add(module)
+                    for (m in list) {
+                        val module = Module()
+                        module.setId(Integer(m.replace("m", "")))
+                        mFreeModuleList.add(module)
+                    }
+
+                    onRequestListenerSucces.onSuccess(mFreeModuleList)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
                 }
-
-                onRequestListenerSucces.onSuccess(mFreeModuleList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -93,54 +98,60 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, String>)
-                val mModules = arrayListOf<Module>()
+                if (post != null) {
+                    val map = (post as HashMap<String, String>)
+                    val mModules = arrayListOf<Module>()
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                /*
+                    /*
                  * mapping map to module object
                  */
-                for ( key in map.keys) {
-                    println(key)
-                    val module = Module()
-                    val questions = arrayListOf<Question>()
+                    for (key in map.keys) {
+                        println(key)
+                        val module = Module()
+                        val questions = arrayListOf<Question>()
 
-                    // get question id from response
-                    val list = map.get(key) as List<String>
-                    for (q in list) {
-                        try {
-                            val question = Question()
-                            question.setQuestionId(Integer(q.replace("p","")))
-                            question.setModuleId(Integer(key.replace("m","")))
-                            questions.add(question)
-                        } catch (exception : Exception) {}
+                        // get question id from response
+                        val list = map.get(key) as List<String>
+                        for (q in list) {
+                            try {
+                                val question = Question()
+                                question.setQuestionId(Integer(q.replace("p", "")))
+                                question.setModuleId(Integer(key.replace("m", "")))
+                                questions.add(question)
+                            } catch (exception: Exception) {
+                            }
+                        }
+
+                        // set module id and question id
+                        module.setId(Integer(key.replace("m", "")))
+                        module.setQuestions(questions)
+
+                        // add module to list
+                        mModules.add(module)
                     }
 
-                    // set module id and question id
-                    module.setId(Integer(key.replace("m","")))
-                    module.setQuestions(questions)
-
-                    // add module to list
-                    mModules.add(module)
-                }
-
-                /*
+                    /*
                   * sort module list because service doesn't return it in order
                   */
-                Collections.sort(mModules, object : Comparator<Module> {
-                    override fun compare(o1: Module, o2: Module): Int {
-                        return extractInt(o1) - extractInt(o2)
-                    }
+                    Collections.sort(mModules, object : Comparator<Module> {
+                        override fun compare(o1: Module, o2: Module): Int {
+                            return extractInt(o1) - extractInt(o2)
+                        }
 
-                    internal fun extractInt(s: Module): Int {
-                        val num = s.getId().toString()
-                        // return 0 if no digits found
-                        return if (num.isEmpty()) 0 else Integer.parseInt(num)
-                    }
-                })
+                        internal fun extractInt(s: Module): Int {
+                            val num = s.getId().toString()
+                            // return 0 if no digits found
+                            return if (num.isEmpty()) 0 else Integer.parseInt(num)
+                        }
+                    })
 
-                onRequestListenerSucces.onSuccess(mModules)
+                    onRequestListenerSucces.onSuccess(mModules)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

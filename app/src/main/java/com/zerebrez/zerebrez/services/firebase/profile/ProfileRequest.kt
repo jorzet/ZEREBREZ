@@ -145,6 +145,9 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
             mUserSchoolsSize = schools.size
             mUserSchools = schools
             requestSchool(mUserSchools) // request the first school
+        } else {
+            val error = GenericError()
+            onRequestLietenerFailed.onFailed(error)
         }
     }
 

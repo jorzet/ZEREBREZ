@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.services.firebase.profile
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Institute
 import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.services.firebase.Engagement
@@ -58,43 +59,48 @@ class SchoolsRequest(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mInstitutes = arrayListOf<Institute>()
+                if (post != null) {
+                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val mInstitutes = arrayListOf<Institute>()
 
-                Log.d(TAG, post.toString())
+                    Log.d(TAG, post.toString())
 
-                for (key in map.keys) {
-                    println(key)
-                    val institute = Institute()
-                    institute.setInstituteId(Integer(key.replace(INSTITUTE_TAG,"")))
-                    val instituteHash = map.get(key) as HashMap<String, String>
-                    for (key2 in instituteHash.keys) {
-                        if (key2.equals("schoolsList")) {
-                            val schools = arrayListOf<School>()
-                            val schoolsHash = instituteHash.get(key2) as HashMap<String, String>
-                            for (key3 in schoolsHash.keys) {
-                                val school = School()
-                                school.setSchoolId(Integer(key3.replace(SCHOOL_TAG,"")))
+                    for (key in map.keys) {
+                        println(key)
+                        val institute = Institute()
+                        institute.setInstituteId(Integer(key.replace(INSTITUTE_TAG, "")))
+                        val instituteHash = map.get(key) as HashMap<String, String>
+                        for (key2 in instituteHash.keys) {
+                            if (key2.equals("schoolsList")) {
+                                val schools = arrayListOf<School>()
+                                val schoolsHash = instituteHash.get(key2) as HashMap<String, String>
+                                for (key3 in schoolsHash.keys) {
+                                    val school = School()
+                                    school.setSchoolId(Integer(key3.replace(SCHOOL_TAG, "")))
 
-                                val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
-                                for (key4 in schoolDataHash.keys) {
-                                    if (key4.equals(SCHOOL_NAME_KEY)) {
-                                        school.setSchoolName(schoolDataHash.get(key4).toString())
-                                    } else if (key4.equals(SCHOOL_SCORE_KEY)) {
-                                        school.setHitsNumber((schoolDataHash.get(key4) as java.lang.Long).toInt())
+                                    val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                    for (key4 in schoolDataHash.keys) {
+                                        if (key4.equals(SCHOOL_NAME_KEY)) {
+                                            school.setSchoolName(schoolDataHash.get(key4).toString())
+                                        } else if (key4.equals(SCHOOL_SCORE_KEY)) {
+                                            school.setHitsNumber((schoolDataHash.get(key4) as java.lang.Long).toInt())
+                                        }
                                     }
+                                    schools.add(school)
                                 }
-                                schools.add(school)
+                                institute.setSchools(schools)
+                            } else if (key2.equals(INSTITUTE_NAME_KEY)) {
+                                institute.setInstituteName(instituteHash.get(key2).toString())
                             }
-                            institute.setSchools(schools)
-                        } else if (key2.equals(INSTITUTE_NAME_KEY)) {
-                            institute.setInstituteName(instituteHash.get(key2).toString())
                         }
+                        mInstitutes.add(institute)
                     }
-                    mInstitutes.add(institute)
-                }
 
-                onRequestListenerSucces.onSuccess(mInstitutes)
+                    onRequestListenerSucces.onSuccess(mInstitutes)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

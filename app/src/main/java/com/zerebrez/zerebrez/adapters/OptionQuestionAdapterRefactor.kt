@@ -29,7 +29,7 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
 
         if (position == 0 && !mIsAnswer) {
             optionView = inflator.inflate(R.layout.custom_init_question, null)
-            optionView.tv_question.typeface = FontUtil.getNunitoRegular(mContext)
+            //optionView.tv_question.typeface = FontUtil.getNunitoRegular(mContext)
         } else {
 
             val currentOption : QuestionOption
@@ -45,7 +45,7 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , texts : List<QuestionOp
             when (currentOption.getQuestionType()) {
                 QuestionType.TEXT -> {
                     optionView.tv_option.text = currentOption.getQuestion()
-                    optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
+                    //optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
                     optionView.tv_option.visibility = View.VISIBLE
                     optionView.mv_otion.visibility = View.GONE
                     optionView.iv_option.visibility = View.GONE
