@@ -50,6 +50,7 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -78,6 +79,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      * Objects
      */
     private lateinit var mUser : User
+
+    /*
+     * Variables
+     */
+    private var mNotLogedIn : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -279,7 +285,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
         saveUser(mUser)
-        requestModules()
+        requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onDoLogInFail(throwable: Throwable) {
@@ -300,6 +308,35 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                     DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
         }
 
+    }
+
+    /*
+     * Listeners to send user data
+     */
+    override fun onSendUserSuccess(success: Boolean) {
+        super.onSendUserSuccess(success)
+        requestGetImagesPath()
+    }
+
+    override fun onSendUserFail(throwable: Throwable) {
+        super.onSendUserFail(throwable)
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+            mLogInView.visibility = View.VISIBLE
+            mLoginAnotherProvidersView.visibility = View.VISIBLE
+            mLoadingProgresBar.visibility = View.GONE
+
+            val error = throwable
+            if (error is FirebaseError) {
+                val firebaseError = error as FirebaseError
+                ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            } else {
+                ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            }
+        }
     }
 
     /*
@@ -624,13 +661,36 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         })
     }
 
+    override fun onGetUserWithFacebookSuccess(user: User) {
+        super.onGetUserWithFacebookSuccess(user)
+        requestGetImagesPath()
+        mNotLogedIn = false
+    }
+
+    override fun onGetUserWithFacebookFail(throwable: Throwable) {
+        super.onGetUserWithFacebookFail(throwable)
+        mUser = User()
+        mUser.setCourse("comipems")
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        if (userFirebase != null) {
+            mUser.setUUID(userFirebase.uid)
+        }
+        mUser.setPremiumUser(false)
+        saveUser(mUser)
+        // save uuid user
+        requestSendUser(mUser)
+    }
+
     /*
      * Facebook Sign in listeners
      */
     override fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
         super.onSignInUserWithFacebookProviderSuccess(success)
         Log.d(TAG, "login with facebook success")
-        requestModules()
+        requestGetUserWithFacebook()
+        //requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
@@ -660,7 +720,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
-        requestModules()
+        requestGetImagesPath()
+        //goContentActivity()
+        //requestModules()
     }
 
     override fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {

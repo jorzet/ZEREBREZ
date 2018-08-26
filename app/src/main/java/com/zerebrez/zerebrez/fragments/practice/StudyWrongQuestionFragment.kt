@@ -33,7 +33,9 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import java.text.Normalizer
 
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.
@@ -50,6 +52,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     private val QUESTION_ID : String = "question_id"
     private val ANONYMOUS_USER : String = "anonymous_user"
     private val FROM_WRONG_QUESTION : String = "from_wrong_question"
+    private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
 
     /*
      * UI accessors
@@ -74,6 +77,9 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
      * Objects
      */
     private var mQuestionList = arrayListOf<Question>()
+    private var mUpdatedQuestions = arrayListOf<Question>()
+    private var mWrongQuestionsId = arrayListOf<Int>()
+    private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -88,18 +94,33 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        requestGetUserData()
+        requestGetWrongQuestionsAndProfileRefactor()
 
         return rootView
     }
 
-    override fun onResume() {
-        super.onResume()
-        requestGetUserData()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode.equals(BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)) {
+            if (resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
+                requestGetWrongQuestionsAndProfileRefactor()
+            }
+        }
     }
 
-    fun resetValues() {
-        mQuestionList = arrayListOf<Question>()
+    override fun onResume() {
+        super.onResume()
+        requestGetWrongQuestionsAndProfileRefactor()
+    }
+
+    private fun resetValues() {
+        mWrongQuestionsId.clear()
+        mWrongQuestionsId = arrayListOf()
+
+        mUpdatedQuestions.clear()
+        mUpdatedQuestions = arrayListOf()
+        mQuestionList.clear()
+        mQuestionList = arrayListOf()
         mLeftTableLayout.removeAllViews()
         mCenterTableLayout.removeAllViews()
         mRightTableLayout.removeAllViews()
@@ -164,52 +185,6 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
 
             val number = mQuestionList.get(i).getQuestionId().toString()
 
-            when (mQuestionList.get(i).getSubjectType()) {
-                SubjectType.NONE -> {
-                    //image.background = resources.getDrawable(R.drawable.main_icon)
-                }
-                SubjectType.MATHEMATICS -> {
-                    image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
-                }
-                SubjectType.SPANISH -> {
-                    image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
-                }
-                SubjectType.VERBAL_HABILITY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
-                }
-                SubjectType.MATHEMATICAL_HABILITY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
-                }
-                SubjectType.BIOLOGY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
-                }
-                SubjectType.CHEMISTRY -> {
-                    image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
-                }
-                SubjectType.PHYSICS -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
-                }
-                SubjectType.GEOGRAPHY -> {
-                    image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
-                }
-                SubjectType.MEXICO_HISTORY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
-                }
-                SubjectType.UNIVERSAL_HISTORY -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
-                }
-                SubjectType.FCE -> {
-                    // TODO
-                    image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                }
-            }
-
             // params for module
             val param = GridLayout.LayoutParams()
 
@@ -243,6 +218,50 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
             } else {
+                val currentQuestion = mQuestionList.get(i)
+                val subject = limpiarTexto(currentQuestion.getSubjectType().value)
+                when (subject) {
+                    limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                        image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.SPANISH.value) -> {
+                        image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.PHYSICS.value) -> {
+                        image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                        image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.FCE.value) -> {
+                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.FCE2.value) -> {
+                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                    }
+                    limpiarTexto(SubjectType.NONE.value) -> {
+                        //image.background = resources.getDrawable(R.drawable.main_icon)
+                    }
+                }
+
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()
                 param.bottomMargin = 2
@@ -250,6 +269,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
+                mWrongQuestionsId.add(currentQuestion.getQuestionId().toInt())
                 view.setOnClickListener(View.OnClickListener {
                     Log.d(TAG, "onClick: number --- " + number)
                     goQuestionActivity(Integer.parseInt(number))
@@ -284,99 +304,51 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(QUESTION_ID, questionId)
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
+        intent.putExtra(WRONG_QUESTIONS_LIST, mWrongQuestionsId)
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 
-    override fun onGetUserDataSuccess(user: User) {
-        super.onGetUserDataSuccess(user)
-        val mUser = getUser()
-        if (mUser != null) {
-            val dataHelper = DataHelper(context!!)
-            val modules = dataHelper.getModulesAnsQuestions()
-            val exams = dataHelper.getExams()
-
-            mUser.setCourse(user.getCourse())
-            mUser.setPremiumUser(user.isPremiumUser())
-
-            if (user.getSelectedSchools().isNotEmpty()) {
-                mUser.setSelectedShools(user.getSelectedSchools())
-            }
-
-            if (user.getAnsweredQuestion().isNotEmpty()) {
-                for (i in 0..modules.size - 1) {
-                    for (j in 0..modules.get(i).getQuestions().size - 1) {
-                        for (question2 in user.getAnsweredQuestion()) {
-                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
-                            }
-                        }
-                    }
-                }
-            }
-
-            mUser.setSelectedShools(user.getSelectedSchools())
-
+    override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
+        super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
+        try {
             if (context != null) {
-                Log.d(TAG, "save modules")
-                dataHelper.saveModules(modules)
-                //dataHelper.saveExams(exams)
-                saveUser(mUser)
+                mUser = user
+                saveUser(user)
+                val answeredQuestion = user.getAnsweredQuestion()
+
                 resetValues()
-                updateQuestionList(DataHelper(context!!).getWrongQuestions())
-                drawQuestions()
-            } else {
-                mMainContainer.visibility = View.GONE
-                mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-            }
-        } else {
-            val mUser2 = User()
-            if (context != null) {
-                val dataHelper = DataHelper(context!!)
-                val modules = dataHelper.getModulesAnsQuestions()
-                val exams = dataHelper.getExams()
-
-                mUser2.setEmail(user.getEmail())
-                mUser2.setPassword(user.getPassword())
-                mUser2.setCourse(user.getCourse())
-                mUser2.setPremiumUser(user.isPremiumUser())
-
-                if (user.getSelectedSchools().isNotEmpty()) {
-                    mUser2.setSelectedShools(user.getSelectedSchools())
-                }
-
-                if (user.getAnsweredQuestion().isNotEmpty()) {
-                    for (i in 0..modules.size - 1) {
-                        for (j in 0..modules.get(i).getQuestions().size - 1) {
-                            for (question2 in user.getAnsweredQuestion()) {
-                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
-                                }
-                            }
-                        }
+                for (i in 0..answeredQuestion.size - 1) {
+                    if (!answeredQuestion.get(i).getWasOK()) {
+                        mUpdatedQuestions.add(answeredQuestion.get(i))
                     }
                 }
 
-                if (context != null) {
-                    Log.d(TAG, "save modules")
-                    dataHelper.saveModules(modules)
-                    //dataHelper.saveExams(exams)
-                    saveUser(mUser2)
-                    resetValues()
-                    updateQuestionList(DataHelper(context!!).getWrongQuestions())
-                    drawQuestions()
-                } else {
-                    mMainContainer.visibility = View.GONE
-                    mNotWrongQuestionsCurrently.visibility = View.VISIBLE
-                }
+                updateQuestionList(mUpdatedQuestions)
+                drawQuestions()
             }
-        }
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        } catch (exception : Exception) {}
     }
 
-    override fun onGetUserDataFail(throwable: Throwable) {
-        super.onGetUserDataFail(throwable)
+    override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    fun limpiarTexto(cadena: String?): String? {
+        var limpio: String? = null
+        if (cadena != null) {
+            var valor: String = cadena
+            valor = valor.toUpperCase()
+            // Normalizar texto para eliminar acentos, dieresis, cedillas y tildes
+            limpio = Normalizer.normalize(valor, Normalizer.Form.NFD)
+            // Quitar caracteres no ASCII excepto la enie, interrogacion que abre, exclamacion que abre, grados, U con dieresis.
+            limpio = limpio!!.replace("[^\\p{ASCII}(N\u0303)(n\u0303)(\u00A1)(\u00BF)(\u00B0)(U\u0308)(u\u0308)]".toRegex(), "")
+            // Regresar a la forma compuesta, para poder comparar la enie con la tabla de valores
+            limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
+        }
+        return limpio
     }
 }

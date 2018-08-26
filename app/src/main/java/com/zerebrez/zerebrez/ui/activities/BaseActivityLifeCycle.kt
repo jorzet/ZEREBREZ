@@ -33,10 +33,14 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     companion object {
         val SET_CHECKED_TAG : String = "set_checked_tag"
         val SHOW_PAYMENT_FRAGMENT : String = "show_payment_fragment"
+        val UPDATE_WRONG_QUESTIONS : String = "update_wrong_questions"
         val SHOW_QUESTION_RESULT_CODE : Int = 1
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
         val SHOW_PAYMENT_FRAGMENT_RESULT_CODE : Int = 4
+        val RC_CHOOSE_SCHOOL : Int = 5
+        val UPDATE_USER_SCHOOLS_RESULT_CODE = 6
+        val UPDATE_WRONG_QUESTIONS_RESULT_CODE = 7
     }
 
     private lateinit var mRequestManager : RequestManager
@@ -83,8 +87,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         return termsAndPrivacy
     }
 
-    fun requestSendAnsweredQuestions(modules : List<Module>) {
-        mRequestManager.requestSendAnsweredQuestions(modules, object : RequestManager.OnSendAnsweredQuestionsListener {
+    fun requestSendAnsweredQuestions(questions : List<Question>) {
+        mRequestManager.requestSendAnsweredQuestions(questions, object : RequestManager.OnSendAnsweredQuestionsListener {
             override fun onSendAnsweredQuestionsLoaded(success: Boolean) {
                 onSendAnsweredQuestionsSuccess(success)
             }
@@ -95,8 +99,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredModules(modules : List<Module>) {
-        mRequestManager.requestSendAnsweredModules(modules, object : RequestManager.OnSendAnsweredModulesListener {
+    fun requestSendAnsweredModules(module : Module) {
+        mRequestManager.requestSendAnsweredModules(module, object : RequestManager.OnSendAnsweredModulesListener {
             override fun onSendAnsweredModulesLoaded(success: Boolean) {
                 onSendAnsweredModulesSuccess(success)
             }
@@ -107,8 +111,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredExams(exams : List<Exam>) {
-        mRequestManager.requestSendAnsweredExams(exams, object : RequestManager.OnSendAnsweredExamsListener {
+    fun requestSendAnsweredExams(exam : Exam) {
+        mRequestManager.requestSendAnsweredExams(exam, object : RequestManager.OnSendAnsweredExamsListener {
             override fun onSendAnsweredExamsLoaded(success: Boolean) {
                 onSendAnsweredExamsSuccess(success)
             }
@@ -336,4 +340,67 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     }
 
 
+    /*
+     ***********************
+     */
+
+
+
+    fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
+            override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
+                onGetQuestionsByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsByExamIdRefactor(examId : Int) {
+        mRequestManager.requestGetQuestionsByExamIdRefactor(examId, object : RequestManager.OnGetQuestionsByExamIdRefactorListener {
+            override fun onGetQuestionsByExamIdRefactorLoaded(questions: List<Question>) {
+                onGetQuestionsByExamIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsByExamIdRefactorError(throwable: Throwable) {
+                onGetQuestionsByExamIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetWrongQuestionsByQuestionIdRefactor(wrongQuestions : List<Question>) {
+        mRequestManager.requestGetWrongQuestionsByQuestionIdRefactor(wrongQuestions, object : RequestManager.OnGetWrongQuestionsByQuestionIdRefactorListener {
+            override fun onGetWrongQuestionsByQuestionIdRefactorLoaded(questions: List<Question>) {
+                onGetWrongQuestionsByQuestionIdRefactorSuccess(questions)
+            }
+
+            override fun onGetWrongQuestionsByQuestionIdRefactorError(throwable: Throwable) {
+                onGetWrongQuestionsByQuestionIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsByExamIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {}
+    open fun onGetWrongQuestionsByQuestionIdRefactorSuccess(questions : List<Question>) {}
+    open fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {}
+
+    fun requestGetSchools() {
+        mRequestManager.requestGetSchools(object : RequestManager.OnGetSchoolsListener {
+            override fun onGetSchoolsLoaded(institutes: List<Institute>) {
+                onGetSchoolsSuccess(institutes)
+            }
+
+            override fun onGetSchoolsError(throwable: Throwable) {
+                onGetSchoolsFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
+    open fun onGetSchoolsFail(throwable: Throwable) {}
 }

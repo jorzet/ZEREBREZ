@@ -138,13 +138,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         int xPos = mHitsWidth;
         int yPos = height;
 
-        Rect verticalLine = new Rect(xPos, mUsersHeight, xPos + mLineCharWidth, yPos - mUsersHeight);
-        paint.setColor(getResources().getColor(R.color.percentage_line_color));
-        canvas.drawRect(verticalLine, paint);
 
-        Rect horizontalLine = new Rect(xPos, yPos - mUsersHeight, width - mHitsWidth, yPos - mUsersHeight - mLineCharWidth);
-        paint.setColor(getResources().getColor(R.color.percentage_line_color));
-        canvas.drawRect(horizontalLine, paint);
 
         // draw score text
         for (int i = 0; i < mScores.length; i++) {
@@ -206,6 +200,14 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
             mSadEmijiIcon.setBounds(imageBounds);
             mSadEmijiIcon.draw(canvas);
         }
+
+        Rect verticalLine = new Rect(xPos, mUsersHeight, xPos + mLineCharWidth, yPos - mUsersHeight);
+        paint.setColor(getResources().getColor(R.color.percentage_line_color));
+        canvas.drawRect(verticalLine, paint);
+
+        Rect horizontalLine = new Rect(xPos, yPos - mUsersHeight, width - mHitsWidth, yPos - mUsersHeight - mLineCharWidth);
+        paint.setColor(getResources().getColor(R.color.percentage_line_color));
+        canvas.drawRect(horizontalLine, paint);
 
     }
 

@@ -1,119 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
-    
-    <RelativeLayout
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
 
-        <TextView
-            android:id="@+id/tv_become_premium"
-            android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    
+        <RelativeLayout
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="@string/become_premium_user_text"
-            android:textColor="@color/become_user_premium_text_color"
-            android:textSize="30sp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginTop="80dp">
 
-        <RelativeLayout
-            android:id="@+id/rl_payment_text_image_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_become_premium"
-            android:layout_marginTop="30dp">
-
-            <ImageView
-                android:id="@+id/iv_brain_key"
-                android:layout_width="40dp"
-                android:layout_height="120dp"
-                android:src="@drawable/brain_key_blue"/>
-
-            <RelativeLayout
+            <TextView
+                android:id="@+id/tv_become_premium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/iv_brain_key"
-                android:layout_toEndOf="@+id/iv_brain_key"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp">
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="@string/become_premium_user_text"
+                android:textColor="@color/become_user_premium_text_color"
+                android:textSize="30sp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_payment_text_image_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_become_premium"
+                android:layout_marginTop="30dp">
 
                 <ImageView
-                    android:id="@+id/iv_gray_line1"
-                    android:layout_width="200dp"
-                    android:layout_height="2dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="@color/paymen_line_color"/>
+                    android:id="@+id/iv_brain_key"
+                    android:layout_width="40dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/brain_key_blue"/>
 
-                <TextView
-                    android:id="@+id/tv_exams_number"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/iv_gray_line1"
-                    android:layout_marginTop="5dp"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/exams_number_text"
-                    android:textColor="@color/exams_text_color2"
-                    android:textSize="20sp"/>
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/iv_brain_key"
+                    android:layout_toEndOf="@+id/iv_brain_key"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp">
 
-                <TextView
-                    android:id="@+id/tv_questions_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_exams_number"
-                    android:layout_marginTop="5dp"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/questions_number_text"
-                    android:textColor="@color/questions_text_color2"
-                    android:textSize="20sp"/>
+                    <ImageView
+                        android:id="@+id/iv_gray_line1"
+                        android:layout_width="200dp"
+                        android:layout_height="2dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@color/paymen_line_color"/>
 
-                <TextView
-                    android:id="@+id/tv_get_free_exams_questions"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_questions_number"
-                    android:layout_marginTop="5dp"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:text="@string/get_all_exams_and_questions_text"
-                    android:textColor="@color/get_all_exams_and_questions_text_color"
-                    android:textSize="10sp"/>
+                    <TextView
+                        android:id="@+id/tv_exams_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/iv_gray_line1"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="4 examenes y 18"
+                        android:textColor="@color/exams_text_color2"
+                        android:textSize="20sp"/>
 
-                <ImageView
-                    android:id="@+id/iv_gray_line2"
-                    android:layout_width="200dp"
-                    android:layout_height="2dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/tv_get_free_exams_questions"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/paymen_line_color"/>
+                    <TextView
+                        android:id="@+id/tv_questions_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_exams_number"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="módulos en total"
+                        android:textColor="@color/questions_text_color2"
+                        android:textSize="20sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_get_free_exams_questions"
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_questions_number"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:text="Y obtén gratis todos los módulos y examenes que se agreguen !por solo $99¡"
+                        android:textColor="@color/get_all_exams_and_questions_text_color"
+                        android:textSize="12sp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_gray_line2"
+                        android:layout_width="200dp"
+                        android:layout_height="2dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/tv_get_free_exams_questions"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/paymen_line_color"/>
+                </RelativeLayout>
+
             </RelativeLayout>
 
+
+            <RelativeLayout
+                android:id="@+id/btn_be_premium"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/rl_payment_text_image_container"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/green_button" >
+
+                <TextView
+                    android:id="@+id/btn_be_premium_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/i_want_to_be_premium_text"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btn_get_free_exams_questions"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/btn_be_premium"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/oranage_button" >
+
+                <TextView
+                    android:id="@+id/btn_get_free_exams_questions_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="@string/get_free_exams_and_questions_text"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </RelativeLayout>
         </RelativeLayout>
-
-
-        <Button
-            android:id="@+id/btn_be_premium"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/rl_payment_text_image_container"
-            android:layout_marginTop="30dp"
-            android:text="@string/i_want_to_be_premium_text"
-            android:background="@drawable/be_premium_button_background" />
-
-        <Button
-            android:id="@+id/btn_get_free_exams_questions"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/btn_be_premium"
-            android:layout_marginTop="30dp"
-            android:text="@string/get_free_exams_and_questions_text"
-            android:background="@drawable/get_free_exams_questions_button_backgrond" />
     </RelativeLayout>
-</RelativeLayout>
+</ScrollView>

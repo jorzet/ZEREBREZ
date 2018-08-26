@@ -4,9 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -50,13 +48,13 @@
 
             <com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
                 android:id="@+id/school_average"
-                android:layout_height="3000dp"
+                android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_below="@+id/iv_gary_line"
                 android:layout_marginTop="50dp"/>
 
         </RelativeLayout>
 
-    </ScrollView>
+
 
 </RelativeLayout>

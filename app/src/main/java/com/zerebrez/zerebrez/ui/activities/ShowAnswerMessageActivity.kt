@@ -49,14 +49,18 @@ class ShowAnswerMessageActivity : BaseActivityLifeCycle() {
 
     }
 
-    /*
-     * Listener that send result code in onBackPress method
-     */
-    private val mItIsUnderstandButtonListener = View.OnClickListener {
+    override fun onBackPressed() {
         SharedPreferencesManager(baseContext).setShowAnswerMessageOK()
         val intent = Intent()
         setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
         finish()
+        super.onBackPressed()
+    }
+
+    /*
+     * Listener that send result code in onBackPress method
+     */
+    private val mItIsUnderstandButtonListener = View.OnClickListener {
         onBackPressed()
     }
 }

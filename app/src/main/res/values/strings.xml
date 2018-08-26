@@ -20,7 +20,7 @@
     <string name="split_secundary_text">S E C U N D A R I A</string>
 
     <string name="select_text">SELECCIONAR</string>
-    <string name="split_select_text">S E L E C C I O N A R</string>
+    <string name="split_select_text">  S E L E C C I O N A R  </string>
 
     <string name="init">Pequeños módulos \n con preguntas de todas \n las materias</string>
     <string name="it_is_understood">ENTENDIDO</string>
@@ -68,7 +68,7 @@
     <string name="become_premium_user_text">¡Vuélvete PREMIUM!</string>
     <string name="exams_number_text">10 examénes</string>
     <string name="questions_number_text">3239 preguntas</string>
-    <string name="get_all_exams_and_questions_text">Y obtén gratis todas las preguntas y exámenes que se agreguen!</string>
+    <string name="get_all_exams_and_questions_text">Y obtén gratis todos los módulos y examenes que se agreguen !por solo $99¡</string>
     <string name="i_want_to_be_premium_text">QUIERO SER PREMIUM</string>
     <string name="get_free_exams_and_questions_text">OBTÉN GRATIS EXÁMENES Y PREGUNTAS</string>
     <string name="you_have_acces_of_all_contents_text">¡Tienes acceso a todo el contenido!</string>
@@ -101,7 +101,7 @@
     <string name="answered_questions_text">contestadas</string>
     <string name="exams_text">Exámenes</string>
     <string name="exam_text">EXAMEN</string>
-    <string name="hits_text">aciertos</string>
+    <string name="hits_text">aciertos de </string>
     <string name="average_by_subjet">Promedio por materia</string>
 
     <!--score fragment-->
@@ -129,7 +129,7 @@ Cero anuncios bannner de terceros. No permitimos publicidad por parte de tercero
 Nuevas maneras de usar WhatsApp. Exploraremos maneras para que tú y diferentes comercios puedan comunicarse usando WhatsApp, por ejemplo con información de pedidos, transacciones y citas; notificaciones de entrega y envío; actualizaciones de producto y servicio; y mercadotecnia en general. Por ejemplo, puedes recibir información sobre el estado de un vuelo para un viaje próximo, un recibo de algo que compraste o una notificación sobre la fecha de una entrega. Los mensajes de mercadotecnia podrían incluir una oferta de algo que quizás te interese. No queremos que recibas mensajes no solicitados, es por eso que, al igual que con todos tus mensajes, puedes administrar estas comunicaciones y respetaremos las opciones que elijas.
 Tus opciones. Si eres un usuario actual, tendrás la opción de elegir que la información de tu cuenta WhatsApp no sea compartida con Facebook para mejorar tu experiencia con la publicidad y los productos en Facebook. Los usuarios que acepten nuestros Términos y Política de Privacidad actualizados, tendrán 30 días adicionales para tomar esta decisión yendo a Ajustes > Cuenta.
 </string>
-    <string name="url_terms_and_privacy">https://www.zerebrez.com/terms.html</string>
+    <string name="url_terms_and_privacy">https://www.zerebrez.com/privacy.html</string>
 
     <!--select schools fragment-->
     <string name="select_your_school_text">Elige tus tres opciones</string>

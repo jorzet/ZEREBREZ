@@ -20,15 +20,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
+import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.question.*
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
 
 
@@ -39,7 +43,7 @@ import com.zerebrez.zerebrez.utils.FontUtil
  * jorzet.94@gmail.com
  */
 
-class QuestionActivity : BaseActivityLifeCycle() {
+class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener {
 
     /*
      * Tags
@@ -54,6 +58,7 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private val SHOW_START : String = "show_start"
     private val HITS_EXTRA = "hits_extra"
     private val MISSES_EXTRA = "misses_extra"
+    private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
 
     /*
      * UI accessors
@@ -68,6 +73,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private lateinit var mShowAnswerText : TextView
     private lateinit var mCompleteQuestionsFragmentContainer : FrameLayout
     private lateinit var mControlsBar : View
+    private lateinit var progressBarHolder : FrameLayout
+    private lateinit var mQuestionsProgress : ProgressBar
 
     /*
      * Variables
@@ -86,6 +93,14 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private var mModulesAndQuestionsSaved = false
     private var mWrongQuestionsSaver = false
     private var mShowPaymentFragment = false
+    private var mProgressByQuestion : Int = 0
+    private var mCurrentProgress : Int = 0
+
+    /*
+     * Animation
+     */
+    private lateinit var inAnimation : AlphaAnimation
+    private lateinit var outAnimation : AlphaAnimation
 
     /*
      * Objects
@@ -109,6 +124,8 @@ class QuestionActivity : BaseActivityLifeCycle() {
         mNextQuestionText = findViewById(R.id.btn_next_question_text)
         mCompleteQuestionsFragmentContainer = findViewById(R.id.complete_question_fragment_container)
         mControlsBar = findViewById(R.id.bottom_bar)
+        progressBarHolder = findViewById(R.id.progressBarHolder)
+        mQuestionsProgress = findViewById(R.id.pb_questions_progress)
 
         //mBackQuestion.setOnClickListener(mBackQuestionListener)
         mCloseQuestion.setOnClickListener(mCloseQuestionListener)
@@ -120,9 +137,14 @@ class QuestionActivity : BaseActivityLifeCycle() {
         setNextQuestionEnable(false)
         mShowExpandedQuestion.visibility = View.GONE
 
-        mModuleNumber.setTypeface(FontUtil.getNunitoRegular(baseContext))
-        mNextQuestionText.setTypeface(FontUtil.getNunitoBlack(baseContext))
-        mShowAnswerText.setTypeface(FontUtil.getNunitoBlack(baseContext))
+        mModuleNumber.typeface = FontUtil.getNunitoBold(baseContext)
+        mNextQuestionText.typeface = FontUtil.getNunitoBlack(baseContext)
+        mShowAnswerText.typeface = FontUtil.getNunitoBlack(baseContext)
+
+        inAnimation = AlphaAnimation(0f, 1f)
+        inAnimation.duration = 200
+        outAnimation = AlphaAnimation(1f, 0f)
+        outAnimation.duration = 200
 
         mModuleId = intent.getIntExtra(MODULE_ID, -1)
         mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
@@ -132,22 +154,29 @@ class QuestionActivity : BaseActivityLifeCycle() {
         isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
 
         if (isFromWrongQuestionFragment) {
-            mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
-            mModuleNumber.text = mQuestionId.toString()
-            if (mQuestions.isNotEmpty()) {
-                mQuestiontypeText.text =  mQuestions.get(mCurrentQuestion).getSubjectType().value
+            showLoading(true)
+            val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
+            val mQuestions = arrayListOf<Question>()
+            var mLastKnowQuestion = false
+            for (wrongQuestionId in mWrongQuestionIds) {
+                if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
+                    val question = Question()
+                    question.setQuestionId(Integer(wrongQuestionId))
+                    mQuestions.add(question)
+                    mLastKnowQuestion = true
+                }
             }
+            requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
+            //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
         } else if (isFromExamFragment) {
-            mQuestions = DataHelper(baseContext).getQuestionsByExamId(Integer(mExamId))
-            mModuleNumber.text = mExamId.toString()
-            mQuestiontypeText.text = "Examen"
+            showLoading(true)
+            requestGetQuestionsByExamIdRefactor(mExamId)
         } else {
-            mQuestions = DataHelper(baseContext).getQuestionsByModuleId(Integer(mModuleId))
-            mModuleNumber.text = mModuleId.toString()
-            mQuestiontypeText.text = "Módulo"
+            showLoading(true)
+            requestGetQuestionsByModuleIdRefactor(mModuleId)
+
         }
 
-        showQuestion()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -155,8 +184,9 @@ class QuestionActivity : BaseActivityLifeCycle() {
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                if (currentFragment is QuestionFragmentRefactor)
+                if (currentFragment is QuestionFragmentRefactor) {
                     (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
+                }
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
@@ -165,17 +195,47 @@ class QuestionActivity : BaseActivityLifeCycle() {
     }
 
     override fun onBackPressed() {
-        if (mShowPaymentFragment) {
-            val intent = Intent()
-            intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
-            setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
-            finish()
-        }
-        super.onBackPressed()
+        try {
+            if (isAnonymous) {
+                goLogInActivityStartFragment()
+            } else if (mShowPaymentFragment) {
+                val intent = Intent()
+                intent.putExtra(SHOW_PAYMENT_FRAGMENT, true)
+                setResult(SHOW_ANSWER_MESSAGE_RESULT_CODE, intent)
+                finish()
+            } else if (isFromWrongQuestionFragment) {
+                val intent = Intent()
+                intent.putExtra(UPDATE_WRONG_QUESTIONS, true)
+                setResult(UPDATE_WRONG_QUESTIONS_RESULT_CODE, intent)
+                finish()
+            }
+            super.onBackPressed()
+        } catch (exception: Exception) {}
     }
 
     private val mCloseQuestionListener = View.OnClickListener {
-        onBackPressed()
+        if (mCurrentQuestion > 0) {
+            if (isFromWrongQuestionFragment) {
+                if (isAnonymous) {
+                    goLogInActivityStartFragment()
+                } else {
+                    onBackPressed()
+                }
+            } else {
+                ErrorDialog.newInstance("¿Seguro que quieres salir?",
+                        "Perderás los avances.",
+                        DialogType.YES_NOT_DIALOG,
+                        this)!!
+                        .show(supportFragmentManager, "")
+            }
+        } else {
+            if (isAnonymous) {
+                goLogInActivityStartFragment()
+                //onBackPressed()
+            } else {
+                onBackPressed()
+            }
+        }
     }
 
     /*
@@ -197,6 +257,9 @@ class QuestionActivity : BaseActivityLifeCycle() {
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
+            if (isFromWrongQuestionFragment) {
+                requestSendAnsweredQuestions(mQuestions)
+            }
             showQuestion()
             mCurrentQuestion++
         } else if (isAnonymous) {
@@ -253,11 +316,13 @@ class QuestionActivity : BaseActivityLifeCycle() {
      * This method show the correspond fragment according to question type
      */
     private fun showQuestion() {
+        mCurrentProgress += mProgressByQuestion
+        mQuestionsProgress.progress = mCurrentProgress
         currentFragment = QuestionFragmentRefactor()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
         transaction.replace(R.id.question_fragment_container, currentFragment);
-        transaction.commit()
+        transaction.commitAllowingStateLoss()
     }
 
     /**
@@ -306,65 +371,58 @@ class QuestionActivity : BaseActivityLifeCycle() {
      * This method save the current module and its own questions
      */
     private fun saveModulesAndQuestions() {
-        mModuleList = DataHelper(baseContext).getModulesAnsQuestions()
-        for (j in 0 .. mModuleList.size - 1) {
-            if (mModuleList.get(j).getId().equals(Integer(mModuleId))) {
-                mModuleList.get(j).setAnsweredModule(true)
-                mModuleList.get(j).setQuestions(mQuestions)
-                mModuleList.get(j).setCorrectQuestions(mCorrectQuestions)
-                mModuleList.get(j).setIncorrectQuestions(mIncorrectQiestions)
-            }
-        }
-        if (mModuleList.isNotEmpty()) {
-            DataHelper(baseContext).saveModules(mModuleList)
 
-            //if (NetworkUtil.isConnected(baseContext)) {
-            //    requestSendAnsweredModules(mModuleList)
-            //} else {
-                requestSendAnsweredModules(mModuleList)
-                requestSendAnsweredQuestions(mModuleList)
-                mModulesAndQuestionsSaved = true
+        //if (NetworkUtil.isConnected(baseContext)) {
+        //    requestSendAnsweredModules(mModuleList)
+        //} else {
+        val module = Module()
+        module.setId(Integer(mModuleId))
+        module.setAnsweredModule(true)
+        module.setQuestions(mQuestions)
+        module.setCorrectQuestions(mCorrectQuestions)
+        module.setIncorrectQuestions(mIncorrectQiestions)
 
-                // this is called on QuestionsCompleteFragment
-                if (isAnonymous) {
-                    goLogInActivity()
-                } else {
-                    showQuestionsCompleteFragment()
-                }
-            //}
+        requestSendAnsweredModules(module)
+        requestSendAnsweredQuestions(mQuestions)
+        mModulesAndQuestionsSaved = true
+
+        // this is called on QuestionsCompleteFragment
+        if (isAnonymous) {
+            goLogInActivity()
+        } else {
+            showQuestionsCompleteFragment()
         }
+
+
     }
 
     private fun saveExamsAndQuestions() {
-        mExamList = DataHelper(baseContext).getExams()
-        for (j in 0 .. mExamList.size - 1) {
-            if (mExamList.get(j).getExamId().equals(Integer(mExamId))) {
-                mExamList.get(j).setQuestions(mQuestions)
-                mExamList.get(j).setHits(mCorrectQuestions)
-                mExamList.get(j).setMisses(mIncorrectQiestions)
-                mExamList.get(j).setAnsweredExam(true)
-                DataHelper(baseContext).saveLastExamDidIt(mExamList.get(j))
-            }
-        }
-        if (mExamList.isNotEmpty()) {
-            // update local data
-            DataHelper(baseContext).saveExams(mExamList)
 
-            // send data
-            //if (NetworkUtil.isConnected(baseContext)) {
-            //    requestSendAnsweredExams(mExamList)
-            //} else {
-                requestSendAnsweredExams(mExamList)
-                mExamAnsQuestionsSaved = true
-                showQuestionsCompleteFragment()
-                // this is called on QuestionsCompleteFragment
-                //onBackPressed()
-            //}
-        }
+        // send data
+        //if (NetworkUtil.isConnected(baseContext)) {
+        //    requestSendAnsweredExams(mExamList)
+        //} else {
+        val exam = Exam()
+        exam.setExamId(Integer(mExamId))
+        exam.setQuestions(mQuestions)
+        exam.setHits(mCorrectQuestions)
+        exam.setMisses(mIncorrectQiestions)
+        exam.setAnsweredExam(true)
+
+            requestSendAnsweredExams(exam)
+            requestSendAnsweredQuestions(mQuestions)
+            mExamAnsQuestionsSaved = true
+            showQuestionsCompleteFragment()
+            // this is called on QuestionsCompleteFragment
+            //onBackPressed()
+        //}
+
     }
 
     private fun saveWrongQuestion() {
-        DataHelper(baseContext).saveWrongQuestion(mQuestions)
+        requestSendAnsweredQuestions(mQuestions)
+        mWrongQuestionsSaver = true
+        showQuestionsCompleteFragment()
     }
 
     override fun onSendAnsweredModulesSuccess(success: Boolean) {
@@ -481,4 +539,92 @@ class QuestionActivity : BaseActivityLifeCycle() {
         this.startActivity(intent)
         this.finish()
     }
+
+    private fun goLogInActivityStartFragment() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.putExtra(SHOW_START, true)
+        this.startActivity(intent)
+        this.finish()
+    }
+
+    override fun onGetQuestionsByModuleIdRefactorSuccess(questions: List<Question>) {
+        super.onGetQuestionsByModuleIdRefactorSuccess(questions)
+        mQuestions = questions
+        mModuleNumber.text = mModuleId.toString()
+        mQuestiontypeText.text = "Módulo"
+        mProgressByQuestion = 100 / questions.size
+        showQuestion()
+        showLoading(false)
+    }
+
+    override fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {
+        super.onGetQuestionsByModuleIdRefactorFail(throwable)
+        showLoading(false)
+        onBackPressed()
+    }
+
+    override fun onGetQuestionsByExamIdRefactorSuccess(questions: List<Question>) {
+        super.onGetQuestionsByExamIdRefactorSuccess(questions)
+        mQuestions = questions
+        mModuleNumber.text = mExamId.toString()
+        mQuestiontypeText.text = "Examen"
+        mProgressByQuestion = 100 / questions.size
+        showQuestion()
+        showLoading(false)
+    }
+
+    override fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {
+        super.onGetQuestionsByExamIdRefactorFail(throwable)
+        showLoading(false)
+        onBackPressed()
+    }
+
+    override fun onGetWrongQuestionsByQuestionIdRefactorSuccess(questions: List<Question>) {
+        super.onGetWrongQuestionsByQuestionIdRefactorSuccess(questions)
+        mQuestions = questions
+        mModuleNumber.text = ":)"
+        if (mQuestions.isNotEmpty()) {
+            mQuestiontypeText.text =  mQuestions.get(mCurrentQuestion).getSubjectType().value
+        }
+        mProgressByQuestion = 100 / questions.size
+        showQuestion()
+        showLoading(false)
+    }
+
+    override fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {
+        super.onGetWrongQuestionsByQuestionIdRefactorFail(throwable)
+        showLoading(false)
+        onBackPressed()
+    }
+
+    fun showLoading(showLoading : Boolean) {
+        if (showLoading) {
+            progressBarHolder.setAnimation(inAnimation);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        } else {
+            progressBarHolder.setAnimation(outAnimation);
+            progressBarHolder.setVisibility(View.GONE);
+        }
+    }
+
+    fun enableDisableAnswerButton(showButton: Boolean) {
+        mShowAnswer.isEnabled = showButton
+    }
+
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+        if (isAnonymous) {
+            goLogInActivityStartFragment()
+        } else {
+            onBackPressed()
+        }
+    }
+
 }

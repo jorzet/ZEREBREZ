@@ -20,7 +20,18 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.services.firebase.CheckUserWithFacebookRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
+import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
+import com.zerebrez.zerebrez.services.firebase.practice.ExamsRequest
+import com.zerebrez.zerebrez.services.firebase.practice.QuestionModuleRequest
+import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
+import com.zerebrez.zerebrez.services.firebase.profile.ProfileRequest
+import com.zerebrez.zerebrez.services.firebase.profile.SchoolsRequest
+import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
+import com.zerebrez.zerebrez.services.firebase.question.TipsRequest
+import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
+import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
 
 /**
  * Created by Jorge Zepeda Tinoco on 28/04/18.
@@ -69,6 +80,24 @@ class RequestManager(activity : Activity) {
         firebase.requestUpdateUser(user)
     }
 
+    fun requestUpdateUserPassword(user : User, onUpdateUserPasswordListener : OnUpdateUserPasswordListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onUpdateUserPasswordListener.onUpdateUserPasswordLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onUpdateUserPasswordListener.onUpdateUserPasswordError(result)
+            }
+        })
+
+        firebase.requestUpdateUserPassword(user)
+    }
+
     fun requestSendUser(user: User, onSendUserListener : OnSendUserListener) {
         val firebase = Firebase(mActivity)
 
@@ -87,7 +116,7 @@ class RequestManager(activity : Activity) {
         firebase.requestSendUser(user)
     }
 
-    fun requestSendAnsweredQuestions(modules: List<Module>, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
+    fun requestSendAnsweredQuestions(questions: List<Question>, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -102,10 +131,10 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredQuestions(modules)
+        firebase.requestSendAnsweredQuestions(questions)
     }
 
-    fun requestSendAnsweredModules(modules : List<Module>, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
+    fun requestSendAnsweredModules(module : Module, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -120,10 +149,10 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredModules(modules)
+        firebase.requestSendAnsweredModules(module)
     }
 
-    fun requestSendAnsweredExams(exams: List<Exam>, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
+    fun requestSendAnsweredExams(exam: Exam, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -138,7 +167,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredExams(exams)
+        firebase.requestSendAnsweredExams(exam)
     }
 
     fun requestSendSelectedSchools(schools: List<School>, onSendSelectedSchoolsListener: OnSendSelectedSchoolsListener) {
@@ -392,6 +421,11 @@ class RequestManager(activity : Activity) {
         fun onUpdateUserError(throwable: Throwable)
     }
 
+    interface OnUpdateUserPasswordListener {
+        fun onUpdateUserPasswordLoaded(success: Boolean)
+        fun onUpdateUserPasswordError(throwable: Throwable)
+    }
+
     interface OnSendUserListener {
         fun onSendUserLoaded(success: Boolean)
         fun onSendUserError(throwable: Throwable)
@@ -492,4 +526,538 @@ class RequestManager(activity : Activity) {
         fun onDownloadAllImagesLoaded(success: Boolean)
         fun onDownloadAllImagesError(throwable: Throwable)
     }
+
+
+    /*
+    ********************************** FIREBASE REQUEST REFACTOR ***********************************
+     */
+
+
+
+    fun requestGetFreeModulesRefactor(onRequestFreeModulesRefactorListener: OnGetFreeModulesRefactorListener) {
+        val questionModuleRequest = QuestionModuleRequest(mActivity)
+
+        questionModuleRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onRequestFreeModulesRefactorListener.onGetFreeModulesRefactorLoaded(result as List<Module>)
+            }
+        })
+
+        questionModuleRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onRequestFreeModulesRefactorListener.onGetFreeModulesRefactorError(result)
+            }
+        })
+
+        questionModuleRequest.requestGetFreeModulesRefactor()
+    }
+
+    fun requestGetModulesRefactor(onGetModulesRefactorListener: OnGetModulesRefactorListener) {
+        val questionModuleRequest = QuestionModuleRequest(mActivity)
+
+        questionModuleRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetModulesRefactorListener.onGetModulesRefactorLoaded(result as List<Module>)
+            }
+        })
+
+        questionModuleRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetModulesRefactorListener.onGetModulesRefactorError(result)
+            }
+        })
+
+        questionModuleRequest.requestGetModulesRefactor()
+    }
+
+    fun requestGetAnsweredModulesAndProfileRefactor(onGetAnsweredModulesAndProfileRefactorListener: OnGetAnsweredModulesAndProfileRefactorListener) {
+        val questionModuleRequest = QuestionModuleRequest(mActivity)
+
+        questionModuleRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetAnsweredModulesAndProfileRefactorListener.onGetAnsweredModulesAndProfileRefactorLoaded(result as User)
+            }
+        })
+
+        questionModuleRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetAnsweredModulesAndProfileRefactorListener.onGetAnsweredModulesAndProfileRefactorError(result)
+            }
+        })
+
+        questionModuleRequest.requestGetProfileUserRefactor()
+    }
+
+    /*
+     * Listeners question module fragment
+     */
+    interface OnGetFreeModulesRefactorListener {
+        fun onGetFreeModulesRefactorLoaded(freeModules : List<Module>)
+        fun onGetFreeModulesRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetModulesRefactorListener {
+        fun onGetModulesRefactorLoaded(modules : List<Module>)
+        fun onGetModulesRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetAnsweredModulesAndProfileRefactorListener {
+        fun onGetAnsweredModulesAndProfileRefactorLoaded(user : User)
+        fun onGetAnsweredModulesAndProfileRefactorError(throwable: Throwable)
+    }
+
+
+    fun requestGetWrongQuestionsAndProfileRefactor(onGetWrongQuestionAndProfileListener: OnGetWrongQuestionAndProfileListener) {
+        val wrongQuestionRequest = WrongQuestionRequest(mActivity)
+
+        wrongQuestionRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetWrongQuestionAndProfileListener.onGetWrongQuestionsAndProfileLoaded(result as User)
+            }
+        })
+
+        wrongQuestionRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetWrongQuestionAndProfileListener.onGetWrongQuestionsAndProfileError(result)
+            }
+        })
+
+        wrongQuestionRequest.requestGetWrontQuestionsRefactor()
+    }
+
+
+    /*
+     * Listener wrong questions fragment
+     */
+    interface OnGetWrongQuestionAndProfileListener {
+        fun onGetWrongQuestionsAndProfileLoaded(user : User)
+        fun onGetWrongQuestionsAndProfileError(throwable: Throwable)
+    }
+
+
+
+
+    fun requestGetFreeExamsRefactor(onRequestFreeExamsRefactorListener: OnGetFreeExamsRefactorListener) {
+        val questionModuleRequest = ExamsRequest(mActivity)
+
+        questionModuleRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onRequestFreeExamsRefactorListener.onGetFreeExamsRefactorLoaded(result as List<Exam>)
+            }
+        })
+
+        questionModuleRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onRequestFreeExamsRefactorListener.onGetFreeExamsRefactorError(result)
+            }
+        })
+
+        questionModuleRequest.requestGetFreeExamsRefactor()
+    }
+
+    fun requestGetExamsRefactor(onGetExamsRefactorListener: OnGetExamsRefactorListener) {
+        val questionExamsRequest = ExamsRequest(mActivity)
+
+        questionExamsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetExamsRefactorListener.onGetExamsRefactorLoaded(result as List<Exam>)
+            }
+        })
+
+        questionExamsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetExamsRefactorListener.onGetExamsRefactorError(result)
+            }
+        })
+
+        questionExamsRequest.requestGetExamsRefactor()
+    }
+
+    fun requestGetAnsweredExamsAndProfileRefactor(onGetAnsweredExamsAndProfileRefactorListener: OnGetAnsweredExamsAndProfileRefactorListener) {
+        val examsRequest = ExamsRequest(mActivity)
+
+        examsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetAnsweredExamsAndProfileRefactorListener.onGetAnsweredExamsAndProfileRefactorLoaded(result as User)
+            }
+        })
+
+        examsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetAnsweredExamsAndProfileRefactorListener.onGetAnsweredExamsAndProfileRefactorError(result)
+            }
+        })
+
+        examsRequest.requestGetProfileUserRefactor()
+    }
+
+    /*
+     * Listeners exams fragment
+     */
+    interface OnGetFreeExamsRefactorListener {
+        fun onGetFreeExamsRefactorLoaded(freeExams : List<Exam>)
+        fun onGetFreeExamsRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetExamsRefactorListener {
+        fun onGetExamsRefactorLoaded(exams : List<Exam>)
+        fun onGetExamsRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetAnsweredExamsAndProfileRefactorListener {
+        fun onGetAnsweredExamsAndProfileRefactorLoaded(user : User)
+        fun onGetAnsweredExamsAndProfileRefactorError(throwable: Throwable)
+    }
+
+
+    fun requestGetProfileRefactor(onGetProfileRefactorListener: OnGetProfileRefactorListener) {
+        val profileRequest = ProfileRequest(mActivity)
+
+        profileRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetProfileRefactorListener.onGetProfileRefactorLoaded(result as User)
+            }
+        })
+
+        profileRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetProfileRefactorListener.onGetProfileRefactorError(result)
+            }
+        })
+
+        profileRequest.requestGetProfileRefactor()
+    }
+
+    fun requestGetUserSchools(schools: List<School> ,onGetUserSchoolsListener: OnGetUserSchoolsListener) {
+        val profileRequest = ProfileRequest(mActivity)
+
+        profileRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetUserSchoolsListener.onGetUserSchoolsLoaded(result as List<School>)
+            }
+        })
+
+        profileRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetUserSchoolsListener.onGetUserSchoolsError(result)
+            }
+        })
+
+        profileRequest.requestGetUserSchools(schools)
+    }
+
+    interface OnGetProfileRefactorListener {
+        fun onGetProfileRefactorLoaded(user: User)
+        fun onGetProfileRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetUserSchoolsListener {
+        fun onGetUserSchoolsLoaded(schools: List<School>)
+        fun onGetUserSchoolsError(throwable: Throwable)
+    }
+
+
+    fun requestGetHitAndMissesAnsweredQuestionsAndExams(onGetHitsAndMissesAnsweredModulesAndExamsListener: OnGetHitsAndMissesAnsweredModulesAndExamsListener) {
+        val advancesRequest = AdvancesRequest(mActivity)
+
+        advancesRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetHitsAndMissesAnsweredModulesAndExamsListener.onGetHitsAndMissesAnsweredModulesAndExamsLoaded(result as User)
+            }
+        })
+
+        advancesRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetHitsAndMissesAnsweredModulesAndExamsListener.onGetHitsAndMissesAnsweredModulesAndExamsError(result)
+            }
+        })
+
+        advancesRequest.requestGetHitAndMissesAnsweredModulesAndExams()
+    }
+
+    fun requestGetAverageSubjects(onGetAverageSubjectsListener: OnGetAverageSubjectsListener) {
+        val advancesRequest = AdvancesRequest(mActivity)
+
+        advancesRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetAverageSubjectsListener.onGetAverageSubjectsLoaded(result as List<Subject>)
+            }
+        })
+
+        advancesRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetAverageSubjectsListener.onGetAverageSubjectsError(result)
+            }
+        })
+
+        advancesRequest.requestGetAverageSubjects()
+    }
+
+    interface OnGetHitsAndMissesAnsweredModulesAndExamsListener {
+        fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user : User)
+        fun onGetHitsAndMissesAnsweredModulesAndExamsError(throwable: Throwable)
+    }
+
+    interface OnGetAverageSubjectsListener {
+        fun onGetAverageSubjectsLoaded(subjects : List<Subject>)
+        fun onGetAverageSubjectsError(throwable: Throwable)
+    }
+
+
+    fun requestGetExamScoreRefactor(onGetExamScoreRefactorListener : OnGetExamScoreRefactorListener) {
+        val examScoreRequest = ExamsScoreRequest(mActivity)
+
+        examScoreRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetExamScoreRefactorListener.onGetExamScoreRefactorLoaded(result as List<ExamScore>)
+            }
+        })
+
+        examScoreRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetExamScoreRefactorListener.onGetExamScoreRefactorError(result)
+            }
+        })
+
+        examScoreRequest.requestGetExamScores()
+    }
+
+    fun requestAnsweredExamsRefactor(onGetAnsweredExamsRefactorListener : OnGetAnsweredExamsRefactorListener) {
+        val examScoreRequest = ExamsScoreRequest(mActivity)
+
+        examScoreRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetAnsweredExamsRefactorListener.onGetAnsweredExamsRefactorLoaded(result as User)
+            }
+        })
+
+        examScoreRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetAnsweredExamsRefactorListener.onGetAnsweredExamsRefactorError(result)
+            }
+        })
+
+        examScoreRequest.requestGetAnsweredExamRefactor()
+    }
+
+    interface OnGetExamScoreRefactorListener {
+        fun onGetExamScoreRefactorLoaded(examScores : List<ExamScore>)
+        fun onGetExamScoreRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetAnsweredExamsRefactorListener {
+        fun onGetAnsweredExamsRefactorLoaded(user: User)
+        fun onGetAnsweredExamsRefactorError(throwable: Throwable)
+    }
+
+
+    fun requestGetQuestionsByModuleIdRefactor(moduleId : Int, onGetQuestionsByModuleIdRefactorListener : OnGetQuestionsByModuleIdRefactorListener) {
+        val questionsRequest = QuestionsRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetQuestionsByModuleIdRefactorListener.onGetQuestionsByModuleIdRefactorLoaded(result as List<Question>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetQuestionsByModuleIdRefactorListener.onGetQuestionsByModuleIdRefactorError(result)
+            }
+        })
+
+        questionsRequest.requestGetQuestionsByModuleId(moduleId)
+    }
+
+    fun requestGetQuestionsByExamIdRefactor(examId : Int, onGetQuestionsByExamIdRefactorListener : OnGetQuestionsByExamIdRefactorListener) {
+        val questionsRequest = QuestionsRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetQuestionsByExamIdRefactorListener.onGetQuestionsByExamIdRefactorLoaded(result as List<Question>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetQuestionsByExamIdRefactorListener.onGetQuestionsByExamIdRefactorError(result)
+            }
+        })
+
+        questionsRequest.requestGetQuestionsByExamId(examId)
+    }
+
+    fun requestGetWrongQuestionsByQuestionIdRefactor(wrongQuestions : List<Question>, onGetWrongQuestionsByQuestionIdRefactorListener : OnGetWrongQuestionsByQuestionIdRefactorListener) {
+        val questionsRequest = QuestionsRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetWrongQuestionsByQuestionIdRefactorListener.onGetWrongQuestionsByQuestionIdRefactorLoaded(result as List<Question>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetWrongQuestionsByQuestionIdRefactorListener.onGetWrongQuestionsByQuestionIdRefactorError(result)
+            }
+        })
+
+        questionsRequest.requestGetWrongQuestionsByQuestionId(wrongQuestions)
+    }
+
+    interface OnGetQuestionsByModuleIdRefactorListener {
+        fun onGetQuestionsByModuleIdRefactorLoaded(questions : List<Question>)
+        fun onGetQuestionsByModuleIdRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetQuestionsByExamIdRefactorListener {
+        fun onGetQuestionsByExamIdRefactorLoaded(questions : List<Question>)
+        fun onGetQuestionsByExamIdRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetWrongQuestionsByQuestionIdRefactorListener {
+        fun onGetWrongQuestionsByQuestionIdRefactorLoaded(questions : List<Question>)
+        fun onGetWrongQuestionsByQuestionIdRefactorError(throwable: Throwable)
+    }
+
+    fun requestGetUserSelectedSchoolsRefactor(onGetUserSelectedSchoolsRefactorListener : OnGetUserSelectedSchoolsRefactorListener) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetUserSelectedSchoolsRefactorListener.onGetUserSelectedSchoolsRefactorLoaded(result as List<School>)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetUserSelectedSchoolsRefactorListener.onGetUserSelectedSchoolsRefactorError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetUserSelectedSchoolsRefactor()
+    }
+
+    fun requestGetScoreLast128QuestionsExam(onGetScoreLast128QuestionsExamListener : OnGetScoreLast128QuestionsExamListener) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetScoreLast128QuestionsExamListener.onGetScoreLast128QuestionsExamLoaded(result as Int)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetScoreLast128QuestionsExamListener.onGetScoreLast128QuestionsExamError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetScoreLast128QuestionsExam()
+    }
+
+    interface OnGetUserSelectedSchoolsRefactorListener {
+        fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>)
+        fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetScoreLast128QuestionsExamListener {
+        fun onGetScoreLast128QuestionsExamLoaded(score: Int)
+        fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
+    }
+
+    fun requestGetSchools(onGetSchoolsListener : OnGetSchoolsListener) {
+        val schoolsRequest = SchoolsRequest(mActivity)
+
+        schoolsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetSchoolsListener.onGetSchoolsLoaded(result as List<Institute>)
+            }
+        })
+
+        schoolsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetSchoolsListener.onGetSchoolsError(result)
+            }
+        })
+
+        schoolsRequest.requestGetSchools()
+    }
+
+    interface OnGetSchoolsListener {
+        fun onGetSchoolsLoaded(institutes : List<Institute>)
+        fun onGetSchoolsError(throwable: Throwable)
+    }
+
+
+
+    fun requestGetUserTips(OnGetUserTipsListener : OnGetUserTipsListener) {
+        val tipsRequest = TipsRequest(mActivity)
+
+        tipsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                OnGetUserTipsListener.onGetUserTipsLoaded(result as User)
+            }
+        })
+
+        tipsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                OnGetUserTipsListener.onGetUserTipsError(result)
+            }
+        })
+
+        tipsRequest.requestGetUserTips()
+    }
+
+    fun requestGetTips(OnGetTipsListener : OnGetTipsListener) {
+        val tipsRequest = TipsRequest(mActivity)
+
+        tipsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                OnGetTipsListener.onGetTipsLoaded(result as List<String>)
+            }
+        })
+
+        tipsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                OnGetTipsListener.onGetTipsError(result)
+            }
+        })
+
+        tipsRequest.requestGetTips()
+    }
+
+    interface OnGetUserTipsListener {
+        fun onGetUserTipsLoaded(user: User)
+        fun onGetUserTipsError(throwable: Throwable)
+    }
+
+    interface OnGetTipsListener {
+        fun onGetTipsLoaded(tips : List<String>)
+        fun onGetTipsError(throwable: Throwable)
+    }
+
+    fun requestGetUserWithFacebook(onGetUserWithFacebookListener : OnGetUserWithFacebookListener) {
+        val checkUserWithFacebookRequest = CheckUserWithFacebookRequest(mActivity)
+
+        checkUserWithFacebookRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetUserWithFacebookListener.onGetUserWithFacebookLoaded(result as User)
+            }
+        })
+
+        checkUserWithFacebookRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetUserWithFacebookListener.onGetUserWithFacebookError(result)
+            }
+        })
+
+        checkUserWithFacebookRequest.requestGetUserWithFacebook()
+    }
+
+    interface OnGetUserWithFacebookListener {
+        fun onGetUserWithFacebookLoaded(user: User)
+        fun onGetUserWithFacebookError(throwable: Throwable)
+    }
+
 }
