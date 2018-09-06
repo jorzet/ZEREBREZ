@@ -141,10 +141,17 @@ Tus opciones. Si eres un usuario actual, tendrás la opción de elegir que la in
     <string name="angle_up">&#xf106;</string>
 
     <!--payway activity-->
-    <string name="google_pay_text">Google Pay</string>
-    <string name="mercado_pago_text">Mercado Pago</string>
-
-
+    <string name="google_pay_text">Google Play</string>
+    <string name="mercado_pago_text">Efectivo</string>
+    <string name="where_to_pay_text">¿Dónde quieres pagar?</string>
+    <string name="comission_text">Comisión: $%.1f</string>
+    <string name="confirm_order_text">Confirma tu pedido</string>
+    <string name="mail_ticket_text">Correo donde enviaremos tu ticket</string>
+    <string name="confirm_text">  C O N F I R M A R  </string>
+    <string name="suscription_text">COMIPENS 12 meses</string>
+    <string name="choose_payment_method_text">Escoge tu método de pago</string>
+    <string name="cash_method_info_text">Los pagos en efectivo pueden demorar algunas horas en ser procesados</string>
     <string name="web_client_id">Include your web client id here</string>
+    <string name="updating_user_text">Actualizando...</string>
 
 </resources>

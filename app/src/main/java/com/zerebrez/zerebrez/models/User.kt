@@ -35,6 +35,7 @@ class User {
     private var premiumUser : Boolean = false
     private var timestamp : Long = 0
 
+
     constructor(email: String, password: String) {
         this.email = email
         this.password = password

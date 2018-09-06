@@ -50,6 +50,8 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_CURRENT_QUESTION : String = "json_current_question"
     private val NOTIFICATION_TIME : String = "notification_time"
     private val REMINDER_SATUS : String = "reminder_status"
+    private val HAS_PENDING_PAYMENT : String = "has_pending_payment"
+    private val PAYMENT_ID : String = "payment_id"
 
     /*
      * fragment tags
@@ -427,6 +429,28 @@ class SharedPreferencesManager(context: Context) {
         val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
         editor.putString(EXAMS_AVERAGE_FRAGMENT, token)
         editor.apply()
+    }
+
+    fun storePendingPayment(hasPendingPayment : Boolean) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(HAS_PENDING_PAYMENT, hasPendingPayment)
+        editor.apply()
+    }
+
+    fun getPendingPayment() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(HAS_PENDING_PAYMENT, false)
+    }
+
+    fun storePaymentId(paymentId :  String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(PAYMENT_ID, paymentId)
+        editor.apply()
+    }
+
+    fun getPaymentId() : String {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(PAYMENT_ID, "")
     }
 
 }

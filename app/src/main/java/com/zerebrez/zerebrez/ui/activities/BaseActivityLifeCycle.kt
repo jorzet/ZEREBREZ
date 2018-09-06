@@ -18,10 +18,17 @@ package com.zerebrez.zerebrez.ui.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.request.RequestManager
+import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
 import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -53,6 +60,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mRequestManager = RequestManager(this)
+        //setUserNormal()
+        CheckPendingPayment()
     }
 
     override fun onStop() {
@@ -85,6 +94,25 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun getTermsAndPrivacy() : String {
         val termsAndPrivacy = SharedPreferencesManager(baseContext).getTermsAndPrivacy()
         return termsAndPrivacy
+    }
+
+
+    fun hasPendingPayment() : Boolean{
+        val pendingPayment = SharedPreferencesManager(baseContext).getPendingPayment()
+        return pendingPayment
+    }
+
+    fun getPaymentId() : String {
+        val paymentId = SharedPreferencesManager(baseContext).getPaymentId()
+        return paymentId
+    }
+
+    fun setPendingPayment(hasPendingPayment : Boolean) {
+        SharedPreferencesManager(baseContext).storePendingPayment(hasPendingPayment)
+    }
+
+    fun setPaymentId(paymentId : String) {
+        SharedPreferencesManager(baseContext).storePaymentId(paymentId)
     }
 
     fun requestSendAnsweredQuestions(questions : List<Question>) {
@@ -231,6 +259,77 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
+    fun requestGetProfileRefactor() {
+        mRequestManager.requestGetProfileRefactor(object : RequestManager.OnGetProfileRefactorListener {
+            override fun onGetProfileRefactorLoaded(user: User) {
+                onGetProfileRefactorSuccess(user)
+            }
+
+            override fun onGetProfileRefactorError(throwable: Throwable) {
+                onGetProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun CheckPendingPayment() {
+        if (hasPendingPayment() && !getPaymentId().equals("")) {
+            Log.e("CheckPendingPayment","Tiene un cargo pendiente")
+            val mComproPagoManager = ComproPagoManager()
+            mComproPagoManager.VerifyCharge(getPaymentId(), object: ComproPagoManager.OnVerifyChargeListener{
+                override fun onVerifyChargeResponse(response: Response<ChargeResponse>?) {
+                    onVerifyChargeSuccess(response)
+                }
+
+                override fun onVerifyChargeFailure(throwable: Throwable?) {
+
+                }
+            });
+        }
+    }
+
+    fun onVerifyChargeSuccess(response: Response<ChargeResponse>?){
+        if (response != null) {
+            if(response.code()>199 && response.code()<300){
+                val chargeResponse = response.body()
+                if (chargeResponse != null) {
+                    if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+                        setUserPremium()
+                    }
+                }
+            }
+        }
+    }
+
+    fun setUserPremium(){
+        var user = getUser()
+        if(user!=null){
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                user.setEmail(userFirebase.email!!)
+            }
+            setPendingPayment(false)
+            user.setPremiumUser(true)
+            user.setTimeStamp(System.currentTimeMillis())
+            saveUser(user)
+            requestSendUser(user)
+        }
+    }
+
+    fun setUserNormal(){
+        Log.e("SetUserPremium","YA ERES PREMIUM")
+        var user = getUser()
+        if(user!=null){
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                user.setEmail(userFirebase.email!!)
+            }
+            user.setPremiumUser(false)
+            user.setTimeStamp(System.currentTimeMillis())
+            saveUser(user)
+            requestSendUser(user)
+        }
+    }
+
     open fun onSendAnsweredQuestionsSuccess(success : Boolean) {
     }
 
@@ -338,6 +437,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
     open fun onGetImagesPathFail(throwable: Throwable) {
     }
+    open fun onGetProfileRefactorSuccess(user: User) {}
+    open fun onGetProfileRefactorFail(throwable: Throwable) {}
 
 
     /*
@@ -400,6 +501,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
             }
         })
     }
+
+
 
     open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
     open fun onGetSchoolsFail(throwable: Throwable) {}

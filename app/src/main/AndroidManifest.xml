@@ -72,7 +72,7 @@
         <activity android:name=".ui.activities.ChooseSchoolsActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.PaywayActivity"
+        <activity android:name=".ui.activities.PaywayActivityRefactor"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.activities.ShowAnswerMessageActivity"

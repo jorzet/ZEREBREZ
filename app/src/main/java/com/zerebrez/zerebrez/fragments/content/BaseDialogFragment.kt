@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.fragments.content
 
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
@@ -26,7 +27,7 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
  * jorzet.94@gmail.com
  */
 
-open class BaseFragment : Fragment() {
+open class BaseDialogFragment : DialogFragment() {
 
     open fun saveUser(user : User) {
         val json = JsonParcer.parceObjectToJson(user)

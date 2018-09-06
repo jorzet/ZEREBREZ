@@ -9,7 +9,7 @@ android {
         config {
             keyAlias 'zerebrez_key2'
             keyPassword 'Audilemans8-'
-            storeFile file('/Users/jorge/Documents/Projects/zerebres/zerebrez_key')
+            storeFile file('../zerebrez_key')
             storePassword 'zerebrez'
         }
     }
@@ -58,7 +58,11 @@ dependencies {
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.github.Nishant-Pathak:MathView:v1.1'
-    implementation 'com.android.billingclient:billing:1.0'
+    implementation 'com.android.billingclient:billing:1.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.4.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
