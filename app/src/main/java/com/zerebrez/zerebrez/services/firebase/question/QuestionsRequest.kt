@@ -81,7 +81,7 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
                     Log.d(TAG, post.toString())
 
                     /*
-                     * mapping map to module object
+                     * mapping map to question array object
                      */
 
                     val questions = arrayListOf<Question>()
@@ -191,7 +191,7 @@ class QuestionsRequest(activity: Activity) : Engagement(activity) {
                     Log.d(TAG, post.toString())
 
                     /*
-                 * mapping map to module object
+                 * mapping map to question array object
                  */
                     for (key in map.keys) {
                         println(key)

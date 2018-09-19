@@ -23,6 +23,7 @@ import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.firebase.CheckUserWithFacebookRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
+import com.zerebrez.zerebrez.services.firebase.courses.CourseRequest
 import com.zerebrez.zerebrez.services.firebase.practice.ExamsRequest
 import com.zerebrez.zerebrez.services.firebase.practice.QuestionModuleRequest
 import com.zerebrez.zerebrez.services.firebase.practice.WrongQuestionRequest
@@ -1058,6 +1059,29 @@ class RequestManager(activity : Activity) {
     interface OnGetUserWithFacebookListener {
         fun onGetUserWithFacebookLoaded(user: User)
         fun onGetUserWithFacebookError(throwable: Throwable)
+    }
+
+    fun requestGetCoursesrefactor(onGetCourseRefactorListener: OnGetCourseRefactorListener) {
+        val courseRequest = CourseRequest(mActivity)
+
+        courseRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetCourseRefactorListener.onGetCoursesRefactorLoaded(result as List<Course>)
+            }
+        })
+
+        courseRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetCourseRefactorListener.onGetCoursesRefactorError(result)
+            }
+        })
+
+        courseRequest.requestGetCourses()
+    }
+
+    interface OnGetCourseRefactorListener {
+        fun onGetCoursesRefactorLoaded(courses: List<Course>)
+        fun onGetCoursesRefactorError(throwable: Throwable)
     }
 
 }

@@ -8,6 +8,7 @@ import com.zerebrez.zerebrez.models.Course
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import org.json.JSONObject
+import java.util.*
 
 class CourseRequest(activity: Activity) : Engagement(activity) {
 
@@ -34,9 +35,23 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
                     Log.d(TAG, "user data ------ " + map.size)
                     val courses = ArrayList<Course>()
                     for (key in map.keys) {
-                        val course = Gson().fromJson(JSONObject(map).toString(), Course::class.java)
+                        val courseMap = map.get(key) as HashMap<*, *>
+                        val course = Gson().fromJson(JSONObject(courseMap).toString(), Course::class.java)
+                        course.courseId = key.toString()
                         courses.add(course)
                     }
+
+                    Collections.sort(courses, object : Comparator<Course> {
+                        override fun compare(o1: Course, o2: Course): Int {
+                            return extractInt(o1) - extractInt(o2)
+                        }
+
+                        fun extractInt(s: Course): Int {
+                            val num = s.courseId.replace("c","").replace("C","")
+                            // return 0 if no digits found
+                            return if (num.isEmpty()) 0 else Integer.parseInt(num)
+                        }
+                    })
 
                     Log.d(TAG, "courses data ------ " )
                     onRequestListenerSucces.onSuccess(courses)

@@ -611,4 +611,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetUserWithFacebookSuccess(user: User) {}
     open fun onGetUserWithFacebookFail(throwable: Throwable) {}
 
+    fun requestGetCoursesRefactor() {
+        mRequestManager.requestGetCoursesrefactor(object : RequestManager.OnGetCourseRefactorListener {
+            override fun onGetCoursesRefactorLoaded(courses: List<Course>) {
+                onGetCoursesRefactorSuccess(courses)
+            }
+
+            override fun onGetCoursesRefactorError(throwable: Throwable) {
+                onGetCoursesRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
+    open fun onGetCoursesRefactorFail(throwable: Throwable) {}
+
 }

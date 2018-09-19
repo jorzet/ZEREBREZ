@@ -3,20 +3,27 @@ package com.zerebrez.zerebrez.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Created by Jorge Zepeda Tinoco on 19/09/18.
+ * jorzet.94@gmail.com
+ */
+
 data class Course (
         @SerializedName("comproPagoDescription")
-        @Expose val
-        comproPagoDescription: String = "",
+        @Expose
+        var comproPagoDescription: String = "",
         @SerializedName("description")
-        @Expose val
-        description: String = "",
+        @Expose
+        var description: String = "",
         @SerializedName("id")
         @Expose
-        val id: String = "",
+        var id: String = "",
         @SerializedName("image")
         @Expose
-        val image: String = "",
+        var image: String = "",
         @SerializedName("isActive")
         @Expose
-        val isActive: Boolean = false
+        var isActive: Boolean = false,
+        // this is to identify course exmp. c1, c2, c3
+        var courseId: String = ""
 );

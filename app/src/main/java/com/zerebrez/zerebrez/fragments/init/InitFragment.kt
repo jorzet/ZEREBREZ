@@ -32,6 +32,7 @@ import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.InitViewPager
+import com.zerebrez.zerebrez.models.Course
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.User
@@ -74,11 +75,20 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
         //secundary.setOnClickListener(secundaryListener)
         //comipems.setOnClickListener(comipemsListener)
 
+        requestGetCoursesRefactor()
         //requestGetExams()
 
         //loading.visibility = View.VISIBLE
 
         return rootView
+    }
+
+    override fun onGetCoursesRefactorSuccess(courses: List<Course>) {
+        super.onGetCoursesRefactorSuccess(courses)
+    }
+
+    override fun onGetCoursesRefactorFail(throwable: Throwable) {
+        super.onGetCoursesRefactorFail(throwable)
     }
 
     override fun onGetExamsSuccess(exams: List<Exam>) {
