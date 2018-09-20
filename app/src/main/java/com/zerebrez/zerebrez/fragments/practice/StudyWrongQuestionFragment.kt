@@ -94,7 +94,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        requestGetWrongQuestionsAndProfileRefactor()
+        requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
 
         return rootView
     }
@@ -103,14 +103,14 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode.equals(BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)) {
             if (resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
-                requestGetWrongQuestionsAndProfileRefactor()
+                requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        requestGetWrongQuestionsAndProfileRefactor()
+        requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
     }
 
     private fun resetValues() {

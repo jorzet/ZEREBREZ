@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
+import kotlin.collections.HashMap
 
 private const val TAG: String = "QuestionModuleRequest"
 
@@ -161,11 +162,11 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetProfileUserRefactor() {
+    fun requestGetProfileUserRefactor(course: String) {
         // Get a reference to our posts
-        val user = getCurrentUser()
-        if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+        val firebaseUser = getCurrentUser()
+        if (firebaseUser != null) {
+            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + firebaseUser.uid)
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -174,7 +175,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = post as HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val user = User()
@@ -198,7 +199,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                                 }
 
                             } else if (key.equals(ANSWERED_MODULED_REFERENCE)) {
-                                val answeredModules = map.get(key) as HashMap<String, String>
+                                val answeredModules = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val modules = arrayListOf<Module>()
 
                                 for (key2 in answeredModules.keys) {

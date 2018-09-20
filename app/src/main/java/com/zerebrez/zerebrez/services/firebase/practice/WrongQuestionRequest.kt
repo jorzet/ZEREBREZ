@@ -55,7 +55,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetWrontQuestionsRefactor() {
+    fun requestGetWrontQuestionsRefactor(course: String) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
@@ -91,7 +91,7 @@ class WrongQuestionRequest(activity: Activity) : Engagement(activity) {
                                 }
 
                             } else if (key.equals(ANSWERED_QUESTION_REFERENCE)) {
-                                val answeredQuestions = map.get(key) as HashMap<String, String>
+                                val answeredQuestions = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val questions = arrayListOf<Question>()
                                 for (key2 in answeredQuestions.keys) {
                                     val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>

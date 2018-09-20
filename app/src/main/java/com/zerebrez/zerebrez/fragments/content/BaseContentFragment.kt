@@ -341,8 +341,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetAnsweredModulesAndProfileRefactor() {
-        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
+    fun requestGetAnsweredModulesAndProfileRefactor(course: String) {
+        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(course, object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
             override fun onGetAnsweredModulesAndProfileRefactorLoaded(user: User) {
                 onGetAnsweredModulesAndProfileRefactorSuccess(user)
             }
@@ -360,8 +360,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetAnsweredModulesAndProfileRefactorSuccess(user : User) {}
     open fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {}
 
-    fun requestGetWrongQuestionsAndProfileRefactor() {
-        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(object : RequestManager.OnGetWrongQuestionAndProfileListener {
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String) {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(course,object : RequestManager.OnGetWrongQuestionAndProfileListener {
             override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
                 onGetWrongQuestionsAndProfileRefactorSuccess(user)
             }
@@ -625,5 +625,21 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
     open fun onGetCoursesRefactorFail(throwable: Throwable) {}
+
+    fun requestGetSubjects() {
+        mRequestManager.requestGetSubjects(object : RequestManager.OnGetSubjectsListener {
+            override fun onGetSubjectsLoaded(subjects: List<SubjectRefactor>) {
+                onGetSubjectsSuccess(subjects)
+            }
+
+            override fun onGetSubjectsError(throwable: Throwable) {
+                onGetSubjectsFail(throwable)
+            }
+
+        })
+    }
+
+    open fun onGetSubjectsSuccess(courses: List<SubjectRefactor>) {}
+    open fun onGetSubjectsFail(throwable: Throwable) {}
 
 }

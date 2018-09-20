@@ -189,6 +189,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         setBottomTabIcons()
 
         requestGetExamScores()
+        requestGetProfileRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
         mBottomTabLayout.setOnTabSelectedListener(onBottomTabLayoutListener)
@@ -439,6 +440,15 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         this.doubleBackToExitPressedOnce = true
 
         Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+    }
+
+    override fun onGetProfileRefactorSuccess(user: User) {
+        super.onGetProfileRefactorSuccess(user)
+        saveUser(user)
+    }
+
+    override fun onGetProfileRefactorFail(throwable: Throwable) {
+        super.onGetProfileRefactorFail(throwable)
     }
 
     override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {

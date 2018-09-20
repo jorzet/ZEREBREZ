@@ -33,6 +33,7 @@ import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
 import com.zerebrez.zerebrez.services.firebase.question.TipsRequest
 import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
 import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
+import com.zerebrez.zerebrez.services.firebase.subject.SubjectRequest
 
 /**
  * Created by Jorge Zepeda Tinoco on 28/04/18.
@@ -571,7 +572,7 @@ class RequestManager(activity : Activity) {
         questionModuleRequest.requestGetModulesRefactor()
     }
 
-    fun requestGetAnsweredModulesAndProfileRefactor(onGetAnsweredModulesAndProfileRefactorListener: OnGetAnsweredModulesAndProfileRefactorListener) {
+    fun requestGetAnsweredModulesAndProfileRefactor(course: String, onGetAnsweredModulesAndProfileRefactorListener: OnGetAnsweredModulesAndProfileRefactorListener) {
         val questionModuleRequest = QuestionModuleRequest(mActivity)
 
         questionModuleRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -586,7 +587,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        questionModuleRequest.requestGetProfileUserRefactor()
+        questionModuleRequest.requestGetProfileUserRefactor(course)
     }
 
     /*
@@ -608,7 +609,7 @@ class RequestManager(activity : Activity) {
     }
 
 
-    fun requestGetWrongQuestionsAndProfileRefactor(onGetWrongQuestionAndProfileListener: OnGetWrongQuestionAndProfileListener) {
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String, onGetWrongQuestionAndProfileListener: OnGetWrongQuestionAndProfileListener) {
         val wrongQuestionRequest = WrongQuestionRequest(mActivity)
 
         wrongQuestionRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -623,7 +624,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        wrongQuestionRequest.requestGetWrontQuestionsRefactor()
+        wrongQuestionRequest.requestGetWrontQuestionsRefactor(course)
     }
 
 
@@ -1082,6 +1083,29 @@ class RequestManager(activity : Activity) {
     interface OnGetCourseRefactorListener {
         fun onGetCoursesRefactorLoaded(courses: List<Course>)
         fun onGetCoursesRefactorError(throwable: Throwable)
+    }
+
+    fun requestGetSubjects(onGetSubjectsListener: OnGetSubjectsListener) {
+        val courseRequest = SubjectRequest(mActivity)
+
+        courseRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetSubjectsListener.onGetSubjectsLoaded(result as List<SubjectRefactor>)
+            }
+        })
+
+        courseRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetSubjectsListener.onGetSubjectsError(result)
+            }
+        })
+
+        courseRequest.requestGetSubjects()
+    }
+
+    interface OnGetSubjectsListener {
+        fun onGetSubjectsLoaded(subjects: List<SubjectRefactor>)
+        fun onGetSubjectsError(throwable: Throwable)
     }
 
 }

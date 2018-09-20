@@ -78,11 +78,17 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
 
                         if (map.containsKey(PROFILE_KEY)) {
                             val user = User()
-                            val profile = map.get(PROFILE_KEY) as HashMap<String, String>
-                            for (key2 in profile.keys) {
+                            val profileMap = map.get(PROFILE_KEY) as HashMap<String, String>
+
+                            val course = profileMap.get(COURSE_KEY) as String
+
+                            user.setCourse(course)
+                            val courseMap = profileMap.get(course) as HashMap<*, *>
+
+                            for (key2 in courseMap.keys) {
                                 if (key2.equals(PREMIUM_KEY)) {
 
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = courseMap.get(PREMIUM_KEY) as java.util.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -95,10 +101,10 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
                                     }
 
                                 } else if (key2.equals(COURSE_KEY)) {
-                                    val course = profile.get(key2).toString()
+                                    val course = courseMap.get(key2).toString()
                                     user.setCourse(course)
                                 } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
-                                    val selectedSchools = profile.get(key2) as ArrayList<Any>
+                                    val selectedSchools = courseMap.get(key2) as ArrayList<Any>
                                     val schools = arrayListOf<School>()
                                     Log.d(TAG, "profile data ------ " + selectedSchools.size)
                                     for (i in 0..selectedSchools.size - 1) {

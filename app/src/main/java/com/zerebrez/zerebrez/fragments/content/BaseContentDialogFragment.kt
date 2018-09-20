@@ -341,8 +341,8 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
         })
     }
 
-    fun requestGetAnsweredModulesAndProfileRefactor() {
-        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
+    fun requestGetAnsweredModulesAndProfileRefactor(course: String) {
+        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(course, object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
             override fun onGetAnsweredModulesAndProfileRefactorLoaded(user: User) {
                 onGetAnsweredModulesAndProfileRefactorSuccess(user)
             }
@@ -360,8 +360,8 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
     open fun onGetAnsweredModulesAndProfileRefactorSuccess(user : User) {}
     open fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {}
 
-    fun requestGetWrongQuestionsAndProfileRefactor() {
-        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(object : RequestManager.OnGetWrongQuestionAndProfileListener {
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String) {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(course, object : RequestManager.OnGetWrongQuestionAndProfileListener {
             override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
                 onGetWrongQuestionsAndProfileRefactorSuccess(user)
             }

@@ -315,7 +315,8 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 }
             }
         }
-        requestGetAnsweredModulesAndProfileRefactor()
+
+        requestGetAnsweredModulesAndProfileRefactor(getUser()!!.getCourse())
     }
 
     override fun onGetFreeModulesRefactorFail(throwable: Throwable) {
