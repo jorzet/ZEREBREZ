@@ -115,8 +115,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         SharedPreferencesManager(baseContext).storePaymentId(paymentId)
     }
 
-    fun requestSendAnsweredQuestions(questions : List<Question>) {
-        mRequestManager.requestSendAnsweredQuestions(questions, object : RequestManager.OnSendAnsweredQuestionsListener {
+    fun requestSendAnsweredQuestions(questions : List<Question>, course: String) {
+        mRequestManager.requestSendAnsweredQuestions(questions, course, object : RequestManager.OnSendAnsweredQuestionsListener {
             override fun onSendAnsweredQuestionsLoaded(success: Boolean) {
                 onSendAnsweredQuestionsSuccess(success)
             }
@@ -127,8 +127,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredModules(module : Module) {
-        mRequestManager.requestSendAnsweredModules(module, object : RequestManager.OnSendAnsweredModulesListener {
+    fun requestSendAnsweredModules(module : Module, course: String) {
+        mRequestManager.requestSendAnsweredModules(module, course, object : RequestManager.OnSendAnsweredModulesListener {
             override fun onSendAnsweredModulesLoaded(success: Boolean) {
                 onSendAnsweredModulesSuccess(success)
             }
@@ -139,8 +139,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredExams(exam : Exam) {
-        mRequestManager.requestSendAnsweredExams(exam, object : RequestManager.OnSendAnsweredExamsListener {
+    fun requestSendAnsweredExams(exam : Exam, course: String) {
+        mRequestManager.requestSendAnsweredExams(exam, course, object : RequestManager.OnSendAnsweredExamsListener {
             override fun onSendAnsweredExamsLoaded(success: Boolean) {
                 onSendAnsweredExamsSuccess(success)
             }

@@ -48,6 +48,7 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
      * Tags
      */
     private val TAG : String = "ExamFragment"
+    private var CURRENT_COURSE : String = "current_course"
     private val FROM_EXAM_FRAGMENT : String = "from_exam_fragment"
     private val ANONYMOUS_USER : String = "anonymous_user"
     private val EXAM_ID : String = "exam_id"
@@ -117,6 +118,12 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
         intent.putExtra(EXAM_ID, examId)
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_EXAM_FRAGMENT, true)
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                intent.putExtra(CURRENT_COURSE, user.getCourse())
+            }
+        }
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 

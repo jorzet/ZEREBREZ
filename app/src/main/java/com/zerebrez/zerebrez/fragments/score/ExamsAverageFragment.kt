@@ -26,6 +26,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamAverageListAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.ExamScore
+import com.zerebrez.zerebrez.models.ExamScoreRafactor
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -52,7 +53,7 @@ class ExamsAverageFragment : BaseContentFragment() {
     /*
      * Objects
      */
-    private lateinit var mExams : List<ExamScore>
+    private lateinit var mExams : List<ExamScoreRafactor>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -72,12 +73,17 @@ class ExamsAverageFragment : BaseContentFragment() {
         return rootView
     }
 
-    override fun onGetExamScoreRefactorSuccess(examScores: List<ExamScore>) {
+    override fun onGetExamScoreRefactorSuccess(examScores: List<ExamScoreRafactor>) {
         super.onGetExamScoreRefactorSuccess(examScores)
 
         mExams = examScores
 
-        requestGetAnsweredExamsRefactor()
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetAnsweredExamsRefactor(user.getCourse())
+            }
+        }
     }
 
     override fun onGetExamScoreRefactorFail(throwable: Throwable) {
@@ -92,12 +98,10 @@ class ExamsAverageFragment : BaseContentFragment() {
         if (context != null) {
             val exams = user.getAnsweredExams()
             saveUser(user)
-            val mExamsDidIt = arrayListOf<ExamScore>()
+            val mExamsDidIt = arrayListOf<ExamScoreRafactor>()
             for (examScore in mExams) {
                 for (exam in exams) {
-                    if (exam.getExamId().equals(examScore.getExamScoreId())) {
-                        examScore.setUserScore(Integer(exam.getHits()))
-                        examScore.setTotalNumberOfQuestion(Integer(exam.getHits() + exam.getMisses()))
+                    if (exam.getExamId().equals(examScore.examId)) {
                         mExamsDidIt.add(examScore)
                     }
                 }

@@ -611,7 +611,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     }
 
-    fun requestSendAnsweredQuestions(questions: List<Question>) {
+    fun requestSendAnsweredQuestions(questions: List<Question>, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -621,9 +621,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
             for (question in questions) {
                 if (!question.getOptionChoosed().equals("")) {
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
                 }
             }
 
@@ -643,7 +643,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestSendAnsweredModules(module : Module) {
+    fun requestSendAnsweredModules(module : Module, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -662,8 +662,8 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                     }
                 }
 
-                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
-                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + course + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + course + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
             }
 
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
@@ -683,7 +683,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     }
 
 
-    fun requestSendAnsweredExams(exam : Exam) {
+    fun requestSendAnsweredExams(exam : Exam, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -692,8 +692,8 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             val userUpdates = HashMap<String, Any>()
 
             if (exam.isAnsweredExam()) {
-                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
-                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + course + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + course + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
             }
 
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {

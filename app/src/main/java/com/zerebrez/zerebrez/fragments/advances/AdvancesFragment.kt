@@ -90,7 +90,10 @@ class AdvancesFragment : BaseContentFragment() {
         mNotAbleNow.typeface = FontUtil.getNunitoSemiBold(context!!)
         mAverageBySubjectTextView.typeface = FontUtil.getNunitoBold(context!!)
 
-        requestGetHitAndMissesAnsweredModulesAndExams()
+        val user = (activity as ContentActivity).getUserProfile()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+        }
 
         requestGetAverageSubjects()
 

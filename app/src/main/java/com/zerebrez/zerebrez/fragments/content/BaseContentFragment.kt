@@ -449,8 +449,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetUserSchoolsSuccess(schools : List<School>) {}
     open fun onGetUserSchoolsFail(throwable: Throwable) {}
 
-    fun requestGetHitAndMissesAnsweredModulesAndExams() {
-        mRequestManager.requestGetHitAndMissesAnsweredQuestionsAndExams(object : RequestManager.OnGetHitsAndMissesAnsweredModulesAndExamsListener {
+    fun requestGetHitAndMissesAnsweredModulesAndExams(course: String) {
+        mRequestManager.requestGetHitAndMissesAnsweredQuestionsAndExams(course, object : RequestManager.OnGetHitsAndMissesAnsweredModulesAndExamsListener {
             override fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user: User) {
                 onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
             }
@@ -480,7 +480,7 @@ abstract class BaseContentFragment : BaseFragment() {
 
     fun requestGetExamScoreRefactor() {
         mRequestManager.requestGetExamScoreRefactor(object : RequestManager.OnGetExamScoreRefactorListener {
-            override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScore>) {
+            override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScoreRafactor>) {
                 onGetExamScoreRefactorSuccess(examScores)
             }
 
@@ -490,8 +490,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetAnsweredExamsRefactor() {
-        mRequestManager.requestAnsweredExamsRefactor(object : RequestManager.OnGetAnsweredExamsRefactorListener {
+    fun requestGetAnsweredExamsRefactor(course: String) {
+        mRequestManager.requestAnsweredExamsRefactor(course, object : RequestManager.OnGetAnsweredExamsRefactorListener {
             override fun onGetAnsweredExamsRefactorLoaded(user: User) {
                 onGetAnsweredExamsRefactorSuccess(user)
             }
@@ -502,7 +502,7 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    open fun onGetExamScoreRefactorSuccess(examScores: List<ExamScore>) {}
+    open fun onGetExamScoreRefactorSuccess(examScores: List<ExamScoreRafactor>) {}
     open fun onGetExamScoreRefactorFail(throwable: Throwable) {}
     open fun onGetAnsweredExamsRefactorSuccess(user: User) {}
     open fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {}

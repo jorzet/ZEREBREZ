@@ -23,6 +23,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.ExamScore
+import com.zerebrez.zerebrez.models.ExamScoreRafactor
+import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_exam_average_refactor.view.*
 
@@ -33,9 +35,9 @@ import kotlinx.android.synthetic.main.custom_exam_average_refactor.view.*
 
 private const val TAG : String = "ExamAverageListAdapterRefactor"
 
-class ExamAverageListAdapterRefactor(averageExams : List<ExamScore>, context : Context) : BaseAdapter() {
+class ExamAverageListAdapterRefactor(averageExams : List<ExamScoreRafactor>, context : Context) : BaseAdapter() {
 
-    private val mAverageExams : List<ExamScore> = averageExams
+    private val mAverageExams : List<ExamScoreRafactor> = averageExams
     private val mContext : Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

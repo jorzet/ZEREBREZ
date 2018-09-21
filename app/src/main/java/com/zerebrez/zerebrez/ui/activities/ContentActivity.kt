@@ -128,6 +128,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mGoogleSignInClient : GoogleSignInClient
 
+    /*
+     * User
+     */
+    private lateinit var mUser: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_container)
@@ -444,7 +449,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetProfileRefactorSuccess(user: User) {
         super.onGetProfileRefactorSuccess(user)
-        saveUser(user)
+        mUser = user
     }
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
@@ -583,6 +588,10 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetImagesPathFail(throwable: Throwable) {
         super.onGetImagesPathFail(throwable)
+    }
+
+    fun getUserProfile(): User? {
+        return this.mUser
     }
 
 }

@@ -48,6 +48,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
      * Tags
      */
     private val TAG : String = "StudyWrongQuestionF"
+    private var CURRENT_COURSE : String = "current_course"
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
     private val ANONYMOUS_USER : String = "anonymous_user"
@@ -94,7 +95,12 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
 
-        requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+            }
+        }
 
         return rootView
     }
@@ -103,14 +109,24 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode.equals(BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)) {
             if (resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
-                requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
+                if (activity != null) {
+                    val user = (activity as ContentActivity).getUserProfile()
+                    if (user != null && !user.getCourse().equals("")) {
+                        requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+                    }
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        requestGetWrongQuestionsAndProfileRefactor(getUser()!!.getCourse())
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+            }
+        }
     }
 
     private fun resetValues() {
@@ -305,6 +321,12 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, true)
         intent.putExtra(WRONG_QUESTIONS_LIST, mWrongQuestionsId)
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                intent.putExtra(CURRENT_COURSE, user.getCourse())
+            }
+        }
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 

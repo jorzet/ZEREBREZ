@@ -49,6 +49,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * Tags
      */
     private val TAG : String = "QuestionActivity"
+    private var CURRENT_COURSE : String = "current_course"
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
     private val EXAM_ID : String = "exam_id"
@@ -79,6 +80,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     /*
      * Variables
      */
+    private var mCourse : String = ""
     private var mModuleId : Int = 0
     private var mQuestionId : Int = 0
     private var mExamId : Int = 0
@@ -146,6 +148,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         outAnimation = AlphaAnimation(1f, 0f)
         outAnimation.duration = 200
 
+        mCourse = intent.getStringExtra(CURRENT_COURSE)
         mModuleId = intent.getIntExtra(MODULE_ID, -1)
         mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
         mExamId = intent.getIntExtra(EXAM_ID, -1)
@@ -258,7 +261,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         setNextQuestionEnable(false)
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
             if (isFromWrongQuestionFragment) {
-                requestSendAnsweredQuestions(mQuestions)
+                requestSendAnsweredQuestions(mQuestions, mCourse)
             }
             showQuestion()
             mCurrentQuestion++
@@ -382,8 +385,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         module.setCorrectQuestions(mCorrectQuestions)
         module.setIncorrectQuestions(mIncorrectQiestions)
 
-        requestSendAnsweredModules(module)
-        requestSendAnsweredQuestions(mQuestions)
+        requestSendAnsweredModules(module, mCourse)
+        requestSendAnsweredQuestions(mQuestions, mCourse)
         mModulesAndQuestionsSaved = true
 
         // this is called on QuestionsCompleteFragment
@@ -409,8 +412,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         exam.setMisses(mIncorrectQiestions)
         exam.setAnsweredExam(true)
 
-            requestSendAnsweredExams(exam)
-            requestSendAnsweredQuestions(mQuestions)
+            requestSendAnsweredExams(exam, mCourse)
+            requestSendAnsweredQuestions(mQuestions, mCourse)
             mExamAnsQuestionsSaved = true
             showQuestionsCompleteFragment()
             // this is called on QuestionsCompleteFragment
@@ -420,7 +423,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private fun saveWrongQuestion() {
-        requestSendAnsweredQuestions(mQuestions)
+        requestSendAnsweredQuestions(mQuestions, mCourse)
         mWrongQuestionsSaver = true
         showQuestionsCompleteFragment()
     }
@@ -473,7 +476,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         currentFragment = QuestionsCompleteFragment()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
-        transaction.replace(R.id.complete_question_fragment_container, currentFragment);
+        transaction.replace(R.id.complete_question_fragment_container, currentFragment)
         transaction.commit()
     }
 

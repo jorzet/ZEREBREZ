@@ -118,7 +118,7 @@ class RequestManager(activity : Activity) {
         firebase.requestSendUser(user)
     }
 
-    fun requestSendAnsweredQuestions(questions: List<Question>, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
+    fun requestSendAnsweredQuestions(questions: List<Question>, course: String, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -133,10 +133,10 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredQuestions(questions)
+        firebase.requestSendAnsweredQuestions(questions, course)
     }
 
-    fun requestSendAnsweredModules(module : Module, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
+    fun requestSendAnsweredModules(module : Module, course: String, onSendAnsweredModulesListener: OnSendAnsweredModulesListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -151,10 +151,10 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredModules(module)
+        firebase.requestSendAnsweredModules(module, course)
     }
 
-    fun requestSendAnsweredExams(exam: Exam, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
+    fun requestSendAnsweredExams(exam: Exam, course: String, onSendAnsweredExamsListener: OnSendAnsweredExamsListener) {
         val firebase = Firebase(mActivity)
 
         firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -169,7 +169,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        firebase.requestSendAnsweredExams(exam)
+        firebase.requestSendAnsweredExams(exam, course)
     }
 
     fun requestSendSelectedSchools(schools: List<School>, onSendSelectedSchoolsListener: OnSendSelectedSchoolsListener) {
@@ -759,7 +759,7 @@ class RequestManager(activity : Activity) {
     }
 
 
-    fun requestGetHitAndMissesAnsweredQuestionsAndExams(onGetHitsAndMissesAnsweredModulesAndExamsListener: OnGetHitsAndMissesAnsweredModulesAndExamsListener) {
+    fun requestGetHitAndMissesAnsweredQuestionsAndExams(course: String, onGetHitsAndMissesAnsweredModulesAndExamsListener: OnGetHitsAndMissesAnsweredModulesAndExamsListener) {
         val advancesRequest = AdvancesRequest(mActivity)
 
         advancesRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -774,7 +774,7 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        advancesRequest.requestGetHitAndMissesAnsweredModulesAndExams()
+        advancesRequest.requestGetHitAndMissesAnsweredModulesAndExams(course)
     }
 
     fun requestGetAverageSubjects(onGetAverageSubjectsListener: OnGetAverageSubjectsListener) {
@@ -811,7 +811,7 @@ class RequestManager(activity : Activity) {
 
         examScoreRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
             override fun onSuccess(result: Any?) {
-                onGetExamScoreRefactorListener.onGetExamScoreRefactorLoaded(result as List<ExamScore>)
+                onGetExamScoreRefactorListener.onGetExamScoreRefactorLoaded(result as List<ExamScoreRafactor>)
             }
         })
 
@@ -824,7 +824,7 @@ class RequestManager(activity : Activity) {
         examScoreRequest.requestGetExamScores()
     }
 
-    fun requestAnsweredExamsRefactor(onGetAnsweredExamsRefactorListener : OnGetAnsweredExamsRefactorListener) {
+    fun requestAnsweredExamsRefactor(course: String, onGetAnsweredExamsRefactorListener : OnGetAnsweredExamsRefactorListener) {
         val examScoreRequest = ExamsScoreRequest(mActivity)
 
         examScoreRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
@@ -839,11 +839,11 @@ class RequestManager(activity : Activity) {
             }
         })
 
-        examScoreRequest.requestGetAnsweredExamRefactor()
+        examScoreRequest.requestGetAnsweredExamRefactor(course)
     }
 
     interface OnGetExamScoreRefactorListener {
-        fun onGetExamScoreRefactorLoaded(examScores : List<ExamScore>)
+        fun onGetExamScoreRefactorLoaded(examScores : List<ExamScoreRafactor>)
         fun onGetExamScoreRefactorError(throwable: Throwable)
     }
 
