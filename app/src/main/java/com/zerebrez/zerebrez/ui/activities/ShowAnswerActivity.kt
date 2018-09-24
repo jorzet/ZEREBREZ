@@ -45,6 +45,11 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
      */
     private lateinit var optionQuestionAdapter : OptionQuestionAdapterRefactor
 
+    /*
+     * Objects
+     */
+    private lateinit var mImagesPath : List<Image>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_answer)
@@ -62,7 +67,7 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
 
             val realSize = questionNewFormat.questionData.size
 
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, baseContext)
+            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext)
             mAnswerList.adapter = optionQuestionAdapter
         }
 

@@ -97,11 +97,15 @@ class ExamsAverageFragment : BaseContentFragment() {
 
         if (context != null) {
             val exams = user.getAnsweredExams()
-            saveUser(user)
+            val mUser = (activity as ContentActivity).getUserProfile()
+            if (mUser != null) {
+                mUser.setAnsweredExams(exams)
+                saveUser(mUser)
+            }
             val mExamsDidIt = arrayListOf<ExamScoreRafactor>()
             for (examScore in mExams) {
                 for (exam in exams) {
-                    if (exam.getExamId().equals(examScore.examId)) {
+                    if (exam.getExamId().equals(Integer.parseInt(examScore.examId.replace("e","")))) {
                         examScore.userScore = Integer(exam.getHits())
                         examScore.totalNumberOfQuestions = Integer(exam.getHits() + exam.getMisses())
                         mExamsDidIt.add(examScore)

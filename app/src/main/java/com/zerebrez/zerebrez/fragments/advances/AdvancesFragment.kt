@@ -108,7 +108,12 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
         if (context != null) {
-            saveUser(user)
+            val mUser = (activity as ContentActivity).getUserProfile()
+            if (mUser != null) {
+                mUser.setAnsweredQuestionsNewFormat(user.getAnsweredQuestionNewFormat())
+                saveUser(mUser)
+            }
+
             val questions = user.getAnsweredQuestionNewFormat()
             var hits = 0
             var misses = 0

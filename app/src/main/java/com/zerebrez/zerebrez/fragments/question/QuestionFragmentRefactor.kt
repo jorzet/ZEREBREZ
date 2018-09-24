@@ -214,7 +214,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(false)
             }
 
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, context!!)
+            optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
 
             setOptions()
             setAnswers()

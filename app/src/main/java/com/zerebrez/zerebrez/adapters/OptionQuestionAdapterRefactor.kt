@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.custom_question_refactor.view.*
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.os.Environment
+import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_init_question.view.*
@@ -19,8 +20,9 @@ import java.io.File
 import java.io.FileInputStream
 
 
-class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : QuestionNewFormat, context: Context) : BaseAdapter() {
+class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : QuestionNewFormat, imagesPath : List<Image>, context: Context) : BaseAdapter() {
     private val mQuestionNewFormat = questionNewFormat
+    private val mImagesPath : List<Image> = imagesPath
     private val mContext : Context = context
     private val mIsAnswer : Boolean = isAnswer
 
@@ -63,7 +65,8 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : Que
                 }
 
                 "img" -> {
-                    questionView.iv_option.setImageBitmap(getBitmap(currentQuestion))
+                    val nameInStorage = getNameInStorage(currentQuestion, mImagesPath)
+                    questionView.iv_option.setImageBitmap(getBitmap(nameInStorage))
                     questionView.tv_option.visibility = View.GONE
                     questionView.mv_otion.visibility = View.GONE
                     questionView.iv_option.visibility = View.VISIBLE
@@ -75,10 +78,16 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : Que
     }
 
     override fun getItem(position: Int): Any {
+        if (mIsAnswer) {
+            return mQuestionNewFormat.stepByStepData.get(position)
+        }
         return mQuestionNewFormat.questionData.get(position)
     }
 
     private fun getItemType(position: Int): String {
+        if (mIsAnswer) {
+            return mQuestionNewFormat.stepByStepTypes.get(position)
+        }
         return mQuestionNewFormat.questionTypes.get(position)
     }
 
@@ -88,9 +97,20 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : Que
 
     override fun getCount(): Int {
         if (mIsAnswer) {
-            return mQuestionNewFormat.questionData.size
+            return mQuestionNewFormat.stepByStepData.size
         }
         return mQuestionNewFormat.questionData.size + 1
+    }
+
+    private fun getNameInStorage(imageId : String, mImagesPath : List<Image>) : String {
+        var nameInStorage = ""
+        for (image in mImagesPath) {
+            if (imageId.equals("i"+image.getImageId())) {
+                nameInStorage = image.getNameInStorage()
+                return nameInStorage
+            }
+        }
+        return ""
     }
 
     fun getBitmap(path: String): Bitmap? {
