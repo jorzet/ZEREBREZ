@@ -278,16 +278,21 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     private val mContinueListener = View.OnClickListener {
         if (NetworkUtil.isConnected(baseContext)) {
             if (mSchools.isNotEmpty()) {
-                requestSendSelectedSchools(mSchools)
+                val user = getUser()
+                if (user != null) {
+                    requestSendSelectedSchools(user, mSchools)
+                }
+
             } else {
                 ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
                         DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
             }
         } else {
             if (mSchools.isNotEmpty()) {
-                requestSendSelectedSchools(mSchools)
+
                 val user = getUser()
                 if (user != null) {
+                    requestSendSelectedSchools(user, mSchools)
                     user.setSelectedShools(mSchools)
                     saveUser(user)
                 }

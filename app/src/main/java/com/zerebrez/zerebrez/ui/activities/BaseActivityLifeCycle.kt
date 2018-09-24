@@ -115,6 +115,10 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         SharedPreferencesManager(baseContext).storePaymentId(paymentId)
     }
 
+    /*
+     * SEND ANSWERED QUESTIONS OLD FORMAT
+     */
+    /*
     fun requestSendAnsweredQuestions(questions : List<Question>, course: String) {
         mRequestManager.requestSendAnsweredQuestions(questions, course, object : RequestManager.OnSendAnsweredQuestionsListener {
             override fun onSendAnsweredQuestionsLoaded(success: Boolean) {
@@ -123,6 +127,22 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
             override fun onSendAnsweredQuestionsError(throwable: Throwable) {
                 onSendAnsweredQuestionsFail(throwable)
+            }
+        })
+    }*/
+
+    /*
+     * SEND ANSWERED QUESTIONS NEW FORMAT
+     */
+    fun requestSendAnsweredQuestionsNewFormat(questions : List<QuestionNewFormat>, course: String) {
+        mRequestManager.requestSendAnsweredQuestionsNewFormat(questions, course,
+                object : RequestManager.OnSendAnsweredQuestionsNewFormatListener {
+            override fun onSendAnsweredQuestionsNewFormatLoaded(success: Boolean) {
+                onSendAnsweredQuestionsNewFormatSuccess(success)
+            }
+
+            override fun onSendAnsweredQuestionsNewFormatError(throwable: Throwable) {
+                onSendAnsweredQuestionsNewFormatFail(throwable)
             }
         })
     }
@@ -151,8 +171,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendSelectedSchools(schools : List<School>) {
-        mRequestManager.requestSendSelectedSchools(schools, object : RequestManager.OnSendSelectedSchoolsListener {
+    fun requestSendSelectedSchools(user: User, schools : List<School>) {
+        mRequestManager.requestSendSelectedSchools(user, schools, object : RequestManager.OnSendSelectedSchoolsListener {
             override fun onSendSelectedSchoolsLoaded(success: Boolean) {
                 onSendSelectedSchoolsSuccess(success)
             }
@@ -187,7 +207,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestModules() {
+    /*fun requestModules() {
         mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
             override fun onGetModulesLoaded(result: List<Module>) {
                 onGetModulesSucces(result)
@@ -197,7 +217,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
                 onGetModulesFail(throwable)
             }
         })
-    }
+    }*/
 
     fun requestCourses() {
         mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
@@ -336,6 +356,12 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun onSendAnsweredQuestionsFail(throwable: Throwable) {
     }
 
+    open fun onSendAnsweredQuestionsNewFormatSuccess(success : Boolean) {
+    }
+
+    open fun onSendAnsweredQuestionsNewFormatFail(throwable: Throwable) {
+    }
+
     open fun onSendAnsweredModulesSuccess(success: Boolean) {
     }
 
@@ -442,11 +468,10 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
 
     /*
-     ***********************
+     * REQUEST QUESTIONS OLD FORMAT
      */
 
-
-
+    /*
     fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
         mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
             override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
@@ -488,7 +513,68 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun onGetQuestionsByExamIdRefactorSuccess(questions : List<Question>) {}
     open fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {}
     open fun onGetWrongQuestionsByQuestionIdRefactorSuccess(questions : List<Question>) {}
-    open fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {}
+    open fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {}*/
+
+    /*
+     * REQUEST QUESTIONS NEW FORMAT
+     */
+
+    fun requestGetQuestionsNewFormatByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsNewFormatByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsNewFormatByModuleIdRefactorListener {
+            override fun onGetQuestionsNewFormatByModuleIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsNewFormatByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsNewFormatByExamIdRefactor(examId : Int) {
+        mRequestManager.requestGetQuestionsNewFormatByExamIdRefactor(examId, object : RequestManager.OnGetQuestionsNewFormatByExamIdRefactorListener {
+            override fun onGetQuestionsNewFormatByExamIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatByExamIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatByExamIdRefactorError(throwable: Throwable) {
+                onGetQuestionsNewFormatByExamIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat : List<QuestionNewFormat>) {
+        mRequestManager.requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat, object : RequestManager.OnGetWrongQuestionsNewFormatByQuestionIdRefactorListener {
+            override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions)
+            }
+
+            override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorError(throwable: Throwable) {
+                onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsNewFormatBySubject(subject: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
+            override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatBySubjectSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatBySubjectError(throwable: Throwable) {
+                onGetQuestionsNewFormatBySubjectFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsNewFormatByExamIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatByExamIdRefactorFail(throwable: Throwable) {}
+    open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
 
     fun requestGetSchools() {
         mRequestManager.requestGetSchools(object : RequestManager.OnGetSchoolsListener {

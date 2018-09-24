@@ -417,14 +417,14 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                 }
             }
 
-            if (user.getAnsweredQuestion().isNotEmpty()) {
+            if (user.getAnsweredQuestionNewFormat().isNotEmpty()) {
                 for (i in 0 .. modules.size - 1) {
-                    for (j in 0 .. modules.get(i).getQuestions().size - 1) {
-                        for (question2 in user.getAnsweredQuestion()) {
-                            if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                    for (j in 0 .. modules.get(i).getQuestionsNewFormat().size - 1) {
+                        for (question2 in user.getAnsweredQuestionNewFormat()) {
+                            if (modules.get(i).getQuestionsNewFormat().get(j).questionId.equals(question2.questionId)) {
+                                modules.get(i).getQuestionsNewFormat().get(j).subject = question2.subject
+                                modules.get(i).getQuestionsNewFormat().get(j).wasOK = question2.wasOK
+                                modules.get(i).getQuestionsNewFormat().get(j).chosenOption = question2.chosenOption
                             }
                         }
                     }
@@ -479,14 +479,14 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                     }
                 }
 
-                if (user.getAnsweredQuestion().isNotEmpty()) {
+                if (user.getAnsweredQuestionNewFormat().isNotEmpty()) {
                     for (i in 0..modules.size - 1) {
-                        for (j in 0..modules.get(i).getQuestions().size - 1) {
-                            for (question2 in user.getAnsweredQuestion()) {
-                                if (modules.get(i).getQuestions().get(j).getQuestionId().equals(question2.getQuestionId())) {
-                                    modules.get(i).getQuestions().get(j).setSubjectType(question2.getSubjectType())
-                                    modules.get(i).getQuestions().get(j).setWasOK(question2.getWasOK())
-                                    modules.get(i).getQuestions().get(j).setOptionChoosed(question2.getOptionChoosed())
+                        for (j in 0..modules.get(i).getQuestionsNewFormat().size - 1) {
+                            for (question2 in user.getAnsweredQuestionNewFormat()) {
+                                if (modules.get(i).getQuestionsNewFormat().get(j).questionId.equals(question2.questionId)) {
+                                    modules.get(i).getQuestionsNewFormat().get(j).subject = question2.subject
+                                    modules.get(i).getQuestionsNewFormat().get(j).wasOK = question2.wasOK
+                                    modules.get(i).getQuestionsNewFormat().get(j).chosenOption = question2.chosenOption
                                 }
                             }
                         }
@@ -663,22 +663,26 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     override fun onGetUserWithFacebookSuccess(user: User) {
         super.onGetUserWithFacebookSuccess(user)
-        requestGetImagesPath()
-        mNotLogedIn = false
+        if (context != null) {
+            requestGetImagesPath()
+            mNotLogedIn = false
+        }
     }
 
     override fun onGetUserWithFacebookFail(throwable: Throwable) {
         super.onGetUserWithFacebookFail(throwable)
-        mUser = User()
-        mUser.setCourse("comipems")
-        val userFirebase = FirebaseAuth.getInstance().currentUser
-        if (userFirebase != null) {
-            mUser.setUUID(userFirebase.uid)
+        if (context != null) {
+            mUser = User()
+            mUser.setCourse("comipems")
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                mUser.setUUID(userFirebase.uid)
+            }
+            mUser.setPremiumUser(false)
+            saveUser(mUser)
+            // save uuid user
+            requestSendUser(mUser)
         }
-        mUser.setPremiumUser(false)
-        saveUser(mUser)
-        // save uuid user
-        requestSendUser(mUser)
     }
 
     /*
@@ -686,33 +690,36 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
         super.onSignInUserWithFacebookProviderSuccess(success)
-        Log.d(TAG, "login with facebook success")
-        requestGetUserWithFacebook()
-        //requestGetImagesPath()
-        //goContentActivity()
-        //requestModules()
+        if (context != null) {
+            Log.d(TAG, "login with facebook success")
+            requestGetUserWithFacebook()
+            //requestGetImagesPath()
+            //goContentActivity()
+            //requestModules()
+        }
     }
 
     override fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
         super.onSignInUserWithFacebookProviderFail(throwable)
-        LoginManager.getInstance().logOut()
-        Log.d(TAG, "login with facebook fail")
-        val dataHelper = DataHelper(context!!)
-        dataHelper.saveSessionData(false)
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
+        if (context != null) {
+            LoginManager.getInstance().logOut()
+            Log.d(TAG, "login with facebook fail")
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+            mLogInView.visibility = View.VISIBLE
+            mLoginAnotherProvidersView.visibility = View.VISIBLE
+            mLoadingProgresBar.visibility = View.GONE
 
-        val error = throwable
-        if (error is FirebaseError) {
-            val firebaseError = error as FirebaseError
-            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
-        } else {
-            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            val error = throwable
+            if (error is FirebaseError) {
+                val firebaseError = error as FirebaseError
+                ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            } else {
+                ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            }
         }
-
     }
 
     /*
@@ -720,38 +727,42 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
-        requestGetImagesPath()
-        //goContentActivity()
-        //requestModules()
+        if (context != null) {
+            requestGetImagesPath()
+            //goContentActivity()
+            //requestModules()
+        }
     }
 
     override fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {
         super.onSignInUserWithGoogleProviderFail(throwable)
-        val dataHelper = DataHelper(context!!)
-        dataHelper.saveSessionData(false)
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+            mLogInView.visibility = View.VISIBLE
+            mLoginAnotherProvidersView.visibility = View.VISIBLE
+            mLoadingProgresBar.visibility = View.GONE
 
-        val error = throwable
-        if (error is FirebaseError) {
-            val firebaseError = error as FirebaseError
-            ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
-        } else {
-            ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
-                    DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
-        }
-
-        (activity as LoginActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
-            override fun onComplete(task: Task<Void>) {
-                if (task.isSuccessful) {
-                    Log.d(TAG, "logout success")
-                } else {
-                    Log.d(TAG, "logout not success")
-                }
+            val error = throwable
+            if (error is FirebaseError) {
+                val firebaseError = error as FirebaseError
+                ErrorDialog.newInstance("Error", firebaseError.getErrorType().value,
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+            } else {
+                ErrorDialog.newInstance("Error", "No se pudo iniciar sesión",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
             }
-        })
+
+            (activity as LoginActivity).getGoogleSignInClient().revokeAccess().addOnCompleteListener(object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "logout success")
+                    } else {
+                        Log.d(TAG, "logout not success")
+                    }
+                }
+            })
+        }
     }
 
 }

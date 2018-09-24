@@ -65,11 +65,13 @@ class SchoolsAverageFragment : BaseContentFragment() {
     override fun onGetUserSelectedSchoolsRefactorSuccess(schools: List<School>) {
         super.onGetUserSelectedSchoolsRefactorSuccess(schools)
 
-        if (schools.isNotEmpty()) {
-            schoolAverageCanvas.setSchools(schools)
-            schoolAverageCanvas.invalidate()
-            //schoolAverageCanvas.setUserHits(1)
-            requestGetScoreLast128QuestionsExam()
+        if (context != null) {
+            if (schools.isNotEmpty()) {
+                schoolAverageCanvas.setSchools(schools)
+                schoolAverageCanvas.invalidate()
+                //schoolAverageCanvas.setUserHits(1)
+                requestGetScoreLast128QuestionsExam()
+            }
         }
     }
 

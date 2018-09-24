@@ -81,7 +81,7 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
         })
     }
 
-    fun requestModules() {
+    /*fun requestModules() {
         mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
             override fun onGetModulesLoaded(result: List<Module>) {
                 onGetModulesSucces(result)
@@ -91,7 +91,7 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
                 onGetModulesFail(throwable)
             }
         })
-    }
+    }*/
 
     fun requestCourses() {
         mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
@@ -507,7 +507,10 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
     open fun onGetAnsweredExamsRefactorSuccess(user: User) {}
     open fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {}
 
-    fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
+    /*
+     * REQUEST QUESTIONS OLD FORMAT
+     */
+    /*fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
         mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
             override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
                 onGetQuestionsByModuleIdRefactorSuccess(questions)
@@ -520,7 +523,26 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
     }
 
     open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
-    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}*/
+
+    /*
+     * REQUEST QUESTIONS NEW FORMAT
+     */
+    fun requestGetQuestionsNewFormatByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsNewFormatByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsNewFormatByModuleIdRefactorListener {
+            override fun onGetQuestionsNewFormatByModuleIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsNewFormatByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {}
+
 
     fun requestGetUserSelectedSchoolsRefactor() {
         mRequestManager.requestGetUserSelectedSchoolsRefactor(object : RequestManager.OnGetUserSelectedSchoolsRefactorListener {

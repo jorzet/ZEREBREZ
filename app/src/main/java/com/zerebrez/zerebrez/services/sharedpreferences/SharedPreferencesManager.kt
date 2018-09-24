@@ -17,7 +17,6 @@
 package com.zerebrez.zerebrez.services.sharedpreferences
 
 import android.content.Context
-import com.zerebrez.zerebrez.models.Question
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -42,12 +41,14 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_INSTITUTES : String = "json_institutes"
     private val JSON_EXAMS : String = "json_exams"
     private val JSON_QUESTIONS : String = "json_questions"
+    private var JSON_QUESTIONS_NEW_FORMAT : String = "json_questions_new_format"
     private val JSON_TERMS_AND_PRIVACY : String = "json_terms_and_privacy"
     private val JSON_SELECTED_SCHOOLS : String = "json_seelected_schools"
     private val JSON_EXAM_SCORES : String = "json_exam_scores"
     private val JSON_LAST_EXAM_DIT_IT : String = "json_last_exam_did_it"
     private val JSON_IMAGES_PATH : String = "json_images_path"
     private val JSON_CURRENT_QUESTION : String = "json_current_question"
+    private val JSON_CURRENT_QUESTION_NEW_FORMAT : String = "json_current_question_new_format"
     private val NOTIFICATION_TIME : String = "notification_time"
     private val REMINDER_SATUS : String = "reminder_status"
     private val HAS_PENDING_PAYMENT : String = "has_pending_payment"
@@ -156,6 +157,9 @@ class SharedPreferencesManager(context: Context) {
         return prefs.getString(JSON_FREE_EXAMS, "")
     }
 
+    /*
+     * STORE JSON CURRENT QUESTION OLD FORMAT
+     */
 
     fun storeJsonCurrentQuestion(json : String) {
         val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
@@ -166,6 +170,21 @@ class SharedPreferencesManager(context: Context) {
     fun getJsonCurrentQuestion() : String? {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(JSON_CURRENT_QUESTION, null)
+    }
+
+    /*
+    * STORE JSON CURRENT QUESTION NEW FORMAT
+    */
+
+    fun storeJsonCurrentQuestionNewFormat(json : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(JSON_CURRENT_QUESTION_NEW_FORMAT, json)
+        editor.apply()
+    }
+
+    fun getJsonCurrentQuestionNewFormat() : String? {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(JSON_CURRENT_QUESTION_NEW_FORMAT, null)
     }
 
 
@@ -191,6 +210,9 @@ class SharedPreferencesManager(context: Context) {
         return prefs.getString(JSON_EXAMS, "")
     }
 
+    /*
+     * STORE JSON QUESTIONS OLD FORMAT
+     */
     fun storeJsonQuestions(json : String) {
         val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
         editor.putString(JSON_QUESTIONS, json)
@@ -200,6 +222,20 @@ class SharedPreferencesManager(context: Context) {
     fun getJsonQuestions() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(JSON_QUESTIONS, "")
+    }
+
+    /*
+     * STORE JSON QUESTIONS NEW FORMAT
+     */
+    fun storeJsonQuestionsNewFormat(json : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(JSON_QUESTIONS_NEW_FORMAT, json)
+        editor.apply()
+    }
+
+    fun getJsonQuestionsNewFormat() : String {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(JSON_QUESTIONS_NEW_FORMAT, "")
     }
 
 

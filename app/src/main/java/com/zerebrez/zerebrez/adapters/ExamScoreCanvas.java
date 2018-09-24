@@ -101,6 +101,11 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         }
     }
 
+    public void setAverageAndBeastScore(int average, int best) {
+        this.usersAverageScore = average;
+        this.userHighestScore = best;
+    }
+
     public void setExamScores(List<UserScoreExam> examScores) {
         // Find a maximum with java.Collections
         List<Integer> hits = new ArrayList<>();

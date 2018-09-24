@@ -97,62 +97,62 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
                             } else if (key.equals(ANSWERED_QUESTION_REFERENCE)) {
                                 val answeredQuestions = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
-                                val questions = arrayListOf<Question>()
+                                val questions = arrayListOf<QuestionNewFormat>()
                                 for (key2 in answeredQuestions.keys) {
                                     val questionAnswered = answeredQuestions.get(key2) as kotlin.collections.HashMap<String, String>
-                                    val question = Question()
-                                    question.setQuestionId(Integer(key2.replace("p", "").replace("q", "")))
+                                    val question = QuestionNewFormat()
+                                    question.questionId = key2
                                     for (key3 in questionAnswered.keys) {
                                         if (key3.equals(SUBJECT_KEY)) {
                                             val subject = limpiarTexto(questionAnswered.get(key3))
                                             when (subject) {
                                                 limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                                                    question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                                    question.subject = SubjectType.VERBAL_HABILITY
                                                 }
                                                 limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                                                    question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                                    question.subject = SubjectType.MATHEMATICAL_HABILITY
                                                 }
                                                 limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                                                    question.setSubjectType(SubjectType.MATHEMATICS)
+                                                    question.subject = SubjectType.MATHEMATICS
                                                 }
                                                 limpiarTexto(SubjectType.SPANISH.value) -> {
-                                                    question.setSubjectType(SubjectType.SPANISH)
+                                                    question.subject = SubjectType.SPANISH
                                                 }
                                                 limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                                                    question.setSubjectType(SubjectType.BIOLOGY)
+                                                    question.subject = SubjectType.BIOLOGY
                                                 }
                                                 limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                                                    question.setSubjectType(SubjectType.CHEMISTRY)
+                                                    question.subject = SubjectType.CHEMISTRY
                                                 }
                                                 limpiarTexto(SubjectType.PHYSICS.value) -> {
-                                                    question.setSubjectType(SubjectType.PHYSICS)
+                                                    question.subject = SubjectType.PHYSICS
                                                 }
                                                 limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                                                    question.setSubjectType(SubjectType.GEOGRAPHY)
+                                                    question.subject = SubjectType.GEOGRAPHY
                                                 }
                                                 limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                                                    question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                                                    question.subject = SubjectType.UNIVERSAL_HISTORY
                                                 }
                                                 limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                                                    question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                                    question.subject = SubjectType.MEXICO_HISTORY
                                                 }
                                                 limpiarTexto(SubjectType.FCE.value) -> {
-                                                    question.setSubjectType(SubjectType.FCE)
+                                                    question.subject = SubjectType.FCE
                                                 }
                                             }
                                         } else if (key3.equals(IS_CORRECT_KEY)) {
                                             val isCorrect = questionAnswered.get(key3) as Boolean
-                                            question.setWasOK(isCorrect)
+                                            question.wasOK = isCorrect
                                         } else if (key3.equals(CHOOSEN_OPTION_KEY)) {
                                             val chosenOption = questionAnswered.get(key3).toString()
-                                            question.setOptionChoosed(chosenOption)
+                                            question.chosenOption = chosenOption
                                         }
                                     }
                                     questions.add(question)
                                 }
-                                user.setAnsweredQuestions(questions)
+                                user.setAnsweredQuestionsNewFormat(questions)
                             } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                                val answeredExams = map.get(key) as HashMap<String, String>
+                                val answeredExams = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val exams = arrayListOf<Exam>()
                                 for (key2 in answeredExams.keys) {
                                     val examAnswered = answeredExams.get(key2) as HashMap<String, String>
@@ -268,7 +268,6 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
                         if (map.containsKey(ANSWERED_QUESTION_REFERENCE)) {
                             val answeredQuestions = map.get(ANSWERED_QUESTION_REFERENCE) as HashMap<String, String>
-                            val questions = arrayListOf<Question>()
                             for (key2 in answeredQuestions.keys) {
                                 val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
 

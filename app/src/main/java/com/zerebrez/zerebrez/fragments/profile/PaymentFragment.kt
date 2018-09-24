@@ -47,6 +47,9 @@ private val PAYWAY_FLOW: Int = 0x234
 
 class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
+    /*
+     * UI accessors
+     */
     private lateinit var mIWantToBePremiumButton : View
     private lateinit var mGetFreeQuestionsExamsButton : View
     private lateinit var mIWantToBePremiumButtonTextView: TextView

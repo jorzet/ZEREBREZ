@@ -20,11 +20,8 @@ import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
 import com.zerebrez.zerebrez.models.Error.GenericError
-import com.zerebrez.zerebrez.models.Question
-import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
-import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 private const val TAG: String = "TipsRequest"
 

@@ -25,7 +25,8 @@ class Module {
     private var moduleId : Integer = Integer(0)
     private var moduleName : String = ""
     private var answeredModule : Boolean = false
-    private var questions : List<Question> = arrayListOf()
+    //private var questions : List<Question> = arrayListOf()
+    private var questionsNewFormat : List<QuestionNewFormat> = arrayListOf()
     private var freeModule : Boolean = false
     private var correctQuestions : Int = 0
     private var incorrectQuestions : Int = 0
@@ -82,7 +83,7 @@ class Module {
      * @param questions
      *      Set a question list object
      */
-    fun setQuestions(questions : List<Question>) {
+    /*fun setQuestions(questions : List<Question>) {
         this.questions = questions
     }
 
@@ -92,6 +93,22 @@ class Module {
      */
     fun getQuestions() : List<Question> {
         return this.questions
+    }*/
+
+    /**
+     * @param questionsNewFormat
+     *      Set a question list object
+     */
+    fun setQuestionsNewFormat(questionsNewFormat : List<QuestionNewFormat>) {
+        this.questionsNewFormat = questionsNewFormat
+    }
+
+    /**
+     * @return
+     *      A question new format list object
+     */
+    fun getQuestionsNewFormat() : List<QuestionNewFormat> {
+        return this.questionsNewFormat
     }
 
     /**

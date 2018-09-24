@@ -41,15 +41,16 @@ class ExamAverageListAdapterRefactor(averageExams : List<ExamScoreRafactor>, con
     private val mContext : Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val currentAverageExam = getItem(position) as ExamScore
+        val currentAverageExam = getItem(position) as ExamScoreRafactor
 
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val examView = inflator.inflate(R.layout.custom_exam_average_refactor, null)
 
-        examView.tv_exam_number.text = "EXAMEN " + currentAverageExam.getExamScoreId()
-        examView.bc_exams_average.setExamScores(currentAverageExam.getOtherUsersScoreExam())
-        examView.bc_exams_average.setUserHits(currentAverageExam.getUserScore().toInt())
-        examView.bc_exams_average.setHighestScore(currentAverageExam.getTotalNumberOfQuestions().toInt())
+        examView.tv_exam_number.text = "EXAMEN " + currentAverageExam.examId.replace("e","")
+        //examView.bc_exams_average.setExamScores(currentAverageExam.getOtherUsersScoreExam())
+        examView.bc_exams_average.setAverageAndBeastScore(currentAverageExam.average.toInt(), currentAverageExam.best.toInt())
+        examView.bc_exams_average.setUserHits(currentAverageExam.userScore.toInt())
+        examView.bc_exams_average.setHighestScore(currentAverageExam.totalNumberOfQuestions.toInt())
 
         examView.tv_exam_number.typeface = FontUtil.getNunitoBold(mContext)
 

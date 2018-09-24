@@ -184,14 +184,15 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     }
 
     fun UpdateUser(){
-        var user = getUser()
-        if(user!=null){
+        val user = getUser()
+        if(user != null){
             val userFirebase = FirebaseAuth.getInstance().currentUser
             if (userFirebase != null) {
                 user.setEmail(userFirebase.email!!)
             }
             user.setPremiumUser(true)
             user.setTimeStamp(System.currentTimeMillis())
+            user.setPayGayMethod("GooglePay")
             saveUser(user)
             updatingUser = true
             setWaitScreen(true)

@@ -67,6 +67,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      * tags
      */
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SELECTED_COURSE : String = "selected_course"
 
     /*
      * UI accessors

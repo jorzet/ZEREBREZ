@@ -109,11 +109,11 @@ class AdvancesFragment : BaseContentFragment() {
 
         if (context != null) {
             saveUser(user)
-            val questions = user.getAnsweredQuestion()
+            val questions = user.getAnsweredQuestionNewFormat()
             var hits = 0
             var misses = 0
             for (question in questions) {
-                if (question.getWasOK())
+                if (question.wasOK)
                     hits ++
                 else
                     misses ++

@@ -33,6 +33,9 @@
 
     <color name="comipems_background">#F7921E</color>
     <color name="secundary_background">#B0DC3A</color>
+    <color name="unam_1_background">#BCA93A</color>
+    <color name="unam_2_background">#B0DCDB</color>
+    <color name="ipn_1_background">#B8D3AA</color>
 
 
     <color name="select_button_color_front">#101E45</color>

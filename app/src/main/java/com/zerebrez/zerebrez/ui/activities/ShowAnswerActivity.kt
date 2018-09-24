@@ -56,52 +56,13 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
 
         val dataHelper = DataHelper(baseContext)
         val mImagesPath = dataHelper.getImagesPath()
-        val question = dataHelper.getCurrentQuestion()
+        val questionNewFormat = dataHelper.getCurrentQuestionNewFormat()
 
-        if (question != null) {
-            val mSortOptions = arrayListOf<QuestionOption>()
+        if (questionNewFormat != null) {
 
-            val texts = question.getStepByStepText()
-            val equations = question.getStepByStepEquations()
-            val images = question.getStepByStepImages()
+            val realSize = questionNewFormat.questionData.size
 
-            var realSize = 0
-            if (texts.size > equations.size && texts.size > images.size)
-                realSize = texts.size
-
-            if (equations.size > texts.size && equations.size > images.size)
-                realSize = equations.size
-
-            if (images.size > texts.size && images.size > equations.size)
-                realSize = images.size
-
-
-            for (i in 0..realSize) {
-                if (texts.size > i) {
-                    val questionOption = QuestionOption()
-                    questionOption.setQuestion(texts.get(i))
-                    questionOption.setQuestionType(QuestionType.TEXT)
-                    mSortOptions.add(questionOption)
-                }
-
-                if (equations.size > i) {
-                    val questionOption = QuestionOption()
-                    questionOption.setQuestion(equations.get(i))
-                    questionOption.setQuestionType(QuestionType.EQUATION)
-                    mSortOptions.add(questionOption)
-                }
-
-                if (images.size > i) {
-                    val questionOption = QuestionOption()
-                    val nameInStorage = getNameInStorage(images.get(i), mImagesPath)
-
-                    questionOption.setQuestion(nameInStorage)
-                    questionOption.setQuestionType(QuestionType.IMAGE)
-                    mSortOptions.add(questionOption)
-                }
-            }
-
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, mSortOptions, baseContext)
+            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, baseContext)
             mAnswerList.adapter = optionQuestionAdapter
         }
 
@@ -118,7 +79,7 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     }
 
     private val mItIsUnderstoodButtonListener = View.OnClickListener {
-        DataHelper(baseContext).saveCurrentQuestion(null)
+        DataHelper(baseContext).saveCurrentQuestionNewFormat(null)
         onBackPressed()
     }
 

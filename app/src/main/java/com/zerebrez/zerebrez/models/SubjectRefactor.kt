@@ -19,8 +19,6 @@ data class SubjectRefactor (
         var nameToDisplay: String = "",
         // this is to identify course exmp. s1, s2, s3
         var subjectId: String = "",
-        @SerializedName("nameToDisplay")
-        @Expose
         var subjectType : SubjectType = SubjectType.NONE,
         var subjectAverage : Double = 0.0
 )

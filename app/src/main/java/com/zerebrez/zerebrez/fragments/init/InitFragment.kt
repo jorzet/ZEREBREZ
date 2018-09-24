@@ -58,7 +58,7 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
     private lateinit var comipems: Button
     private lateinit var loading : ProgressBar
 
-    private var mCourses : List<String> = arrayListOf<String>()
+    private var mCourses : List<Course> = arrayListOf<Course>()
 
     private var mCurrentCourse : String = "comipems"
 
@@ -69,7 +69,7 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
 
         val rootView = inflater.inflate(R.layout.init_fragment, container, false)!!
 
-        //mViewPager = rootView.findViewById(R.id.viewPager)
+        mViewPager = rootView.findViewById(R.id.viewPager)
         mSelectButton = rootView.findViewById(R.id.btn_select)
         //secundary = rootView.findViewById(R.id.btn1)
         //comipems = rootView.findViewById(R.id.btn2)
@@ -82,17 +82,37 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
         requestGetCoursesRefactor()
         //requestGetExams()
 
-        //loading.visibility = View.VISIBLE
+        loading.visibility = View.VISIBLE
 
         return rootView
     }
 
     override fun onGetCoursesRefactorSuccess(courses: List<Course>) {
         super.onGetCoursesRefactorSuccess(courses)
+        loading.visibility = View.GONE
+
+        mCourses = courses
+        if (fragmentManager != null && context != null) {
+            val mAdapter = InitViewPager(context!!, fragmentManager!!, courses)
+            mViewPager.adapter = mAdapter
+            mViewPager.currentItem = 0
+            loading.visibility = View.GONE
+            /*if (courses.size == 1) {
+                secundary.visibility = View.GONE
+                comipems.visibility = View.GONE
+            } else {
+                setButton(secundary, 40, 40, true)
+                setButton(comipems, 20, 20, false)
+                setTab()
+            }*/
+        } else {
+            activity!!.onBackPressed()
+        }
     }
 
     override fun onGetCoursesRefactorFail(throwable: Throwable) {
         super.onGetCoursesRefactorFail(throwable)
+        loading.visibility = View.GONE
     }
 
     override fun onGetExamsSuccess(exams: List<Exam>) {
@@ -103,40 +123,11 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
             dataHelper.saveExams(exams)
         }
 
-        requestCourses()
+        requestGetCoursesRefactor()
     }
 
     override fun onGetExamsFail(throwable: Throwable) {
         super.onGetExamsFail(throwable)
-        loading.visibility = View.GONE
-    }
-
-    override fun onGetCoursesSuccess(courses: List<String>) {
-        super.onGetCoursesSuccess(courses)
-
-        loading.visibility = View.GONE
-
-        mCourses = courses
-        if (fragmentManager != null) {
-            val mAdapter = InitViewPager(fragmentManager!!, courses)
-            mViewPager.adapter = mAdapter
-            mViewPager.currentItem = 0
-
-            if (courses.size == 1) {
-                secundary.visibility = View.GONE
-                comipems.visibility = View.GONE
-            } else {
-                setButton(secundary, 40, 40, true)
-                setButton(comipems, 20, 20, false)
-                setTab()
-            }
-        } else {
-            activity!!.onBackPressed()
-        }
-    }
-
-    override fun onGetCoursesFail(throwable: Throwable) {
-        super.onGetCoursesFail(throwable)
         loading.visibility = View.GONE
     }
 
@@ -196,6 +187,9 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
 
         mSelectButton.visibility = View.GONE
         loading.visibility = View.VISIBLE
+        if (mCourses != null && mCourses.isNotEmpty()) {
+            mCurrentCourse = mCourses[mViewPager.currentItem].id
+        }
         requestLogIn(null)
 
         /*val user = User()
@@ -218,7 +212,7 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
         val user = User()
-        user.setCourse("comipems")
+        user.setCourse(mCurrentCourse)
         val userFirebase = FirebaseAuth.getInstance().currentUser
         if (userFirebase != null) {
             user.setUUID(userFirebase.uid)
@@ -271,6 +265,11 @@ class InitFragment : BaseContentFragment(), ActivityCompat.OnRequestPermissionsR
         intent.putExtra(ANONYMOUS_USER, true)
         if (!mCurrentCourse.equals("")) {
             intent.putExtra(CURRENT_COURSE, mCurrentCourse)
+            val user = getUser()
+            if (user != null) {
+                user.setCourse(mCurrentCourse)
+                saveUser(user)
+            }
         }
 
         startActivity(intent)

@@ -24,6 +24,9 @@ data class Course (
         @SerializedName("isActive")
         @Expose
         var isActive: Boolean = false,
+        @SerializedName("monthsDuration")
+        @Expose
+        var monthsDuration: String = "",
         // this is to identify course exmp. c1, c2, c3
         var courseId: String = ""
 );

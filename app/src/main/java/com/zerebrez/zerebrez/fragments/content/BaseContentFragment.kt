@@ -81,7 +81,7 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestModules() {
+    /*fun requestModules() {
         mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
             override fun onGetModulesLoaded(result: List<Module>) {
                 onGetModulesSucces(result)
@@ -91,7 +91,7 @@ abstract class BaseContentFragment : BaseFragment() {
                 onGetModulesFail(throwable)
             }
         })
-    }
+    }*/
 
     fun requestCourses() {
         mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
@@ -507,6 +507,7 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetAnsweredExamsRefactorSuccess(user: User) {}
     open fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {}
 
+    /*
     fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
         mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
             override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
@@ -520,7 +521,7 @@ abstract class BaseContentFragment : BaseFragment() {
     }
 
     open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
-    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}*/
 
     fun requestGetUserSelectedSchoolsRefactor() {
         mRequestManager.requestGetUserSelectedSchoolsRefactor(object : RequestManager.OnGetUserSelectedSchoolsRefactorListener {
@@ -639,7 +640,7 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    open fun onGetSubjectsSuccess(courses: List<SubjectRefactor>) {}
+    open fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {}
     open fun onGetSubjectsFail(throwable: Throwable) {}
 
 }

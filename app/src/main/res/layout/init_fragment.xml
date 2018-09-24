@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<RelativeLayout
+<!--<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/comipems_background"
@@ -29,8 +29,9 @@
         android:textStyle="bold"
         android:textSize="35dp"/>
 </RelativeLayout>
+-->
 
-    <!--<RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/footer">
@@ -51,7 +52,7 @@
     </RelativeLayout>
 
 
-
+<!--
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,8 +73,8 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/rounded_button_unselected" />
 
-    </LinearLayout>-->
-
+    </LinearLayout>
+-->
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"

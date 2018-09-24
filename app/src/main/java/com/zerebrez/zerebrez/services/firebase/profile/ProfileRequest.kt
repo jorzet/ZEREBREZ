@@ -39,6 +39,9 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
     private val SELECTED_SCHOOLS_KEY : String = "selectedSchools"
     private val INSTITUTE_ID_KEY : String = "institutionId"
     private val SCHOOL_ID_KEY : String = "schoolId"
+    private val DEVELOPERS_DEBUG_KEY : String = "developersDebug"
+    private val METHOD_KEY : String = "method"
+    private val PAYMENT_CONFIRMED_IN_KEY : String = "paymentConfirmedIn"
 
     private val INSTITUTE_TAG : String = "institute"
     private val SCHOOL_TAG : String = "school"
@@ -78,17 +81,17 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
 
                         if (map.containsKey(PROFILE_KEY)) {
                             val user = User()
-                            val profileMap = map.get(PROFILE_KEY) as HashMap<String, String>
+                            val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
                             val course = profileMap.get(COURSE_KEY) as String
 
                             user.setCourse(course)
-                            val courseMap = profileMap.get(course) as HashMap<*, *>
+                            val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
 
                             for (key2 in courseMap.keys) {
                                 if (key2.equals(PREMIUM_KEY)) {
 
-                                    val premiumHash = courseMap.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -100,15 +103,12 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
                                         user.setTimeStamp(timeStamp)
                                     }
 
-                                } else if (key2.equals(COURSE_KEY)) {
-                                    val course = courseMap.get(key2).toString()
-                                    user.setCourse(course)
                                 } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
                                     val selectedSchools = courseMap.get(key2) as ArrayList<Any>
                                     val schools = arrayListOf<School>()
                                     Log.d(TAG, "profile data ------ " + selectedSchools.size)
                                     for (i in 0..selectedSchools.size - 1) {
-                                        val institute = selectedSchools.get(i) as HashMap<String, String>
+                                        val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String, String>
                                         val school = School()
                                         if (institute.containsKey(INSTITUTE_ID_KEY)) {
                                             school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))

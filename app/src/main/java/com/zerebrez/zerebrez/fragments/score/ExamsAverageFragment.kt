@@ -102,6 +102,8 @@ class ExamsAverageFragment : BaseContentFragment() {
             for (examScore in mExams) {
                 for (exam in exams) {
                     if (exam.getExamId().equals(examScore.examId)) {
+                        examScore.userScore = Integer(exam.getHits())
+                        examScore.totalNumberOfQuestions = Integer(exam.getHits() + exam.getMisses())
                         mExamsDidIt.add(examScore)
                     }
                 }

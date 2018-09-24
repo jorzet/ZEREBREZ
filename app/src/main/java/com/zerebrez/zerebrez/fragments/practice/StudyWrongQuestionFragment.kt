@@ -28,7 +28,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
-import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
@@ -77,8 +77,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     /*
      * Objects
      */
-    private var mQuestionList = arrayListOf<Question>()
-    private var mUpdatedQuestions = arrayListOf<Question>()
+    private var mQuestionList = arrayListOf<QuestionNewFormat>()
+    private var mUpdatedQuestions = arrayListOf<QuestionNewFormat>()
     private var mWrongQuestionsId = arrayListOf<Int>()
     private lateinit var mUser : User
 
@@ -142,44 +142,44 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mRightTableLayout.removeAllViews()
     }
 
-    private fun updateQuestionList(questions : List<Question>) {
+    private fun updateQuestionList(questions : List<QuestionNewFormat>) {
         var row = 1
         for (i in 0 .. questions.size - 1) {
             when (row) {
                 1 -> {
                     mQuestionList.add(questions.get(i))
-                    val nothing = Question()
-                    nothing.setQuestionId(Integer(-1))
+                    val nothing = QuestionNewFormat()
+                    nothing.questionId = "-1"
                     mQuestionList.add(nothing)
-                    val padding = Question()
-                    padding.setQuestionId(Integer(-2))
+                    val padding = QuestionNewFormat()
+                    padding.questionId = "-2"
                     mQuestionList.add(padding)
                 }
                 2 -> {
-                    val nothing = Question()
-                    nothing.setQuestionId(Integer(-1))
+                    val nothing = QuestionNewFormat()
+                    nothing.questionId = "-1"
                     mQuestionList.add(nothing)
                     mQuestionList.add(questions.get(i))
-                    val padding = Question()
-                    padding.setQuestionId(Integer(-1))
+                    val padding = QuestionNewFormat()
+                    padding.questionId = "-1"
                     mQuestionList.add(padding)
                 }
                 3 -> {
-                    val nothing = Question()
-                    nothing.setQuestionId(Integer(-2))
+                    val nothing = QuestionNewFormat()
+                    nothing.questionId = "-2"
                     mQuestionList.add(nothing)
-                    val padding = Question()
-                    padding.setQuestionId(Integer(-1))
+                    val padding = QuestionNewFormat()
+                    padding.questionId = "-1"
                     mQuestionList.add(padding)
                     mQuestionList.add(questions.get(i))
                 }
                 4 -> {
-                    val nothing = Question()
-                    nothing.setQuestionId(Integer(-1))
+                    val nothing = QuestionNewFormat()
+                    nothing.questionId = "-1"
                     mQuestionList.add(nothing)
                     mQuestionList.add(questions.get(i))
-                    val padding = Question()
-                    padding.setQuestionId(Integer(-1))
+                    val padding = QuestionNewFormat()
+                    padding.questionId = "-1"
                     mQuestionList.add(padding)
                 }
             }
@@ -199,7 +199,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             val view = LayoutInflater.from(context).inflate(R.layout.custom_wrong_question, null, false)
             val image : ImageView = view.findViewById(R.id.image)
 
-            val number = mQuestionList.get(i).getQuestionId().toString()
+            val number = mQuestionList.get(i).questionId
 
             // params for module
             val param = GridLayout.LayoutParams()
@@ -235,7 +235,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.setGravity(Gravity.CENTER)
             } else {
                 val currentQuestion = mQuestionList.get(i)
-                val subject = limpiarTexto(currentQuestion.getSubjectType().value)
+                val subject = limpiarTexto(currentQuestion.subject.value)
                 when (subject) {
                     limpiarTexto(SubjectType.MATHEMATICS.value) -> {
                         image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
@@ -285,7 +285,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
-                mWrongQuestionsId.add(currentQuestion.getQuestionId().toInt())
+                mWrongQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p","")))
                 view.setOnClickListener(View.OnClickListener {
                     Log.d(TAG, "onClick: number --- " + number)
                     goQuestionActivity(Integer.parseInt(number))
@@ -336,11 +336,11 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             if (context != null) {
                 mUser = user
                 saveUser(user)
-                val answeredQuestion = user.getAnsweredQuestion()
+                val answeredQuestion = user.getAnsweredQuestionNewFormat()
 
                 resetValues()
                 for (i in 0..answeredQuestion.size - 1) {
-                    if (!answeredQuestion.get(i).getWasOK()) {
+                    if (!answeredQuestion.get(i).wasOK) {
                         mUpdatedQuestions.add(answeredQuestion.get(i))
                     }
                 }
