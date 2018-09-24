@@ -35,11 +35,11 @@ class InitViewPager(context: Context, fm: FragmentManager, courses : List<Course
     private val mCourses : List<Course> = courses
     private val mContext: Context = context
 
-    val colors = listOf(R.color.comipems_background,
-            R.color.secundary_background,
-            R.color.unam_1_background,
-            R.color.unam_2_background,
-            R.color.ipn_1_background)
+    val colors = listOf(mContext.resources.getColor(R.color.comipems_background),
+            mContext.resources.getColor(R.color.secundary_background),
+            mContext.resources.getColor(R.color.unam_1_background),
+            mContext.resources.getColor(R.color.unam_2_background),
+            mContext.resources.getColor(R.color.ipn_1_background))
 
     override fun getItem(position: Int): Fragment {
 
