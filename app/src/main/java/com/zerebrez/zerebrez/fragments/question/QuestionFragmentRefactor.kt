@@ -22,6 +22,8 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,7 @@ import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
 import android.widget.ScrollView
+import com.zerebrez.zerebrez.adapters.QuestionAnswerAdapterRefactor
 import com.zerebrez.zerebrez.models.QuestionNewFormat
 
 /**
@@ -59,7 +62,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     /*
      * UI accessors
      */
-    private lateinit var mQuestionList : ListView
+    private lateinit var mQuestionList : RecyclerView
     private lateinit var mQuestion : TextView
     private lateinit var mOptionA : View
     private lateinit var mOptionB : View
@@ -88,6 +91,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
      * Adapter
      */
     private lateinit var optionQuestionAdapter : OptionQuestionAdapterRefactor
+    private lateinit var questionAnswerAdapterRefactor: QuestionAnswerAdapterRefactor
 
     /*
      * Objects
@@ -131,10 +135,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mOptionCTextView = rootView.findViewById(R.id.tv_option_c)
         mOptionDTextView = rootView.findViewById(R.id.tv_option_d)
 
-        //mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        //mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        //mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        //mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mOptionATextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mOptionBTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mOptionCTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mOptionDTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         //question = (activity as QuestionActivity).getQuestion()
         questionNewFormat = (activity as QuestionActivity).getQuestionNewFormat()
@@ -214,7 +218,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(false)
             }
 
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
+            //optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
+            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
 
             setOptions()
             setAnswers()
@@ -224,7 +229,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     }
 
     private fun setOptions() {
-        mQuestionList.adapter = optionQuestionAdapter
+        //mQuestionList.adapter = optionQuestionAdapter
+        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        mQuestionList.setLayoutManager(linearLayoutManager)
+        mQuestionList.adapter = questionAnswerAdapterRefactor
     }
 
     private fun setAnswers() {
@@ -239,6 +247,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "txt" -> {
                                 mTextAnswerA.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerA.visibility = View.VISIBLE
+                                mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
                                 mEquationAnswerA.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
@@ -256,6 +265,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "txt" -> {
                                 mTextAnswerB.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerB.visibility = View.VISIBLE
+                                mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
                                 mEquationAnswerB.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
@@ -273,6 +283,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "txt" -> {
                                 mTextAnswerC.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerC.visibility = View.VISIBLE
+                                mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
                                 mEquationAnswerC.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
@@ -290,6 +301,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "txt" -> {
                                 mTextAnswerD.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerD.visibility = View.VISIBLE
+                                mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
                                 mEquationAnswerD.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")

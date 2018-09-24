@@ -26,6 +26,9 @@ import com.zerebrez.zerebrez.models.QuestionOption
 import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import android.content.Intent
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import com.zerebrez.zerebrez.adapters.QuestionAnswerAdapterRefactor
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -37,13 +40,14 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     /*
      * UI accessors
      */
-    private lateinit var mAnswerList : ListView
+    private lateinit var mAnswerList : RecyclerView
     private lateinit var mItIsUnderstoodButton : View
 
     /*
      * Adapter
      */
     private lateinit var optionQuestionAdapter : OptionQuestionAdapterRefactor
+    private lateinit var questionAnswerAdapterRefactor: QuestionAnswerAdapterRefactor
 
     /*
      * Objects
@@ -67,8 +71,13 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
 
             val realSize = questionNewFormat.questionData.size
 
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext)
-            mAnswerList.adapter = optionQuestionAdapter
+            //optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext)
+            //mAnswerList.adapter = optionQuestionAdapter
+            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext!!)
+
+            val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
+            mAnswerList.setLayoutManager(linearLayoutManager)
+            mAnswerList.adapter = questionAnswerAdapterRefactor
         }
 
     }
