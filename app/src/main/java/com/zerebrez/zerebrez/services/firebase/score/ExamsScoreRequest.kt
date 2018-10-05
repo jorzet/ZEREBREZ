@@ -19,19 +19,20 @@ package com.zerebrez.zerebrez.services.firebase.score
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.database.*
+import com.google.gson.Gson
+import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.Error.GenericError
-import com.zerebrez.zerebrez.models.Exam
-import com.zerebrez.zerebrez.models.ExamScore
-import com.zerebrez.zerebrez.models.User
-import com.zerebrez.zerebrez.models.UserScoreExam
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import org.json.JSONObject
+import java.util.ArrayList
+import java.util.HashMap
 
 private const val TAG: String = "ExamsScoreRequest"
 
 class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
-    private val EXAM_SCORES_REFERENCE : String = "scores/exams/comipems"
+    private val EXAM_SCORES_REFERENCE : String = "scores/exams/comipems/processedData"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
 
@@ -64,28 +65,17 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, HashMap<Any, Any>>)
-                    val mExamScores = arrayListOf<ExamScore>()
-
-                    Log.d(TAG, post.toString())
-
+                    val map = (post as HashMap<*, *>)
+                    Log.d(TAG, "user data ------ " + map.size)
+                    val examScores = ArrayList<ExamScoreRafactor>()
                     for (key in map.keys) {
-                        println(key)
-                        val obj = map.get(key) as HashMap<String, Any>
-                        val examScore = ExamScore()
-                        examScore.setExamScoreId(Integer(key.replace("e", "")))
-                        val mUserScoreExams = arrayListOf<UserScoreExam>()
-                        for (key2 in obj.keys) {
-                            val userScoreExam = UserScoreExam()
-                            userScoreExam.setUserUUDI(key2)
-                            userScoreExam.setScore(Integer(obj.get(key2).toString()))
-                            mUserScoreExams.add(userScoreExam)
-                        }
-                        examScore.setOtherUsersScoreExam(mUserScoreExams)
-                        mExamScores.add(examScore)
+                        val examScoreMap = map.get(key) as HashMap<*, *>
+                        val examScore = Gson().fromJson(JSONObject(examScoreMap).toString(), ExamScoreRafactor::class.java)
+                        examScore.examId = key.toString()
+                        examScores.add(examScore)
                     }
 
-                    onRequestListenerSucces.onSuccess(mExamScores)
+                    onRequestListenerSucces.onSuccess(examScores)
                 } else {
                     val error = GenericError()
                     onRequestLietenerFailed.onFailed(error)
@@ -99,7 +89,7 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetAnsweredExamRefactor() {
+    fun requestGetAnsweredExamRefactor(course: String) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
@@ -112,16 +102,16 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as java.util.HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<*, *>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val user = User()
                         for (key in map.keys) {
                             println(key)
                             if (key.equals(PROFILE_REFERENCE)) {
-                                val profile = map.get(key) as java.util.HashMap<String, String>
+                                val profile = map.get(key) as kotlin.collections.HashMap<String, String>
                                 if (profile.containsKey(PREMIUM_KEY)) {
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -135,7 +125,7 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
                                 }
 
                             } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                                val answeredExams = map.get(key) as java.util.HashMap<String, String>
+                                val answeredExams = (map.get(key) as kotlin.collections.HashMap<*, *>).get(course) as kotlin.collections.HashMap<String, String>
                                 val exams = arrayListOf<Exam>()
                                 for (key2 in answeredExams.keys) {
                                     val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
@@ -144,10 +134,10 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
                                     for (key3 in examAnswered.keys) {
                                         if (key3.equals(INCORRECT_KEY)) {
-                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            val incorrectQuestions = (examAnswered.get(key3) as kotlin.Long).toInt()
                                             exam.setMisses(incorrectQuestions)
                                         } else if (key3.equals(CORRECT_KEY)) {
-                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                            val correctQuestions = (examAnswered.get(key3) as kotlin.Long).toInt()
                                             exam.setHits(correctQuestions)
                                         }
                                     }

@@ -29,11 +29,14 @@ class User {
     private var facebookLogIn = false
     private var googleLogIn = false
     private var answeredModules : List<Module> = arrayListOf()
-    private var answeredQuestions : List<Question> = arrayListOf()
+    //private var answeredQuestions : List<Question> = arrayListOf()
+    private var answeredQuestionsNewFormat : List<QuestionNewFormat> = arrayListOf()
     private var answeredExams : List<Exam> = arrayListOf()
     private var selectedSchools : List<School> = arrayListOf()
     private var premiumUser : Boolean = false
     private var timestamp : Long = 0
+    private var payGayMethod : String = ""
+
 
     constructor(email: String, password: String) {
         this.email = email
@@ -82,8 +85,20 @@ class User {
         return this.answeredModules
     }
 
-    fun setAnsweredQuestions(answeredQuestions : List<Question>) {
+    /*fun setAnsweredQuestions(answeredQuestions : List<Question>) {
         this.answeredQuestions = answeredQuestions
+    }
+
+    fun getAnsweredQuestion() : List<Question> {
+        return this.answeredQuestions
+    }*/
+
+    fun getAnsweredQuestionNewFormat() : List<QuestionNewFormat> {
+        return this.answeredQuestionsNewFormat
+    }
+
+    fun setAnsweredQuestionsNewFormat(answeredQuestionsNewFormat : List<QuestionNewFormat>) {
+        this.answeredQuestionsNewFormat = answeredQuestionsNewFormat
     }
 
     fun setAnsweredExams(answeredExams : List<Exam>) {
@@ -92,10 +107,6 @@ class User {
 
     fun getAnsweredExams() : List<Exam> {
         return this.answeredExams
-    }
-
-    fun getAnsweredQuestion() : List<Question> {
-        return this.answeredQuestions
     }
 
     fun setSelectedShools(selectedSchools: List<School>) {
@@ -140,5 +151,13 @@ class User {
 
     fun getTimestamp() : Long {
         return this.timestamp
+    }
+
+    fun setPayGayMethod(paymentMethod: String) {
+        this.payGayMethod = paymentMethod
+    }
+
+    fun getPayGayMethod() : String {
+        return this.payGayMethod
     }
 }

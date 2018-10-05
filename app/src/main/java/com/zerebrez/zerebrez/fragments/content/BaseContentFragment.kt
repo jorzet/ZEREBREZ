@@ -81,7 +81,7 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestModules() {
+    /*fun requestModules() {
         mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
             override fun onGetModulesLoaded(result: List<Module>) {
                 onGetModulesSucces(result)
@@ -91,7 +91,7 @@ abstract class BaseContentFragment : BaseFragment() {
                 onGetModulesFail(throwable)
             }
         })
-    }
+    }*/
 
     fun requestCourses() {
         mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
@@ -341,8 +341,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetAnsweredModulesAndProfileRefactor() {
-        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
+    fun requestGetAnsweredModulesAndProfileRefactor(course: String) {
+        mRequestManager.requestGetAnsweredModulesAndProfileRefactor(course, object : RequestManager.OnGetAnsweredModulesAndProfileRefactorListener {
             override fun onGetAnsweredModulesAndProfileRefactorLoaded(user: User) {
                 onGetAnsweredModulesAndProfileRefactorSuccess(user)
             }
@@ -360,8 +360,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetAnsweredModulesAndProfileRefactorSuccess(user : User) {}
     open fun onGetAnsweredModulesAndProfileRefactorFail(throwable: Throwable) {}
 
-    fun requestGetWrongQuestionsAndProfileRefactor() {
-        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(object : RequestManager.OnGetWrongQuestionAndProfileListener {
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String) {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(course,object : RequestManager.OnGetWrongQuestionAndProfileListener {
             override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
                 onGetWrongQuestionsAndProfileRefactorSuccess(user)
             }
@@ -449,8 +449,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetUserSchoolsSuccess(schools : List<School>) {}
     open fun onGetUserSchoolsFail(throwable: Throwable) {}
 
-    fun requestGetHitAndMissesAnsweredModulesAndExams() {
-        mRequestManager.requestGetHitAndMissesAnsweredQuestionsAndExams(object : RequestManager.OnGetHitsAndMissesAnsweredModulesAndExamsListener {
+    fun requestGetHitAndMissesAnsweredModulesAndExams(course: String) {
+        mRequestManager.requestGetHitAndMissesAnsweredQuestionsAndExams(course, object : RequestManager.OnGetHitsAndMissesAnsweredModulesAndExamsListener {
             override fun onGetHitsAndMissesAnsweredModulesAndExamsLoaded(user: User) {
                 onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
             }
@@ -480,7 +480,7 @@ abstract class BaseContentFragment : BaseFragment() {
 
     fun requestGetExamScoreRefactor() {
         mRequestManager.requestGetExamScoreRefactor(object : RequestManager.OnGetExamScoreRefactorListener {
-            override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScore>) {
+            override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScoreRafactor>) {
                 onGetExamScoreRefactorSuccess(examScores)
             }
 
@@ -490,8 +490,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetAnsweredExamsRefactor() {
-        mRequestManager.requestAnsweredExamsRefactor(object : RequestManager.OnGetAnsweredExamsRefactorListener {
+    fun requestGetAnsweredExamsRefactor(course: String) {
+        mRequestManager.requestAnsweredExamsRefactor(course, object : RequestManager.OnGetAnsweredExamsRefactorListener {
             override fun onGetAnsweredExamsRefactorLoaded(user: User) {
                 onGetAnsweredExamsRefactorSuccess(user)
             }
@@ -502,11 +502,12 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    open fun onGetExamScoreRefactorSuccess(examScores: List<ExamScore>) {}
+    open fun onGetExamScoreRefactorSuccess(examScores: List<ExamScoreRafactor>) {}
     open fun onGetExamScoreRefactorFail(throwable: Throwable) {}
     open fun onGetAnsweredExamsRefactorSuccess(user: User) {}
     open fun onGetAnsweredExamsRefactorFail(throwable: Throwable) {}
 
+    /*
     fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
         mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
             override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
@@ -520,7 +521,7 @@ abstract class BaseContentFragment : BaseFragment() {
     }
 
     open fun onGetQuestionsByModuleIdRefactorSuccess(questions : List<Question>) {}
-    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {}*/
 
     fun requestGetUserSelectedSchoolsRefactor() {
         mRequestManager.requestGetUserSelectedSchoolsRefactor(object : RequestManager.OnGetUserSelectedSchoolsRefactorListener {
@@ -610,5 +611,36 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onGetUserWithFacebookSuccess(user: User) {}
     open fun onGetUserWithFacebookFail(throwable: Throwable) {}
+
+    fun requestGetCoursesRefactor() {
+        mRequestManager.requestGetCoursesrefactor(object : RequestManager.OnGetCourseRefactorListener {
+            override fun onGetCoursesRefactorLoaded(courses: List<Course>) {
+                onGetCoursesRefactorSuccess(courses)
+            }
+
+            override fun onGetCoursesRefactorError(throwable: Throwable) {
+                onGetCoursesRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
+    open fun onGetCoursesRefactorFail(throwable: Throwable) {}
+
+    fun requestGetSubjects() {
+        mRequestManager.requestGetSubjects(object : RequestManager.OnGetSubjectsListener {
+            override fun onGetSubjectsLoaded(subjects: List<SubjectRefactor>) {
+                onGetSubjectsSuccess(subjects)
+            }
+
+            override fun onGetSubjectsError(throwable: Throwable) {
+                onGetSubjectsFail(throwable)
+            }
+
+        })
+    }
+
+    open fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {}
+    open fun onGetSubjectsFail(throwable: Throwable) {}
 
 }

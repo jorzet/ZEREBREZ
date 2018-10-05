@@ -27,7 +27,8 @@ class Exam {
     private var examText : String = ""
     private var hits : Int = 0
     private var misses : Int = 0
-    private var questions : List<Question> = arrayListOf()
+    //private var questions : List<Question> = arrayListOf()
+    private var questionsNewFormat : List<QuestionNewFormat> = arrayListOf()
     private var answeredExam : Boolean = false
     private var isFreeExam : Boolean = false
 
@@ -75,7 +76,7 @@ class Exam {
      * @param questions
      *      Set a question list object
      */
-    fun setQuestions(questions : List<Question>) {
+    /*fun setQuestions(questions : List<Question>) {
         this.questions = questions
     }
 
@@ -85,6 +86,22 @@ class Exam {
      */
     fun getQuestions() : List<Question> {
         return this.questions
+    }*/
+
+    /**
+     * @param questionsNewFormat
+     *      Set a question list object
+     */
+    fun setQuestionsNewFormat(questionsNewFormat : List<QuestionNewFormat>) {
+        this.questionsNewFormat = questionsNewFormat
+    }
+
+    /**
+     * @return
+     *      A question list object
+     */
+    fun getQuestionsNewFormat() : List<QuestionNewFormat> {
+        return this.questionsNewFormat
     }
 
     fun setAnsweredExam(answeredExam : Boolean) {

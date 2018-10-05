@@ -15,7 +15,21 @@
         android:textColor="@color/square_second_padding_color"
         android:textStyle="bold"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/nslv_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tv_answer_text"
+        android:layout_above="@id/btn_it_is_understand"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="30dp"
+        android:numColumns="1"
+        android:clickable="false"/>
+
+    <!--<ListView
         android:id="@+id/nslv_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +42,7 @@
         android:layout_marginBottom="30dp"
         android:numColumns="1"
         android:clickable="false">
-    </ListView>
+    </ListView>-->
 
 
     <RelativeLayout

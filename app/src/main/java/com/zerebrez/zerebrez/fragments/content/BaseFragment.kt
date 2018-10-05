@@ -73,4 +73,12 @@ open class BaseFragment : Fragment() {
     open fun setExamsAverageFragmentOK() {
         SharedPreferencesManager(context!!).setExamsAverageFragmentOK()
     }
+
+    open fun setPendingPayment(hasPendingPayment : Boolean) {
+        SharedPreferencesManager(context!!).storePendingPayment(hasPendingPayment)
+    }
+
+    open fun setPaymentId(paymentId : String) {
+        SharedPreferencesManager(context!!).storePaymentId(paymentId)
+    }
 }

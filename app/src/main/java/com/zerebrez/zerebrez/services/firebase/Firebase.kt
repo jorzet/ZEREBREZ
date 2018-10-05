@@ -72,6 +72,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val COURSE_KEY : String = "course"
     private val PREMIUM_KEY : String = "premium"
     private val IS_PREMIUM_KEY : String = "isPremium"
+    private val DEVELOPERS_DEBUG_KEY : String = "developersDebug"
+    private val METHOD_KEY : String = "method"
+    private val PAYMENT_CONFIRMED_IN_KEY : String = "paymentConfirmedIn"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
     private val ANSWERED_QUESTION_MODULE : String = "answeredQuestions"
@@ -157,6 +160,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
      * This method init an inistance of Firebase and gets the module reference
      * then cast the response in module object list and set a response on listener
      */
+    /*
     fun requestGetModules() {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE)
@@ -227,12 +231,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 //onRequestLietenerFailed.onFailed(databaseError.toException())
             }
         })
-    }
+    }*/
 
     /*
      * This method gets all questions from Firebase and add it in its correspond module
      */
-    fun getQuestions(modules : List<Module>) {
+    /*fun getQuestions(modules : List<Module>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -442,7 +446,8 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
                 val dataHelper = DataHelper(mActivity)
                 dataHelper.saveModules(updatedModules)
-                dataHelper.saveQuestions(mQuestions)
+                //dataHelper.saveQuestions(mQuestions)
+                dataHelper.saveQuestionsNewFormat(mQuestions)
 
 
                 // send modules in onSuccess listener
@@ -454,7 +459,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 onRequestLietenerFailed.onFailed(databaseError.toException())
             }
         })
-    }
+    }*/
 
     fun requestGetCourses() {
         // Get a reference to our posts
@@ -543,9 +548,14 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             val userUpdates = HashMap<String, Any>()
             if (!userCache.getCourse().equals("")) {
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + DEVELOPERS_DEBUG_KEY, "Suscripcion")
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + METHOD_KEY, userCache.getPayGayMethod())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + PAYMENT_CONFIRMED_IN_KEY, "Android")
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
             }
-            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
-            userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
 
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
@@ -611,7 +621,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     }
 
-    fun requestSendAnsweredQuestions(questions: List<Question>) {
+    /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -621,9 +631,42 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
             for (question in questions) {
                 if (!question.getOptionChoosed().equals("")) {
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
+                }
+            }
+
+            mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isComplete) {
+                        Log.d(TAG, "complete requestSendAnsweredQuestions")
+                        onRequestListenerSucces.onSuccess(true)
+                    } else {
+                        Log.d(TAG, "cancelled requestSendAnsweredQuestions")
+                        val error = GenericError()
+                        error.setErrorType(ErrorType.ANSWERED_QUESTIONS_NOT_SENDED)
+                        onRequestLietenerFailed.onFailed(error)
+                    }
+                }
+            })
+        }
+    }*/
+
+
+    fun requestSendAnsweredQuestionsNewFormat(questions: List<QuestionNewFormat>, course: String) {
+        // Get a reference to our posts
+        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase.keepSynced(true)
+        val user = getCurrentUser()
+        if (user != null) {
+            val userUpdates = HashMap<String, Any>()
+
+            for (question in questions) {
+                if (!question.chosenOption.equals("") && question.subject != null) {
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + IS_CORRECT_REFERENCE, question.wasOK)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + SUBJECT_REFERENCE, question.subject.value)
+                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + CHOSEN_OPTION_REFERENCE, question.chosenOption)
                 }
             }
 
@@ -643,7 +686,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestSendAnsweredModules(module : Module) {
+    fun requestSendAnsweredModules(module : Module, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -654,16 +697,16 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             if (module.isAnsweredModule()) {
                 var correct = 0
                 var incorrect = 0
-                for (question in module.getQuestions()) {
-                    if (question.getWasOK()) {
+                for (question in module.getQuestionsNewFormat()) {
+                    if (question.wasOK) {
                         correct++
                     } else {
                         incorrect++
                     }
                 }
 
-                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
-                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + course + "/" + "m" + module.getId() + "/" + CORRECT_REFERENCE, correct)
+                userUpdates.put(user.uid + "/" + ANSWERED_MODULED_REFERENCE + "/" + course + "/" + "m" + module.getId() + "/" + INCORRECT_REFERENCE, incorrect)
             }
 
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
@@ -683,7 +726,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     }
 
 
-    fun requestSendAnsweredExams(exam : Exam) {
+    fun requestSendAnsweredExams(exam : Exam, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
@@ -692,8 +735,8 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             val userUpdates = HashMap<String, Any>()
 
             if (exam.isAnsweredExam()) {
-                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
-                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + course + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
+                userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + course + "/" + "e" + exam.getExamId()+ "/" + INCORRECT_REFERENCE, exam.getMisses())
             }
 
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
@@ -712,19 +755,19 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestSendSelectedSchools(schools : List<School>) {
+    fun requestSendSelectedSchools(userCache: User, schools : List<School>) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
         mFirebaseDatabase.keepSynced(true)
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
-            val dbNode = mFirebaseDatabase.child(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE)
+            val dbNode = mFirebaseDatabase.child(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + SELECTED_SCHOOLS_REFERENCE)
             dbNode.setValue(null)
 
             for (i in 0 .. schools.size - 1) {
-                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + INSTITUTION_ID, "institute" + schools.get(i).getInstituteId())
-                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + SCHOOL_ID, "school" + schools.get(i).getSchoolId())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" +  SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + INSTITUTION_ID, "institute" + schools.get(i).getInstituteId())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" +  SELECTED_SCHOOLS_REFERENCE + "/" + i + "/" + SCHOOL_ID, "school" + schools.get(i).getSchoolId())
             }
             mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
@@ -799,60 +842,60 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                             }
                         } else if (key.equals("answeredQuestions")) {
                             val answeredQuestions = map.get(key) as HashMap<String, String>
-                            val questions = arrayListOf<Question>()
+                            val questions = arrayListOf<QuestionNewFormat>()
                             for (key2 in answeredQuestions.keys) {
                                 val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
-                                val question = Question()
-                                question.setQuestionId(Integer(key2.replace("p","").replace("q","")))
+                                val question = QuestionNewFormat()
+                                question.questionId = key2
                                 for (key3 in questionAnswered.keys) {
                                     if (key3.equals("subject")) {
                                         val subject = limpiarTexto(questionAnswered.get(key3))
                                         when (subject) {
                                             limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
+                                                question.subject = SubjectType.VERBAL_HABILITY
                                             }
                                             limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+                                                question.subject = SubjectType.MATHEMATICAL_HABILITY
                                             }
                                             limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                                                question.setSubjectType(SubjectType.MATHEMATICS)
+                                                question.subject = SubjectType.MATHEMATICS
                                             }
                                             limpiarTexto(SubjectType.SPANISH.value) -> {
-                                                question.setSubjectType(SubjectType.SPANISH)
+                                                question.subject = SubjectType.SPANISH
                                             }
                                             limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                                                question.setSubjectType(SubjectType.BIOLOGY)
+                                                question.subject = SubjectType.BIOLOGY
                                             }
                                             limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                                                question.setSubjectType(SubjectType.CHEMISTRY)
+                                                question.subject = SubjectType.CHEMISTRY
                                             }
                                             limpiarTexto(SubjectType.PHYSICS.value) -> {
-                                                question.setSubjectType(SubjectType.PHYSICS)
+                                                question.subject = SubjectType.PHYSICS
                                             }
                                             limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                                                question.setSubjectType(SubjectType.GEOGRAPHY)
+                                                question.subject = SubjectType.GEOGRAPHY
                                             }
                                             limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                                                question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+                                                question.subject = SubjectType.UNIVERSAL_HISTORY
                                             }
                                             limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                                                question.setSubjectType(SubjectType.MEXICO_HISTORY)
+                                                question.subject = SubjectType.MEXICO_HISTORY
                                             }
                                             limpiarTexto(SubjectType.FCE.value) -> {
-                                                question.setSubjectType(SubjectType.FCE)
+                                                question.subject = SubjectType.FCE
                                             }
                                         }
                                     } else if (key3.equals("isCorrect")) {
                                         val isCorrect = questionAnswered.get(key3) as Boolean
-                                        question.setWasOK(isCorrect)
+                                        question.wasOK = isCorrect
                                     } else if (key3.equals("chosenOption")) {
                                         val chosenOption = questionAnswered.get(key3).toString()
-                                        question.setOptionChoosed(chosenOption)
+                                        question.chosenOption = chosenOption
                                     }
                                 }
                                 questions.add(question)
                             }
-                            user.setAnsweredQuestions(questions)
+                            user.setAnsweredQuestionsNewFormat(questions)
                         } else if (key.equals("answeredModules")) {
                             val answeredModules = map.get(key) as HashMap<String, String>
                             val modules = arrayListOf<Module>()
@@ -986,19 +1029,19 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 for ( key in map.keys) {
                     println(key)
                     val exam = Exam()
-                    val questions = arrayListOf<Question>()
+                    val questionsNewFormat = arrayListOf<QuestionNewFormat>()
 
                     // get question id from response
                     val list = map.get(key) as List<String>
                     for (q in list) {
-                        val question = Question()
-                        question.setQuestionId(Integer(q.replace("p","")))
-                        questions.add(question)
+                        val questionNewFormat = QuestionNewFormat()
+                        questionNewFormat.questionId = q
+                        questionsNewFormat.add(questionNewFormat)
                     }
 
                     // set module id and question id
                     exam.setExamId(Integer(key.replace("e","")))
-                    exam.setQuestions(questions)
+                    exam.setQuestionsNewFormat(questionsNewFormat)
 
                     // add module to list
                     mExams.add(exam)
@@ -1151,20 +1194,20 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 for ( key in map.keys) {
                     println(key)
                     val module = Module()
-                    val questions = arrayListOf<Question>()
+                    val questions = arrayListOf<QuestionNewFormat>()
 
                     // get question id from response
                     val list = map.get(key) as List<String>
                     for (q in list) {
-                        val question = Question()
-                        question.setQuestionId(Integer(q.replace("p","")))
-                        question.setModuleId(Integer(key.replace("m","")))
+                        val question = QuestionNewFormat()
+                        question.questionId = q
+                        //question.setModuleId(Integer(key.replace("m","")))
                         questions.add(question)
                     }
 
                     // set module id and question id
                     module.setId(Integer(key.replace("m","")))
-                    module.setQuestions(questions)
+                    module.setQuestionsNewFormat(questions)
 
                     // add module to list
                     mModules.add(module)

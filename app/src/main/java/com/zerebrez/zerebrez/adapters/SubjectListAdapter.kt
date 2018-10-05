@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Subject
+import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_option_sobject.view.*
@@ -32,20 +33,20 @@ import kotlinx.android.synthetic.main.custom_option_sobject.view.*
  * jorzet.94@gmail.com
  */
 
-class SubjectListAdapter (subjects : List<Subject>, context : Context) : BaseAdapter() {
-    private val mSubjects: List<Subject> = subjects
+class SubjectListAdapter (subjects : List<SubjectRefactor>, context : Context) : BaseAdapter() {
+    private val mSubjects: List<SubjectRefactor> = subjects
     private val mContext: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val currentSubject = getItem(position) as Subject
+        val currentSubject = getItem(position) as SubjectRefactor
 
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val subjectView = inflator.inflate(R.layout.custom_option_sobject, null)
 
-        subjectView.tv_subject_name.text = currentSubject.getsubjectType().value.toUpperCase()
+        subjectView.tv_subject_name.text = currentSubject.subjectType.value.toUpperCase()
         subjectView.tv_subject_name.typeface = FontUtil.getNunitoRegular(mContext)
 
-        when (currentSubject.getsubjectType()) {
+        when (currentSubject.subjectType) {
             SubjectType.MATHEMATICS -> {
                 subjectView.image.background = mContext.resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                 subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.mathematics_subject_background)

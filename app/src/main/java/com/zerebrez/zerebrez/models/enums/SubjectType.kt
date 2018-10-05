@@ -16,6 +16,9 @@
 
 package com.zerebrez.zerebrez.models.enums
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
 /**
  * Created by Jorge Zepeda Tinoco on 01/05/18.
  * jorzet.94@gmail.com
@@ -23,17 +26,43 @@ package com.zerebrez.zerebrez.models.enums
 
 enum class SubjectType constructor(val value : String)  {
     NONE(""),
+    @SerializedName("Habilidad Verbal")
+    @Expose
     VERBAL_HABILITY("Habilidad Verbal"),
+    @SerializedName("Habilidad Matematica")
+    @Expose
     MATHEMATICAL_HABILITY("Habilidad Matematica"),
+    @SerializedName("Español")
+    @Expose
     SPANISH("Español"),
+    @SerializedName("Ingles")
+    @Expose
     ENGLISH("Ingles"),
+    @SerializedName("Matemáticas")
+    @Expose
     MATHEMATICS("Matemáticas"),
+    @SerializedName("Química")
+    @Expose
     CHEMISTRY("Química"),
+    @SerializedName("Física")
+    @Expose
     PHYSICS("Física"),
+    @SerializedName("Biología")
+    @Expose
     BIOLOGY("Biología"),
+    @SerializedName("Geografía")
+    @Expose
     GEOGRAPHY("Geografía"),
+    @SerializedName("Historia de México")
+    @Expose
     MEXICO_HISTORY("Historia de México"),
+    @SerializedName("Historia Universal")
+    @Expose
     UNIVERSAL_HISTORY("Historia Universal"),
+    @SerializedName("Formación cívica y ética")
+    @Expose
     FCE("Formación cívica y ética"),
+    @SerializedName("FCE")
+    @Expose
     FCE2("FCE");
 }

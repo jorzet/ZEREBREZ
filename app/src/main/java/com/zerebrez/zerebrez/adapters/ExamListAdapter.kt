@@ -60,7 +60,7 @@ class ExamListAdapter (user : User, exams : List<Exam>, context : Context) : Bas
             examView.rl_exam_not_done_container.visibility = View.VISIBLE
             examView.iv_exam.setImageDrawable(mContext.resources.getDrawable(R.drawable.exam_icon))
             examView.tv_exam.setTextColor(mContext.resources.getColor((R.color.exam_not_done_text_color)))
-            examView.tv_question_number.text = currentExam.getQuestions().size.toString()
+            examView.tv_question_number.text = currentExam.getQuestionsNewFormat().size.toString()
             examView.tv_exam.typeface = FontUtil.getNunitoRegular(mContext)
             examView.tv_question_number.typeface = FontUtil.getNunitoRegular(mContext)
 

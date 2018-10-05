@@ -18,10 +18,17 @@ package com.zerebrez.zerebrez.ui.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.request.RequestManager
+import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
 import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * Created by Jorge Zepeda Tinoco on 27/02/18.
@@ -53,6 +60,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mRequestManager = RequestManager(this)
+        //setUserNormal()
+        CheckPendingPayment()
     }
 
     override fun onStop() {
@@ -87,8 +96,31 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         return termsAndPrivacy
     }
 
-    fun requestSendAnsweredQuestions(questions : List<Question>) {
-        mRequestManager.requestSendAnsweredQuestions(questions, object : RequestManager.OnSendAnsweredQuestionsListener {
+
+    fun hasPendingPayment() : Boolean{
+        val pendingPayment = SharedPreferencesManager(baseContext).getPendingPayment()
+        return pendingPayment
+    }
+
+    fun getPaymentId() : String {
+        val paymentId = SharedPreferencesManager(baseContext).getPaymentId()
+        return paymentId
+    }
+
+    fun setPendingPayment(hasPendingPayment : Boolean) {
+        SharedPreferencesManager(baseContext).storePendingPayment(hasPendingPayment)
+    }
+
+    fun setPaymentId(paymentId : String) {
+        SharedPreferencesManager(baseContext).storePaymentId(paymentId)
+    }
+
+    /*
+     * SEND ANSWERED QUESTIONS OLD FORMAT
+     */
+    /*
+    fun requestSendAnsweredQuestions(questions : List<Question>, course: String) {
+        mRequestManager.requestSendAnsweredQuestions(questions, course, object : RequestManager.OnSendAnsweredQuestionsListener {
             override fun onSendAnsweredQuestionsLoaded(success: Boolean) {
                 onSendAnsweredQuestionsSuccess(success)
             }
@@ -97,10 +129,26 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
                 onSendAnsweredQuestionsFail(throwable)
             }
         })
+    }*/
+
+    /*
+     * SEND ANSWERED QUESTIONS NEW FORMAT
+     */
+    fun requestSendAnsweredQuestionsNewFormat(questions : List<QuestionNewFormat>, course: String) {
+        mRequestManager.requestSendAnsweredQuestionsNewFormat(questions, course,
+                object : RequestManager.OnSendAnsweredQuestionsNewFormatListener {
+            override fun onSendAnsweredQuestionsNewFormatLoaded(success: Boolean) {
+                onSendAnsweredQuestionsNewFormatSuccess(success)
+            }
+
+            override fun onSendAnsweredQuestionsNewFormatError(throwable: Throwable) {
+                onSendAnsweredQuestionsNewFormatFail(throwable)
+            }
+        })
     }
 
-    fun requestSendAnsweredModules(module : Module) {
-        mRequestManager.requestSendAnsweredModules(module, object : RequestManager.OnSendAnsweredModulesListener {
+    fun requestSendAnsweredModules(module : Module, course: String) {
+        mRequestManager.requestSendAnsweredModules(module, course, object : RequestManager.OnSendAnsweredModulesListener {
             override fun onSendAnsweredModulesLoaded(success: Boolean) {
                 onSendAnsweredModulesSuccess(success)
             }
@@ -111,8 +159,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendAnsweredExams(exam : Exam) {
-        mRequestManager.requestSendAnsweredExams(exam, object : RequestManager.OnSendAnsweredExamsListener {
+    fun requestSendAnsweredExams(exam : Exam, course: String) {
+        mRequestManager.requestSendAnsweredExams(exam, course, object : RequestManager.OnSendAnsweredExamsListener {
             override fun onSendAnsweredExamsLoaded(success: Boolean) {
                 onSendAnsweredExamsSuccess(success)
             }
@@ -123,8 +171,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestSendSelectedSchools(schools : List<School>) {
-        mRequestManager.requestSendSelectedSchools(schools, object : RequestManager.OnSendSelectedSchoolsListener {
+    fun requestSendSelectedSchools(user: User, schools : List<School>) {
+        mRequestManager.requestSendSelectedSchools(user, schools, object : RequestManager.OnSendSelectedSchoolsListener {
             override fun onSendSelectedSchoolsLoaded(success: Boolean) {
                 onSendSelectedSchoolsSuccess(success)
             }
@@ -159,7 +207,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestModules() {
+    /*fun requestModules() {
         mRequestManager.requestGetModules(object : RequestManager.OnGetModulesListener {
             override fun onGetModulesLoaded(result: List<Module>) {
                 onGetModulesSucces(result)
@@ -169,7 +217,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
                 onGetModulesFail(throwable)
             }
         })
-    }
+    }*/
 
     fun requestCourses() {
         mRequestManager.requestGetCourses(object : RequestManager.OnGetCoursesListener {
@@ -231,10 +279,87 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
+    fun requestGetProfileRefactor() {
+        mRequestManager.requestGetProfileRefactor(object : RequestManager.OnGetProfileRefactorListener {
+            override fun onGetProfileRefactorLoaded(user: User) {
+                onGetProfileRefactorSuccess(user)
+            }
+
+            override fun onGetProfileRefactorError(throwable: Throwable) {
+                onGetProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun CheckPendingPayment() {
+        if (hasPendingPayment() && !getPaymentId().equals("")) {
+            Log.e("CheckPendingPayment","Tiene un cargo pendiente")
+            val mComproPagoManager = ComproPagoManager()
+            mComproPagoManager.VerifyCharge(getPaymentId(), object: ComproPagoManager.OnVerifyChargeListener{
+                override fun onVerifyChargeResponse(response: Response<ChargeResponse>?) {
+                    onVerifyChargeSuccess(response)
+                }
+
+                override fun onVerifyChargeFailure(throwable: Throwable?) {
+
+                }
+            });
+        }
+    }
+
+    fun onVerifyChargeSuccess(response: Response<ChargeResponse>?){
+        if (response != null) {
+            if(response.code()>199 && response.code()<300){
+                val chargeResponse = response.body()
+                if (chargeResponse != null) {
+                    if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+                        setUserPremium()
+                    }
+                }
+            }
+        }
+    }
+
+    fun setUserPremium(){
+        var user = getUser()
+        if(user!=null){
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                user.setEmail(userFirebase.email!!)
+            }
+            setPendingPayment(false)
+            user.setPremiumUser(true)
+            user.setTimeStamp(System.currentTimeMillis())
+            saveUser(user)
+            requestSendUser(user)
+        }
+    }
+
+    fun setUserNormal(){
+        Log.e("SetUserPremium","YA ERES PREMIUM")
+        var user = getUser()
+        if(user!=null){
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                user.setEmail(userFirebase.email!!)
+            }
+            user.setPremiumUser(false)
+            user.setTimeStamp(System.currentTimeMillis())
+            saveUser(user)
+            requestSendUser(user)
+        }
+    }
+
     open fun onSendAnsweredQuestionsSuccess(success : Boolean) {
     }
 
     open fun onSendAnsweredQuestionsFail(throwable: Throwable) {
+    }
+
+    open fun onSendAnsweredQuestionsNewFormatSuccess(success : Boolean) {
+    }
+
+    open fun onSendAnsweredQuestionsNewFormatFail(throwable: Throwable) {
     }
 
     open fun onSendAnsweredModulesSuccess(success: Boolean) {
@@ -338,14 +463,15 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
     open fun onGetImagesPathFail(throwable: Throwable) {
     }
+    open fun onGetProfileRefactorSuccess(user: User) {}
+    open fun onGetProfileRefactorFail(throwable: Throwable) {}
 
 
     /*
-     ***********************
+     * REQUEST QUESTIONS OLD FORMAT
      */
 
-
-
+    /*
     fun requestGetQuestionsByModuleIdRefactor(moduleId : Int) {
         mRequestManager.requestGetQuestionsByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsByModuleIdRefactorListener {
             override fun onGetQuestionsByModuleIdRefactorLoaded(questions: List<Question>) {
@@ -387,7 +513,68 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun onGetQuestionsByExamIdRefactorSuccess(questions : List<Question>) {}
     open fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {}
     open fun onGetWrongQuestionsByQuestionIdRefactorSuccess(questions : List<Question>) {}
-    open fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {}
+    open fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {}*/
+
+    /*
+     * REQUEST QUESTIONS NEW FORMAT
+     */
+
+    fun requestGetQuestionsNewFormatByModuleIdRefactor(moduleId : Int) {
+        mRequestManager.requestGetQuestionsNewFormatByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsNewFormatByModuleIdRefactorListener {
+            override fun onGetQuestionsNewFormatByModuleIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatByModuleIdRefactorError(throwable: Throwable) {
+                onGetQuestionsNewFormatByModuleIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsNewFormatByExamIdRefactor(examId : Int) {
+        mRequestManager.requestGetQuestionsNewFormatByExamIdRefactor(examId, object : RequestManager.OnGetQuestionsNewFormatByExamIdRefactorListener {
+            override fun onGetQuestionsNewFormatByExamIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatByExamIdRefactorSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatByExamIdRefactorError(throwable: Throwable) {
+                onGetQuestionsNewFormatByExamIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat : List<QuestionNewFormat>) {
+        mRequestManager.requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat, object : RequestManager.OnGetWrongQuestionsNewFormatByQuestionIdRefactorListener {
+            override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorLoaded(questions: List<QuestionNewFormat>) {
+                onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions)
+            }
+
+            override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorError(throwable: Throwable) {
+                onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsNewFormatBySubject(subject: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
+            override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatBySubjectSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatBySubjectError(throwable: Throwable) {
+                onGetQuestionsNewFormatBySubjectFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsNewFormatByExamIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatByExamIdRefactorFail(throwable: Throwable) {}
+    open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {}
+    open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
 
     fun requestGetSchools() {
         mRequestManager.requestGetSchools(object : RequestManager.OnGetSchoolsListener {
@@ -400,6 +587,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
             }
         })
     }
+
+
 
     open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
     open fun onGetSchoolsFail(throwable: Throwable) {}

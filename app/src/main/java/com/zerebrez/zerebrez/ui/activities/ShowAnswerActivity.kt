@@ -26,6 +26,9 @@ import com.zerebrez.zerebrez.models.QuestionOption
 import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import android.content.Intent
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import com.zerebrez.zerebrez.adapters.QuestionAnswerAdapterRefactor
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -37,13 +40,19 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     /*
      * UI accessors
      */
-    private lateinit var mAnswerList : ListView
+    private lateinit var mAnswerList : RecyclerView
     private lateinit var mItIsUnderstoodButton : View
 
     /*
      * Adapter
      */
     private lateinit var optionQuestionAdapter : OptionQuestionAdapterRefactor
+    private lateinit var questionAnswerAdapterRefactor: QuestionAnswerAdapterRefactor
+
+    /*
+     * Objects
+     */
+    private lateinit var mImagesPath : List<Image>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,53 +65,19 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
 
         val dataHelper = DataHelper(baseContext)
         val mImagesPath = dataHelper.getImagesPath()
-        val question = dataHelper.getCurrentQuestion()
+        val questionNewFormat = dataHelper.getCurrentQuestionNewFormat()
 
-        if (question != null) {
-            val mSortOptions = arrayListOf<QuestionOption>()
+        if (questionNewFormat != null) {
 
-            val texts = question.getStepByStepText()
-            val equations = question.getStepByStepEquations()
-            val images = question.getStepByStepImages()
+            val realSize = questionNewFormat.questionData.size
 
-            var realSize = 0
-            if (texts.size > equations.size && texts.size > images.size)
-                realSize = texts.size
+            //optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext)
+            //mAnswerList.adapter = optionQuestionAdapter
+            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext!!)
 
-            if (equations.size > texts.size && equations.size > images.size)
-                realSize = equations.size
-
-            if (images.size > texts.size && images.size > equations.size)
-                realSize = images.size
-
-
-            for (i in 0..realSize) {
-                if (texts.size > i) {
-                    val questionOption = QuestionOption()
-                    questionOption.setQuestion(texts.get(i))
-                    questionOption.setQuestionType(QuestionType.TEXT)
-                    mSortOptions.add(questionOption)
-                }
-
-                if (equations.size > i) {
-                    val questionOption = QuestionOption()
-                    questionOption.setQuestion(equations.get(i))
-                    questionOption.setQuestionType(QuestionType.EQUATION)
-                    mSortOptions.add(questionOption)
-                }
-
-                if (images.size > i) {
-                    val questionOption = QuestionOption()
-                    val nameInStorage = getNameInStorage(images.get(i), mImagesPath)
-
-                    questionOption.setQuestion(nameInStorage)
-                    questionOption.setQuestionType(QuestionType.IMAGE)
-                    mSortOptions.add(questionOption)
-                }
-            }
-
-            optionQuestionAdapter = OptionQuestionAdapterRefactor(true, mSortOptions, baseContext)
-            mAnswerList.adapter = optionQuestionAdapter
+            val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
+            mAnswerList.setLayoutManager(linearLayoutManager)
+            mAnswerList.adapter = questionAnswerAdapterRefactor
         }
 
     }
@@ -118,7 +93,7 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     }
 
     private val mItIsUnderstoodButtonListener = View.OnClickListener {
-        DataHelper(baseContext).saveCurrentQuestion(null)
+        DataHelper(baseContext).saveCurrentQuestionNewFormat(null)
         onBackPressed()
     }
 

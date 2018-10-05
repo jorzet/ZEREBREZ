@@ -21,7 +21,8 @@ import android.util.Log
 import com.google.firebase.database.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Exam
-import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.QuestionNewFormat
+import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -36,6 +37,8 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_EXAMS_REFERENCE : String = "answeredExams"
+    private val COURSE_KEY : String = "course"
+    private val PROFILE_KEY : String = "profile"
 
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -113,19 +116,19 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                     for (key in map.keys) {
                         println(key)
                         val exam = Exam()
-                        val questions = arrayListOf<Question>()
+                        val questions = arrayListOf<QuestionNewFormat>()
 
                         // get question id from response
                         val list = map.get(key) as List<String>
                         for (q in list) {
-                            val question = Question()
-                            question.setQuestionId(Integer(q.replace("p", "")))
-                            questions.add(question)
+                            val questionNewFormat = QuestionNewFormat()
+                            questionNewFormat.questionId = q
+                            questions.add(questionNewFormat)
                         }
 
                         // set module id and question id
                         exam.setExamId(Integer(key.replace("e", "")))
-                        exam.setQuestions(questions)
+                        exam.setQuestionsNewFormat(questions)
 
                         // add module to list
                         mExams.add(exam)
@@ -176,48 +179,57 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                         val map = (post as HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
+                        var course = ""
                         val user = User()
-                        for (key in map.keys) {
-                            println(key)
-                            if (key.equals(PROFILE_REFERENCE)) {
-                                val profile = map.get(key) as HashMap<String, String>
-                                if (profile.containsKey(PREMIUM_KEY)) {
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                        if (map.containsKey(PROFILE_KEY)) {
 
-                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                        user.setPremiumUser(isPremium)
-                                    }
+                            val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
-                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                        user.setTimeStamp(timeStamp)
-                                    }
+                            course = profileMap.get(COURSE_KEY) as String
+
+                            user.setCourse(course)
+                            val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
+
+                            if (courseMap.containsKey(PREMIUM_KEY)) {
+                                val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
+
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                    user.setPremiumUser(isPremium)
                                 }
 
-                            } else if (key.equals(ANSWERED_EXAM_KEY)) {
-                                val answeredExams = map.get(key) as HashMap<String, String>
-                                val exams = arrayListOf<Exam>()
-                                for (key2 in answeredExams.keys) {
-                                    val examAnswered = answeredExams.get(key2) as HashMap<String, String>
-                                    val exam = Exam()
-                                    exam.setExamId(Integer(key2.replace("e", "")))
-
-                                    for (key3 in examAnswered.keys) {
-                                        if (key3.equals(INCORRECT_KEY)) {
-                                            val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                            exam.setMisses(incorrectQuestions)
-                                        } else if (key3.equals(CORRECT_KEY)) {
-                                            val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
-                                            exam.setHits(correctQuestions)
-                                        }
-                                    }
-
-                                    exams.add(exam)
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                    user.setTimeStamp(timeStamp)
                                 }
-                                user.setAnsweredExams(exams)
+
                             }
+
                         }
+
+                        if (map.containsKey(ANSWERED_EXAM_KEY)) {
+                            val answeredExams = (map.get(ANSWERED_EXAM_KEY) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
+                            val exams = arrayListOf<Exam>()
+                            for (key2 in answeredExams.keys) {
+                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val exam = Exam()
+                                exam.setExamId(Integer(key2.replace("e", "")))
+
+                                for (key3 in examAnswered.keys) {
+                                    if (key3.equals(INCORRECT_KEY)) {
+                                        val incorrectQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                        exam.setMisses(incorrectQuestions)
+                                    } else if (key3.equals(CORRECT_KEY)) {
+                                        val correctQuestions = (examAnswered.get(key3) as java.lang.Long).toInt()
+                                        exam.setHits(correctQuestions)
+                                    }
+                                }
+
+                                exams.add(exam)
+                            }
+                            user.setAnsweredExams(exams)
+                        }
+
                         Log.d(TAG, "user data ------ " + user.getUUID())
                         onRequestListenerSucces.onSuccess(user)
                     } else {

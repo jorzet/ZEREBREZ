@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.fragments.practice
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,10 +29,13 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SubjectListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Subject
+import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
+import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -41,6 +45,14 @@ import com.zerebrez.zerebrez.utils.FontUtil
  */
 
 class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListener, ErrorDialog.OnErrorDialogListener {
+
+    /*
+     * Tags
+     */
+    private var CURRENT_COURSE : String = "current_course"
+    private val FROM_SUBJECT_QUESTION : String = "from_subject_question"
+    private val SELECTED_SUBJECT : String = "selected_subject"
+    private val ANONYMOUS_USER : String = "anonymous_user"
 
     /*
      * UI accessors
@@ -62,7 +74,8 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
     /*
      * Objects
      */
-    var updatedsubjects = arrayListOf<Subject>()
+    var updatedsubjects : List<SubjectRefactor> = arrayListOf()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (container == null)
@@ -76,76 +89,8 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
 
         mNotSubjectCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
 
-        // TODO it is hardcoded
-        val subjects = arrayListOf<Subject>()
-        val subject1 = Subject()
-        subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
-        subject1.setSubjectAverage(0.0)
-        subjects.add(subject1)
-        val subject2 = Subject()
-        subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-        subject2.setSubjectAverage(0.0)
-        subjects.add(subject2)
 
-        val subject5 = Subject()
-        subject5.setSubjectType(SubjectType.CHEMISTRY)
-        subject5.setSubjectAverage(0.0)
-        subjects.add(subject5)
-
-        val subject3 = Subject()
-        subject3.setSubjectType(SubjectType.SPANISH)
-        subject3.setSubjectAverage(0.0)
-        subjects.add(subject3)
-
-        val subject8 = Subject()
-        subject8.setSubjectType(SubjectType.GEOGRAPHY)
-        subject8.setSubjectAverage(0.0)
-        subjects.add(subject8)
-
-        val subject10 = Subject()
-        subject10.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-        subject10.setSubjectAverage(0.0)
-        subjects.add(subject10)
-
-        val subject11 = Subject()
-        subject11.setSubjectType(SubjectType.FCE)
-        subject11.setSubjectAverage(0.0)
-        subjects.add(subject11)
-
-        val subject4 = Subject()
-        subject4.setSubjectType(SubjectType.MATHEMATICS)
-        subject4.setSubjectAverage(0.0)
-        subjects.add(subject4)
-
-        val subject6 = Subject()
-        subject6.setSubjectType(SubjectType.PHYSICS)
-        subject6.setSubjectAverage(0.0)
-        subjects.add(subject6)
-
-        val subject7 = Subject()
-        subject7.setSubjectType(SubjectType.BIOLOGY)
-        subject7.setSubjectAverage(0.0)
-        subjects.add(subject7)
-
-        val subject9 = Subject()
-        subject9.setSubjectType(SubjectType.MEXICO_HISTORY)
-        subject9.setSubjectAverage(0.0)
-        subjects.add(subject9)
-
-
-        if (subjects.isEmpty()) {
-            mSubjectList.visibility = View.GONE
-            mGoToBottom.visibility = View.GONE
-            mNotSubjectCurrently.visibility = View.VISIBLE
-        } else {
-            subjectListAdapter = SubjectListAdapter(subjects, context!!)
-            mSubjectList.adapter = subjectListAdapter
-            mSubjectList.setOnItemClickListener(this)
-            mGoToBottom.setOnClickListener(mGoToBottomListener)
-        }
-
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+        requestGetSubjects()
 
         return rootView
     }
@@ -161,8 +106,40 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
      * Subject listener
      */
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        ErrorDialog.newInstance("Muy pronto", DialogType.OK_DIALOG, this)!!
-                .show(fragmentManager!!, "notAbleNow")
+
+        if (updatedsubjects.isNotEmpty()) {
+            goQuestionActivity(updatedsubjects[position].internalName)
+        } else {
+            ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo", DialogType.OK_DIALOG, this)!!
+                    .show(fragmentManager!!, "notAbleNow")
+        }
+    }
+
+    override fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {
+        super.onGetSubjectsSuccess(subjects)
+        if (context != null) {
+            if (subjects.isEmpty()) {
+                mSubjectList.visibility = View.GONE
+                mGoToBottom.visibility = View.GONE
+                mNotSubjectCurrently.visibility = View.VISIBLE
+            } else {
+                updatedsubjects = subjects
+                subjectListAdapter = SubjectListAdapter(subjects, context!!)
+                mSubjectList.adapter = subjectListAdapter
+                mSubjectList.setOnItemClickListener(this)
+                mGoToBottom.setOnClickListener(mGoToBottomListener)
+            }
+            if (activity != null) {
+                (activity as ContentActivity).showLoading(false)
+            }
+        }
+    }
+
+    override fun onGetSubjectsFail(throwable: Throwable) {
+        super.onGetSubjectsFail(throwable)
+        if (activity != null) {
+            (activity as ContentActivity).showLoading(false)
+        }
     }
 
     /*
@@ -178,6 +155,20 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
 
     override fun onConfirmationAccept() {
 
+    }
+
+    private fun goQuestionActivity(selectedSubject : String) {
+        val intent = Intent(activity, QuestionActivity::class.java)
+        intent.putExtra(SELECTED_SUBJECT, selectedSubject)
+        intent.putExtra(ANONYMOUS_USER, false)
+        intent.putExtra(FROM_SUBJECT_QUESTION, true)
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                intent.putExtra(CURRENT_COURSE, user.getCourse())
+            }
+        }
+        this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 
 }

@@ -128,6 +128,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mGoogleSignInClient : GoogleSignInClient
 
+    /*
+     * User
+     */
+    private lateinit var mUser: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_container)
@@ -189,6 +194,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         setBottomTabIcons()
 
         requestGetExamScores()
+        requestGetProfileRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
         mBottomTabLayout.setOnTabSelectedListener(onBottomTabLayoutListener)
@@ -441,6 +447,15 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
     }
 
+    override fun onGetProfileRefactorSuccess(user: User) {
+        super.onGetProfileRefactorSuccess(user)
+        mUser = user
+    }
+
+    override fun onGetProfileRefactorFail(throwable: Throwable) {
+        super.onGetProfileRefactorFail(throwable)
+    }
+
     override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
         super.onGetExamScoresSuccess(examScores)
         if (examScores.isNotEmpty()) {
@@ -573,6 +588,10 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetImagesPathFail(throwable: Throwable) {
         super.onGetImagesPathFail(throwable)
+    }
+
+    fun getUserProfile(): User? {
+        return this.mUser
     }
 
 }

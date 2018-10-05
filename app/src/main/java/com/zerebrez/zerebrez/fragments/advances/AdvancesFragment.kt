@@ -90,7 +90,10 @@ class AdvancesFragment : BaseContentFragment() {
         mNotAbleNow.typeface = FontUtil.getNunitoSemiBold(context!!)
         mAverageBySubjectTextView.typeface = FontUtil.getNunitoBold(context!!)
 
-        requestGetHitAndMissesAnsweredModulesAndExams()
+        val user = (activity as ContentActivity).getUserProfile()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+        }
 
         requestGetAverageSubjects()
 
@@ -105,12 +108,17 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
         if (context != null) {
-            saveUser(user)
-            val questions = user.getAnsweredQuestion()
+            val mUser = (activity as ContentActivity).getUserProfile()
+            if (mUser != null) {
+                mUser.setAnsweredQuestionsNewFormat(user.getAnsweredQuestionNewFormat())
+                saveUser(mUser)
+            }
+
+            val questions = user.getAnsweredQuestionNewFormat()
             var hits = 0
             var misses = 0
             for (question in questions) {
-                if (question.getWasOK())
+                if (question.wasOK)
                     hits ++
                 else
                     misses ++

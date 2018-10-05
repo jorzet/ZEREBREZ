@@ -16,17 +16,20 @@
 
 package com.zerebrez.zerebrez.fragments.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
-import com.zerebrez.zerebrez.ui.activities.PaywayActivity
+import com.zerebrez.zerebrez.ui.activities.PaywayActivityRefactor
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -37,8 +40,16 @@ import com.zerebrez.zerebrez.utils.FontUtil
 
 private const val TAG : String = "PaymentFragment"
 
+/*
+* request code
+*/
+private val PAYWAY_FLOW: Int = 0x234
+
 class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
+    /*
+     * UI accessors
+     */
     private lateinit var mIWantToBePremiumButton : View
     private lateinit var mGetFreeQuestionsExamsButton : View
     private lateinit var mIWantToBePremiumButtonTextView: TextView
@@ -66,6 +77,7 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         return rootView
     }
 
+
     private val mIWantToBePremiumListener = View.OnClickListener {
         goPaywayActivity()
     }
@@ -77,13 +89,23 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private fun goPaywayActivity() {
-        val intent = Intent(activity, PaywayActivity::class.java)
-        startActivity(intent)
+        val intent = Intent(activity, PaywayActivityRefactor::class.java)
+        startActivityForResult(intent, PAYWAY_FLOW)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == PAYWAY_FLOW){
+            if(resultCode == Activity.RESULT_OK){
+                val intent = activity!!.intent
+                startActivity(intent)
+                activity!!.finish()
+            }
+        }
     }
 
     /*
-     * Dialog listeners
-     */
+             * Dialog listeners
+             */
     override fun onConfirmationCancel() {
 
     }

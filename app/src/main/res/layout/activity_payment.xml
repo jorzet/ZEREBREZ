@@ -5,123 +5,153 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/exams_text_color2"
-        app:navigationIcon="?attr/homeAsUpIndicator" />
-
     <RelativeLayout
-        android:id="@+id/rl_payway_text_container"
+        android:id="@+id/rl_progress_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/toolbar">
-
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pb_payway_activity"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true">
+        </ProgressBar>
         <TextView
-            android:id="@+id/tv_payway_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:text="Medios de Pago"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="140dp"
+            android:text="@string/updating_user_text"
             android:textColor="@color/exams_text_color2"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/iv_gray_line1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/gray"/>
+            android:textSize="25sp"
+            android:textStyle="bold"
+            />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_google_pay_container"
+        android:id="@+id/rl_activity_payway_container"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_below="@+id/rl_payway_text_container">
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/rl_close_payway_activity"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/close_icon"/>
+        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/iv_google_pay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/google_pay_mark_icon" />
+        <RelativeLayout
+            android:id="@+id/rl_payway_text_container"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="120dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_google_pay"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:text="@string/google_pay_text"
-            android:textColor="@color/exams_text_color2"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/tv_payway_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/choose_payment_method_text"
+                android:textColor="@color/exams_text_color2"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
 
-        <ImageView
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_google_pay_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="100dp"
+            android:layout_below="@+id/rl_payway_text_container">
+
+            <ImageView
+                android:id="@+id/iv_google_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/google_pay_mark_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_google_pay"
+                android:layout_centerHorizontal="true"
+                android:text="@string/google_pay_text"
+                android:textColor="@color/exams_text_color2"
+                android:textSize="20sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_mercado_pago_container"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/next_icon" />
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="100dp"
+            android:layout_below="@+id/rl_payway_text_container">
 
-        <ImageView
-            android:id="@+id/iv_gray_line2"
+            <ImageView
+                android:id="@+id/iv_mercado_pago"
+                android:layout_width="96dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/payment_method_cash_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_mercado_pago"
+                android:layout_marginTop="-10dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/mercado_pago_text"
+                android:textColor="@color/exams_text_color2"
+                android:textSize="20sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_payway_cash_info_container"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/gray"/>
+            android:layout_marginBottom="20dp">
 
+            <TextView
+                android:id="@+id/tv_cash_info_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/cash_method_info_text"
+                android:textColor="@color/exams_text_color2"
+                android:textSize="17sp"
+                android:textAlignment="center"/>
+
+        </RelativeLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_mercado_pago_container"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_below="@+id/rl_google_pay_container">
-
-        <ImageView
-            android:id="@+id/iv_mercado_pago"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/mercado_pago_icon" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_mercado_pago"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:text="@string/mercado_pago_text"
-            android:textColor="@color/exams_text_color2"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/next_icon" />
-
-        <ImageView
-            android:id="@+id/iv_gray_line3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/gray"/>
-
-    </RelativeLayout>
 
 </RelativeLayout>

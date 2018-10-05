@@ -70,7 +70,7 @@ class DataHelper(context: Context) {
         return modules
     }
 
-    fun saveQuestions(questions : List<Question>) {
+    /*fun saveQuestions(questions : List<Question>) {
         val json = JsonParcer.parceObjectListToJson(questions)
         SharedPreferencesManager(mContext).storeJsonQuestions(json)
     }
@@ -84,8 +84,28 @@ class DataHelper(context: Context) {
         }
 
         return quetions
+    }*/
+
+    fun saveQuestionsNewFormat(questionsNewFormat : List<QuestionNewFormat>) {
+        val json = JsonParcer.parceObjectListToJson(questionsNewFormat)
+        SharedPreferencesManager(mContext).storeJsonQuestionsNewFormat(json)
     }
 
+    fun getQuestionsNewFormat() : List<QuestionNewFormat> {
+        val json = SharedPreferencesManager(mContext).getJsonQuestionsNewFormat()
+        val quetionsNewFormat = arrayListOf<QuestionNewFormat>()
+        val questionArray = JSONArray(json)
+        for (i in 0 .. questionArray.length() - 1) {
+            quetionsNewFormat.add(JsonParcer.getObjectFromJson(questionArray.get(i).toString(), QuestionNewFormat::class.java) as QuestionNewFormat)
+        }
+
+        return quetionsNewFormat
+    }
+
+    /*
+     * SAVE CURRENT QUESTION OLD FORMAT
+     */
+    /*
     fun saveCurrentQuestion(currentQuestion : Question?) {
         var json = ""
         if (currentQuestion != null) {
@@ -101,9 +121,29 @@ class DataHelper(context: Context) {
             return currectQuestion
         }
         return null
+    }*/
+
+    /*
+     * SAVE CURRENT QUESTION NEW FORMAT
+     */
+    fun saveCurrentQuestionNewFormat(currentQuestionNewFormat : QuestionNewFormat?) {
+        var json = ""
+        if (currentQuestionNewFormat != null) {
+            json = JsonParcer.parceObjectToJson(currentQuestionNewFormat)
+        }
+        SharedPreferencesManager(mContext).storeJsonCurrentQuestionNewFormat(json)
     }
 
-    fun getQuestionsByModuleId(moduleId : Integer) : List<Question>{
+    fun getCurrentQuestionNewFormat() : QuestionNewFormat? {
+        val json = SharedPreferencesManager(mContext).getJsonCurrentQuestionNewFormat()
+        if (json != null) {
+            val currectQuestionNewFormat = JsonParcer.getObjectFromJson(json, QuestionNewFormat::class.java) as QuestionNewFormat
+            return currectQuestionNewFormat
+        }
+        return null
+    }
+
+    /*fun getQuestionsByModuleId(moduleId : Integer) : List<Question>{
         val json = SharedPreferencesManager(mContext).getJsonModules()
         Log.d(TAG, json)
         val modules = arrayListOf<Module>()
@@ -119,9 +159,9 @@ class DataHelper(context: Context) {
         }
 
         return arrayListOf<Question>()
-    }
+    }*/
 
-    fun getWrongQuestionsByQuestionId(questionId : Integer) : List<Question> {
+    /*fun getWrongQuestionsByQuestionId(questionId : Integer) : List<Question> {
         val json = SharedPreferencesManager(mContext).getJsonModules()
         Log.d(TAG, json)
         val questions = arrayListOf<Question>()
@@ -137,9 +177,9 @@ class DataHelper(context: Context) {
         }
 
         return arrayListOf<Question>()
-    }
+    }*/
 
-    fun getQuestionsByExamId(examId : Integer) : List<Question> {
+    /*fun getQuestionsByExamId(examId : Integer) : List<Question> {
         val json = SharedPreferencesManager(mContext).getJsonExams()
         val mQuestions = getQuestions()
         Log.d(TAG, json)
@@ -200,7 +240,7 @@ class DataHelper(context: Context) {
                 }
             }
         }
-    }
+    }*/
 
     fun saveExams(exams : List<Exam>) {
         val json = JsonParcer.parceObjectListToJson(exams)

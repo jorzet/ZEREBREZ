@@ -37,6 +37,15 @@
                     android:layout_below="@+id/tv_question"
                     android:layout_marginTop="5dp"/>-->
 
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/nslv_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/iv_gray_line1"
+                    android:layout_marginTop="30dp"
+                    android:clickable="false"/>
+                <!--
                 <ListView
                     android:id="@+id/nslv_container"
                     android:layout_width="match_parent"
@@ -45,7 +54,7 @@
                     android:layout_below="@id/iv_gray_line1"
                     android:numColumns="1"
                     android:clickable="false">
-                </ListView>
+                </ListView>-->
 
 
             </RelativeLayout>
@@ -123,7 +132,8 @@
                             android:gravity="center"
                             android:text="a"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp"
+                            android:visibility="gone"/>
 
                         <!--<com.nishant.math.MathView
                             android:id="@+id/mv_answer_a"
@@ -205,7 +215,8 @@
                             android:gravity="center"
                             android:text="b"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp"
+                            android:visibility="gone"/>
 
                         <!--<com.nishant.math.MathView
                             android:id="@+id/mv_answer_b"
@@ -285,7 +296,8 @@
                             android:gravity="center"
                             android:text="c"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp"
+                            android:visibility="gone"/>
 
                         <!--<com.nishant.math.MathView
                             android:id="@+id/mv_answer_c"
@@ -367,7 +379,7 @@
                             android:text="a"
                             android:textColor="@color/white"
                             android:textSize="15sp"
-                            android:visibility="visible"/>
+                            android:visibility="gone"/>
 
                         <!--<com.nishant.math.MathView
                             android:id="@+id/mv_answer_d"

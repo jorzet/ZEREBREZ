@@ -49,6 +49,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
      * tags
      */
     private val TAG : String = "QuestionModulesFragment"
+    private var CURRENT_COURSE : String = "current_course"
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
     private val ANONYMOUS_USER : String = "anonymous_user"
@@ -271,6 +272,12 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         intent.putExtra(MODULE_ID, moduleId)
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_WRONG_QUESTION, false)
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                intent.putExtra(CURRENT_COURSE, user.getCourse())
+            }
+        }
         this.startActivityForResult(intent, BaseActivityLifeCycle.SHOW_QUESTION_RESULT_CODE)
     }
 
@@ -315,7 +322,13 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 }
             }
         }
-        requestGetAnsweredModulesAndProfileRefactor()
+
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetAnsweredModulesAndProfileRefactor(user.getCourse())
+            }
+        }
     }
 
     override fun onGetFreeModulesRefactorFail(throwable: Throwable) {

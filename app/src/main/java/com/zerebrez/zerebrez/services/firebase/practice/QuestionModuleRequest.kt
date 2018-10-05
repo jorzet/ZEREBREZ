@@ -21,11 +21,12 @@ import android.util.Log
 import com.google.firebase.database.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Module
-import com.zerebrez.zerebrez.models.Question
+import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
+import kotlin.collections.HashMap
 
 private const val TAG: String = "QuestionModuleRequest"
 
@@ -40,6 +41,8 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
+    private val COURSE_KEY : String = "course"
+    private val PROFILE_KEY : String = "profile"
 
     private val mActivity : Activity = activity
     private lateinit var mFirebaseDatabase: DatabaseReference
@@ -110,15 +113,15 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                     for (key in map.keys) {
                         println(key)
                         val module = Module()
-                        val questions = arrayListOf<Question>()
+                        val questions = arrayListOf<QuestionNewFormat>()
 
                         // get question id from response
                         val list = map.get(key) as List<String>
                         for (q in list) {
                             try {
-                                val question = Question()
-                                question.setQuestionId(Integer(q.replace("p", "")))
-                                question.setModuleId(Integer(key.replace("m", "")))
+                                val question = QuestionNewFormat()
+                                question.questionId = q
+                                //question.setModuleId(Integer(key.replace("m", "")))
                                 questions.add(question)
                             } catch (exception: Exception) {
                             }
@@ -126,7 +129,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                         // set module id and question id
                         module.setId(Integer(key.replace("m", "")))
-                        module.setQuestions(questions)
+                        module.setQuestionsNewFormat(questions)
 
                         // add module to list
                         mModules.add(module)
@@ -161,11 +164,11 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetProfileUserRefactor() {
+    fun requestGetProfileUserRefactor(course: String) {
         // Get a reference to our posts
-        val user = getCurrentUser()
-        if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+        val firebaseUser = getCurrentUser()
+        if (firebaseUser != null) {
+            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + firebaseUser.uid)
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -174,31 +177,39 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = post as HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
+                        var course = ""
                         val user = User()
-                        for (key in map.keys) {
-                            println(key)
-                            if (key.equals(PROFILE_REFERENCE)) {
-                                val profile = map.get(key) as HashMap<String, String>
-                                if (profile.containsKey(PREMIUM_KEY)) {
-                                    val premiumHash = profile.get(PREMIUM_KEY) as HashMap<String, String>
+                        if (map.containsKey(PROFILE_KEY)) {
 
-                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                        user.setPremiumUser(isPremium)
-                                    }
+                            val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
-                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                        user.setTimeStamp(timeStamp)
-                                    }
+                            course = profileMap.get(COURSE_KEY) as String
 
+                            user.setCourse(course)
+                            val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
+
+                            if (courseMap.containsKey(PREMIUM_KEY)) {
+                                val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
+
+                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                    user.setPremiumUser(isPremium)
                                 }
 
-                            } else if (key.equals(ANSWERED_MODULED_REFERENCE)) {
-                                val answeredModules = map.get(key) as HashMap<String, String>
+                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                    user.setTimeStamp(timeStamp)
+                                }
+
+                            }
+
+                        }
+
+                        if (map.containsKey(ANSWERED_MODULED_REFERENCE)) {
+                                val answeredModules = (map.get(ANSWERED_MODULED_REFERENCE) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val modules = arrayListOf<Module>()
 
                                 for (key2 in answeredModules.keys) {
@@ -219,7 +230,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                                     modules.add(module)
                                 }
                                 user.setAnsweredModules(modules)
-                            }
+
                         }
                         Log.d(TAG, "user data ------ " + user.getUUID())
                         onRequestListenerSucces.onSuccess(user)
