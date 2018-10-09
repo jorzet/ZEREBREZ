@@ -330,6 +330,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
             setPendingPayment(false)
             user.setPremiumUser(true)
             user.setTimeStamp(System.currentTimeMillis())
+            user.setPayGayMethod("comproPago")
             saveUser(user)
             requestSendUser(user)
         }
@@ -345,6 +346,7 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
             }
             user.setPremiumUser(false)
             user.setTimeStamp(System.currentTimeMillis())
+            user.setPayGayMethod("")
             saveUser(user)
             requestSendUser(user)
         }
