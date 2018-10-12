@@ -48,7 +48,7 @@ class ExamAverageListAdapterRefactor(averageExams : List<ExamScoreRafactor>, con
 
         examView.tv_exam_number.text = "EXAMEN " + currentAverageExam.examId.replace("e","")
         //examView.bc_exams_average.setExamScores(currentAverageExam.getOtherUsersScoreExam())
-        examView.bc_exams_average.setAverageAndBeastScore(currentAverageExam.average.toInt(), currentAverageExam.best.toInt())
+        examView.bc_exams_average.setAverageAndBeastScore(currentAverageExam.average.toFloat(), currentAverageExam.best.toInt())
         examView.bc_exams_average.setUserHits(currentAverageExam.userScore.toInt())
         examView.bc_exams_average.setHighestScore(currentAverageExam.totalNumberOfQuestions.toInt())
 

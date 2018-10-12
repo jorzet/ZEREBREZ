@@ -22,10 +22,12 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.request.RequestManager
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
 import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,7 +37,7 @@ import retrofit2.Response
  * jorzet.94@gmail.com
  */
 
-open class BaseActivityLifeCycle : AppCompatActivity() {
+open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialogListener {
 
     companion object {
         val SET_CHECKED_TAG : String = "set_checked_tag"
@@ -313,6 +315,9 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+                        ErrorDialog.newInstance("Felicidades ya eres PREMIUM",
+                                DialogType.OK_DIALOG ,this)!!
+                                .show(supportFragmentManager, "paywaySuccess")
                         setUserPremium()
                     }
                 }
@@ -594,4 +599,17 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
     open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
     open fun onGetSchoolsFail(throwable: Throwable) {}
+
+
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
+    }
 }

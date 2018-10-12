@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,8 @@ import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
+import com.felipecsl.gifimageview.library.GifImageView
+import com.zerebrez.zerebrez.utils.GifDataDownloader
 
 class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : QuestionNewFormat, imagesPath : List<Image>, context: Context) : RecyclerView.Adapter<QuestionAnswerViewHolder>() {
 
@@ -63,6 +66,7 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
                     holder.mOptionText.visibility = View.VISIBLE
                     holder.mOptionMath.visibility = View.GONE
                     holder.mOptionImage.visibility = View.GONE
+                    holder.mOptionGifImage.visibility = View.GONE
                 }
                 "eq" -> {
                     //optionView.mv_otion.text = "$$"+currentOption.getQuestion()+"$$"
@@ -70,13 +74,32 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
                     holder.mOptionText.visibility = View.GONE
                     holder.mOptionMath.visibility = View.VISIBLE
                     holder.mOptionImage.visibility = View.GONE
+                    holder.mOptionGifImage.visibility = View.GONE
                 }
                 "img" -> {
                     val nameInStorage = getNameInStorage(currentQuestion, mImagesPath)
-                    holder.mOptionImage.setImageBitmap(getBitmap(nameInStorage))
-                    holder.mOptionText.visibility = View.GONE
-                    holder.mOptionMath.visibility = View.GONE
-                    holder.mOptionImage.visibility = View.VISIBLE
+                    if (nameInStorage.contains(".gif")) {
+                        val bitmap = getBitmap(nameInStorage)
+                        holder.mOptionGifImage.setImageBitmap(bitmap)
+                        holder.mOptionGifImage.startAnimation()
+
+                        /*object : GifDataDownloader() {
+                            override fun onPostExecute(bytes: ByteArray) {
+                                holder.mOptionGifImage.setBytes(bytes)
+                                holder.mOptionGifImage.startAnimation()
+                            }
+                        }.execute("http://katemobile.ru/tmp/sample3.gif")*/
+                        holder.mOptionText.visibility = View.GONE
+                        holder.mOptionMath.visibility = View.GONE
+                        holder.mOptionImage.visibility = View.GONE
+                        holder.mOptionGifImage.visibility = View.VISIBLE
+                    } else {
+                        holder.mOptionImage.setImageBitmap(getBitmap(nameInStorage))
+                        holder.mOptionText.visibility = View.GONE
+                        holder.mOptionMath.visibility = View.GONE
+                        holder.mOptionImage.visibility = View.VISIBLE
+                        holder.mOptionGifImage.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -127,6 +150,7 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
 
 class QuestionAnswerViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val mOptionText = view.findViewById(R.id.tv_option) as TextView
-    val mOptionMath = view.findViewById(R.id.mv_otion) as MathView
+    val mOptionMath = view.findViewById(R.id.mv_option) as MathView
     val mOptionImage = view.findViewById(R.id.iv_option) as ImageView
+    val mOptionGifImage = view.findViewById(R.id.giv_option) as GifImageView
 }

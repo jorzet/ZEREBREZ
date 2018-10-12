@@ -165,6 +165,15 @@
                             android:layout_centerHorizontal="true"
                             android:visibility="gone"/>
 
+                        <com.felipecsl.gifimageview.library.GifImageView
+                            android:id="@+id/giv_answer_a"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="150dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>
+
                     </RelativeLayout>
                 </RelativeLayout>
 
@@ -243,6 +252,15 @@
                             android:id="@+id/iv_answer_b"
                             android:layout_width="150dp"
                             android:layout_height="150dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>
+
+                        <com.felipecsl.gifimageview.library.GifImageView
+                            android:id="@+id/giv_answer_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
                             android:visibility="gone"/>
@@ -328,6 +346,15 @@
                             android:layout_centerHorizontal="true"
                             android:visibility="gone"/>
 
+                        <com.felipecsl.gifimageview.library.GifImageView
+                            android:id="@+id/giv_answer_c"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="150dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>
+
                     </RelativeLayout>
                 </RelativeLayout>
 
@@ -406,6 +433,15 @@
                             android:id="@+id/iv_answer_d"
                             android:layout_width="150dp"
                             android:layout_height="150dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="gone"/>
+
+                        <com.felipecsl.gifimageview.library.GifImageView
+                            android:id="@+id/giv_answer_d"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="150dp"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
                             android:visibility="gone"/>

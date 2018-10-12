@@ -118,7 +118,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         drawTex("ESCUELA", mTextTopSize, getResources().getColor(R.color.school_text_color),
                 50, 0, 150, mTextTopWidth);
         // draw hits text
-        drawTex("ACIERTOS", mTextTopSize, getResources().getColor(R.color.hits_text_color),
+        drawTex("ACIERTOS", mTextTopSize, getResources().getColor(R.color.my_score_text_color),
                 width - 250, 0, width - 50, mTextTopWidth);
 
         int progressHeight = height - mTextTopWidth;
@@ -132,12 +132,12 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                     mTextSchoolSize,
                     mTextTopSize,
                     getResources().getColor(R.color.school_text_color),
-                    getResources().getColor(R.color.hits_text_color),
-                    50, 150, width - 250, width - 50);
+                    getResources().getColor(R.color.my_score_text_color),
+                    50, 150, width - 210, width - 10);
         }
 
         drawUserHits(userHits, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
-                width - 250, width - 50);
+                width - 290, width - 90);
 
         // draw progress bar
         drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight);
@@ -186,7 +186,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         paint.setColor(textColor);
         paint.setTextSize(textSize);
-        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
+        paint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
         canvas.drawText(text, bounds.left, bounds.top - paint.ascent(), paint);
     }
 
@@ -215,7 +215,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         // draw text in center
         paint.setColor(textSchoolColor);
         paint.setTextSize(textSizeSchool);
-        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
+        paint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
         canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
 
         /*
@@ -247,14 +247,14 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                 yPos - mLineProgressBarWidth/2,
                 xPos - mProgressBarWidth,
                 yPos + mLineProgressBarWidth/2);
-        paint.setColor(getResources().getColor(R.color.percentage_line_color));
+        paint.setColor(getResources().getColor(R.color.school_text_color));
         canvas.drawRect(firstLine, paint);
 
         Rect secondLine = new Rect(xPos + mProgressBarWidth,
                 yPos - mLineProgressBarWidth/2,
                 xPos + mProgressBarWidth + offset,
                 yPos + mLineProgressBarWidth/2);
-        paint.setColor(getResources().getColor(R.color.percentage_line_color));
+        paint.setColor(getResources().getColor(R.color.my_score_text_color));
         canvas.drawRect(secondLine, paint);
 
     }

@@ -105,7 +105,7 @@
     <string name="average_by_subjet">Promedio por materia</string>
 
     <!--score fragment-->
-    <string name="comipems_2017_text">COMIPEMS 2017</string>
+    <string name="comipems_2017_text">Puntajes</string>
     <string name="school_text">ESCUELA</string>
     <string name="hits_text_2">ACIERTOS</string>
     <string name="not_exams_did_it">Por el momento no tienes examenes resueltos</string>

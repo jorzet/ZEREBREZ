@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
@@ -58,6 +59,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     private lateinit var mSuperButton : View
     private lateinit var mSuperButtonText : TextView
     private lateinit var mBePremiumContainer : View
+    private lateinit var mLoadingSuggestion : ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -77,6 +79,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         mSuperButton = rootView.findViewById(R.id.btn_super)
         mSuperButtonText = rootView.findViewById(R.id.btn_super_text)
         mBePremiumContainer = rootView.findViewById(R.id.rl_be_premium_container)
+        mLoadingSuggestion = rootView.findViewById(R.id.pb_loading_suggest)
 
 
         mQuestionTypeText.typeface = FontUtil.getNunitoRegular(context!!)
@@ -109,6 +112,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         }
 
         mBePremiumContainer.visibility = View.GONE
+        mLoadingSuggestion.visibility = View.VISIBLE
         requestGetUserTips()
 
         mBePremiumButton.setOnClickListener(mBePremiumButtonListener)
@@ -148,17 +152,21 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         if (user.isPremiumUser()) {
             requestGetTips()
         } else {
+            mLoadingSuggestion.visibility = View.GONE
             mBePremiumContainer.visibility = View.VISIBLE
         }
     }
 
     override fun onGetUserTipdFail(throwable: Throwable) {
         super.onGetUserTipdFail(throwable)
+        mLoadingSuggestion.visibility = View.GONE
         mBePremiumContainer.visibility = View.VISIBLE
     }
 
     override fun onGetTipsSuccess(tips: List<String>) {
         super.onGetTipsSuccess(tips)
+
+        mLoadingSuggestion.visibility = View.GONE
 
         val rand = Random()
         val randomTip = tips.get(rand.nextInt(tips.size))
@@ -172,6 +180,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
     override fun ongetTipsFail(throwable: Throwable) {
         super.ongetTipsFail(throwable)
+        mLoadingSuggestion.visibility = View.GONE
         mBePremiumContainer.visibility = View.VISIBLE
     }
 
