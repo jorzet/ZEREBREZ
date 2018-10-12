@@ -61,7 +61,7 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     private var updatingUser : Boolean = false
 
     // ProductID
-    private val productID = "android.test.canceled"
+    private val productID = "comipems"
 
     /*
      * Fragments

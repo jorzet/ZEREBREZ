@@ -104,6 +104,11 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
                                             user.setTimeStamp(timeStamp)
                                         }
 
+                                        if (premiumHash.containsKey(METHOD_KEY)) {
+                                            val method = premiumHash.get(METHOD_KEY) as String
+                                            user.setPayGayMethod(method)
+                                        }
+
                                     } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
                                         val selectedSchools = courseMap.get(key2) as ArrayList<Any>
                                         val schools = arrayListOf<School>()
