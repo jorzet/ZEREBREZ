@@ -171,7 +171,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             val mQuestions = arrayListOf<QuestionNewFormat>()
             var mLastKnowQuestion = false
             for (wrongQuestionId in mWrongQuestionIds) {
-                if (mLastKnowQuestion || wrongQuestionId.equals("p" + mQuestionId)) {
+                if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
                     val question = QuestionNewFormat()
                     question.questionId = "p" + wrongQuestionId
                     mQuestions.add(question)
@@ -712,6 +712,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {
         super.onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
         showLoading(false)
+        ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
+                DialogType.OK_DIALOG, this)!!
+                .show(supportFragmentManager!!, "notAbleNow")
         onBackPressed()
     }
 

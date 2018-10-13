@@ -199,7 +199,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             val view = LayoutInflater.from(context).inflate(R.layout.custom_wrong_question, null, false)
             val image : ImageView = view.findViewById(R.id.image)
 
-            val number = mQuestionList.get(i).questionId
+            val number = mQuestionList.get(i).questionId.replace("p","")
 
             // params for module
             val param = GridLayout.LayoutParams()

@@ -22,10 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
+import com.zerebrez.zerebrez.components.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.School
-import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 

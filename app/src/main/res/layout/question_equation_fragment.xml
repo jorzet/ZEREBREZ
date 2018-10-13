@@ -37,7 +37,7 @@
                     android:layout_below="@+id/tv_question"
                     android:layout_marginTop="5dp"/>
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                <com.zerebrez.zerebrez.components.NonScrollListView
                     android:id="@+id/nslv_equation_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                     android:layout_marginTop="30dp"
                     android:numColumns="1"
                     android:clickable="false">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                </com.zerebrez.zerebrez.components.NonScrollListView>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"

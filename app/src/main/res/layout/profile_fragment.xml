@@ -75,12 +75,12 @@
                 android:layout_below="@+id/iv_gray_line9"
                 android:orientation="vertical">
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                <com.zerebrez.zerebrez.components.NonScrollListView
                     android:id="@+id/nslv_schools_selected"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                </com.zerebrez.zerebrez.components.NonScrollListView>
 
                 <TextView
                     android:id="@+id/tv_not_selected_schools"
@@ -230,15 +230,25 @@
                     android:textColor="@color/black"
                     android:background="@drawable/edittext_profile_background" />
 
-                <Button
-                    android:id="@+id/btn_link_email"
+                <RelativeLayout
+                    android:id="@+id/btn_change_password"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:layout_below="@+id/et_password"
                     android:layout_marginTop="20dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/link_email_account_button_background"
-                    android:text="  Cambiar contraseña  "/>
+                    android:background="@drawable/link_email_account_button_background">
+
+                    <TextView
+                        android:id="@+id/tv_change_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="  Cambiar contraseña  "
+                        android:textSize="17sp"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 

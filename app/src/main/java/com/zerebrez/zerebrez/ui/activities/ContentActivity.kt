@@ -591,7 +591,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     }
 
     fun getUserProfile(): User? {
-        return this.mUser
+        if (::mUser.isInitialized) {
+            return this.mUser
+        } else {
+            return null
+        }
     }
 
 }

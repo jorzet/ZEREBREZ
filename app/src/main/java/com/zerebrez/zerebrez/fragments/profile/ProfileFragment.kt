@@ -27,7 +27,7 @@ import android.widget.*
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.NonScrollListView
+import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.adapters.SchoolListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.School
@@ -80,6 +80,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
      */
     private val SHOW_START = "show_start"
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SHOW_BACK_BUTTON : String = "show_back_button"
 
     /*
      * UI accessors
@@ -97,7 +98,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTermsAndPrivacy : View
     private lateinit var mEditSchoolsButton : View
     private lateinit var mEditSchoolsTextView : TextView
-    private lateinit var mLinkEmailButton : Button
+    private lateinit var mChangePasswordButton : View
+    private lateinit var mChangePasswordText : TextView
     private lateinit var mNotSelectedSchools : TextView
     private lateinit var mAllowMobileDataSwitch : Switch
     private lateinit var mAllowNotificationsSwitch : Switch
@@ -146,7 +148,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
         mLinkWithFacebookButton = rootView.findViewById(R.id.btn_facebook_login)
         mLinkWithGoogleButton = rootView.findViewById(R.id.btn_google_login)
-        mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
+        mChangePasswordButton = rootView.findViewById(R.id.btn_change_password)
+        mChangePasswordText = rootView.findViewById(R.id.tv_change_password)
         mIsLoggedInWithFacebookImage = rootView.findViewById(R.id.iv_is_loggedin_with_facebook)
         mIsLoggedInWithGoogleImage = rootView.findViewById(R.id.iv_is_loggedin_with_google)
         mLinktYourAccountsTextView = rootView.findViewById(R.id.tv_link_accounts_text)
@@ -161,7 +164,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mNotSelectedSchools.typeface = FontUtil.getNunitoSemiBold(context!!)
         mEditSchoolsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLinktYourAccountsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mLinkEmailButton.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mChangePasswordText.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLogOut.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
         mNotification.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -173,7 +176,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)
-        mLinkEmailButton.setOnClickListener(mLinkEmailButtonListener)
+        mChangePasswordButton.setOnClickListener(mLinkEmailButtonListener)
         mLinkWithFacebookButton.setOnClickListener(mLinkWithFacebookButtonListener)
         mLinkWithGoogleButton.setOnClickListener(mLinkWithGoogleButtonListener)
         mLogOut.setOnClickListener(mLogOutListener)
@@ -183,7 +186,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         //mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
         mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
-        mLinkEmailButton.setOnEditorActionListener(onSendFormListener)
+        //mChangePasswordButton.setOnEditorActionListener(onSendFormListener)
 
         // set notification
         val dataHelper = DataHelper(context!!)
@@ -260,7 +263,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 try {
                     val inputMethodManager = textView!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
-                    mLinkEmailButton.performClick()
+                    mChangePasswordButton.performClick()
                     action = true
                 } catch (exception : Exception) {
 
@@ -633,6 +636,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private fun goChooseSchoolsActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
+        intent.putExtra(SHOW_BACK_BUTTON, true)
         startActivityForResult(intent, BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)
     }
 

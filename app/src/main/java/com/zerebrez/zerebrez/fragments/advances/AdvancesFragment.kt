@@ -24,13 +24,11 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.AverageSubjectListAdapter
 import com.zerebrez.zerebrez.adapters.ExamScoreListAdapter
-import com.zerebrez.zerebrez.adapters.NonScrollListView
+import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
-import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
-import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 

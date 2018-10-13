@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zerebrez.zerebrez.adapters;
+package com.zerebrez.zerebrez.components;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -48,6 +48,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
     private int height;
 
     private int mHitsWidth;
+    private int mEmojiWidth;
     private int mLineCharWidth;
     private int mUsersHeight;
     private int mTextWidth;
@@ -74,6 +75,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         paint.setTextAlign(Paint.Align.CENTER);
 
         mHitsWidth = (int) getResources().getDimension(R.dimen.hits_width);
+        mEmojiWidth = (int) getResources().getDimension(R.dimen.emoji_width);
         mLineCharWidth = (int) getResources().getDimension(R.dimen.line_chart_width);
         mUsersHeight = (int) getResources().getDimension(R.dimen.users_height);
         mTextTopSize = (int) getResources().getDimension(R.dimen.text_top_size);
@@ -193,15 +195,15 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
         // draw read line
         if (userHits > usersAverageScore) {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mHappyEmojiIcon.setBounds(imageBounds);
             mHappyEmojiIcon.draw(canvas);
         } else if (userHits == usersAverageScore) {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mOkEmojiIcon.setBounds(imageBounds);
             mOkEmojiIcon.draw(canvas);
         } else {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mSadEmijiIcon.setBounds(imageBounds);
             mSadEmijiIcon.draw(canvas);
         }

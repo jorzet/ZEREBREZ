@@ -42,6 +42,7 @@
 
     <!--school score canvas-->
     <dimen name="hits_width">30dp</dimen>
+    <dimen name="emoji_width">20dp</dimen>
     <dimen name="users_height">30dp</dimen>
     <dimen name="line_chart_width">2dp</dimen>
 

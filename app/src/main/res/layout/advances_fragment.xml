@@ -171,13 +171,13 @@
                     android:textColor="@color/exams_text_color"
                     android:textSize="28sp"/>
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                <com.zerebrez.zerebrez.components.NonScrollListView
                     android:id="@+id/nslv_exams"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_exams"
                     android:layout_marginTop="30dp">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                </com.zerebrez.zerebrez.components.NonScrollListView>
 
                 <TextView
                     android:id="@+id/tv_not_exams_currently"
@@ -220,13 +220,13 @@
                     android:textColor="@color/average_by_subject_text_color"
                     android:textSize="28sp"/>
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
+                <com.zerebrez.zerebrez.components.NonScrollListView
                     android:id="@+id/nslv_average_by_subject"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_average_by_subject"
                     android:layout_marginTop="30dp">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                </com.zerebrez.zerebrez.components.NonScrollListView>
 
                 <TextView
                     android:id="@+id/tv_not_able_now"

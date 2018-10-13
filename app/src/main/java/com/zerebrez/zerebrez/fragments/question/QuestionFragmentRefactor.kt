@@ -30,12 +30,9 @@ import android.view.ViewGroup
 import android.widget.*
 //import com.nishant.math.MathView // uncomment if is needed
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.adapters.OptionQuestionAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Image
-import com.zerebrez.zerebrez.models.QuestionOption
-import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil

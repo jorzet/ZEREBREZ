@@ -108,7 +108,7 @@
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/rl_payment_text_image_container"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="50dp"
                 android:background="@drawable/green_button" >
 
                 <TextView
@@ -130,7 +130,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/btn_be_premium"
                 android:layout_marginTop="30dp"
-                android:background="@drawable/oranage_button" >
+                android:background="@drawable/oranage_button"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/btn_get_free_exams_questions_text"

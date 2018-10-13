@@ -67,6 +67,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      * tags
      */
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SHOW_BACK_BUTTON : String = "show_back_button"
     private val SELECTED_COURSE : String = "selected_course"
 
     /*
@@ -165,6 +166,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private fun goChooseSchoolActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, true)
+        intent.putExtra(SHOW_BACK_BUTTON, false)
         startActivity(intent)
         activity!!.finish()
     }
