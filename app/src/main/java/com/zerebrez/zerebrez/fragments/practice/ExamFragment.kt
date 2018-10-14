@@ -30,7 +30,6 @@ import com.zerebrez.zerebrez.adapters.ExamListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.User
-import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity

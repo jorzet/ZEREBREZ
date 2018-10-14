@@ -18,8 +18,9 @@
         <!-- DEFINE LIGHT THEME FOR DIALOG -->
     </style>
 
-    <style name="CustomTabTextSize" parent="TextAppearance.Design.Tab">
+    <style name="CustomTabTextSize">
         <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
 </resources>

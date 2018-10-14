@@ -28,10 +28,8 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SubjectListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
-import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.DialogType
-import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity

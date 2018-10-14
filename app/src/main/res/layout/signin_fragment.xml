@@ -84,10 +84,20 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="45dp"
                     android:text="I N G R E S A R"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:background="@drawable/signin_button" />
 
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_i_forgot_my_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rl_login_inputs"
+                android:text="Olvidé mi contraseña"
+                android:textSize="14sp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"/>
 
 
             <RelativeLayout
@@ -95,8 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/rl_login_inputs"
-                android:layout_marginTop="40dp">
+                android:layout_below="@+id/tv_i_forgot_my_password">
 
                 <TextView
                     android:id="@+id/tv_login_with"
@@ -104,9 +113,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp"
-                    android:text="INICIAR CON"
+                    android:text="I N I C I A R    C O N"
                     android:textColor="@color/white"
-                    android:textSize="17dp"/>
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:id="@+id/iv_gary_line2"
@@ -117,6 +126,7 @@
                     android:background="@color/white"/>
 
                 <LinearLayout
+                    android:id="@+id/ll_buttons_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/iv_gary_line2"
@@ -126,8 +136,8 @@
                     <Button
                         android:id="@+id/btn_facebook_login"
                         android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="30dp"
                         android:focusedByDefault="false"
                         android:background="@drawable/facebook_button_image"/>
 
@@ -135,14 +145,9 @@
                     <RelativeLayout
                         android:id="@+id/btn_google_login"
                         android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="30dp"
                         android:background="@drawable/google_button_image">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:src="@drawable/google_logo_icon"
-                            android:layout_centerHorizontal="true"/>
                         <ImageView
                             android:id="@+id/iv_is_loggedin_with_google"
                             android:layout_width="20dp"
@@ -156,6 +161,17 @@
 
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_support_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_buttons_container"
+                    android:text="@string/support_email_text"
+                    android:textSize="14sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="40dp"/>
 
             </RelativeLayout>
 

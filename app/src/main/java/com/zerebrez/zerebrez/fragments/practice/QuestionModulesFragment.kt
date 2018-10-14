@@ -161,7 +161,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             val number = mModuleList.get(i).getId().toString()
 
             text.text = number
-            text.typeface = FontUtil.getNunitoSemiBold(context!!)
+            text.typeface = FontUtil.getNunitoBold(context!!)
 
             // params for module
             val param = GridLayout.LayoutParams()
@@ -169,8 +169,8 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             if (number.equals("-1")) {
                 view.background = resources.getDrawable(R.drawable.empty_square)
                 text.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
+                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
                 param.bottomMargin = 2
                 param.rightMargin = 2
                 param.leftMargin = 2

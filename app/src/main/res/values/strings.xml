@@ -9,7 +9,7 @@
     <string name="get_knowladge_key_text">¡Obtén la llave\ndel conocimiento!</string>
     <string name="start_button_text">Comenzar</string>
     <string name="do_you_have_account_text">¿Ya tienes una cuenta?</string>
-    <string name="user_email_text">Usuario o correo</string>
+    <string name="user_email_text">Correo</string>
     <string name="password_text">Contraseña</string>
     <string name="singin_text">INGRESAR</string>
     <string name="singin_with">INICIAR CON</string>

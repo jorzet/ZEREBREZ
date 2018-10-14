@@ -18,6 +18,8 @@ package com.zerebrez.zerebrez.fragments.login
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +76,8 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mLoginAnotherProvidersView : View
     private lateinit var mLoadingProgresBar : ProgressBar
     private lateinit var mTextLoginWith : TextView
+    private lateinit var mForgotPassword : TextView
+    private lateinit var mSendEmail : TextView
 
     /*
      * Objects
@@ -101,15 +105,21 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mLoginAnotherProvidersView = rootView.findViewById(R.id.rl_login_other_provider)
         mLoadingProgresBar = rootView.findViewById(R.id.pb_loading)
         mTextLoginWith = rootView.findViewById(R.id.tv_login_with)
+        mForgotPassword = rootView.findViewById(R.id.tv_i_forgot_my_password)
+        mSendEmail = rootView.findViewById(R.id.tv_support_email)
 
-        mSinginButton.setTypeface(FontUtil.getNunitoSemiBold(context!!))
-        mTextLoginWith.setTypeface(FontUtil.getNunitoBold(context!!))
+        mSinginButton.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mTextLoginWith.typeface = FontUtil.getNunitoBold(context!!)
+        mForgotPassword.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
 
 
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)
         mSinginGoogleButton.setOnClickListener(mSinginGoogleButtonListener)
         mPasswordEditText.setOnEditorActionListener(onSendFormListener)
+        mForgotPassword.setOnClickListener(mForgotPasswordListener)
+        mSendEmail.setOnClickListener(mSendEmailListener)
 
         return rootView
     }
@@ -172,6 +182,38 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
             }
             return action
         }
+    }
+
+    private val mForgotPasswordListener = View.OnClickListener {
+
+    }
+
+    private val mSendEmailListener = View.OnClickListener {
+        goSendEmailActivity()
+    }
+
+    /*
+     * This method open the native mail app to send an email to soporte@zerebrez.com
+     */
+    private fun goSendEmailActivity() {
+        //val intent = Intent(activity, SendEmailActivity::class.java)
+        //activity!!.startActivity(intent)
+        val emailIntent = Intent(Intent.ACTION_SENDTO,
+                Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Aquí escribe tu mensaje" + "" +
+                "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
+        startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
+    }
+
+    /*
+     * This method returns the devices current API version
+     */
+    fun getAndroidVersion(): String {
+        val release = Build.VERSION.RELEASE
+        val sdkVersion = Build.VERSION.SDK_INT
+        return "Android SDK: $sdkVersion ($release)"
     }
 
     /*
