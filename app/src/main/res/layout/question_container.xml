@@ -59,11 +59,11 @@
         android:id="@+id/pb_questions_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
-        android:layout_height="3dp"
+        android:layout_height="2dp"
         android:layout_below="@+id/toolbar_question"
         android:indeterminate="false"
-        android:maxHeight="10dip"
-        android:minHeight="10dip"
+        android:maxHeight="4dip"
+        android:minHeight="4dip"
         android:progress="0"
         android:progressDrawable="@drawable/greenprogress" />
 

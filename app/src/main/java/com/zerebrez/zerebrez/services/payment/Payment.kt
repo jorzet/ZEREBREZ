@@ -67,7 +67,9 @@ class Payment(activity: Activity) : AbstractPendingRequest() {
                     override fun onComplete(task: Task<Boolean>) {
                         try {
                             val result = task.getResult(ApiException::class.java)
-                            onShowGooglePayment(result)
+                            if (result != null) {
+                                onShowGooglePayment(result)
+                            }
                         } catch (exception: ApiException) {
                         }
                     }

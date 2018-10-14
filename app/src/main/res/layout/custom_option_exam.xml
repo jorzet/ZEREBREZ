@@ -15,16 +15,15 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="50dp"
             android:src="@drawable/exam_icon"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/iv_exam"
             android:layout_toEndOf="@+id/iv_exam"
-            android:layout_marginLeft="30dp">
+            android:layout_marginStart="30dp">
 
             <TextView
                 android:id="@+id/tv_exam"
@@ -52,8 +51,8 @@
                     android:id="@+id/tv_correct"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_correct"
-                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/iv_correct"
+                    android:layout_marginStart="10dp"
                     android:layout_centerVertical="true"
                     android:text="1"
                     android:textColor="@color/exams_text_color2"
@@ -63,16 +62,16 @@
                     android:id="@+id/iv_incorrect"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_toRightOf="@+id/tv_correct"
-                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/tv_correct"
+                    android:layout_marginStart="20dp"
                     android:src="@drawable/cross_circle_icon"/>
 
                 <TextView
                     android:id="@+id/tv_incorrect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_incorrect"
-                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/iv_incorrect"
+                    android:layout_marginStart="10dp"
                     android:layout_centerVertical="true"
                     android:text="3"
                     android:textColor="@color/exams_text_color2"
@@ -101,8 +100,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/tv_question_number"
-                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/tv_question_number"
+                    android:layout_marginStart="20dp"
                     android:text="Preguntas"
                     android:textColor="@color/question_number_text_color"
                     android:textSize="15sp"/>

@@ -18,14 +18,24 @@ package com.zerebrez.zerebrez.fragments.question
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import com.facebook.login.LoginManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -46,6 +56,11 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     private val SHOW_START : String = "show_start"
 
     /*
+     *
+     */
+    private val TIME_DELAY : Long = 1200
+
+    /*
      * UI accessors
      */
     private lateinit var mQuestionTypeText : TextView
@@ -60,6 +75,11 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     private lateinit var mSuperButtonText : TextView
     private lateinit var mBePremiumContainer : View
     private lateinit var mLoadingSuggestion : ProgressBar
+
+    /*
+     * attributtes
+     */
+    private var mAdShowed : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -154,6 +174,30 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         } else {
             mLoadingSuggestion.visibility = View.GONE
             mBePremiumContainer.visibility = View.VISIBLE
+
+            // check if Ad is already showed
+            if (!mAdShowed) {
+                // get random number
+                val randomNumber = Math.random()
+                var rand = 0
+                if (randomNumber > 0.5) {
+                    rand = 1
+                }
+                // show random Ad
+                if (rand.equals(0)) {
+                    val mInterstitialAd = (activity as QuestionActivity).getInterstitialAd()
+                    if (mInterstitialAd != null && mInterstitialAd.isLoaded) {
+                        mInterstitialAd.show()
+                        mAdShowed = true
+                    }
+                } else {
+                    val mRewardedVideoAd = (activity as QuestionActivity).getRewardedVideoAd()
+                    if (mRewardedVideoAd != null && mRewardedVideoAd.isLoaded) {
+                        mRewardedVideoAd.show()
+                        mAdShowed = true
+                    }
+                }
+            }
         }
     }
 

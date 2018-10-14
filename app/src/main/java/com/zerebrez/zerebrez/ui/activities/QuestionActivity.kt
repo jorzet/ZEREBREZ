@@ -24,6 +24,14 @@ import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.question.*
 import com.zerebrez.zerebrez.models.Exam
@@ -43,7 +51,8 @@ import com.zerebrez.zerebrez.utils.FontUtil
  * jorzet.94@gmail.com
  */
 
-class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener {
+class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener,
+        RewardedVideoAdListener {
 
     /*
      * Tags
@@ -98,8 +107,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mModulesAndQuestionsSaved = false
     private var mWrongQuestionsSaver = false
     private var mShowPaymentFragment = false
-    private var mProgressByQuestion : Int = 0
-    private var mCurrentProgress : Int = 0
+    private var mProgressByQuestion : Float = 0.0F
+    private var mCurrentProgress : Float = 0.0F
 
     /*
      * Animation
@@ -115,6 +124,12 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private lateinit var mModuleList : List<Module>
     private lateinit var mExamList : List<Exam>
     private lateinit var currentFragment : Fragment
+
+    /*
+     * Ads Objects
+     */
+    private lateinit var mRewardedVideoAd: RewardedVideoAd
+    private lateinit var mInterstitialAd: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,6 +206,44 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId)
         }
 
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+        // Use an activity context to get the rewarded video instance.
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+        mRewardedVideoAd.rewardedVideoAdListener = this
+        // RequestAdd
+        loadRewardedVideoAd()
+
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        mInterstitialAd.adListener = object: AdListener() {
+            override fun onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when when the interstitial ad is closed.
+            }
+        }
+
+    }
+
+    private fun loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                AdRequest.Builder().build())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -340,7 +393,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     private fun showQuestion() {
         mCurrentProgress += mProgressByQuestion
-        mQuestionsProgress.progress = mCurrentProgress
+        mQuestionsProgress.progress = mCurrentProgress.toInt()
         currentFragment = QuestionFragmentRefactor()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
@@ -670,7 +723,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mQuestionsNewFormat = questions
         mModuleNumber.text = mModuleId.toString()
         mQuestiontypeText.text = "Módulo"
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -686,7 +739,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mQuestionsNewFormat = questions
         mModuleNumber.text = mExamId.toString()
         mQuestiontypeText.text = "Examen"
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -704,7 +757,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mQuestionsNewFormat.isNotEmpty()) {
             mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
         }
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -725,7 +778,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mQuestionsNewFormat.isNotEmpty()) {
             mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
         }
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -764,6 +817,58 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         } else {
             onBackPressed()
         }
+    }
+
+
+    /********************************************************************************/
+
+    fun getInterstitialAd() : InterstitialAd? {
+        if (::mInterstitialAd.isInitialized) {
+            return mInterstitialAd
+        } else {
+            return null
+        }
+    }
+
+    fun getRewardedVideoAd() : RewardedVideoAd? {
+        if (::mRewardedVideoAd.isInitialized) {
+            return mRewardedVideoAd
+        } else {
+            return null
+        }
+    }
+
+    override fun onRewarded(reward: RewardItem) {
+        //Toast.makeText(this, "onRewarded! currency: ${reward.type} amount: ${reward.amount}", Toast.LENGTH_SHORT).show()
+        // Reward the user.
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        //Toast.makeText(this, "onRewardedVideoAdLeftApplication", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdClosed() {
+        //Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(errorCode: Int) {
+        //Toast.makeText(this, "onRewardedVideoAdFailedToLoad", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        //Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        //Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoStarted() {
+        //Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoCompleted() {
+        //Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show()
     }
 
 }

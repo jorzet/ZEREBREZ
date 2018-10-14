@@ -25,14 +25,14 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
     private val mContext : Context = context
     private val mIsAnswer : Boolean = isAnswer
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): QuestionAnswerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionAnswerViewHolder {
         // infalte the item Layout
         val view: View
         if (mIsAnswer) {
-            view = LayoutInflater.from(parent!!.getContext())
+            view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.custom_answer_refactor, parent, false)
         } else {
-            view = LayoutInflater.from(parent!!.getContext())
+            view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.custom_question_refactor, parent, false)
         }
         // set the view's size, margins, paddings and layout parameters
@@ -46,7 +46,7 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
         return mQuestionNewFormat.questionData.size
     }
 
-    override fun onBindViewHolder(holder: QuestionAnswerViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: QuestionAnswerViewHolder, position: Int) {
         if (holder != null) {
             val currentQuestion : String
             val questionType : String

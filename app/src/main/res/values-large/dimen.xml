@@ -10,7 +10,7 @@
     <dimen name="comipems_image_height">300dp</dimen>
 
     <!--main container-->
-    <dimen name="height_top_tablayout">100dp</dimen>
+    <dimen name="height_top_tablayout">80dp</dimen>
 
     <!--question module fragment-->
     <dimen name="width_table">100dp</dimen>

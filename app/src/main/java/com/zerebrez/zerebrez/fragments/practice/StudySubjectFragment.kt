@@ -157,6 +157,10 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
 
     }
 
+    private fun goStudySubjectQuestionFragment() {
+
+    }
+
     private fun goQuestionActivity(selectedSubject : String) {
         val intent = Intent(activity, QuestionActivity::class.java)
         intent.putExtra(SELECTED_SUBJECT, selectedSubject)
