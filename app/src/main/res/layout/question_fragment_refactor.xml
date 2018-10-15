@@ -43,7 +43,6 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/iv_gray_line1"
-                    android:layout_marginTop="30dp"
                     android:clickable="false"/>
                 <!--
                 <ListView
@@ -181,7 +180,7 @@
                     android:id="@+id/rl_option_b"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginTop="10dp">
 
                     <RelativeLayout
                         android:id="@+id/rl_b_option"
@@ -272,7 +271,7 @@
                     android:id="@+id/rl_option_c"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginTop="10dp">
 
                     <RelativeLayout
                         android:id="@+id/rl_c_option"
@@ -362,7 +361,7 @@
                     android:id="@+id/rl_option_d"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginTop="10dp">
 
                     <RelativeLayout
                         android:id="@+id/rl_d_option"

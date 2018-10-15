@@ -236,9 +236,16 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                         if (json != null) {
                             val email = json.getString("email")
                             val birthday = json.getString("birthday")
-                            mUser = User()
-                            mUser.setEmail(email)
-                            mUser.setPassword(birthday)
+                            val user = getUser()
+                            if (user != null) {
+                                mUser = user
+                                mUser.setEmail(email)
+                                mUser.setPassword(birthday)
+                            } else {
+                                mUser = User()
+                                mUser.setEmail(email)
+                                mUser.setPassword(birthday)
+                            }
                             saveUser(mUser)
                             requestLinkAnonymousUserWithFacebookProvider(loginResult.accessToken)
                         } else {
@@ -535,9 +542,17 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val credential = GoogleAuthProvider.getCredential(idToken, null);
         val email = account.getEmail()
         val randomPass = account.getId()
-        mUser = User()
-        mUser.setEmail(email!!)
-        mUser.setPassword(randomPass!!)
+        val user = getUser()
+        if (user != null) {
+            mUser = user
+            mUser.setEmail(email!!)
+            mUser.setPassword(randomPass!!)
+        } else {
+            mUser = User()
+            mUser.setEmail(email!!)
+            mUser.setPassword(randomPass!!)
+        }
+
         saveUser(mUser)
         requestLinkAnonymousUserWithGoogleProvider(credential)
     }

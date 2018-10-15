@@ -167,78 +167,79 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         outAnimation = AlphaAnimation(1f, 0f)
         outAnimation.duration = 200
 
-        mCourse = intent.getStringExtra(CURRENT_COURSE)
-        mModuleId = intent.getIntExtra(MODULE_ID, -1)
-        mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
-        mExamId = intent.getIntExtra(EXAM_ID, -1)
-        isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
-        isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
-        isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
-        isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
+        if (intent != null) {
+            mCourse = intent.getStringExtra(CURRENT_COURSE)
+            mModuleId = intent.getIntExtra(MODULE_ID, -1)
+            mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
+            mExamId = intent.getIntExtra(EXAM_ID, -1)
+            isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
+            isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
+            isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
+            isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
 
-        if (isFromSubjectQuestionFragment) {
-            showLoading(true)
-            val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
-            requestGetQuestionsNewFormatBySubject(mSelectedSubject)
-        } else if (isFromWrongQuestionFragment) {
-            showLoading(true)
-            val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
-            val mQuestions = arrayListOf<QuestionNewFormat>()
-            var mLastKnowQuestion = false
-            for (wrongQuestionId in mWrongQuestionIds) {
-                if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
-                    val question = QuestionNewFormat()
-                    question.questionId = "p" + wrongQuestionId
-                    mQuestions.add(question)
-                    mLastKnowQuestion = true
+            if (isFromSubjectQuestionFragment) {
+                showLoading(true)
+                val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
+                requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+            } else if (isFromWrongQuestionFragment) {
+                showLoading(true)
+                val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
+                val mQuestions = arrayListOf<QuestionNewFormat>()
+                var mLastKnowQuestion = false
+                for (wrongQuestionId in mWrongQuestionIds) {
+                    if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
+                        val question = QuestionNewFormat()
+                        question.questionId = "p" + wrongQuestionId
+                        mQuestions.add(question)
+                        mLastKnowQuestion = true
+                    }
+                }
+                //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
+                requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions)
+                //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
+            } else if (isFromExamFragment) {
+                showLoading(true)
+                //requestGetQuestionsByExamIdRefactor(mExamId)
+                requestGetQuestionsNewFormatByExamIdRefactor(mExamId)
+            } else {
+                showLoading(true)
+                //requestGetQuestionsByModuleIdRefactor(mModuleId)
+                requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId)
+            }
+
+            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+            // Use an activity context to get the rewarded video instance.
+            mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+            mRewardedVideoAd.rewardedVideoAdListener = this
+            // RequestAdd
+            loadRewardedVideoAd()
+
+            mInterstitialAd = InterstitialAd(this)
+            mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    // Code to be executed when an ad finishes loading.
+                }
+
+                override fun onAdFailedToLoad(errorCode: Int) {
+                    // Code to be executed when an ad request fails.
+                }
+
+                override fun onAdOpened() {
+                    // Code to be executed when the ad is displayed.
+                }
+
+                override fun onAdLeftApplication() {
+                    // Code to be executed when the user has left the app.
+                }
+
+                override fun onAdClosed() {
+                    // Code to be executed when when the interstitial ad is closed.
                 }
             }
-            //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
-            requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions)
-            //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
-        } else if (isFromExamFragment) {
-            showLoading(true)
-            //requestGetQuestionsByExamIdRefactor(mExamId)
-            requestGetQuestionsNewFormatByExamIdRefactor(mExamId)
-        } else {
-            showLoading(true)
-            //requestGetQuestionsByModuleIdRefactor(mModuleId)
-            requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId)
         }
-
-        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
-        // Use an activity context to get the rewarded video instance.
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
-        mRewardedVideoAd.rewardedVideoAdListener = this
-        // RequestAdd
-        loadRewardedVideoAd()
-
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
-        mInterstitialAd.adListener = object: AdListener() {
-            override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
-
-            override fun onAdFailedToLoad(errorCode: Int) {
-                // Code to be executed when an ad request fails.
-            }
-
-            override fun onAdOpened() {
-                // Code to be executed when the ad is displayed.
-            }
-
-            override fun onAdLeftApplication() {
-                // Code to be executed when the user has left the app.
-            }
-
-            override fun onAdClosed() {
-                // Code to be executed when when the interstitial ad is closed.
-            }
-        }
-
     }
 
     private fun loadRewardedVideoAd() {

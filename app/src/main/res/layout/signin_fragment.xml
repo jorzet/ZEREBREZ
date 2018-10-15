@@ -87,25 +87,24 @@
                     android:textSize="18sp"
                     android:background="@drawable/signin_button" />
 
+                <TextView
+                    android:id="@+id/tv_i_forgot_my_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btn_login"
+                    android:text="Olvidé mi contraseña"
+                    android:textSize="14sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"/>
+
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tv_i_forgot_my_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/rl_login_inputs"
-                android:text="Olvidé mi contraseña"
-                android:textSize="14sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"/>
-
 
             <RelativeLayout
                 android:id="@+id/rl_login_other_provider"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/tv_i_forgot_my_password">
+                android:layout_below="@+id/rl_login_inputs">
 
                 <TextView
                     android:id="@+id/tv_login_with"

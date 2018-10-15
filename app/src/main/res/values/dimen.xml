@@ -5,6 +5,10 @@
     <dimen name="secundary_image_width">150dp</dimen>
     <dimen name="secundary_image_height">250dp</dimen>
 
+    <!--course-->
+    <dimen name="course_image_width">50dp</dimen>
+    <dimen name="course_image_height">90dp</dimen>
+
     <!--comipems fragment-->
     <dimen name="comipems_image_width">150dp</dimen>
     <dimen name="comipems_image_height">250dp</dimen>

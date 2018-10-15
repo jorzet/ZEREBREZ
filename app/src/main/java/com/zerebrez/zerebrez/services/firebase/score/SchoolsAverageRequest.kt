@@ -88,43 +88,45 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                         if (map.containsKey(PROFILE_KEY)) {
                             val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
-                            val course = profileMap.get(COURSE_KEY) as String
+                            if (profileMap.containsKey(COURSE_KEY)) {
+                                val course = profileMap.get(COURSE_KEY) as String
 
-                            user.setCourse(course)
-                            val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
+                                user.setCourse(course)
+                                val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
 
-                            for (key2 in courseMap.keys) {
-                                if (key2.equals(PREMIUM_KEY)) {
+                                for (key2 in courseMap.keys) {
+                                    if (key2.equals(PREMIUM_KEY)) {
 
-                                    val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
+                                        val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
-                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                        user.setPremiumUser(isPremium)
-                                    }
-
-                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                        user.setTimeStamp(timeStamp)
-                                    }
-
-                                } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
-                                    val selectedSchools = courseMap.get(key2) as ArrayList<Any>
-                                    val schools = arrayListOf<School>()
-                                    Log.d(TAG, "profile data ------ " + selectedSchools.size)
-                                    for (i in 0..selectedSchools.size - 1) {
-                                        val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String, String>
-                                        val school = School()
-                                        if (institute.containsKey(INSTITUTE_ID_KEY)) {
-                                            school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))
+                                        if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                            val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                            user.setPremiumUser(isPremium)
                                         }
 
-                                        if (institute.containsKey(SCHOOL_ID_KEY)) {
-                                            school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG, "")))
+                                        if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                            val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                            user.setTimeStamp(timeStamp)
                                         }
-                                        schools.add(school)
+
+                                    } else if (key2.equals(SELECTED_SCHOOLS_KEY)) {
+                                        val selectedSchools = courseMap.get(key2) as ArrayList<Any>
+                                        val schools = arrayListOf<School>()
+                                        Log.d(TAG, "profile data ------ " + selectedSchools.size)
+                                        for (i in 0..selectedSchools.size - 1) {
+                                            val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String, String>
+                                            val school = School()
+                                            if (institute.containsKey(INSTITUTE_ID_KEY)) {
+                                                school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))
+                                            }
+
+                                            if (institute.containsKey(SCHOOL_ID_KEY)) {
+                                                school.setSchoolId(Integer(institute.get(SCHOOL_ID_KEY)!!.replace(SCHOOL_TAG, "")))
+                                            }
+                                            schools.add(school)
+                                        }
+                                        user.setSelectedShools(schools)
                                     }
-                                    user.setSelectedShools(schools)
                                 }
                             }
                         }

@@ -55,6 +55,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
+import com.zerebrez.zerebrez.BuildConfig
 import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.User
@@ -624,7 +625,22 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         val emailIntent = Intent(Intent.ACTION_SENDTO,
                 Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        var userUUID = ""
+        var userEmail = ""
+        val versionName = BuildConfig.VERSION_NAME
+        if (userFirebase != null) {
+            userUUID = userFirebase.uid
+            if (userFirebase.email != null && !userFirebase.email.equals("")) {
+                userEmail = userFirebase.email!!
+            } else {
+                userEmail = mEmail.text.toString()
+            }
+        }
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Versión app: " + versionName +
+                "\n Cuenta: " + userUUID +
+                "\n Correo: " + userEmail +
                 "\n\n\n Aquí escribe tu mensaje" + "" +
                 "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
         startActivity(Intent.createChooser(emailIntent, "Enviando email..."))

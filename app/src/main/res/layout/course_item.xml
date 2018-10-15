@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_course_container"
+    android:layout_width="match_parent"
+    android:layout_height="130dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_image_course_container"
+        android:layout_width="@dimen/course_image_width"
+        android:layout_height="@dimen/course_image_height"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp">
+
+        <ImageView
+            android:id="@+id/iv_course_icon"
+            android:layout_width="@dimen/course_image_width"
+            android:layout_height="@dimen/course_image_height"
+            android:src="@drawable/comipems_init_icon"
+            android:layout_centerVertical="true" />
+
+        <ProgressBar
+            android:id="@+id/pb_loading_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="@color/white"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_course_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/split_comipems_text"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="15dp"/>
+
+</RelativeLayout>
