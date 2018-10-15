@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.AverageSubjectListAdapter
@@ -53,6 +54,11 @@ class AdvancesFragment : BaseContentFragment() {
     private lateinit var mAnsweredQuestionTextView: TextView
     private lateinit var mExamsTextView: TextView
     private lateinit var mAverageBySubjectTextView: TextView
+    private lateinit var mLoadingNumAnsweredQuestions: ProgressBar
+    private lateinit var mLoadingHitssUser: ProgressBar
+    private lateinit var mLoadingMissesUser: ProgressBar
+    private lateinit var mLoadingUserExamsProgressBar: ProgressBar
+    private lateinit var mLoadingAverageBySubject: ProgressBar
 
     /*
      * adapters
@@ -79,6 +85,12 @@ class AdvancesFragment : BaseContentFragment() {
         mExamsTextView = rootView.findViewById(R.id.tv_exams)
         mAverageBySubjectTextView = rootView.findViewById(R.id.tv_average_by_subject)
 
+        mLoadingNumAnsweredQuestions = rootView.findViewById(R.id.pb_loading_num_answered_questions)
+        mLoadingHitssUser = rootView.findViewById(R.id.pb_loading_hits_user)
+        mLoadingMissesUser = rootView.findViewById(R.id.pb_loading_misses_user)
+        mLoadingUserExamsProgressBar = rootView.findViewById(R.id.pb_loading_user_exams)
+        mLoadingAverageBySubject = rootView.findViewById(R.id.pb_loading_average_by_subject)
+
         mQuestionTextView.typeface = FontUtil.getNunitoBold(context!!)
         mTotalQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mAnsweredQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -90,9 +102,14 @@ class AdvancesFragment : BaseContentFragment() {
 
         val user = (activity as ContentActivity).getUserProfile()
         if (user != null && !user.getCourse().equals("")) {
+            mLoadingNumAnsweredQuestions.visibility = View.VISIBLE
+            mLoadingHitssUser.visibility = View.VISIBLE
+            mLoadingMissesUser.visibility = View.VISIBLE
+            mLoadingUserExamsProgressBar.visibility = View.VISIBLE
             requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
         }
 
+        mLoadingAverageBySubject.visibility = View.VISIBLE
         requestGetAverageSubjects()
 
         return rootView
@@ -106,6 +123,7 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
         if (context != null) {
+
             val mUser = (activity as ContentActivity).getUserProfile()
             if (mUser != null) {
                 mUser.setAnsweredQuestionsNewFormat(user.getAnsweredQuestionNewFormat())
@@ -121,6 +139,11 @@ class AdvancesFragment : BaseContentFragment() {
                 else
                     misses ++
             }
+
+            mLoadingNumAnsweredQuestions.visibility = View.GONE
+            mLoadingHitssUser.visibility = View.GONE
+            mLoadingMissesUser.visibility = View.GONE
+
             val total = hits + misses
             mTotalQuestionTextView.text = total.toString()
             mHitsNumberTextView.text = hits.toString()
@@ -129,10 +152,11 @@ class AdvancesFragment : BaseContentFragment() {
             val answeredExams = user.getAnsweredExams()
 
             if (answeredExams.isEmpty()) {
+                mLoadingUserExamsProgressBar.visibility = View.GONE
                 mExamList.visibility = View.GONE
                 mNotExamsDidIt.visibility = View.VISIBLE
             } else {
-
+                mLoadingUserExamsProgressBar.visibility = View.GONE
                 examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
                 mExamList.adapter = examScoreListAdapter
             }
@@ -144,6 +168,12 @@ class AdvancesFragment : BaseContentFragment() {
 
     override fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {
         super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
+
+        mLoadingNumAnsweredQuestions.visibility = View.GONE
+        mLoadingHitssUser.visibility = View.GONE
+        mLoadingMissesUser.visibility = View.GONE
+        mLoadingUserExamsProgressBar.visibility = View.GONE
+
         mExamList.visibility = View.GONE
         mNotExamsDidIt.visibility = View.VISIBLE
         if (activity != null)
@@ -154,6 +184,7 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetAverageSubjectsSuccess(subjects2)
 
         if (context != null) {
+            mLoadingAverageBySubject.visibility = View.GONE
             if (subjects2.isEmpty()) {
                 // TODO it is hardcoded
                 val subjects = arrayListOf<Subject>()
@@ -225,6 +256,7 @@ class AdvancesFragment : BaseContentFragment() {
 
         if (context != null) {
             // TODO it is hardcoded
+            mLoadingAverageBySubject.visibility = View.GONE
             val subjects = arrayListOf<Subject>()
 
             val subject1 = Subject()

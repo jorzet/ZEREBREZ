@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.models.Course
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
+import com.zerebrez.zerebrez.utils.ColorUtils
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.course_item.view.*
 import kotlinx.android.synthetic.main.custom_option_exam.view.*
@@ -46,12 +47,6 @@ class CourseListAdapter (context : Context, courses : List<Course>) : BaseAdapte
     private val mContext: Context = context
     private val mCourses: List<Course> = courses
 
-    val colors = listOf(mContext.resources.getColor(R.color.comipems_background),
-            mContext.resources.getColor(R.color.secundary_background),
-            mContext.resources.getColor(R.color.unam_1_background),
-            mContext.resources.getColor(R.color.unam_2_background),
-            mContext.resources.getColor(R.color.ipn_1_background))
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
         val currentCourse = getItem(position) as Course
@@ -66,7 +61,8 @@ class CourseListAdapter (context : Context, courses : List<Course>) : BaseAdapte
             courseView.tv_course_text.typeface = FontUtil.getNunitoSemiBold(mContext)
 
             // set background color course
-            courseView.rl_course_container.setBackgroundColor(colors[position])
+            val color = ColorUtils.mCourseColors[position%ColorUtils.mCourseColors.size]
+            courseView.rl_course_container.setBackgroundColor(mContext.resources.getColor(color))
 
             // download and set course image
             downloadToImageView(currentCourse.image, courseView.iv_course_icon, courseView.pb_loading_course)

@@ -24,6 +24,7 @@ import android.widget.BaseAdapter
 import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.utils.ColorUtils
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_exam.view.*
 
@@ -55,9 +56,11 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
         examView.tv_hits_number.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         // generate random color
-        val color = ColorGenerator.MATERIAL.getColor(getItem(position))
+        //val color = ColorGenerator.MATERIAL.getColor(getItem(position))
 
-        examView.rl_background.setBackgroundColor(color)
+        val color = ColorUtils.mExamColors[position%ColorUtils.mExamColors.size]
+
+        examView.rl_background.setBackgroundColor(mContext.resources.getColor(color))
 
         return examView
     }

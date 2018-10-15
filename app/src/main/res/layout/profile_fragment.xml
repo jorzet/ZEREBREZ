@@ -75,28 +75,41 @@
                 android:layout_below="@+id/iv_gray_line9"
                 android:orientation="vertical">
 
-                <com.zerebrez.zerebrez.components.NonScrollListView
-                    android:id="@+id/nslv_schools_selected"
+                <RelativeLayout
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="100dp"
                     android:layout_marginTop="10dp">
-                </com.zerebrez.zerebrez.components.NonScrollListView>
+                    <ProgressBar
+                        android:id="@+id/pb_loading_user_schools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminateTint="@color/com_facebook_blue"
+                        android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/tv_not_selected_schools"
-                    android:layout_width="280dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="@string/not_selected_schools_text"
-                    android:textColor="@color/not_selected_schools_text_color"
-                    android:textSize="15sp"
-                    android:visibility="gone"/>
+                    <com.zerebrez.zerebrez.components.NonScrollListView
+                        android:id="@+id/nslv_schools_selected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </com.zerebrez.zerebrez.components.NonScrollListView>
+
+                    <TextView
+                        android:id="@+id/tv_not_selected_schools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:text="@string/not_selected_schools_text"
+                        android:textColor="@color/not_selected_schools_text_color"
+                        android:textSize="15sp"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
 
                 <RelativeLayout
                     android:layout_width="280dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="55dp">
                     <RelativeLayout
                         android:id="@+id/btn_change_schools"
                         android:layout_width="160dp"
@@ -115,7 +128,7 @@
                             android:textSize="17sp"
                             android:textColor="@color/white"/>
                     </RelativeLayout>
-            </RelativeLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 

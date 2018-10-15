@@ -113,6 +113,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTimeTextView: TextView
     private lateinit var mMobileDataTextView: TextView
     private lateinit var mTermsAndPrivacyTextView: TextView
+    private lateinit var mLoadingUserSchoolsProgressBar: ProgressBar
 
     /*
      * Adapters
@@ -158,6 +159,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mTimeTextView = rootView.findViewById(R.id.tv_time)
         //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
+        mLoadingUserSchoolsProgressBar = rootView.findViewById(R.id.pb_loading_user_schools)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
         mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -706,6 +708,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             saveUser(user)
             val mSchools = user.getSelectedSchools()
 
+            mLoadingUserSchoolsProgressBar.visibility = View.VISIBLE
             requestGetUserSchools(mSchools)
 
             val course = user.getCourse()
@@ -733,6 +736,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
             val user = getUser()
             if (user != null) {
+
+                mLoadingUserSchoolsProgressBar.visibility = View.GONE
                 user.setSelectedShools(schools)
                 saveUser(user)
                 val updatedSchools = arrayListOf<School>()
@@ -770,6 +775,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 mEditSchoolsButton.visibility = View.VISIBLE
             }
         } else {
+            mLoadingUserSchoolsProgressBar.visibility = View.GONE
             mEditSchoolsButton.visibility = View.VISIBLE
             mEditSchoolsTextView.text = "Escoger"
             mSelectedSchoolsList.visibility = View.GONE

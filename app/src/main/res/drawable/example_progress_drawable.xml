@@ -4,8 +4,8 @@
         <shape>
             <solid android:color="@color/physics_subject_color" />
             <size
-                android:height="15dp"
-                android:width="15dp" />
+                android:height="10dp"
+                android:width="10dp" />
             <corners android:radius="10dp" />
         </shape>
     </item>
@@ -18,8 +18,8 @@
         <shape>
             <solid android:color="@color/background" />
             <size
-                android:height="15dp"
-                android:width="15dp" />
+                android:height="10dp"
+                android:width="10dp" />
             <corners android:radius="10dp" />
         </shape>
     </item>
