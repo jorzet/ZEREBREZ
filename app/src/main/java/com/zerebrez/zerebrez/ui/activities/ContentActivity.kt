@@ -49,6 +49,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.zerebrez.zerebrez.fragments.practice.StudySubjectFragment
+import com.zerebrez.zerebrez.fragments.practice.StudySubjectQuestionsFragment
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages

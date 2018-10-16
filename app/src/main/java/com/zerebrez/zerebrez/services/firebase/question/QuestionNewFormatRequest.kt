@@ -208,6 +208,17 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
+    fun requestGetSubjectQuestionsNewFormatBySubjectQuestionId(subjectQuestionNewFormatIds : List<QuestionNewFormat>) {
+        if (subjectQuestionNewFormatIds.isNotEmpty()) {
+            mQuestionSize = subjectQuestionNewFormatIds.size
+            mQuestions = subjectQuestionNewFormatIds
+            requestQuestionsNewFormat()
+        } else {
+            val error = GenericError()
+            onRequestLietenerFailed.onFailed(error)
+        }
+    }
+
     fun requestGetWrongQuestionsNewFormatByQuestionId(wrongQuestionNewFormatIds : List<QuestionNewFormat>) {
 
         if (wrongQuestionNewFormatIds.isNotEmpty()) {

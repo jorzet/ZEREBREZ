@@ -40,4 +40,10 @@
         android:src="@drawable/to_bottom_icon"
         android:visibility="gone"/>
 
+    <FrameLayout
+        android:id="@+id/study_questions_subject_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
 </RelativeLayout>

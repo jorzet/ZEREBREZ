@@ -643,4 +643,34 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {}
     open fun onGetSubjectsFail(throwable: Throwable) {}
 
+    fun requestGetQuestionsNewFormatBySubject(subject: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
+            override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
+                onGetQuestionsNewFormatBySubjectSuccess(questions)
+            }
+
+            override fun onGetQuestionsNewFormatBySubjectError(throwable: Throwable) {
+                onGetQuestionsNewFormatBySubjectFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
+    open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
+
+    fun requestGetFreeSubjectsQuestionsRefactor() {
+        mRequestManager.requestGetFreeSubjectsQuestionsRefactor(object : RequestManager.OnGetFreeSubjectsQuestionsListener {
+            override fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Int) {
+                onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects)
+            }
+
+            override fun onGetFreeSubjectsQuestionsError(throwable: Throwable) {
+                onGetFreeSubjectsQuestionsFail(throwable)
+            }
+
+        })
+    }
+    open fun onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects : Int) {}
+    open fun onGetFreeSubjectsQuestionsFail(throwable: Throwable) {}
+
 }

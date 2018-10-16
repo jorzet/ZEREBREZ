@@ -601,6 +601,22 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetSchoolsFail(throwable: Throwable) {}
 
 
+    fun requestGetQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat: List<QuestionNewFormat>) {
+        mRequestManager.requestGetQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat, object : RequestManager.OnGetSubjectQuestionsNewFormatBySubjectQuestionIdListener {
+            override fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdLoaded(questions: List<QuestionNewFormat>) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions)
+            }
+
+            override fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdError(throwable: Throwable) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable)
+            }
+
+        })
+    }
+
+    open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {}
+    open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {}
+
     override fun onConfirmationCancel() {
 
     }

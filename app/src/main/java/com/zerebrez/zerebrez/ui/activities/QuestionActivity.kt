@@ -71,6 +71,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val HITS_EXTRA = "hits_extra"
     private val MISSES_EXTRA = "misses_extra"
     private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
+    private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
 
     /*
      * UI accessors
@@ -179,8 +180,20 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
             if (isFromSubjectQuestionFragment) {
                 showLoading(true)
-                val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
-                requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+                //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
+                //requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+                val mSubjectQuestionIds = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<Int>
+                val mQuestions = arrayListOf<QuestionNewFormat>()
+                var mLastKnowQuestion = false
+                for (subjectQuestionId in mSubjectQuestionIds) {
+                    if (mLastKnowQuestion || subjectQuestionId.equals(mQuestionId)) {
+                        val question = QuestionNewFormat()
+                        question.questionId = "p" + subjectQuestionId
+                        mQuestions.add(question)
+                        mLastKnowQuestion = true
+                    }
+                }
+                requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions)
             } else if (isFromWrongQuestionFragment) {
                 showLoading(true)
                 val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
@@ -765,6 +778,27 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {
         super.onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
+        showLoading(false)
+        ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
+                DialogType.OK_DIALOG, this)!!
+                .show(supportFragmentManager!!, "notAbleNow")
+        onBackPressed()
+    }
+
+    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {
+        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions)
+        mQuestionsNewFormat = questions
+        mModuleNumber.text = ":)"
+        if (mQuestionsNewFormat.isNotEmpty()) {
+            mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
+        }
+        mProgressByQuestion = 100 / questions.size.toFloat()
+        showQuestion()
+        showLoading(false)
+    }
+
+    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {
+        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable)
         showLoading(false)
         ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
                 DialogType.OK_DIALOG, this)!!

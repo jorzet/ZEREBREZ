@@ -64,6 +64,15 @@
                 </GridLayout>
 
             </RelativeLayout>
+
         </RelativeLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_question_subjects"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/com_facebook_blue"
+        android:visibility="gone"/>
 </RelativeLayout>

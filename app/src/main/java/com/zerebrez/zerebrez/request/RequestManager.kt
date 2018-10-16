@@ -34,6 +34,7 @@ import com.zerebrez.zerebrez.services.firebase.question.QuestionsRequest
 import com.zerebrez.zerebrez.services.firebase.question.TipsRequest
 import com.zerebrez.zerebrez.services.firebase.score.ExamsScoreRequest
 import com.zerebrez.zerebrez.services.firebase.score.SchoolsAverageRequest
+import com.zerebrez.zerebrez.services.firebase.subject.SubjectQuestionRequest
 import com.zerebrez.zerebrez.services.firebase.subject.SubjectRequest
 
 /**
@@ -1253,6 +1254,54 @@ class RequestManager(activity : Activity) {
     interface OnGetSubjectsListener {
         fun onGetSubjectsLoaded(subjects: List<SubjectRefactor>)
         fun onGetSubjectsError(throwable: Throwable)
+    }
+
+    fun requestGetFreeSubjectsQuestionsRefactor(onGetFreeSubjectsQuestionsListener: OnGetFreeSubjectsQuestionsListener) {
+        val courseRequest = SubjectQuestionRequest(mActivity)
+
+        courseRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetFreeSubjectsQuestionsListener.onGetFreeSubjectsQuestionsLoaded(result as Int)
+            }
+        })
+
+        courseRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetFreeSubjectsQuestionsListener.onGetFreeSubjectsQuestionsError(result)
+            }
+        })
+
+        courseRequest.requestGetFreeSubjectsQuestionsRefactor()
+    }
+
+    interface OnGetFreeSubjectsQuestionsListener {
+        fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Int)
+        fun onGetFreeSubjectsQuestionsError(throwable: Throwable)
+    }
+
+    fun requestGetQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat: List<QuestionNewFormat>, onGetSubjectQuestionsNewFormatBySubjectQuestionIdListener: OnGetSubjectQuestionsNewFormatBySubjectQuestionIdListener) {
+        val questionsRequest = QuestionNewFormatRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdListener
+                        .OnGetSubjectQuestionsNewFormatBySubjectQuestionIdLoaded(result as List<QuestionNewFormat>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdListener
+                        .OnGetSubjectQuestionsNewFormatBySubjectQuestionIdError(result)
+            }
+        })
+
+        questionsRequest.requestGetSubjectQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat)
+    }
+
+    interface OnGetSubjectQuestionsNewFormatBySubjectQuestionIdListener {
+        fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdLoaded(questions: List<QuestionNewFormat>)
+        fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdError(throwable: Throwable)
     }
 
 }
