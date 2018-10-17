@@ -115,6 +115,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         val isAfterExam = (activity as QuestionActivity).areExamsAndQuestionsSaved()
         val isAfterModules = (activity as QuestionActivity).areModulesAndQuestionsSaved()
         val isAfterWrongQuestions = (activity as QuestionActivity).areWrongQuestionsSaved()
+        val isAfterSubjectQuestions = (activity as QuestionActivity).areSubjectQuestionsSaved()
 
         mHitsNumber.text = (activity as QuestionActivity).getCorrectQuestions().toString()
         mMissesNumber.text = (activity as QuestionActivity).getIncorrectQuestion().toString()
@@ -127,6 +128,8 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         } else if (isAfterExam) {
             val examId = (activity as QuestionActivity).getExamId()
             mQuestionTypeText.text = "Examen ${examId}"
+        } else if (isAfterSubjectQuestions) {
+            mQuestionTypeText.text = (activity as QuestionActivity).getSubject()
         } else if (isAfterWrongQuestions) {
             mQuestionTypeText.text = "Incorrectas"
         }

@@ -41,7 +41,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val numOfQuestions = post as Int
+                    val numOfQuestions = post as Long
 
                     onRequestListenerSucces.onSuccess(numOfQuestions)
                 } else {

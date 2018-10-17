@@ -72,6 +72,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val MISSES_EXTRA = "misses_extra"
     private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
     private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
+    private val SUBJECT_EXTRA : String = "subject_extra"
 
     /*
      * UI accessors
@@ -92,6 +93,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     /*
      * Variables
      */
+    private var mSubject : String = ""
     private var mCourse : String = ""
     private var mModuleId : Int = 0
     private var mQuestionId : Int = 0
@@ -106,7 +108,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var resetExpandedButton : Boolean = false
     private var mExamAnsQuestionsSaved = false
     private var mModulesAndQuestionsSaved = false
-    private var mWrongQuestionsSaver = false
+    private var mWrongQuestionsSaved = false
+    private var mSubjectQuestionsSaved = false
     private var mShowPaymentFragment = false
     private var mProgressByQuestion : Float = 0.0F
     private var mCurrentProgress : Float = 0.0F
@@ -183,6 +186,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
                 //requestGetQuestionsNewFormatBySubject(mSelectedSubject)
                 val mSubjectQuestionIds = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<Int>
+                mSubject = intent.getStringExtra(SUBJECT_EXTRA)
                 val mQuestions = arrayListOf<QuestionNewFormat>()
                 var mLastKnowQuestion = false
                 for (subjectQuestionId in mSubjectQuestionIds) {
@@ -297,7 +301,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     private val mCloseQuestionListener = View.OnClickListener {
         if (mCurrentQuestion > 0) {
-            if (isFromWrongQuestionFragment) {
+            if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
                 } else {
@@ -351,6 +355,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         } else {
             if (isFromWrongQuestionFragment) {
                 saveWrongQuestion()
+            } else if (isFromSubjectQuestionFragment) {
+                saveQuestionSubject()
             } else if (isFromExamFragment) {
                 saveExamsAndQuestions()
             } else {
@@ -546,10 +552,16 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     }
 
+    private fun saveQuestionSubject() {
+        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        mSubjectQuestionsSaved = true
+        showQuestionsCompleteFragment()
+    }
+
     private fun saveWrongQuestion() {
         //requestSendAnsweredQuestions(mQuestions, mCourse)
         requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
-        mWrongQuestionsSaver = true
+        mWrongQuestionsSaved = true
         showQuestionsCompleteFragment()
     }
 
@@ -635,8 +647,16 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         return this.mExamAnsQuestionsSaved
     }
 
+    fun areSubjectQuestionsSaved() : Boolean {
+        return this.mSubjectQuestionsSaved
+    }
+
+    fun getSubject() : String {
+        return this.mSubject
+    }
+
     fun areWrongQuestionsSaved() : Boolean {
-        return this.mWrongQuestionsSaver
+        return this.mWrongQuestionsSaved
     }
 
     fun isAnonymousUser() : Boolean {

@@ -1261,7 +1261,7 @@ class RequestManager(activity : Activity) {
 
         courseRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
             override fun onSuccess(result: Any?) {
-                onGetFreeSubjectsQuestionsListener.onGetFreeSubjectsQuestionsLoaded(result as Int)
+                onGetFreeSubjectsQuestionsListener.onGetFreeSubjectsQuestionsLoaded(result as Long)
             }
         })
 
@@ -1275,7 +1275,7 @@ class RequestManager(activity : Activity) {
     }
 
     interface OnGetFreeSubjectsQuestionsListener {
-        fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Int)
+        fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Long)
         fun onGetFreeSubjectsQuestionsError(throwable: Throwable)
     }
 

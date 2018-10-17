@@ -660,7 +660,7 @@ abstract class BaseContentFragment : BaseFragment() {
 
     fun requestGetFreeSubjectsQuestionsRefactor() {
         mRequestManager.requestGetFreeSubjectsQuestionsRefactor(object : RequestManager.OnGetFreeSubjectsQuestionsListener {
-            override fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Int) {
+            override fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Long) {
                 onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects)
             }
 
@@ -670,7 +670,7 @@ abstract class BaseContentFragment : BaseFragment() {
 
         })
     }
-    open fun onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects : Int) {}
+    open fun onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects : Long) {}
     open fun onGetFreeSubjectsQuestionsFail(throwable: Throwable) {}
 
 }

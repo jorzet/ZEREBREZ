@@ -17,6 +17,7 @@ import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import kotlinx.android.synthetic.main.custom_subject_question.view.*
+import kotlinx.android.synthetic.main.init_fragment.*
 import java.text.Normalizer
 
 class StudySubjectQuestionsFragment : BaseContentFragment() {
@@ -31,6 +32,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
     private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
     private val SELECTED_SUBJECT : String = "selected_subject"
     private val ANONYMOUS_USER : String = "anonymous_user"
+    private val SUBJECT_EXTRA : String = "subject_extra"
 
     /*
      * UI accessors
@@ -53,14 +55,16 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
     /*
      * attibutes
      */
+    private var mSubject : String = ""
     private lateinit var mSelectedSubject : String
+    private var mNumberOfFreeQuestionSubject : Long = 0
+    private var isRequesting : Boolean = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)
             return null
-
 
         val rootView = inflater.inflate(R.layout.study_subject_question_fragment, container, false)!!
 
@@ -73,8 +77,9 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
         if (::mSelectedSubject.isInitialized && mSelectedSubject != null && !mSelectedSubject.equals("")) {
             mLoadingQuestionSubject.visibility = View.VISIBLE
-            if (activity != null)
-                (activity as ContentActivity).showLoading(true)
+            /*if (activity != null)
+                (activity as ContentActivity).showLoading(true)*/
+            isRequesting = true
             requestGetQuestionsNewFormatBySubject(mSelectedSubject)
         }
 
@@ -85,9 +90,12 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
         super.onResume()
         if (::mSelectedSubject.isInitialized && mSelectedSubject != null && !mSelectedSubject.equals("")) {
             mLoadingQuestionSubject.visibility = View.VISIBLE
-            if (activity != null)
-                (activity as ContentActivity).showLoading(true)
-            requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+            /*if (activity != null)
+                (activity as ContentActivity).showLoading(true)*/
+            if (!isRequesting) {
+                isRequesting = true
+                requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+            }
         }
     }
 
@@ -159,12 +167,12 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
     private fun drawQuestions() {
 
         var cnt : Int = 0
+        var count : Int = 0
 
         for (i in 0 .. mQuestionList.size - 1) {
 
             val view = LayoutInflater.from(context).inflate(R.layout.custom_subject_question, null, false)
             val image : ImageView = view.findViewById(R.id.image)
-
             val number = mQuestionList.get(i).questionId.replace("p","")
 
             // params for module
@@ -209,41 +217,60 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
             } else {
                 val currentQuestion = mQuestionList.get(i)
                 val subject = limpiarTexto(currentQuestion.subject.value)
+                if (count >= mNumberOfFreeQuestionSubject.toInt() && !mUser.isPremiumUser()) {
+                    view.background = resources.getDrawable(R.drawable.not_premium_module_background)
+                } else if (currentQuestion.wasOK) {
+                    view.background = resources.getDrawable(R.drawable.checked_module_background)
+                } else {
+                    view.background = resources.getDrawable(R.drawable.unchecked_module_background)
+                }
                 when (subject) {
                     limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                        mSubject = SubjectType.MATHEMATICS.value
                         image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.SPANISH.value) -> {
+                        mSubject = SubjectType.SPANISH.value
                         image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                        mSubject = SubjectType.VERBAL_HABILITY.value
                         image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                        mSubject = SubjectType.MATHEMATICAL_HABILITY.value
                         image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                        mSubject = SubjectType.BIOLOGY.value
                         image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                        mSubject = SubjectType.CHEMISTRY.value
                         image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.PHYSICS.value) -> {
+                        mSubject = SubjectType.PHYSICS.value
                         image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                        mSubject = SubjectType.GEOGRAPHY.value
                         image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                        mSubject = SubjectType.MEXICO_HISTORY.value
                         image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                        mSubject = SubjectType.UNIVERSAL_HISTORY.value
                         image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.FCE.value) -> {
+                        mSubject = SubjectType.FCE.value
                         image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.FCE2.value) -> {
+                        mSubject = SubjectType.FCE2.value
                         image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                     }
                     limpiarTexto(SubjectType.NONE.value) -> {
@@ -258,11 +285,23 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
-                mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p","")))
+                val c = count
+                if (mUser.isPremiumUser()) {
+                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
+                } else if (!mUser.isPremiumUser() && c < mNumberOfFreeQuestionSubject.toInt()){
+                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
+                }
+
                 view.setOnClickListener(View.OnClickListener {
-                    Log.d(TAG, "onClick: number --- " + number)
-                    goQuestionActivity(Integer.parseInt(number))
+
+                    if (mUser.isPremiumUser() || c < mNumberOfFreeQuestionSubject.toInt()) {
+                        Log.d(TAG, "onClick: number --- " + number)
+                        goQuestionActivity(Integer.parseInt(number))
+                    } else {
+                        (activity as ContentActivity).goPaymentFragment()
+                    }
                 })
+                count++
             }
 
             when (cnt) {
@@ -279,7 +318,6 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                     view.setLayoutParams(param)
                 }
             }
-
             cnt++
             if (cnt==3) { cnt = 0 }
         }
@@ -288,26 +326,75 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
     override fun onGetQuestionsNewFormatBySubjectSuccess(questions: List<QuestionNewFormat>) {
         super.onGetQuestionsNewFormatBySubjectSuccess(questions)
+        isRequesting = false
         try {
-            if (context != null) {
-                mLoadingQuestionSubject.visibility = View.GONE
-                resetValues()
-                mUpdatedQuestions.addAll(questions)
-
-                updateQuestionList(mUpdatedQuestions)
-                drawQuestions()
-            }
-            if (activity != null)
-                (activity as ContentActivity).showLoading(false)
-        } catch (exception : Exception) {}
+            resetValues()
+            mUpdatedQuestions.addAll(questions)
+            requestGetFreeSubjectsQuestionsRefactor()
+        } catch (e : Exception) { }
     }
 
     override fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {
         super.onGetQuestionsNewFormatBySubjectFail(throwable)
+        isRequesting = false
         mLoadingQuestionSubject.visibility = View.GONE
         if (activity != null) {
-            (activity as ContentActivity).showLoading(false)
+            //(activity as ContentActivity).showLoading(false)
         }
+    }
+
+    override fun onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects: Long) {
+        super.onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects)
+        mNumberOfFreeQuestionSubject = numberOfFreeQuestionSubjects
+
+        if (activity != null) {
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetFreeSubjectsQuestionsFail(throwable: Throwable) {
+        super.onGetFreeSubjectsQuestionsFail(throwable)
+        mNumberOfFreeQuestionSubject = 0
+        mLoadingQuestionSubject.visibility = View.GONE
+        if (activity != null) {
+            //(activity as ContentActivity).showLoading(false)
+        }
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorSuccess(user: User) {
+        super.onGetWrongQuestionsAndProfileRefactorSuccess(user)
+        try {
+            if (context != null) {
+                mLoadingQuestionSubject.visibility = View.GONE
+                mUser = user
+                saveUser(user)
+                val answeredQuestions = user.getAnsweredQuestionNewFormat()
+
+                for (i in 0.. mUpdatedQuestions.size -1) {
+                    for (answeredQuestion in answeredQuestions) {
+                        if (answeredQuestion.questionId.equals(mUpdatedQuestions[i].questionId) && answeredQuestion.wasOK) {
+                            mUpdatedQuestions[i].wasOK = answeredQuestion.wasOK
+                        }
+                    }
+                }
+
+                updateQuestionList(mUpdatedQuestions)
+                drawQuestions()
+            }
+            /*if (activity != null)
+                (activity as ContentActivity).showLoading(false)*/
+        } catch (exception : Exception) {}
+    }
+
+    override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
+        super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
+        mLoadingQuestionSubject.visibility = View.GONE
+        /*if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+            */
     }
 
     private fun goQuestionActivity(questionId : Int) {
@@ -316,6 +403,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
         intent.putExtra(ANONYMOUS_USER, false)
         intent.putExtra(FROM_SUBJECT_QUESTION, true)
         intent.putExtra(SUBJECT_QUESTIONS_LIST, mSubjectQuestionsId)
+        intent.putExtra(SUBJECT_EXTRA, mSubject)
         if (activity != null) {
             val user = (activity as ContentActivity).getUserProfile()
             if (user != null && !user.getCourse().equals("")) {
