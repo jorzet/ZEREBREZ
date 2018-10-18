@@ -66,44 +66,52 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
 
     override fun onGetCoursesRefactorSuccess(courses: List<Course>) {
         super.onGetCoursesRefactorSuccess(courses)
-        mLoadingCourses.visibility = View.GONE
-
-        mCourses = courses
-
         if (context != null) {
-            val courseListAdapter = CourseListAdapter(context!!, mCourses)
-            mCourseListView.adapter = courseListAdapter
-            mCourseListView.setOnItemClickListener(this)
-        } else {
-            if (activity != null) {
-                activity!!.onBackPressed()
+            mLoadingCourses.visibility = View.GONE
+
+            mCourses = courses
+
+            if (context != null) {
+                val courseListAdapter = CourseListAdapter(context!!, mCourses)
+                mCourseListView.adapter = courseListAdapter
+                mCourseListView.setOnItemClickListener(this)
+            } else {
+                if (activity != null) {
+                    activity!!.onBackPressed()
+                }
             }
         }
     }
 
     override fun onGetCoursesRefactorFail(throwable: Throwable) {
         super.onGetCoursesRefactorFail(throwable)
-        mLoadingCourses.visibility = View.GONE
+        if (context != null) {
+            mLoadingCourses.visibility = View.GONE
+        }
     }
 
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
-        val user = User()
-        user.setCourse(mCurrentCourse)
-        val userFirebase = FirebaseAuth.getInstance().currentUser
-        if (userFirebase != null) {
-            user.setUUID(userFirebase.uid)
-        }
-        saveUser(user)
-        if (!mCurrentCourse.equals("")) {
-            requestGetImagesPath(mCurrentCourse)
+        if (context != null) {
+            val user = User()
+            user.setCourse(mCurrentCourse)
+            val userFirebase = FirebaseAuth.getInstance().currentUser
+            if (userFirebase != null) {
+                user.setUUID(userFirebase.uid)
+            }
+            saveUser(user)
+            if (!mCurrentCourse.equals("")) {
+                requestGetImagesPath(mCurrentCourse)
+            }
         }
     }
 
     override fun onDoLogInFail(throwable: Throwable) {
         super.onDoLogInFail(throwable)
-        mCourseListView.visibility = View.VISIBLE
-        mLoadingCourses.visibility = View.GONE
+        if (context != null) {
+            mCourseListView.visibility = View.VISIBLE
+            mLoadingCourses.visibility = View.GONE
+        }
     }
 
     override fun onGetImagesPathSuccess(images: List<Image>) {
@@ -123,8 +131,10 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
 
     override fun onGetImagesPathFail(throwable: Throwable) {
         super.onGetImagesPathFail(throwable)
-        mCourseListView.visibility = View.VISIBLE
-        mLoadingCourses.visibility = View.GONE
+        if (context != null) {
+            mCourseListView.visibility = View.VISIBLE
+            mLoadingCourses.visibility = View.GONE
+        }
     }
 
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
