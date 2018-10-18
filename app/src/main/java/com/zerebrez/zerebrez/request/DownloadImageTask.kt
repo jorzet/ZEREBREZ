@@ -35,7 +35,7 @@ import java.io.*
  * jorzet.94@gmail.com
  */
 
-class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, String>() {
+class DownloadImageTask(context : Context, course: String): AbstractRequestTask<Any, Void, String>() {
 
     private val DOWNLOAD_COMPLETE : String = "download_complete"
     private val CANNOT_DOWNLOAD_CONTENT : String = "cannot_download_content"
@@ -45,6 +45,7 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
     private var mErrorOccurred : Boolean = false
     @SuppressLint("StaticFieldLeak")
     private var mContext : Context = context
+    private val mCourse : String = course
 
     override fun onPreExecute() {
         super.onPreExecute()
@@ -97,7 +98,7 @@ class DownloadImageTask(context : Context): AbstractRequestTask<Any, Void, Strin
     private fun downloadToLocalFile(imageName : String) {
         val storage = FirebaseStorage.getInstance()
         Log.d(DownloadImages.TAG,"start download: "+ imageName)
-        val fileRef = storage.getReference().child("ios/images/2x/${imageName}")
+        val fileRef = storage.getReference().child(mCourse + "/images/${imageName}")
         if (fileRef != null) {
             try {
                 val localFile: File = File.createTempFile("images", "jpg")

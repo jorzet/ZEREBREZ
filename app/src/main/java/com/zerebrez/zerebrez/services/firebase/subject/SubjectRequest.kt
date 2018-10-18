@@ -20,7 +20,8 @@ import java.util.*
 class SubjectRequest(activity: Activity) : Engagement(activity) {
 
     private val TAG: String = "SubjectRequest"
-    private val SUBJECT_REFERENCE: String = "subjects/comipems"
+    private val COURSE_LABEL : String = "course_label"
+    private val SUBJECT_REFERENCE: String = "subjects/course_label"
 
     private val mActivity: Activity = activity
     private lateinit var mFirebaseDatabase: DatabaseReference
@@ -30,8 +31,8 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
         mFirebaseInstance = FirebaseDatabase.getInstance()
     }
 
-    fun requestGetSubjects() {
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE)
+    fun requestGetSubjects(course: String) {
+        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course))
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

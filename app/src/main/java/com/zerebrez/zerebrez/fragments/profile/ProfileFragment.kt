@@ -124,6 +124,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
      * Objects
      */
     private lateinit var mUser : User
+    private var isRequesting : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -205,7 +206,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
 
 
-
+        isRequesting = true
         requestGetProfileRefactor()
 
         checkProviders()
@@ -252,7 +253,10 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onResume() {
         super.onResume()
 
-        requestGetProfileRefactor()
+        if (!isRequesting) {
+            isRequesting = true
+            requestGetProfileRefactor()
+        }
 
         checkProviders()
         //checkMobileDataSate()
@@ -576,10 +580,12 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private fun goLogInActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.putExtra(SHOW_START, true)
-        activity!!.startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra(SHOW_START, true)
+            activity!!.startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     private fun signInWithGoogle() {
@@ -703,13 +709,19 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetProfileRefactorSuccess(user: User) {
         super.onGetProfileRefactorSuccess(user)
-
+        isRequesting = false
         if (context != null) {
             saveUser(user)
             val mSchools = user.getSelectedSchools()
 
             mLoadingUserSchoolsProgressBar.visibility = View.VISIBLE
-            requestGetUserSchools(mSchools)
+            if (mSchools.isEmpty()) {
+
+            } else {
+                if (!user.getCourse().equals("")) {
+                    requestGetUserSchools(mSchools, user.getCourse())
+                }
+            }
 
             val course = user.getCourse()
             if (!course.equals("")) {
@@ -725,13 +737,14 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
         super.onGetProfileRefactorFail(throwable)
+        isRequesting = false
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetUserSchoolsSuccess(schools: List<School>) {
         super.onGetUserSchoolsSuccess(schools)
-        if (schools.isNotEmpty() && context != null) {
+        if (schools.isNotEmpty() && context != null && activity != null) {
             // save user chools to get it in next view
 
             val user = getUser()
@@ -787,7 +800,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
         super.onGetUserSchoolsFail(throwable)
-        if (context != null) {
+        if (context != null && activity != null) {
             val updatedSchools = arrayListOf<School>()
             val school1 = School()
             val school2 = School()

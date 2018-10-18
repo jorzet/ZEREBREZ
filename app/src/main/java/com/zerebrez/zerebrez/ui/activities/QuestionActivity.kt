@@ -181,6 +181,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
             isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
 
+            val user = getUser()
+
             if (isFromSubjectQuestionFragment) {
                 showLoading(true)
                 //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
@@ -197,7 +199,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                         mLastKnowQuestion = true
                     }
                 }
-                requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions, user.getCourse())
+                }
             } else if (isFromWrongQuestionFragment) {
                 showLoading(true)
                 val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
@@ -212,16 +216,22 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     }
                 }
                 //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
-                requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions, user.getCourse())
+                }
                 //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
             } else if (isFromExamFragment) {
                 showLoading(true)
                 //requestGetQuestionsByExamIdRefactor(mExamId)
-                requestGetQuestionsNewFormatByExamIdRefactor(mExamId)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatByExamIdRefactor(mExamId, user.getCourse())
+                }
             } else {
                 showLoading(true)
                 //requestGetQuestionsByModuleIdRefactor(mModuleId)
-                requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId, user.getCourse())
+                }
             }
 
             // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
@@ -305,6 +315,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
                 } else {
+                    requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
                     onBackPressed()
                 }
             } else {
@@ -346,8 +357,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size -1) {
             if (isFromWrongQuestionFragment) {
                 //requestSendAnsweredQuestions(mQuestions, mCourse)
-                requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
-            }
+                //requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+            } /*else if (isFromSubjectQuestionFragment) {
+                requestSendAnsweredQuestionNewFormat(mQuestionsNewFormat[mCurrentQuestion], mCourse)
+            }*/
             showQuestion()
             mCurrentQuestion++
         } else if (isAnonymous) {

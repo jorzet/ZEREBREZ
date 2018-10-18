@@ -95,7 +95,7 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == PAYWAY_FLOW){
-            if(resultCode == Activity.RESULT_OK){
+            if(resultCode == Activity.RESULT_OK && activity != null){
                 val intent = activity!!.intent
                 startActivity(intent)
                 activity!!.finish()

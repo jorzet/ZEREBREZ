@@ -145,8 +145,10 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     }
 
     private val mBePremiumButtonListener = View.OnClickListener {
-        (activity as QuestionActivity).showPaymentFragment(true)
-        activity!!.onBackPressed()
+        if (activity != null) {
+            (activity as QuestionActivity).showPaymentFragment(true)
+            activity!!.onBackPressed()
+        }
     }
 
     private val mSuperButtonListener = View.OnClickListener {
@@ -154,7 +156,9 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         if (isAnonymousUser) {
             goLogInActivity()
         } else {
-            activity!!.onBackPressed()
+            if (activity != null) {
+                activity!!.onBackPressed()
+            }
         }
     }
 
@@ -163,41 +167,48 @@ class QuestionsCompleteFragment : BaseContentFragment() {
      * the app is going to redirect to LoginActivity to show SingUpFragment
      */
     private fun goLogInActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.putExtra(SHOW_START, false)
-        this.startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra(SHOW_START, false)
+            this.startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     override fun onGetUserTipsSuccess(user: User) {
         super.onGetUserTipsSuccess(user)
-
-        if (user.isPremiumUser()) {
-            requestGetTips()
-        } else {
-            mLoadingSuggestion.visibility = View.GONE
-            mBePremiumContainer.visibility = View.VISIBLE
-
-            // check if Ad is already showed
-            if (!mAdShowed) {
-                // get random number
-                val randomNumber = Math.random()
-                var rand = 0
-                if (randomNumber > 0.5) {
-                    rand = 1
+        if (context != null) {
+            if (user.isPremiumUser()) {
+                if (!user.getCourse().equals("")) {
+                    requestGetTips(user.getCourse())
                 }
-                // show random Ad
-                if (rand.equals(0)) {
-                    val mInterstitialAd = (activity as QuestionActivity).getInterstitialAd()
-                    if (mInterstitialAd != null && mInterstitialAd.isLoaded) {
-                        mInterstitialAd.show()
-                        mAdShowed = true
+            } else {
+                mLoadingSuggestion.visibility = View.GONE
+                mBePremiumContainer.visibility = View.VISIBLE
+
+                // check if Ad is already showed
+                if (!mAdShowed) {
+                    // get random number
+                    val randomNumber = Math.random()
+                    var rand = 0
+                    if (randomNumber > 0.5) {
+                        rand = 1
                     }
-                } else {
-                    val mRewardedVideoAd = (activity as QuestionActivity).getRewardedVideoAd()
-                    if (mRewardedVideoAd != null && mRewardedVideoAd.isLoaded) {
-                        mRewardedVideoAd.show()
-                        mAdShowed = true
+                    if (activity != null) {
+                        // show random Ad
+                        //if (rand.equals(0)) {
+                        val mInterstitialAd = (activity as QuestionActivity).getInterstitialAd()
+                        if (mInterstitialAd != null && mInterstitialAd.isLoaded) {
+                            mInterstitialAd.show()
+                            mAdShowed = true
+                        }
+                        /*} else {
+                        val mRewardedVideoAd = (activity as QuestionActivity).getRewardedVideoAd()
+                        if (mRewardedVideoAd != null && mRewardedVideoAd.isLoaded) {
+                            mRewardedVideoAd.show()
+                            mAdShowed = true
+                        }
+                    }*/
                     }
                 }
             }
@@ -206,29 +217,34 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
     override fun onGetUserTipdFail(throwable: Throwable) {
         super.onGetUserTipdFail(throwable)
-        mLoadingSuggestion.visibility = View.GONE
-        mBePremiumContainer.visibility = View.VISIBLE
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
+            mBePremiumContainer.visibility = View.VISIBLE
+        }
     }
 
     override fun onGetTipsSuccess(tips: List<String>) {
         super.onGetTipsSuccess(tips)
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
 
-        mLoadingSuggestion.visibility = View.GONE
+            val rand = Random()
+            val randomTip = tips.get(rand.nextInt(tips.size))
 
-        val rand = Random()
-        val randomTip = tips.get(rand.nextInt(tips.size))
-
-        mBePremiumText1.text = "Recomendación"
-        mBePremiumText2.text = randomTip
-        mBePremiumContainer.visibility = View.VISIBLE
-        mBePremiumButton.visibility = View.GONE
+            mBePremiumText1.text = "Recomendación"
+            mBePremiumText2.text = randomTip
+            mBePremiumContainer.visibility = View.VISIBLE
+            mBePremiumButton.visibility = View.GONE
+        }
 
     }
 
     override fun ongetTipsFail(throwable: Throwable) {
         super.ongetTipsFail(throwable)
-        mLoadingSuggestion.visibility = View.GONE
-        mBePremiumContainer.visibility = View.VISIBLE
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
+            mBePremiumContainer.visibility = View.VISIBLE
+        }
     }
 
 }

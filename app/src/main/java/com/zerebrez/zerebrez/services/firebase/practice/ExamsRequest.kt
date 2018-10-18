@@ -32,8 +32,9 @@ private const val TAG: String = "ExamsRequest"
 
 class ExamsRequest(activity: Activity) : Engagement(activity) {
 
-    private val FREE_EXAMS_REFERENCE : String = "freeUser/comipems/exams"
-    private val EXAMS_REFERENCE : String = "exams/comipems"
+    private val COURSE_LABEL : String = "course_label"
+    private val FREE_EXAMS_REFERENCE : String = "freeUser/course_label/exams"
+    private val EXAMS_REFERENCE : String = "exams/course_label"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_EXAMS_REFERENCE : String = "answeredExams"
@@ -59,9 +60,9 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetFreeExamsRefactor() {
+    fun requestGetFreeExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -95,9 +96,9 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetExamsRefactor() {
+    fun requestGetExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

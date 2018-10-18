@@ -88,14 +88,20 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         mCenterTableLayout = rootView.findViewById(R.id.table_center)
         mRightTableLayout = rootView.findViewById(R.id.table_right)
 
-        requestGetModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetModulesRefactor(user.getCourse())
+        }
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-        requestGetModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetModulesRefactor(user.getCourse())
+        }
     }
 
     /*
@@ -302,7 +308,10 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     override fun onGetModulesRefactorSuccess(modules: List<Module>) {
         super.onGetModulesRefactorSuccess(modules)
         mUpdatedModules = modules
-        requestGetFreeModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetFreeModulesRefactor(user.getCourse())
+        }
     }
 
     override fun onGetModulesRefactorFail(throwable: Throwable) {

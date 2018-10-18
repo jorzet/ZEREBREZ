@@ -117,8 +117,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetInstitutes() {
-        mRequestManager.requestGetInstitutes(object : RequestManager.OnGetInstitutesListener {
+    fun requestGetInstitutes(course: String) {
+        mRequestManager.requestGetInstitutes(course, object : RequestManager.OnGetInstitutesListener {
             override fun onGetInstitutesLoaded(institutes: List<Institute>) {
                 onGetInstitutesSuccess(institutes)
             }
@@ -141,8 +141,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetImagesPath() {
-        mRequestManager.requestGetImagesPath(object : RequestManager.OnGetImagesPathListener {
+    fun requestGetImagesPath(course: String) {
+        mRequestManager.requestGetImagesPath(course, object : RequestManager.OnGetImagesPathListener {
             override fun onGetImagesPathLoaded(images: List<Image>) {
                 onGetImagesPathSuccess(images)
             }
@@ -153,17 +153,6 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetExamScores() {
-        mRequestManager.requestGetExamScores(object : RequestManager.OnGetExamScoresListener {
-            override fun onGetExamScoresLoaded(result: List<ExamScore>) {
-                onGetExamScoresSuccess(result)
-            }
-
-            override fun onGetExamScoresError(throwable: Throwable) {
-                onGetExamScoresFail(throwable)
-            }
-        })
-    }
 
     /*
      * Facebook user sign in request method
@@ -317,8 +306,8 @@ abstract class BaseContentFragment : BaseFragment() {
     ********************************** FIREBASE REQUEST REFACTOR ***********************************
      */
 
-    fun requestGetFreeModulesRefactor() {
-        mRequestManager.requestGetFreeModulesRefactor(object : RequestManager.OnGetFreeModulesRefactorListener {
+    fun requestGetFreeModulesRefactor(course: String) {
+        mRequestManager.requestGetFreeModulesRefactor(course, object : RequestManager.OnGetFreeModulesRefactorListener {
             override fun onGetFreeModulesRefactorLoaded(freeModules: List<Module>) {
                 onGetFreeModulesRefactorSuccess(freeModules)
             }
@@ -329,8 +318,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetModulesRefactor() {
-        mRequestManager.requestGetModulesRefactor(object : RequestManager.OnGetModulesRefactorListener {
+    fun requestGetModulesRefactor(course: String) {
+        mRequestManager.requestGetModulesRefactor(course,object : RequestManager.OnGetModulesRefactorListener {
             override fun onGetModulesRefactorLoaded(modules: List<Module>) {
                 onGetModulesRefactorSuccess(modules)
             }
@@ -377,8 +366,8 @@ abstract class BaseContentFragment : BaseFragment() {
 
 
 
-    fun requestGetFreeExamsRefactor() {
-        mRequestManager.requestGetFreeExamsRefactor(object : RequestManager.OnGetFreeExamsRefactorListener {
+    fun requestGetFreeExamsRefactor(course: String) {
+        mRequestManager.requestGetFreeExamsRefactor(course, object : RequestManager.OnGetFreeExamsRefactorListener {
             override fun onGetFreeExamsRefactorLoaded(freeExams: List<Exam>) {
                 onGetFreeExamsRefactorSuccess(freeExams)
             }
@@ -388,8 +377,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetExamsRefactor() {
-        mRequestManager.requestGetExamsRefactor(object : RequestManager.OnGetExamsRefactorListener {
+    fun requestGetExamsRefactor(course: String) {
+        mRequestManager.requestGetExamsRefactor(course, object : RequestManager.OnGetExamsRefactorListener {
             override fun onGetExamsRefactorLoaded(exams: List<Exam>) {
                 onGetExamsRefactorSuccess(exams)
             }
@@ -432,8 +421,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetUserSchools(schools: List<School>) {
-        mRequestManager.requestGetUserSchools(schools, object : RequestManager.OnGetUserSchoolsListener {
+    fun requestGetUserSchools(schools: List<School>, course: String) {
+        mRequestManager.requestGetUserSchools(schools, course, object : RequestManager.OnGetUserSchoolsListener {
             override fun onGetUserSchoolsLoaded(schools: List<School>) {
                 onGetUserSchoolsSuccess(schools)
             }
@@ -461,8 +450,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetAverageSubjects() {
-        mRequestManager.requestGetAverageSubjects(object : RequestManager.OnGetAverageSubjectsListener {
+    fun requestGetAverageSubjects(course : String) {
+        mRequestManager.requestGetAverageSubjects(course, object : RequestManager.OnGetAverageSubjectsListener {
             override fun onGetAverageSubjectsLoaded(subjects: List<Subject>) {
                 onGetAverageSubjectsSuccess(subjects)
             }
@@ -478,8 +467,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetAverageSubjectsSuccess(subjects : List<Subject>) {}
     open fun onGetAverageSubjectsFail(throwable: Throwable) {}
 
-    fun requestGetExamScoreRefactor() {
-        mRequestManager.requestGetExamScoreRefactor(object : RequestManager.OnGetExamScoreRefactorListener {
+    fun requestGetExamScoreRefactor(course: String) {
+        mRequestManager.requestGetExamScoreRefactor(course, object : RequestManager.OnGetExamScoreRefactorListener {
             override fun onGetExamScoreRefactorLoaded(examScores: List<ExamScoreRafactor>) {
                 onGetExamScoreRefactorSuccess(examScores)
             }
@@ -564,8 +553,8 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    fun requestGetTips() {
-        mRequestManager.requestGetTips(object : RequestManager.OnGetTipsListener {
+    fun requestGetTips(course: String) {
+        mRequestManager.requestGetTips(course, object : RequestManager.OnGetTipsListener {
             override fun onGetTipsLoaded(tips: List<String>) {
                 onGetTipsSuccess(tips)
             }
@@ -627,8 +616,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
     open fun onGetCoursesRefactorFail(throwable: Throwable) {}
 
-    fun requestGetSubjects() {
-        mRequestManager.requestGetSubjects(object : RequestManager.OnGetSubjectsListener {
+    fun requestGetSubjects(course: String) {
+        mRequestManager.requestGetSubjects(course, object : RequestManager.OnGetSubjectsListener {
             override fun onGetSubjectsLoaded(subjects: List<SubjectRefactor>) {
                 onGetSubjectsSuccess(subjects)
             }
@@ -643,8 +632,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {}
     open fun onGetSubjectsFail(throwable: Throwable) {}
 
-    fun requestGetQuestionsNewFormatBySubject(subject: String) {
-        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
+    fun requestGetQuestionsNewFormatBySubject(subject: String, course: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, course, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
             override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
                 onGetQuestionsNewFormatBySubjectSuccess(questions)
             }
@@ -658,8 +647,8 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
 
-    fun requestGetFreeSubjectsQuestionsRefactor() {
-        mRequestManager.requestGetFreeSubjectsQuestionsRefactor(object : RequestManager.OnGetFreeSubjectsQuestionsListener {
+    fun requestGetFreeSubjectsQuestionsRefactor(course: String) {
+        mRequestManager.requestGetFreeSubjectsQuestionsRefactor(course, object : RequestManager.OnGetFreeSubjectsQuestionsListener {
             override fun onGetFreeSubjectsQuestionsLoaded(numberOfFreeQuestionSubjects: Long) {
                 onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects)
             }

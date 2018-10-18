@@ -11,8 +11,8 @@ private const val TAG : String = "CheckUserWithFacebook"
 
 class CheckUserWithFacebookRequest(activity: Activity) : Engagement(activity) {
 
+
     private val USERS_REFERENCE : String = "users"
-    private val INSTITUTES_REFERENCE : String = "schools/comipems"
 
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
@@ -26,7 +26,6 @@ class CheckUserWithFacebookRequest(activity: Activity) : Engagement(activity) {
     private val INSTITUTE_TAG : String = "institute"
     private val SCHOOL_TAG : String = "school"
 
-    private val mActivity : Activity = activity
     private lateinit var mFirebaseDatabase: DatabaseReference
     private var mFirebaseInstance: FirebaseDatabase
 

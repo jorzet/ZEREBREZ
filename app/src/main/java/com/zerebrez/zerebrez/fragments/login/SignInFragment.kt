@@ -158,9 +158,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     private fun goContentActivity() {
-        val intent = Intent(activity, ContentActivity::class.java)
-        startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, ContentActivity::class.java)
+            startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     private fun signInWithGoogle() {
@@ -238,7 +240,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         if (!email.equals("") && !password.equals("")) {
             mUser = User(email, password)
 
-            if (NetworkUtil.isConnected(context!!)) {
+            if (NetworkUtil.isConnected(context!!) && activity != null) {
 
                 mLogInView.visibility = View.GONE
                 mLoginAnotherProvidersView.visibility = View.GONE
@@ -338,7 +340,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
         saveUser(mUser)
-        requestGetImagesPath()
+        if (mUser != null && !mUser.getCourse().equals("")) {
+            requestGetImagesPath(mUser.getCourse())
+        }
         //goContentActivity()
         //requestModules()
     }
@@ -368,7 +372,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSendUserSuccess(success: Boolean) {
         super.onSendUserSuccess(success)
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
     }
 
     override fun onSendUserFail(throwable: Throwable) {
@@ -390,29 +397,6 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                         DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
             }
         }
-    }
-
-    /*
-     * get modules listeners
-     */
-    override fun onGetModulesSucces(result: List<Module>) {
-        super.onGetModulesSucces(result)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveModules(result)
-        }
-        requestGetExams()
-    }
-
-    override fun onGetModulesFail(throwable: Throwable) {
-        super.onGetModulesFail(throwable)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveSessionData(false)
-        }
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
     }
 
     /*
@@ -587,8 +571,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onGetCoursesSuccess(courses: List<String>) {
         super.onGetCoursesSuccess(courses)
-
-        requestGetInstitutes()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetInstitutes(user.getCourse())
+        }
     }
 
     override fun onGetCoursesFail(throwable: Throwable) {
@@ -629,8 +615,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                 saveUser(user)
             }
         }
-
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
     }
 
     override fun onGetInstitutesFail(throwable: Throwable) {
@@ -717,7 +705,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onGetUserWithFacebookSuccess(user: User) {
         super.onGetUserWithFacebookSuccess(user)
         if (context != null) {
-            requestGetImagesPath()
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetImagesPath(user.getCourse())
+            }
             mNotLogedIn = false
         }
     }
@@ -781,7 +772,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
         if (context != null) {
-            requestGetImagesPath()
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetImagesPath(user.getCourse())
+            }
             //goContentActivity()
             //requestModules()
         }

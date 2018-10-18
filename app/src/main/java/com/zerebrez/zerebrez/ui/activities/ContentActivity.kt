@@ -194,7 +194,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         // paint botton TabLayout icon
         setBottomTabIcons()
 
-        requestGetExamScores()
+        //requestGetExamScores()
         requestGetProfileRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
@@ -457,7 +457,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onGetProfileRefactorFail(throwable)
     }
 
-    override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
+    /*override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
         super.onGetExamScoresSuccess(examScores)
         if (examScores.isNotEmpty()) {
             val dataHelper = DataHelper(baseContext)
@@ -467,7 +467,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetExamScoresFail(throwable: Throwable) {
         super.onGetExamScoresFail(throwable)
-    }
+    }*/
 
     fun goPaymentFragment() {
         // go to profile fragment

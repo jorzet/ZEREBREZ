@@ -27,8 +27,9 @@ private const val TAG: String = "TipsRequest"
 
 class TipsRequest(activity: Activity) : Engagement(activity) {
 
+    private val COURSE_LABEL : String = "course_label"
     private val USERS_REFERENCE : String = "users"
-    private val TIPS_REFERENCE : String = "tips/comipems"
+    private val TIPS_REFERENCE : String = "tips/course_label"
 
     private val PROFILE_KEY : String = "profile"
     private val COURSE_KEY : String = "course"
@@ -117,9 +118,9 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestGetTips() {
+    fun requestGetTips(course : String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(TIPS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(TIPS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

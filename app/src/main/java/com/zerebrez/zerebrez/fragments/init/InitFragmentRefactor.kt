@@ -75,7 +75,9 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
             mCourseListView.adapter = courseListAdapter
             mCourseListView.setOnItemClickListener(this)
         } else {
-            activity!!.onBackPressed()
+            if (activity != null) {
+                activity!!.onBackPressed()
+            }
         }
     }
 
@@ -93,7 +95,9 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
             user.setUUID(userFirebase.uid)
         }
         saveUser(user)
-        requestGetImagesPath()
+        if (!mCurrentCourse.equals("")) {
+            requestGetImagesPath(mCurrentCourse)
+        }
     }
 
     override fun onDoLogInFail(throwable: Throwable) {
@@ -135,23 +139,27 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
     }
 
     private val mCloseCourseSelectionListener = View.OnClickListener {
-        activity!!.onBackPressed()
+        if (activity != null) {
+            activity!!.onBackPressed()
+        }
     }
 
     private fun goQuestionActivity() {
-        val intent = Intent(activity, QuestionActivity::class.java)
-        intent.putExtra(MODULE_ID, 1) // show first module
-        intent.putExtra(ANONYMOUS_USER, true)
-        if (!mCurrentCourse.equals("")) {
-            intent.putExtra(CURRENT_COURSE, mCurrentCourse)
-            val user = getUser()
-            if (user != null) {
-                user.setCourse(mCurrentCourse)
-                saveUser(user)
+        if (activity != null) {
+            val intent = Intent(activity, QuestionActivity::class.java)
+            intent.putExtra(MODULE_ID, 1) // show first module
+            intent.putExtra(ANONYMOUS_USER, true)
+            if (!mCurrentCourse.equals("")) {
+                intent.putExtra(CURRENT_COURSE, mCurrentCourse)
+                val user = getUser()
+                if (user != null) {
+                    user.setCourse(mCurrentCourse)
+                    saveUser(user)
+                }
             }
-        }
 
-        startActivity(intent)
-        activity!!.finish()
+            startActivity(intent)
+            activity!!.finish()
+        }
     }
 }

@@ -94,7 +94,10 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     override fun onGetModulesSucces(result: List<Module>) {
         super.onGetModulesSucces(result)
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
         //goInitFragment()
     }
 

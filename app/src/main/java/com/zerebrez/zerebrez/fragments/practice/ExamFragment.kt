@@ -84,15 +84,20 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
         mExamList = rootView.findViewById(R.id.lv_exam_container)
         mNotExamsCurrentlyTextView = rootView.findViewById(R.id.tv_not_exams_currently)
 
-        requestGetExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamsRefactor(user.getCourse())
+        }
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-
-        requestGetExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamsRefactor(user.getCourse())
+        }
 
     }
 
@@ -146,7 +151,10 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
         super.onGetExamsRefactorSuccess(exams)
         mUpdatedExams = exams
-        requestGetFreeExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetFreeExamsRefactor(user.getCourse())
+        }
     }
 
     override fun onGetExamsRefactorFail(throwable: Throwable) {

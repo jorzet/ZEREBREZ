@@ -16,6 +16,7 @@ import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_subject_question.view.*
 import kotlinx.android.synthetic.main.init_fragment.*
 import java.text.Normalizer
@@ -80,7 +81,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
             /*if (activity != null)
                 (activity as ContentActivity).showLoading(true)*/
             isRequesting = true
-            requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetQuestionsNewFormatBySubject(mSelectedSubject, user.getCourse())
+            }
         }
 
         return rootView
@@ -94,7 +98,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                 (activity as ContentActivity).showLoading(true)*/
             if (!isRequesting) {
                 isRequesting = true
-                requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+                val user = getUser()
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatBySubject(mSelectedSubject, user.getCourse())
+                }
             }
         }
     }
@@ -181,8 +188,8 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
             if (number.equals("-1")) {
                 view.background = resources.getDrawable(R.drawable.empty_square)
                 image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
+                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
                 param.bottomMargin = 2
                 param.rightMargin = 2
                 param.leftMargin = 2
@@ -200,6 +207,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                     view.background = resources.getDrawable(R.drawable.square_second_module_background)
                 }
                 view.text.visibility = View.VISIBLE
+                view.text.typeface = FontUtil.getNunitoSemiBold(context!!)
                 image.visibility = View.GONE
                 param.height = resources.getDimension(R.dimen.height_square).toInt()
                 param.width = resources.getDimension(R.dimen.width_square).toInt()
@@ -330,7 +338,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
         try {
             resetValues()
             mUpdatedQuestions.addAll(questions)
-            requestGetFreeSubjectsQuestionsRefactor()
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetFreeSubjectsQuestionsRefactor(user.getCourse())
+            }
         } catch (e : Exception) { }
     }
 

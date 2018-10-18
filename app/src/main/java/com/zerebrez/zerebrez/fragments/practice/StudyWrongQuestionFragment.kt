@@ -207,8 +207,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             if (number.equals("-1")) {
                 view.background = resources.getDrawable(R.drawable.empty_square)
                 image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
+                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
                 param.bottomMargin = 2
                 param.rightMargin = 2
                 param.leftMargin = 2

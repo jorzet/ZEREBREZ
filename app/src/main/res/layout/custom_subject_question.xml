@@ -18,8 +18,8 @@
 
     <TextView
         android:id="@+id/text"
-        android:layout_width="@dimen/width_row"
-        android:layout_height="@dimen/height_row"
+        android:layout_width="@dimen/height_square"
+        android:layout_height="@dimen/height_square"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:gravity="center"

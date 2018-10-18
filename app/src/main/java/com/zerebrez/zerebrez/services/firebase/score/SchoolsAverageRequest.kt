@@ -31,9 +31,10 @@ private const val TAG: String = "SchoolsAverageRequest"
 
 class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
+    private val COURSE_LABEL : String = "course_label"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
-    private val INSTITUTES_REFERENCE : String = "schools/comipems"
+    private val INSTITUTES_REFERENCE : String = "schools/course_label"
 
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
@@ -132,7 +133,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                         }
 
                         if (user.getSelectedSchools().isNotEmpty()) {
-                            requestGetUserSchools(user.getSelectedSchools())
+                            requestGetUserSchools(user.getSelectedSchools(), user.getCourse())
                         } else {
                             val error = GenericError()
                             onRequestLietenerFailed.onFailed(error)
@@ -153,17 +154,17 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
 
 
-    private fun requestGetUserSchools(schools: List<School>) {
+    private fun requestGetUserSchools(schools: List<School>, course: String) {
         if (schools.isNotEmpty()) {
             mUserSchoolsSize = schools.size
             mUserSchools = schools
-            requestSchool(mUserSchools) // request the first school
+            requestSchool(mUserSchools, course) // request the first school
         }
     }
 
-    private fun requestSchool(schools: List<School>) {
+    private fun requestSchool(schools: List<School>, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

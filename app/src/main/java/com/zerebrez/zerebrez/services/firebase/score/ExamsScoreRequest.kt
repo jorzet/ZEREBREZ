@@ -32,7 +32,8 @@ private const val TAG: String = "ExamsScoreRequest"
 
 class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
-    private val EXAM_SCORES_REFERENCE : String = "scores/exams/comipems/processedData"
+    private val COURSE_LABEL : String = "course_label"
+    private val EXAM_SCORES_REFERENCE : String = "scores/exams/course_label/processedData"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
 
@@ -55,9 +56,9 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetExamScores() {
+    fun requestGetExamScores(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAM_SCORES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(EXAM_SCORES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

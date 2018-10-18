@@ -190,7 +190,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestGetAverageSubjects() {
+    fun requestGetAverageSubjects(course : String) {
 // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
@@ -267,7 +267,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                         var FCETotal = 0
 
                         if (map.containsKey(ANSWERED_QUESTION_REFERENCE)) {
-                            val answeredQuestions = map.get(ANSWERED_QUESTION_REFERENCE) as HashMap<String, String>
+                            val answeredQuestions = (map.get(ANSWERED_QUESTION_REFERENCE) as kotlin.collections.HashMap<String, String> ).get(course) as kotlin.collections.HashMap<String, String>
                             for (key2 in answeredQuestions.keys) {
                                 val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
 

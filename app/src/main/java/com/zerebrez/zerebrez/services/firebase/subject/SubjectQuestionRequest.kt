@@ -14,9 +14,9 @@ private const val TAG: String = "SubjectQuestionRequest"
 
 class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
-    private val SUBJECT_REFERENCE: String = "subjects/comipems"
+    private val COURSE_LABEL : String = "course_label"
     private val USERS_REFERENCE : String = "users"
-    private val FREE_SUBJECTS_QUESTION_REFERENCE : String = "freeUser/comipems/subjects/numberOfQuestionsEnabeled"
+    private val FREE_SUBJECTS_QUESTION_REFERENCE : String = "freeUser/course_label/subjects/numberOfQuestionsEnabeled"
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -31,9 +31,9 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
     init {
         mFirebaseInstance = FirebaseDatabase.getInstance()
     }
-    fun requestGetFreeSubjectsQuestionsRefactor() {
+    fun requestGetFreeSubjectsQuestionsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_SUBJECTS_QUESTION_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_SUBJECTS_QUESTION_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

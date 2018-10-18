@@ -178,7 +178,10 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
         }
 
-        requestGetSchools()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetSchools(user.getCourse())
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

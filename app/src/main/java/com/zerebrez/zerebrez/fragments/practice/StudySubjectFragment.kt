@@ -91,7 +91,10 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
         mNotSubjectCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
 
 
-        requestGetSubjects()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetSubjects(user.getCourse())
+        }
 
         return rootView
     }
