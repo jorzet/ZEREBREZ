@@ -15,7 +15,7 @@
         </shape>
     </item>
     <item
-        android:height="30dp">
+        android:height="40dp">
         <shape>
             <corners
                 android:radius="8dip" />

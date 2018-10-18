@@ -183,7 +183,7 @@
                     <RelativeLayout
                         android:id="@+id/btn_be_premium"
                         android:layout_width="200dp"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="20dp"
                         android:layout_below="@+id/tv_premium_text_2"
@@ -193,7 +193,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginTop="3dp"
+                            android:layout_centerVertical="true"
                             android:gravity="center"
                             android:text="Quiero ser premium"
                             android:textColor="@color/white"
@@ -225,13 +225,13 @@
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/blue_background_button">
+                    android:background="@drawable/super_button_background">
                     <TextView
                         android:id="@+id/btn_super_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_centerVertical="true"
                         android:gravity="center"
                         android:text="Súper  : )"
                         android:textColor="@color/white"
