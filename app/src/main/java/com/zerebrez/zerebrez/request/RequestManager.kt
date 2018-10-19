@@ -20,7 +20,7 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
-import com.zerebrez.zerebrez.services.firebase.CheckUserWithFacebookRequest
+import com.zerebrez.zerebrez.services.firebase.CheckUserWithProviderRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
 import com.zerebrez.zerebrez.services.firebase.courses.CourseRequest
@@ -1192,27 +1192,27 @@ class RequestManager(activity : Activity) {
         fun onGetTipsError(throwable: Throwable)
     }
 
-    fun requestGetUserWithFacebook(onGetUserWithFacebookListener : OnGetUserWithFacebookListener) {
-        val checkUserWithFacebookRequest = CheckUserWithFacebookRequest(mActivity)
+    fun requestGetUserWithProvider(onGetUserWithProviderListener : OnGetUserWithProviderListener) {
+        val checkUserWithProviderRequest = CheckUserWithProviderRequest(mActivity)
 
-        checkUserWithFacebookRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+        checkUserWithProviderRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
             override fun onSuccess(result: Any?) {
-                onGetUserWithFacebookListener.onGetUserWithFacebookLoaded(result as User)
+                onGetUserWithProviderListener.onGetUserWithProviderLoaded(result as User)
             }
         })
 
-        checkUserWithFacebookRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+        checkUserWithProviderRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
             override fun onFailed(result: Throwable) {
-                onGetUserWithFacebookListener.onGetUserWithFacebookError(result)
+                onGetUserWithProviderListener.onGetUserWithProviderError(result)
             }
         })
 
-        checkUserWithFacebookRequest.requestGetUserWithFacebook()
+        checkUserWithProviderRequest.requestGetUserWithProvider()
     }
 
-    interface OnGetUserWithFacebookListener {
-        fun onGetUserWithFacebookLoaded(user: User)
-        fun onGetUserWithFacebookError(throwable: Throwable)
+    interface OnGetUserWithProviderListener {
+        fun onGetUserWithProviderLoaded(user: User)
+        fun onGetUserWithProviderError(throwable: Throwable)
     }
 
     fun requestGetCoursesrefactor(onGetCourseRefactorListener: OnGetCourseRefactorListener) {

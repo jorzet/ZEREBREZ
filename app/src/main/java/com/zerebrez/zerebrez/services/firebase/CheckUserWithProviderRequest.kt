@@ -9,7 +9,7 @@ import com.zerebrez.zerebrez.models.User
 
 private const val TAG : String = "CheckUserWithFacebook"
 
-class CheckUserWithFacebookRequest(activity: Activity) : Engagement(activity) {
+class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
 
 
     private val USERS_REFERENCE : String = "users"
@@ -37,7 +37,7 @@ class CheckUserWithFacebookRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetUserWithFacebook() {
+    fun requestGetUserWithProvider() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {

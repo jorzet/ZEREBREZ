@@ -400,6 +400,29 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     /*
+     * get modules listeners
+     */
+    override fun onGetModulesSucces(result: List<Module>) {
+        super.onGetModulesSucces(result)
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveModules(result)
+        }
+        requestGetExams()
+    }
+
+    override fun onGetModulesFail(throwable: Throwable) {
+        super.onGetModulesFail(throwable)
+        if (context != null) {
+            val dataHelper = DataHelper(context!!)
+            dataHelper.saveSessionData(false)
+        }
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+    }
+
+    /*
      * Get exams listeners
      */
     override fun onGetExamsSuccess(exams: List<Exam>) {
@@ -702,10 +725,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         })
     }
 
-    override fun onGetUserWithFacebookSuccess(user: User) {
-        super.onGetUserWithFacebookSuccess(user)
+    override fun onGetUserWithProviderSuccess(user: User) {
+        super.onGetUserWithProviderSuccess(user)
         if (context != null) {
-            val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
                 requestGetImagesPath(user.getCourse())
             }
@@ -713,8 +735,8 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         }
     }
 
-    override fun onGetUserWithFacebookFail(throwable: Throwable) {
-        super.onGetUserWithFacebookFail(throwable)
+    override fun onGetUserWithProviderFail(throwable: Throwable) {
+        super.onGetUserWithProviderFail(throwable)
         if (context != null) {
             mUser = User()
             mUser.setCourse("comipems")
@@ -736,7 +758,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         super.onSignInUserWithFacebookProviderSuccess(success)
         if (context != null) {
             Log.d(TAG, "login with facebook success")
-            requestGetUserWithFacebook()
+            requestGetUserWithProvider()
             //requestGetImagesPath()
             //goContentActivity()
             //requestModules()
@@ -772,10 +794,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
         if (context != null) {
-            val user = getUser()
-            if (user != null && !user.getCourse().equals("")) {
-                requestGetImagesPath(user.getCourse())
-            }
+            requestGetUserWithProvider()
             //goContentActivity()
             //requestModules()
         }
