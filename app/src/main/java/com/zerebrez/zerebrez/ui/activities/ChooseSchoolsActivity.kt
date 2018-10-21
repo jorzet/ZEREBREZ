@@ -311,7 +311,11 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                     user.setSelectedShools(mSchools)
                     saveUser(user)
                 }
-                onBackPressed()
+                if (showContinueButton) {
+                    goContentActivity()
+                } else {
+                    onBackPressed()
+                }
             } else {
                 ErrorDialog.newInstance("Debes elegir por lo menos una escuela",
                         DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
@@ -328,23 +332,27 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     override fun onSendSelectedSchoolsSuccess(success: Boolean) {
         super.onSendSelectedSchoolsSuccess(success)
 
-        val user = getUser()
-        if (user != null) {
-            user.setSelectedShools(mSchools)
-            saveUser(user)
-        }
+        if (this != null) {
+            val user = getUser()
+            if (user != null) {
+                user.setSelectedShools(mSchools)
+                saveUser(user)
+            }
 
-        if (showContinueButton) {
-            goContentActivity()
-        } else {
-            onBackPressed()
+            if (showContinueButton) {
+                goContentActivity()
+            } else {
+                onBackPressed()
+            }
         }
     }
 
     override fun onSendSelectedSchoolsFail(throwable: Throwable) {
         super.onSendSelectedSchoolsFail(throwable)
-        ErrorDialog.newInstance("Ocurrio un Error", "Vuelve a intentarlo",
-                DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
+        if (this != null) {
+            ErrorDialog.newInstance("Ocurrio un Error", "Vuelve a intentarlo",
+                    DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, "warningDialog")
+        }
     }
 
     /*
