@@ -613,8 +613,21 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
+    fun requestGetCoursePrice(course: String) {
+        mRequestManager.requestGetCoursePrice(course, object : RequestManager.OnGetCoursePriceListener {
+            override fun onGetCoursePriceLoaded(coursePrice: String) {
+                onGetCoursePriceSuccess(coursePrice)
+            }
+            override fun onGetCoursePriceError(throwable: Throwable) {
+                onGetCoursePriceFail(throwable)
+            }
+        })
+    }
+
     open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
     open fun onGetCoursesRefactorFail(throwable: Throwable) {}
+    open fun onGetCoursePriceSuccess(coursePrice: String) {}
+    open fun onGetCoursePriceFail(throwable: Throwable) {}
 
     fun requestGetSubjects(course: String) {
         mRequestManager.requestGetSubjects(course, object : RequestManager.OnGetSubjectsListener {

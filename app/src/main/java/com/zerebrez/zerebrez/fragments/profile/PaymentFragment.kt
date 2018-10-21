@@ -27,6 +27,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.Exam
+import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.activities.PaywayActivityRefactor
@@ -54,6 +56,15 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mGetFreeQuestionsExamsButton : View
     private lateinit var mIWantToBePremiumButtonTextView: TextView
     private lateinit var mGetFreeQuestionsExamsButtonTextView: TextView
+    private lateinit var mExamsModulesNomberTextView: TextView
+    private lateinit var mPromoCourseWithPriceTextView: TextView
+    private lateinit var mBecomePremiumTextView: TextView
+
+    /*
+     * Attributes
+     */
+    private var mTotalExamsAndModules = ""
+    private var mPromoCourseWithPrice = "Y obtén gratis todos los módulos y examenes que se agreguen !por solo \$"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -66,13 +77,24 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mGetFreeQuestionsExamsButton = rootView.findViewById(R.id.btn_get_free_exams_questions)
         mIWantToBePremiumButtonTextView = rootView.findViewById(R.id.btn_be_premium_text)
         mGetFreeQuestionsExamsButtonTextView = rootView.findViewById(R.id.btn_get_free_exams_questions_text)
+        mExamsModulesNomberTextView = rootView.findViewById(R.id.tv_exams_number)
+        mPromoCourseWithPriceTextView = rootView.findViewById(R.id.tv_get_free_exams_questions)
+        mBecomePremiumTextView = rootView.findViewById(R.id.tv_become_premium)
 
         mIWantToBePremiumButtonTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mGetFreeQuestionsExamsButtonTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mExamsModulesNomberTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mPromoCourseWithPriceTextView.typeface = FontUtil.getNunitoRegular(context!!)
+        mBecomePremiumTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         mIWantToBePremiumButton.setOnClickListener(mIWantToBePremiumListener)
         mGetFreeQuestionsExamsButton.setOnClickListener(mGetFreeQuestionsExamsListener)
 
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamsRefactor(user.getCourse())
+            requestGetCoursePrice(user.getCourse())
+        }
 
         return rootView
     }
@@ -117,4 +139,66 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onConfirmationAccept() {
 
     }
+
+    override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
+        super.onGetExamsRefactorSuccess(exams)
+        if (context != null) {
+            if (exams != null && exams.isNotEmpty()) {
+                mTotalExamsAndModules = exams.size.toString() + " examenes y "
+            } else {
+                mTotalExamsAndModules = "0 examenes y "
+            }
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetModulesRefactor(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetExamsRefactorFail(throwable: Throwable) {
+        super.onGetExamsRefactorFail(throwable)
+        if (context != null) {
+            mExamsModulesNomberTextView.text = "8 examenes y 18"
+            mExamsModulesNomberTextView.text = mTotalExamsAndModules
+        }
+    }
+
+
+    override fun onGetModulesRefactorSuccess(modules: List<Module>) {
+        super.onGetModulesRefactorSuccess(modules)
+        if (context != null) {
+            if (modules != null && modules.isNotEmpty()) {
+                mTotalExamsAndModules = mTotalExamsAndModules + modules.size.toString()
+                mExamsModulesNomberTextView.text = mTotalExamsAndModules
+            } else {
+                mTotalExamsAndModules = mTotalExamsAndModules + "0"
+                mExamsModulesNomberTextView.text = mTotalExamsAndModules
+            }
+        }
+    }
+
+    override fun onGetModulesRefactorFail(throwable: Throwable) {
+        super.onGetModulesRefactorFail(throwable)
+        if (context != null) {
+            mTotalExamsAndModules = mTotalExamsAndModules + "0"
+            mExamsModulesNomberTextView.text = mTotalExamsAndModules
+        }
+    }
+
+    override fun onGetCoursePriceSuccess(coursePrice: String) {
+        super.onGetCoursePriceSuccess(coursePrice)
+        if (context != null) {
+            if (coursePrice != null && !coursePrice.equals("")) {
+                mPromoCourseWithPriceTextView.text = mPromoCourseWithPrice + coursePrice + "!"
+            }
+        }
+    }
+
+    override fun onGetCoursePriceFail(throwable: Throwable) {
+        super.onGetCoursePriceFail(throwable)
+        if (context != null) {
+            mPromoCourseWithPriceTextView.text = mPromoCourseWithPrice + "99!"
+        }
+    }
+
 }

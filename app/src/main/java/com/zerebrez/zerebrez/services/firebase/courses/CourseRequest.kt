@@ -18,7 +18,11 @@ import java.util.*
 class CourseRequest(activity: Activity) : Engagement(activity) {
 
     private val TAG : String = "CourseRequest"
+
+    private val COURSE_LABEL : String = "course_label"
+
     private val COURSES_REFERENCE : String = "courses"
+    private val PRICE_REFERENCE : String = "price/course_label/android"
 
     private val mActivity : Activity = activity
     private lateinit var mFirebaseDatabase: DatabaseReference
@@ -60,6 +64,30 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
 
                     Log.d(TAG, "courses data ------ " )
                     onRequestListenerSucces.onSuccess(courses)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
+    }
+
+    fun requestGetCoursePrice(course: String) {
+        mFirebaseDatabase = mFirebaseInstance.getReference(PRICE_REFERENCE.replace(COURSE_LABEL, course))
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val price = (post as Long).toString()
+                    Log.d(TAG, "price data ------ " )
+                    onRequestListenerSucces.onSuccess(price)
                 } else {
                     val error = GenericError()
                     onRequestLietenerFailed.onFailed(error)

@@ -1233,9 +1233,33 @@ class RequestManager(activity : Activity) {
         courseRequest.requestGetCourses()
     }
 
+    fun requestGetCoursePrice(course: String, onGetCoursePriceListener: OnGetCoursePriceListener) {
+        val courseRequest = CourseRequest(mActivity)
+
+        courseRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetCoursePriceListener.onGetCoursePriceLoaded(result as String)
+            }
+        })
+
+        courseRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetCoursePriceListener.onGetCoursePriceError(result)
+            }
+        })
+
+        courseRequest.requestGetCoursePrice(course)
+    }
+
+
     interface OnGetCourseRefactorListener {
         fun onGetCoursesRefactorLoaded(courses: List<Course>)
         fun onGetCoursesRefactorError(throwable: Throwable)
+    }
+
+    interface OnGetCoursePriceListener {
+        fun onGetCoursePriceLoaded(coursePrice : String)
+        fun onGetCoursePriceError(throwable: Throwable)
     }
 
     fun requestGetSubjects(course: String, onGetSubjectsListener: OnGetSubjectsListener) {
