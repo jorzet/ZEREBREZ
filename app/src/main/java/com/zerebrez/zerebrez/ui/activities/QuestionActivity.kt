@@ -235,7 +235,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             }
 
             // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
             // Use an activity context to get the rewarded video instance.
             mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
             mRewardedVideoAd.rewardedVideoAdListener = this
