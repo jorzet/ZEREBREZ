@@ -65,6 +65,7 @@ import com.zerebrez.zerebrez.services.notification.NotificationAlarmReciver
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
+import com.zerebrez.zerebrez.utils.CacheManager
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -342,6 +343,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         SharedPreferencesManager(context!!).removeSessionData()
         SharedPreferencesManager(context!!).setPersistanceDataEnable(true)
         LoginManager.getInstance().logOut()
+        CacheManager.deleteCache(context!!)
 
         if (ok1) {
             setQuestionModuleFragmentOK()

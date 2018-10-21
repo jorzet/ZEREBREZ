@@ -260,7 +260,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     }
 
     public void drawUserHits(int hits, int textUserHitsSize, int textUserHitsColor, int leftHits, int rightHits) {
-        int progressHeight = height - mTextTopWidth;
+        int progressHeight = height ;
         int yPos = mTextTopWidth + progressHeight - ((hits * progressHeight) / maxHits);
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
