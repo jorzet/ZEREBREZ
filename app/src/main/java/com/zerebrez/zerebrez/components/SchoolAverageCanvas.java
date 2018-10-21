@@ -140,7 +140,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                 width - 290, width - 90);
 
         // draw progress bar
-        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight);
+        drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight + mTextTopWidth);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     }
 
     private void drawProgressBar(int userHits, int left, int top, int right, int bottom) {
-        int progressHeight = height - mTextTopWidth;
+        int progressHeight = height;
         int progress = progressHeight - ((userHits * progressHeight) / maxHits);
 
         /*
