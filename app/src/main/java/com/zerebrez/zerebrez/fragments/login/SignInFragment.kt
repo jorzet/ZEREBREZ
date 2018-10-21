@@ -238,7 +238,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val password = mPasswordEditText.text.toString()
 
         if (!email.equals("") && !password.equals("")) {
-            mUser = User(email, password)
+            mUser = User(email.replace(" ", ""), password)
 
             if (NetworkUtil.isConnected(context!!) && activity != null) {
 
