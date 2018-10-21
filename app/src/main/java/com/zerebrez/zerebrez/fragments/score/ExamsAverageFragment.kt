@@ -68,7 +68,10 @@ class ExamsAverageFragment : BaseContentFragment() {
         notExamsDidIt.typeface = FontUtil.getNunitoSemiBold(context!!)
 
 
-        requestGetExamScoreRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamScoreRefactor(user.getCourse())
+        }
 
         return rootView
     }

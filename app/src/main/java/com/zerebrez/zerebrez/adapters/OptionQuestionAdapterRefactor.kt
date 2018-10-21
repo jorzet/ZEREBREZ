@@ -53,23 +53,34 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : Que
                     questionView.tv_option.text = currentQuestion
                     //optionView.tv_option.typeface = FontUtil.getNunitoRegular(mContext)
                     questionView.tv_option.visibility = View.VISIBLE
-                    questionView.mv_otion.visibility = View.GONE
+                    questionView.mv_option.visibility = View.GONE
                     questionView.iv_option.visibility = View.GONE
+                    questionView.giv_option.visibility = View.GONE
                 }
                 "eq" -> {
                     //optionView.mv_otion.text = "$$"+currentOption.getQuestion()+"$$"
-                    questionView.mv_otion.setDisplayText("$$" + currentQuestion + "$$")
+                    questionView.mv_option.setDisplayText("$$" + currentQuestion + "$$")
                     questionView.tv_option.visibility = View.GONE
-                    questionView.mv_otion.visibility = View.VISIBLE
+                    questionView.mv_option.visibility = View.VISIBLE
                     questionView.iv_option.visibility = View.GONE
+                    questionView.giv_option.visibility = View.GONE
                 }
-
                 "img" -> {
                     val nameInStorage = getNameInStorage(currentQuestion, mImagesPath)
-                    questionView.iv_option.setImageBitmap(getBitmap(nameInStorage))
-                    questionView.tv_option.visibility = View.GONE
-                    questionView.mv_otion.visibility = View.GONE
-                    questionView.iv_option.visibility = View.VISIBLE
+                    if (nameInStorage.contains(".gif")) {
+                        questionView.giv_option.setImageBitmap(getBitmap(nameInStorage))
+                        questionView.giv_option.startAnimation()
+                        questionView.tv_option.visibility = View.GONE
+                        questionView.mv_option.visibility = View.GONE
+                        questionView.iv_option.visibility = View.GONE
+                        questionView.giv_option.visibility = View.VISIBLE
+                    } else {
+                        questionView.iv_option.setImageBitmap(getBitmap(nameInStorage))
+                        questionView.tv_option.visibility = View.GONE
+                        questionView.mv_option.visibility = View.GONE
+                        questionView.iv_option.visibility = View.VISIBLE
+                        questionView.giv_option.visibility = View.GONE
+                    }
                 }
             }
         }

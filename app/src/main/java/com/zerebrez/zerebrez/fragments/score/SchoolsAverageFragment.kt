@@ -22,10 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.SchoolAverageCanvas
+import com.zerebrez.zerebrez.components.SchoolAverageCanvas
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.School
-import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -92,7 +91,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
     override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {
         super.onGetScoreLast128QuestionsExamFail(throwable)
-        schoolAverageCanvas.setUserHits(1)
+        schoolAverageCanvas.setUserHits(0)
         schoolAverageCanvas.invalidate()
         mNot128ExmanQuestionDitIt.visibility = View.VISIBLE
         if (activity != null)

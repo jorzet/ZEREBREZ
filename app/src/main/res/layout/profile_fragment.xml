@@ -75,28 +75,41 @@
                 android:layout_below="@+id/iv_gray_line9"
                 android:orientation="vertical">
 
-                <com.zerebrez.zerebrez.adapters.NonScrollListView
-                    android:id="@+id/nslv_schools_selected"
+                <RelativeLayout
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="100dp"
                     android:layout_marginTop="10dp">
-                </com.zerebrez.zerebrez.adapters.NonScrollListView>
+                    <ProgressBar
+                        android:id="@+id/pb_loading_user_schools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminateTint="@color/com_facebook_blue"
+                        android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/tv_not_selected_schools"
-                    android:layout_width="280dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="@string/not_selected_schools_text"
-                    android:textColor="@color/not_selected_schools_text_color"
-                    android:textSize="15sp"
-                    android:visibility="gone"/>
+                    <com.zerebrez.zerebrez.components.NonScrollListView
+                        android:id="@+id/nslv_schools_selected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </com.zerebrez.zerebrez.components.NonScrollListView>
+
+                    <TextView
+                        android:id="@+id/tv_not_selected_schools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:text="@string/not_selected_schools_text"
+                        android:textColor="@color/not_selected_schools_text_color"
+                        android:textSize="15sp"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
 
                 <RelativeLayout
                     android:layout_width="280dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="55dp">
                     <RelativeLayout
                         android:id="@+id/btn_change_schools"
                         android:layout_width="160dp"
@@ -115,7 +128,7 @@
                             android:textSize="17sp"
                             android:textColor="@color/white"/>
                     </RelativeLayout>
-            </RelativeLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -155,7 +168,7 @@
                     <RelativeLayout
                         android:id="@+id/btn_facebook_login"
                         android:layout_width="100dp"
-                        android:layout_height="40dp"
+                        android:layout_height="30dp"
                         android:layout_marginRight="30dp"
                         android:background="@drawable/facebook_button_image">
                         <ImageView
@@ -163,7 +176,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginTop="8dp"
+                            android:layout_centerVertical="true"
                             android:layout_marginEnd="3dp"
                             android:src="@drawable/tick_circle_icon"
                             android:visibility="gone"/>
@@ -172,20 +185,16 @@
                     <RelativeLayout
                         android:id="@+id/btn_google_login"
                         android:layout_width="100dp"
-                        android:layout_height="40dp"
+                        android:layout_height="30dp"
                         android:layout_marginLeft="30dp"
                         android:background="@drawable/google_button_image">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:src="@drawable/google_logo_icon"
-                            android:layout_centerHorizontal="true"/>
+
                         <ImageView
                             android:id="@+id/iv_is_loggedin_with_google"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginTop="8dp"
+                            android:layout_centerVertical="true"
                             android:layout_marginEnd="3dp"
                             android:src="@drawable/tick_circle_icon"
                             android:visibility="gone"/>
@@ -230,15 +239,25 @@
                     android:textColor="@color/black"
                     android:background="@drawable/edittext_profile_background" />
 
-                <Button
-                    android:id="@+id/btn_link_email"
+                <RelativeLayout
+                    android:id="@+id/btn_change_password"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:layout_below="@+id/et_password"
                     android:layout_marginTop="20dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/link_email_account_button_background"
-                    android:text="  Cambiar contraseña  "/>
+                    android:background="@drawable/link_email_account_button_background">
+
+                    <TextView
+                        android:id="@+id/tv_change_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="  Cambiar contraseña  "
+                        android:textSize="17sp"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 

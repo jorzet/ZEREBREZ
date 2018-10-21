@@ -32,10 +32,12 @@ private const val TAG: String = "QuestionsRequest"
 
 class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
-    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "questions/newFormat/comipems"
-    private val MODULES_REFERENCE : String = "modules/comipems"
-    private var SUBJECT_REFERENCE : String = "questionsInSubjects/comipems"
-    private val EXAMS_REFERENCE : String = "exams/comipems"
+    private val COURSE_LABEL : String = "course_label"
+
+    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label"
+    private val MODULES_REFERENCE : String = "modules/course_label"
+    private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label"
+    private val EXAMS_REFERENCE : String = "exams/course_label"
     private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
     private val USERS_REFERENCE : String = "users"
 
@@ -63,9 +65,9 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetQuestionsNewFormatByModuleId(moduleId : Int) {
+    fun requestGetQuestionsNewFormatByModuleId(moduleId : Int, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE + "/m" + moduleId)
+        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course) + "/m" + moduleId)
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -93,7 +95,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                     if (questions.isNotEmpty()) {
                         mQuestionSize = questions.size
                         mQuestions = questions
-                        requestQuestionsNewFormat()
+                        requestQuestionsNewFormat(course)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -112,9 +114,9 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetQuestionNewFormatBySubject(subject: String) {
+    fun requestGetQuestionNewFormatBySubject(subject: String, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE + "/" + subject)
+        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course) + "/" + subject)
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -141,7 +143,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                     if (questions.isNotEmpty()) {
                         mQuestionSize = questions.size
                         mQuestions = questions
-                        requestQuestionsNewFormat()
+                        requestQuestionsNewFormat(course)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -160,9 +162,9 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetQuestionsNewFormatByExamId(examId : Int) {
+    fun requestGetQuestionsNewFormatByExamId(examId : Int, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE + "/e" + examId)
+        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course) + "/e" + examId)
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -189,7 +191,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                     if (questions.isNotEmpty()) {
                         mQuestionSize = questions.size
                         mQuestions = questions
-                        requestQuestionsNewFormat()
+                        requestQuestionsNewFormat(course)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -208,21 +210,32 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetWrongQuestionsNewFormatByQuestionId(wrongQuestionNewFormatIds : List<QuestionNewFormat>) {
-
-        if (wrongQuestionNewFormatIds.isNotEmpty()) {
-            mQuestionSize = wrongQuestionNewFormatIds.size
-            mQuestions = wrongQuestionNewFormatIds
-            requestQuestionsNewFormat()
+    fun requestGetSubjectQuestionsNewFormatBySubjectQuestionId(subjectQuestionNewFormatIds : List<QuestionNewFormat>, course: String) {
+        if (subjectQuestionNewFormatIds.isNotEmpty()) {
+            mQuestionSize = subjectQuestionNewFormatIds.size
+            mQuestions = subjectQuestionNewFormatIds
+            requestQuestionsNewFormat(course)
         } else {
             val error = GenericError()
             onRequestLietenerFailed.onFailed(error)
         }
     }
 
-    fun requestQuestionsNewFormat() {
+    fun requestGetWrongQuestionsNewFormatByQuestionId(wrongQuestionNewFormatIds : List<QuestionNewFormat>, course: String) {
+
+        if (wrongQuestionNewFormatIds.isNotEmpty()) {
+            mQuestionSize = wrongQuestionNewFormatIds.size
+            mQuestions = wrongQuestionNewFormatIds
+            requestQuestionsNewFormat(course)
+        } else {
+            val error = GenericError()
+            onRequestLietenerFailed.onFailed(error)
+        }
+    }
+
+    fun requestQuestionsNewFormat(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

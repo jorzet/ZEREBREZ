@@ -9,7 +9,7 @@
     <string name="get_knowladge_key_text">¡Obtén la llave\ndel conocimiento!</string>
     <string name="start_button_text">Comenzar</string>
     <string name="do_you_have_account_text">¿Ya tienes una cuenta?</string>
-    <string name="user_email_text">Usuario o correo</string>
+    <string name="user_email_text">Correo</string>
     <string name="password_text">Contraseña</string>
     <string name="singin_text">INGRESAR</string>
     <string name="singin_with">INICIAR CON</string>
@@ -105,13 +105,16 @@
     <string name="average_by_subjet">Promedio por materia</string>
 
     <!--score fragment-->
-    <string name="comipems_2017_text">COMIPEMS 2017</string>
+    <string name="comipems_2017_text">Puntajes</string>
     <string name="school_text">ESCUELA</string>
     <string name="hits_text_2">ACIERTOS</string>
     <string name="not_exams_did_it">Por el momento no tienes examenes resueltos</string>
 
     <!--wrong questions-->
     <string name="not_wrong_questions_text">Por el momento no tienes preguntas erroneas que repasar</string>
+
+    <!--study subject fragment-->
+    <string name="not_subject_questions_text">Por el momento no hay preguntas para esta materia</string>
 
     <!--dialogs-->
     <string name="dialog_yes_text">Sí</string>

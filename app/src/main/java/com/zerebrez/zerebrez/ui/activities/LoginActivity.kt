@@ -123,10 +123,10 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
 
         // request SMS permissions
         if (!isWriteStoragePermissionGranted()) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            //ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         }
         if (!isReadStoragePermissionGranted()) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
+            //ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
         }
     }
 

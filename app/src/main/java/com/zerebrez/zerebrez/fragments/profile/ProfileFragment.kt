@@ -27,7 +27,7 @@ import android.widget.*
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.NonScrollListView
+import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.adapters.SchoolListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.School
@@ -55,6 +55,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
+import com.zerebrez.zerebrez.BuildConfig
 import com.zerebrez.zerebrez.models.Error.FirebaseError
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.User
@@ -80,6 +81,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
      */
     private val SHOW_START = "show_start"
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SHOW_BACK_BUTTON : String = "show_back_button"
 
     /*
      * UI accessors
@@ -97,7 +99,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTermsAndPrivacy : View
     private lateinit var mEditSchoolsButton : View
     private lateinit var mEditSchoolsTextView : TextView
-    private lateinit var mLinkEmailButton : Button
+    private lateinit var mChangePasswordButton : View
+    private lateinit var mChangePasswordText : TextView
     private lateinit var mNotSelectedSchools : TextView
     private lateinit var mAllowMobileDataSwitch : Switch
     private lateinit var mAllowNotificationsSwitch : Switch
@@ -110,6 +113,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTimeTextView: TextView
     private lateinit var mMobileDataTextView: TextView
     private lateinit var mTermsAndPrivacyTextView: TextView
+    private lateinit var mLoadingUserSchoolsProgressBar: ProgressBar
 
     /*
      * Adapters
@@ -120,6 +124,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
      * Objects
      */
     private lateinit var mUser : User
+    private var isRequesting : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -146,7 +151,8 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mAllowNotificationsSwitch = rootView.findViewById(R.id.sw_allow_notification)
         mLinkWithFacebookButton = rootView.findViewById(R.id.btn_facebook_login)
         mLinkWithGoogleButton = rootView.findViewById(R.id.btn_google_login)
-        mLinkEmailButton = rootView.findViewById(R.id.btn_link_email)
+        mChangePasswordButton = rootView.findViewById(R.id.btn_change_password)
+        mChangePasswordText = rootView.findViewById(R.id.tv_change_password)
         mIsLoggedInWithFacebookImage = rootView.findViewById(R.id.iv_is_loggedin_with_facebook)
         mIsLoggedInWithGoogleImage = rootView.findViewById(R.id.iv_is_loggedin_with_google)
         mLinktYourAccountsTextView = rootView.findViewById(R.id.tv_link_accounts_text)
@@ -154,6 +160,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mTimeTextView = rootView.findViewById(R.id.tv_time)
         //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
+        mLoadingUserSchoolsProgressBar = rootView.findViewById(R.id.pb_loading_user_schools)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
         mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -161,7 +168,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mNotSelectedSchools.typeface = FontUtil.getNunitoSemiBold(context!!)
         mEditSchoolsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLinktYourAccountsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mLinkEmailButton.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mChangePasswordText.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLogOut.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
         mNotification.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -173,7 +180,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)
-        mLinkEmailButton.setOnClickListener(mLinkEmailButtonListener)
+        mChangePasswordButton.setOnClickListener(mLinkEmailButtonListener)
         mLinkWithFacebookButton.setOnClickListener(mLinkWithFacebookButtonListener)
         mLinkWithGoogleButton.setOnClickListener(mLinkWithGoogleButtonListener)
         mLogOut.setOnClickListener(mLogOutListener)
@@ -183,7 +190,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
         //mAllowMobileDataSwitch.setOnCheckedChangeListener(mAllowMobileNetworkSwitchListener)
         mAllowNotificationsSwitch.setOnCheckedChangeListener(mAllowNotificationsSwitchListener)
-        mLinkEmailButton.setOnEditorActionListener(onSendFormListener)
+        //mChangePasswordButton.setOnEditorActionListener(onSendFormListener)
 
         // set notification
         val dataHelper = DataHelper(context!!)
@@ -199,7 +206,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
 
 
-
+        isRequesting = true
         requestGetProfileRefactor()
 
         checkProviders()
@@ -246,7 +253,10 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onResume() {
         super.onResume()
 
-        requestGetProfileRefactor()
+        if (!isRequesting) {
+            isRequesting = true
+            requestGetProfileRefactor()
+        }
 
         checkProviders()
         //checkMobileDataSate()
@@ -260,7 +270,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 try {
                     val inputMethodManager = textView!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0)
-                    mLinkEmailButton.performClick()
+                    mChangePasswordButton.performClick()
                     action = true
                 } catch (exception : Exception) {
 
@@ -570,10 +580,12 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     private fun goLogInActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.putExtra(SHOW_START, true)
-        activity!!.startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra(SHOW_START, true)
+            activity!!.startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     private fun signInWithGoogle() {
@@ -621,7 +633,22 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         val emailIntent = Intent(Intent.ACTION_SENDTO,
                 Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        var userUUID = ""
+        var userEmail = ""
+        val versionName = BuildConfig.VERSION_NAME
+        if (userFirebase != null) {
+            userUUID = userFirebase.uid
+            if (userFirebase.email != null && !userFirebase.email.equals("")) {
+                userEmail = userFirebase.email!!
+            } else {
+                userEmail = mEmail.text.toString()
+            }
+        }
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Versión app: " + versionName +
+                "\n Cuenta: " + userUUID +
+                "\n Correo: " + userEmail +
                 "\n\n\n Aquí escribe tu mensaje" + "" +
                 "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
         startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
@@ -633,6 +660,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private fun goChooseSchoolsActivity() {
         val intent = Intent(activity, ChooseSchoolsActivity::class.java)
         intent.putExtra(SHOW_CONTINUE_BUTTON, false)
+        intent.putExtra(SHOW_BACK_BUTTON, true)
         startActivityForResult(intent, BaseActivityLifeCycle.RC_CHOOSE_SCHOOL)
     }
 
@@ -681,12 +709,19 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetProfileRefactorSuccess(user: User) {
         super.onGetProfileRefactorSuccess(user)
-
+        isRequesting = false
         if (context != null) {
             saveUser(user)
             val mSchools = user.getSelectedSchools()
 
-            requestGetUserSchools(mSchools)
+            mLoadingUserSchoolsProgressBar.visibility = View.VISIBLE
+            if (mSchools.isEmpty()) {
+
+            } else {
+                if (!user.getCourse().equals("")) {
+                    requestGetUserSchools(mSchools, user.getCourse())
+                }
+            }
 
             val course = user.getCourse()
             if (!course.equals("")) {
@@ -702,17 +737,20 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
         super.onGetProfileRefactorFail(throwable)
+        isRequesting = false
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetUserSchoolsSuccess(schools: List<School>) {
         super.onGetUserSchoolsSuccess(schools)
-        if (schools.isNotEmpty() && context != null) {
+        if (schools.isNotEmpty() && context != null && activity != null) {
             // save user chools to get it in next view
 
             val user = getUser()
             if (user != null) {
+
+                mLoadingUserSchoolsProgressBar.visibility = View.GONE
                 user.setSelectedShools(schools)
                 saveUser(user)
                 val updatedSchools = arrayListOf<School>()
@@ -750,6 +788,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 mEditSchoolsButton.visibility = View.VISIBLE
             }
         } else {
+            mLoadingUserSchoolsProgressBar.visibility = View.GONE
             mEditSchoolsButton.visibility = View.VISIBLE
             mEditSchoolsTextView.text = "Escoger"
             mSelectedSchoolsList.visibility = View.GONE
@@ -761,7 +800,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
     override fun onGetUserSchoolsFail(throwable: Throwable) {
         super.onGetUserSchoolsFail(throwable)
-        if (context != null) {
+        if (context != null && activity != null) {
             val updatedSchools = arrayListOf<School>()
             val school1 = School()
             val school2 = School()

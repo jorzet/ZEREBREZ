@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zerebrez.zerebrez.adapters;
+package com.zerebrez.zerebrez.components;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -48,6 +48,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
     private int height;
 
     private int mHitsWidth;
+    private int mEmojiWidth;
     private int mLineCharWidth;
     private int mUsersHeight;
     private int mTextWidth;
@@ -62,7 +63,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
     private int userHits;
     private int userHighestScore;
-    private int usersAverageScore;
+    private float usersAverageScore;
 
     private int mHighestScore = 128;
     private int[] mScores;
@@ -74,6 +75,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         paint.setTextAlign(Paint.Align.CENTER);
 
         mHitsWidth = (int) getResources().getDimension(R.dimen.hits_width);
+        mEmojiWidth = (int) getResources().getDimension(R.dimen.emoji_width);
         mLineCharWidth = (int) getResources().getDimension(R.dimen.line_chart_width);
         mUsersHeight = (int) getResources().getDimension(R.dimen.users_height);
         mTextTopSize = (int) getResources().getDimension(R.dimen.text_top_size);
@@ -101,7 +103,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         }
     }
 
-    public void setAverageAndBeastScore(int average, int best) {
+    public void setAverageAndBeastScore(float average, int best) {
         this.usersAverageScore = average;
         this.userHighestScore = best;
     }
@@ -168,7 +170,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         int offset = mProgressBarWidth/2;
         int progressUser = (height - mUsersHeight) - ((userHits * (height - (2 * mUsersHeight))) / mHighestScore);
         int progressBeast = (height - mUsersHeight) - ((userHighestScore * (height - (2 * mUsersHeight))) / mHighestScore);
-        int progressAverage = (height - mUsersHeight) - ((usersAverageScore * (height - (2 * mUsersHeight))) / mHighestScore);
+        int progressAverage = (height - mUsersHeight) - (((int) usersAverageScore * (height - (2 * mUsersHeight))) / mHighestScore);
 
         drawProgressBar(userHits, getResources().getColor(R.color.me_color),
                 xMe - offset, progressUser, xMe + offset, yPos - mUsersHeight - 30);
@@ -176,7 +178,7 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         drawProgressBar(userHighestScore, getResources().getColor(R.color.beast_color),
                 xBeast - offset, progressBeast, xBeast + offset, yPos - mUsersHeight - 30);
 
-        drawProgressBar(usersAverageScore, getResources().getColor(R.color.average_color),
+        drawProgressBarFloat(usersAverageScore, getResources().getColor(R.color.average_color),
                 xAverage - offset, progressAverage, xAverage + offset, yPos - mUsersHeight - 30);
 
         int lastOffset = 0;
@@ -193,15 +195,15 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
 
         // draw read line
         if (userHits > usersAverageScore) {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mHappyEmojiIcon.setBounds(imageBounds);
             mHappyEmojiIcon.draw(canvas);
         } else if (userHits == usersAverageScore) {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mOkEmojiIcon.setBounds(imageBounds);
             mOkEmojiIcon.draw(canvas);
         } else {
-            Rect imageBounds = new Rect(width - mHitsWidth, progressAverage - mHitsWidth / 2, width, progressAverage + mHitsWidth/2); // Adjust this for where you want it
+            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mSadEmijiIcon.setBounds(imageBounds);
             mSadEmijiIcon.draw(canvas);
         }
@@ -231,6 +233,17 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
         canvas.drawRect(left, top, right, bottom, paint );
 
         drawTex(String.valueOf(userHits), mTextTopSize, progressBarColor, left, top - 40, right, top - 10);
+    }
+
+    private void drawProgressBarFloat(float userHits, int progressBarColor, int left, int top, int right, int bottom) {
+        /*
+         * here is drawn the progress
+         */
+        paint.setColor(progressBarColor);
+        canvas.drawRect(left, top, right, bottom, paint );
+        String formattedString = String.format("%.01f", userHits);
+
+        drawTex(formattedString, mTextTopSize, progressBarColor, left, top - 40, right, top - 10);
     }
 
     private void drawTex(String text, int textSize, int textColor, int left, int top, int right, int bottom) {

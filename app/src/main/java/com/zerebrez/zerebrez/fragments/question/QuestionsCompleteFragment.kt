@@ -18,13 +18,24 @@ package com.zerebrez.zerebrez.fragments.question
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import com.facebook.login.LoginManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -45,6 +56,11 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     private val SHOW_START : String = "show_start"
 
     /*
+     *
+     */
+    private val TIME_DELAY : Long = 1200
+
+    /*
      * UI accessors
      */
     private lateinit var mQuestionTypeText : TextView
@@ -58,6 +74,12 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     private lateinit var mSuperButton : View
     private lateinit var mSuperButtonText : TextView
     private lateinit var mBePremiumContainer : View
+    private lateinit var mLoadingSuggestion : ProgressBar
+
+    /*
+     * attributtes
+     */
+    private var mAdShowed : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -77,6 +99,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         mSuperButton = rootView.findViewById(R.id.btn_super)
         mSuperButtonText = rootView.findViewById(R.id.btn_super_text)
         mBePremiumContainer = rootView.findViewById(R.id.rl_be_premium_container)
+        mLoadingSuggestion = rootView.findViewById(R.id.pb_loading_suggest)
 
 
         mQuestionTypeText.typeface = FontUtil.getNunitoRegular(context!!)
@@ -92,6 +115,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         val isAfterExam = (activity as QuestionActivity).areExamsAndQuestionsSaved()
         val isAfterModules = (activity as QuestionActivity).areModulesAndQuestionsSaved()
         val isAfterWrongQuestions = (activity as QuestionActivity).areWrongQuestionsSaved()
+        val isAfterSubjectQuestions = (activity as QuestionActivity).areSubjectQuestionsSaved()
 
         mHitsNumber.text = (activity as QuestionActivity).getCorrectQuestions().toString()
         mMissesNumber.text = (activity as QuestionActivity).getIncorrectQuestion().toString()
@@ -104,11 +128,14 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         } else if (isAfterExam) {
             val examId = (activity as QuestionActivity).getExamId()
             mQuestionTypeText.text = "Examen ${examId}"
+        } else if (isAfterSubjectQuestions) {
+            mQuestionTypeText.text = (activity as QuestionActivity).getSubject()
         } else if (isAfterWrongQuestions) {
             mQuestionTypeText.text = "Incorrectas"
         }
 
         mBePremiumContainer.visibility = View.GONE
+        mLoadingSuggestion.visibility = View.VISIBLE
         requestGetUserTips()
 
         mBePremiumButton.setOnClickListener(mBePremiumButtonListener)
@@ -118,8 +145,10 @@ class QuestionsCompleteFragment : BaseContentFragment() {
     }
 
     private val mBePremiumButtonListener = View.OnClickListener {
-        (activity as QuestionActivity).showPaymentFragment(true)
-        activity!!.onBackPressed()
+        if (activity != null) {
+            (activity as QuestionActivity).showPaymentFragment(true)
+            activity!!.onBackPressed()
+        }
     }
 
     private val mSuperButtonListener = View.OnClickListener {
@@ -127,7 +156,9 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         if (isAnonymousUser) {
             goLogInActivity()
         } else {
-            activity!!.onBackPressed()
+            if (activity != null) {
+                activity!!.onBackPressed()
+            }
         }
     }
 
@@ -136,43 +167,84 @@ class QuestionsCompleteFragment : BaseContentFragment() {
      * the app is going to redirect to LoginActivity to show SingUpFragment
      */
     private fun goLogInActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.putExtra(SHOW_START, false)
-        this.startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, LoginActivity::class.java)
+            intent.putExtra(SHOW_START, false)
+            this.startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     override fun onGetUserTipsSuccess(user: User) {
         super.onGetUserTipsSuccess(user)
+        if (context != null) {
+            if (user.isPremiumUser()) {
+                if (!user.getCourse().equals("")) {
+                    requestGetTips(user.getCourse())
+                }
+            } else {
+                mLoadingSuggestion.visibility = View.GONE
+                mBePremiumContainer.visibility = View.VISIBLE
 
-        if (user.isPremiumUser()) {
-            requestGetTips()
-        } else {
-            mBePremiumContainer.visibility = View.VISIBLE
+                // check if Ad is already showed
+                if (!mAdShowed) {
+                    // get random number
+                    val randomNumber = Math.random()
+                    var rand = 0
+                    if (randomNumber > 0.5) {
+                        rand = 1
+                    }
+                    if (activity != null) {
+                        // show random Ad
+                        //if (rand.equals(0)) {
+                        val mInterstitialAd = (activity as QuestionActivity).getInterstitialAd()
+                        if (mInterstitialAd != null && mInterstitialAd.isLoaded) {
+                            mInterstitialAd.show()
+                            mAdShowed = true
+                        }
+                        /*} else {
+                        val mRewardedVideoAd = (activity as QuestionActivity).getRewardedVideoAd()
+                        if (mRewardedVideoAd != null && mRewardedVideoAd.isLoaded) {
+                            mRewardedVideoAd.show()
+                            mAdShowed = true
+                        }
+                    }*/
+                    }
+                }
+            }
         }
     }
 
     override fun onGetUserTipdFail(throwable: Throwable) {
         super.onGetUserTipdFail(throwable)
-        mBePremiumContainer.visibility = View.VISIBLE
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
+            mBePremiumContainer.visibility = View.VISIBLE
+        }
     }
 
     override fun onGetTipsSuccess(tips: List<String>) {
         super.onGetTipsSuccess(tips)
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
 
-        val rand = Random()
-        val randomTip = tips.get(rand.nextInt(tips.size))
+            val rand = Random()
+            val randomTip = tips.get(rand.nextInt(tips.size))
 
-        mBePremiumText1.text = "Recomendación"
-        mBePremiumText2.text = randomTip
-        mBePremiumContainer.visibility = View.VISIBLE
-        mBePremiumButton.visibility = View.GONE
+            mBePremiumText1.text = "Recomendación"
+            mBePremiumText2.text = randomTip
+            mBePremiumContainer.visibility = View.VISIBLE
+            mBePremiumButton.visibility = View.GONE
+        }
 
     }
 
     override fun ongetTipsFail(throwable: Throwable) {
         super.ongetTipsFail(throwable)
-        mBePremiumContainer.visibility = View.VISIBLE
+        if (context != null) {
+            mLoadingSuggestion.visibility = View.GONE
+            mBePremiumContainer.visibility = View.VISIBLE
+        }
     }
 
 }

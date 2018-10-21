@@ -38,6 +38,8 @@ import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.enums.SubjectType
+import com.zerebrez.zerebrez.request.AbstractRequestTask
+import com.zerebrez.zerebrez.request.SendQuestionRequestTask
 import org.json.JSONArray
 import java.text.Normalizer
 import kotlin.collections.ArrayList
@@ -59,15 +61,14 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     private val mActivity : Activity = activity
 
-    private val MODULES_REFERENCE : String = "modules/comipems"
-    private val COMIPEMS_QUESTIONS_REFERENCE : String = "questions/comipems"
-    private val INSTITUTES_REFERENCE : String = "schools/comipems"
-    private val EXAMS_REFERENCE : String = "exams/comipems"
+    private val COURSE_LABEL : String = "course_label"
+
+    private val INSTITUTES_REFERENCE : String = "schools/course_label"
+    private val EXAMS_REFERENCE : String = "exams/course_label"
     private val COURSES_REFERENCE : String = "freeUser"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
-    private val EXAM_SCORES_REFERENCE : String = "scores/exams/comipems"
-    private val IMAGES_REFERENCE : String = "images/comipems"
+    private val IMAGES_REFERENCE : String = "images/course_label"
     private val SELECTED_SCHOOLS_REFERENCE : String = "selectedSchools"
     private val COURSE_KEY : String = "course"
     private val PREMIUM_KEY : String = "premium"
@@ -86,8 +87,6 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val CHOSEN_OPTION_REFERENCE : String = "chosenOption"
     private val INSTITUTION_ID : String = "institutionId"
     private val SCHOOL_ID : String = "schoolId"
-
-    private val FREE_MODULES : String = "freeUser/comipems/modules"
 
 
     private lateinit var mRequestType : RequestType
@@ -573,86 +572,6 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestGetExamScores() {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAM_SCORES_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mExamScores = arrayListOf<ExamScore>()
-
-                Log.d(TAG, post.toString())
-
-                for (key in map.keys) {
-                    println(key)
-                    if (!key.equals("processedData")) {
-                        val obj = map.get(key) as HashMap<String, Any>
-                        val examScore = ExamScore()
-                        examScore.setExamScoreId(Integer(key.replace("e", "")))
-                        val mUserScoreExams = arrayListOf<UserScoreExam>()
-                        for (key2 in obj.keys) {
-                            val userScoreExam = UserScoreExam()
-                            userScoreExam.setUserUUDI(key2)
-                            userScoreExam.setScore(Integer(obj.get(key2).toString()))
-                            mUserScoreExams.add(userScoreExam)
-                        }
-                        examScore.setOtherUsersScoreExam(mUserScoreExams)
-                        mExamScores.add(examScore)
-                    } else {
-
-                    }
-                }
-
-                onRequestListenerSucces.onSuccess(mExamScores)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }
-
-    fun requestGetSchoolScores() {
-
-    }
-
-    /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String) {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        val user = getCurrentUser()
-        if (user != null) {
-            val userUpdates = HashMap<String, Any>()
-
-            for (question in questions) {
-                if (!question.getOptionChoosed().equals("")) {
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + IS_CORRECT_REFERENCE, question.getWasOK())
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + SUBJECT_REFERENCE, question.getSubjectType().value)
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + "p" + question.getQuestionId() + "/" + CHOSEN_OPTION_REFERENCE, question.getOptionChoosed())
-                }
-            }
-
-            mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
-                override fun onComplete(task: Task<Void>) {
-                    if (task.isComplete) {
-                        Log.d(TAG, "complete requestSendAnsweredQuestions")
-                        onRequestListenerSucces.onSuccess(true)
-                    } else {
-                        Log.d(TAG, "cancelled requestSendAnsweredQuestions")
-                        val error = GenericError()
-                        error.setErrorType(ErrorType.ANSWERED_QUESTIONS_NOT_SENDED)
-                        onRequestLietenerFailed.onFailed(error)
-                    }
-                }
-            })
-        }
-    }*/
-
 
     fun requestSendAnsweredQuestionsNewFormat(questions: List<QuestionNewFormat>, course: String) {
         // Get a reference to our posts
@@ -684,6 +603,22 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 }
             })
         }
+    }
+
+    fun requestSendAnsweredQuestionNewFormat(question: QuestionNewFormat, course: String) {
+        val sendQuestionTask = SendQuestionRequestTask(mActivity)
+
+        sendQuestionTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
+            override fun onSuccess(result: Any) {
+                Log.d(TAG, "send question success")
+            }
+        })
+        sendQuestionTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
+            override fun onFailed(result: Throwable) {
+                Log.d(TAG, "send question fail")
+            }
+        })
+         sendQuestionTask.execute(question, course)
     }
 
     fun requestSendAnsweredModules(module : Module, course: String) {
@@ -954,9 +889,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     }
 
 
-    fun requestGetInstitutes() {
+    fun requestGetInstitutes(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -1058,9 +993,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetImagesPath() {
+    fun requestGetImagesPath(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(IMAGES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(IMAGES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -1143,100 +1078,6 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         onRequestLietenerFailed.onFailed(throwable)
     }
 
-    fun requestGetFreeModulesRefactor() {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_MODULES)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                val list = (post as List<String>)
-
-                Log.d(TAG, post.toString())
-
-                val mFreeModuleList = arrayListOf<Module>()
-
-                for (m in list) {
-                    val module = Module()
-                    module.setId(Integer(m.replace("m", "")))
-                    mFreeModuleList.add(module)
-                }
-
-                onRequestListenerSucces.onSuccess(mFreeModuleList)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }
-
-    fun requestGetModulesRefactor() {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, String>)
-                val mModules = arrayListOf<Module>()
-
-                Log.d(TAG, post.toString())
-
-                /*
-                 * mapping map to module object
-                 */
-                for ( key in map.keys) {
-                    println(key)
-                    val module = Module()
-                    val questions = arrayListOf<QuestionNewFormat>()
-
-                    // get question id from response
-                    val list = map.get(key) as List<String>
-                    for (q in list) {
-                        val question = QuestionNewFormat()
-                        question.questionId = q
-                        //question.setModuleId(Integer(key.replace("m","")))
-                        questions.add(question)
-                    }
-
-                    // set module id and question id
-                    module.setId(Integer(key.replace("m","")))
-                    module.setQuestionsNewFormat(questions)
-
-                    // add module to list
-                    mModules.add(module)
-                }
-
-                /*
-                  * sort module list because service doesn't return it in order
-                  */
-                Collections.sort(mModules, object : Comparator<Module> {
-                    override fun compare(o1: Module, o2: Module): Int {
-                        return extractInt(o1) - extractInt(o2)
-                    }
-
-                    internal fun extractInt(s: Module): Int {
-                        val num = s.getId().toString()
-                        // return 0 if no digits found
-                        return if (num.isEmpty()) 0 else Integer.parseInt(num)
-                    }
-                })
-
-                onRequestListenerSucces.onSuccess(mModules)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                //onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }
 
     fun requestUpdateUserPassword(user : User) {
         requestChangeUserPassword(user)

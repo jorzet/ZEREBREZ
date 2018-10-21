@@ -21,7 +21,6 @@ import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -50,6 +49,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.zerebrez.zerebrez.fragments.practice.StudySubjectFragment
+import com.zerebrez.zerebrez.fragments.practice.StudySubjectQuestionsFragment
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
@@ -193,7 +194,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         // paint botton TabLayout icon
         setBottomTabIcons()
 
-        requestGetExamScores()
+        //requestGetExamScores()
         requestGetProfileRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
@@ -351,13 +352,13 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mPracticeTopSelectedIcons[0])
-                mTopTabLayout.getTabAt(0)!!.setText("Preguntas")
+                mTopTabLayout.getTabAt(0)!!.text = "Preguntas"
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[1])
-                mTopTabLayout.getTabAt(1)!!.setText("Materias")
+                mTopTabLayout.getTabAt(1)!!.text = "Materias"
                 mTopTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[2])
-                mTopTabLayout.getTabAt(2)!!.setText("Erróneas")
+                mTopTabLayout.getTabAt(2)!!.text = "Erróneas"
                 mTopTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mPracticeTopUnselectedIcons[3])
-                mTopTabLayout.getTabAt(3)!!.setText("Examenes")
+                mTopTabLayout.getTabAt(3)!!.text = "Exámenes"
             }
             NodeType.ADVANCES -> {
                 mViewPager.setAdapter(mAdvancesViewPager)
@@ -370,9 +371,9 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mScoreTopSelectedIcons[0])
-                mTopTabLayout.getTabAt(0)!!.setText("Escuelas")
+                mTopTabLayout.getTabAt(0)!!.text = "Escuelas"
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mScoreTopUnselectedIcons[1])
-                mTopTabLayout.getTabAt(1)!!.setText("Usuarios")
+                mTopTabLayout.getTabAt(1)!!.text = "Usuarios"
             }
             NodeType.PROFILE -> {
                 mViewPager.setAdapter(mProfileViewPager)
@@ -380,9 +381,9 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 mTopTabLayout.setupWithViewPager(mViewPager)
 
                 mTopTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mProfileTopSelectedIcons[0])
-                mTopTabLayout.getTabAt(0)!!.setText("Mi Perfil")
+                mTopTabLayout.getTabAt(0)!!.text = "Mi Perfil"
                 mTopTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mProfileTopUnselectedIcons[1])
-                mTopTabLayout.getTabAt(1)!!.setText("Premium")
+                mTopTabLayout.getTabAt(1)!!.text = "Premium"
             }
         }
     }
@@ -392,13 +393,13 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
      */
     private fun setBottomTabIcons() {
         mBottomTabLayout.getTabAt(0)!!.setIcon(ImagesUtil.mBottomSelectedIcons[0])
-        mBottomTabLayout.getTabAt(0)!!.setText("Practicar")
+        mBottomTabLayout.getTabAt(0)!!.text = "Practicar"
         mBottomTabLayout.getTabAt(1)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[1])
-        mBottomTabLayout.getTabAt(1)!!.setText("Progreso")
+        mBottomTabLayout.getTabAt(1)!!.text = "Progreso"
         mBottomTabLayout.getTabAt(2)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[2])
-        mBottomTabLayout.getTabAt(2)!!.setText("Ranking")
+        mBottomTabLayout.getTabAt(2)!!.text = "Ranking"
         mBottomTabLayout.getTabAt(3)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[3])
-        mBottomTabLayout.getTabAt(3)!!.setText("Mi Perfil")
+        mBottomTabLayout.getTabAt(3)!!.text = "Mi Perfil"
         //mBottomTabLayout.getTabAt(4)!!.setIcon(ImagesUtil.mBottomUnselectedIcons[4])
         //mBottomTabLayout.getTabAt(4)!!.setText("Mi Perfil")
     }
@@ -456,7 +457,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onGetProfileRefactorFail(throwable)
     }
 
-    override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
+    /*override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
         super.onGetExamScoresSuccess(examScores)
         if (examScores.isNotEmpty()) {
             val dataHelper = DataHelper(baseContext)
@@ -466,7 +467,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetExamScoresFail(throwable: Throwable) {
         super.onGetExamScoresFail(throwable)
-    }
+    }*/
 
     fun goPaymentFragment() {
         // go to profile fragment
@@ -591,7 +592,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
     }
 
     fun getUserProfile(): User? {
-        return this.mUser
+        if (::mUser.isInitialized) {
+            return this.mUser
+        } else {
+            return null
+        }
     }
 
 }

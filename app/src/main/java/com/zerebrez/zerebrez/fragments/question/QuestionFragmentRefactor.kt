@@ -30,12 +30,9 @@ import android.view.ViewGroup
 import android.widget.*
 //import com.nishant.math.MathView // uncomment if is needed
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.adapters.NonScrollListView
 import com.zerebrez.zerebrez.adapters.OptionQuestionAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Image
-import com.zerebrez.zerebrez.models.QuestionOption
-import com.zerebrez.zerebrez.models.enums.QuestionType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -43,6 +40,7 @@ import katex.hourglass.`in`.mathlib.MathView
 import android.widget.ScrollView
 import com.zerebrez.zerebrez.adapters.QuestionAnswerAdapterRefactor
 import com.zerebrez.zerebrez.models.QuestionNewFormat
+import com.felipecsl.gifimageview.library.GifImageView
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/05/18.
@@ -80,6 +78,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     private lateinit var mImageAnswerB : ImageView
     private lateinit var mImageAnswerC : ImageView
     private lateinit var mImageAnswerD : ImageView
+    private lateinit var mGifImageAnswerA : GifImageView
+    private lateinit var mGifImageAnswerB : GifImageView
+    private lateinit var mGifImageAnswerC : GifImageView
+    private lateinit var mGifImageAnswerD : GifImageView
     private lateinit var mQuestionContainerView : LinearLayout
     private lateinit var mQuestionsScrolView : ScrollView
     private lateinit var mOptionATextView: TextView
@@ -128,6 +130,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         mImageAnswerB = rootView.findViewById(R.id.iv_answer_b)
         mImageAnswerC = rootView.findViewById(R.id.iv_answer_c)
         mImageAnswerD = rootView.findViewById(R.id.iv_answer_d)
+        mGifImageAnswerA = rootView.findViewById(R.id.giv_answer_a)
+        mGifImageAnswerB = rootView.findViewById(R.id.giv_answer_b)
+        mGifImageAnswerC = rootView.findViewById(R.id.giv_answer_c)
+        mGifImageAnswerD = rootView.findViewById(R.id.giv_answer_d)
         mQuestionContainerView = rootView.findViewById(R.id.ll_question_container)
         mQuestionsScrolView = rootView.findViewById(R.id.questions_scroll)
         mOptionATextView = rootView.findViewById(R.id.tv_option_a)
@@ -255,8 +261,14 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             }
                             "img" -> {
                                 val nameInStoregeA = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
-                                mImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
-                                mImageAnswerA.visibility = View.VISIBLE
+                                if (nameInStoregeA.contains(".gif")) {
+                                    mGifImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
+                                    mGifImageAnswerA.startAnimation()
+                                    mGifImageAnswerA.visibility = View.VISIBLE
+                                } else {
+                                    mImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
+                                    mImageAnswerA.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
@@ -273,8 +285,14 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             }
                             "img" -> {
                                 val nameInStoregeB = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
-                                mImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
-                                mImageAnswerB.visibility = View.VISIBLE
+                                if (nameInStoregeB.contains(".gif")) {
+                                    mGifImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
+                                    mGifImageAnswerB.startAnimation()
+                                    mGifImageAnswerB.visibility = View.VISIBLE
+                                } else {
+                                    mImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
+                                    mImageAnswerB.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
@@ -291,8 +309,14 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             }
                             "img" -> {
                                 val nameInStoregeC = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
-                                mImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
-                                mImageAnswerC.visibility = View.VISIBLE
+                                if (nameInStoregeC.contains(".gif")) {
+                                    mGifImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
+                                    mGifImageAnswerC.startAnimation()
+                                    mGifImageAnswerC.visibility = View.VISIBLE
+                                } else {
+                                    mImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
+                                    mImageAnswerC.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
@@ -309,87 +333,20 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             }
                             "img" -> {
                                 val nameInStoregeD = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
-                                mImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
-                                mImageAnswerD.visibility = View.VISIBLE
+                                if (nameInStoregeD.contains(".gif")) {
+                                    mGifImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
+                                    mGifImageAnswerD.startAnimation()
+                                    mGifImageAnswerD.visibility = View.VISIBLE
+                                } else {
+                                    mImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
+                                    mImageAnswerD.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
                 }
 
             }
-
-            /*when (question!!.getQuestionType()) {
-            QuestionType.TEXT.toString() -> {
-                mTextAnswerA.setText(question!!.getOptionOne())
-                mTextAnswerB.setText(question!!.getOptionTwo())
-                mTextAnswerC.setText(question!!.getOptionThree())
-                mTextAnswerD.setText(question!!.getOptionFour())
-
-                //mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
-                //mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
-                //mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
-                //mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
-
-                mTextAnswerA.visibility = View.VISIBLE
-                mTextAnswerB.visibility = View.VISIBLE
-                mTextAnswerC.visibility = View.VISIBLE
-                mTextAnswerD.visibility = View.VISIBLE
-                mEquationAnswerA.visibility = View.GONE
-                mEquationAnswerB.visibility = View.GONE
-                mEquationAnswerC.visibility = View.GONE
-                mEquationAnswerD.visibility = View.GONE
-                mImageAnswerA.visibility = View.GONE
-                mImageAnswerB.visibility = View.GONE
-                mImageAnswerC.visibility = View.GONE
-                mImageAnswerD.visibility = View.GONE
-            }
-            QuestionType.EQUATION.toString() -> {
-                /*mEquationAnswerA.text = "$$"+question!!.getOptionOne()+"$$"
-                mEquationAnswerB.text = "$$"+question!!.getOptionTwo()+"$$"
-                mEquationAnswerC.text = "$$"+question!!.getOptionThree()+"$$"
-                mEquationAnswerD.text = "$$"+question!!.getOptionFour()+"$$"*/
-                mEquationAnswerA.setDisplayText("$$"+question!!.getOptionOne()+"$$")
-                mEquationAnswerB.setDisplayText("$$"+question!!.getOptionTwo()+"$$")
-                mEquationAnswerC.setDisplayText("$$"+question!!.getOptionThree()+"$$")
-                mEquationAnswerD.setDisplayText("$$"+question!!.getOptionFour()+"$$")
-                mTextAnswerA.visibility = View.GONE
-                mTextAnswerB.visibility = View.GONE
-                mTextAnswerC.visibility = View.GONE
-                mTextAnswerD.visibility = View.GONE
-                mEquationAnswerA.visibility = View.VISIBLE
-                mEquationAnswerB.visibility = View.VISIBLE
-                mEquationAnswerC.visibility = View.VISIBLE
-                mEquationAnswerD.visibility = View.VISIBLE
-                mImageAnswerA.visibility = View.GONE
-                mImageAnswerB.visibility = View.GONE
-                mImageAnswerC.visibility = View.GONE
-                mImageAnswerD.visibility = View.GONE
-            }
-            QuestionType.IMAGE.toString() -> {
-                val nameInStoregeA = getNameInStorage(question!!.getOptionOne(), mImagesPath)
-                val nameInStoregeB = getNameInStorage(question!!.getOptionTwo(), mImagesPath)
-                val nameInStoregeC = getNameInStorage(question!!.getOptionThree(), mImagesPath)
-                val nameInStoregeD = getNameInStorage(question!!.getOptionFour(), mImagesPath)
-
-                mImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
-                mImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
-                mImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
-                mImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
-
-                mTextAnswerA.visibility = View.GONE
-                mTextAnswerB.visibility = View.GONE
-                mTextAnswerC.visibility = View.GONE
-                mTextAnswerD.visibility = View.GONE
-                mEquationAnswerA.visibility = View.GONE
-                mEquationAnswerB.visibility = View.GONE
-                mEquationAnswerC.visibility = View.GONE
-                mEquationAnswerD.visibility = View.GONE
-                mImageAnswerA.visibility = View.VISIBLE
-                mImageAnswerB.visibility = View.VISIBLE
-                mImageAnswerC.visibility = View.VISIBLE
-                mImageAnswerD.visibility = View.VISIBLE
-            }
-        }*/
 
             mOptionA.setOnClickListener(this)
             mOptionB.setOnClickListener(this)

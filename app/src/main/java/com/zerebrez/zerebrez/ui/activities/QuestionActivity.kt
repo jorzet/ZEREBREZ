@@ -24,6 +24,14 @@ import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.question.*
 import com.zerebrez.zerebrez.models.Exam
@@ -43,7 +51,8 @@ import com.zerebrez.zerebrez.utils.FontUtil
  * jorzet.94@gmail.com
  */
 
-class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener {
+class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener,
+        RewardedVideoAdListener {
 
     /*
      * Tags
@@ -62,6 +71,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val HITS_EXTRA = "hits_extra"
     private val MISSES_EXTRA = "misses_extra"
     private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
+    private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
+    private val SUBJECT_EXTRA : String = "subject_extra"
 
     /*
      * UI accessors
@@ -82,6 +93,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     /*
      * Variables
      */
+    private var mSubject : String = ""
     private var mCourse : String = ""
     private var mModuleId : Int = 0
     private var mQuestionId : Int = 0
@@ -96,10 +108,11 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var resetExpandedButton : Boolean = false
     private var mExamAnsQuestionsSaved = false
     private var mModulesAndQuestionsSaved = false
-    private var mWrongQuestionsSaver = false
+    private var mWrongQuestionsSaved = false
+    private var mSubjectQuestionsSaved = false
     private var mShowPaymentFragment = false
-    private var mProgressByQuestion : Int = 0
-    private var mCurrentProgress : Int = 0
+    private var mProgressByQuestion : Float = 0.0F
+    private var mCurrentProgress : Float = 0.0F
 
     /*
      * Animation
@@ -115,6 +128,12 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private lateinit var mModuleList : List<Module>
     private lateinit var mExamList : List<Exam>
     private lateinit var currentFragment : Fragment
+
+    /*
+     * Ads Objects
+     */
+    private lateinit var mRewardedVideoAd: RewardedVideoAd
+    private lateinit var mInterstitialAd: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,45 +171,107 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         outAnimation = AlphaAnimation(1f, 0f)
         outAnimation.duration = 200
 
-        mCourse = intent.getStringExtra(CURRENT_COURSE)
-        mModuleId = intent.getIntExtra(MODULE_ID, -1)
-        mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
-        mExamId = intent.getIntExtra(EXAM_ID, -1)
-        isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
-        isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
-        isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
-        isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
+        if (intent != null) {
+            mCourse = intent.getStringExtra(CURRENT_COURSE)
+            mModuleId = intent.getIntExtra(MODULE_ID, -1)
+            mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
+            mExamId = intent.getIntExtra(EXAM_ID, -1)
+            isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
+            isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
+            isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
+            isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
 
-        if (isFromSubjectQuestionFragment) {
-            showLoading(true)
-            val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
-            requestGetQuestionsNewFormatBySubject(mSelectedSubject)
-        } else if (isFromWrongQuestionFragment) {
-            showLoading(true)
-            val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
-            val mQuestions = arrayListOf<QuestionNewFormat>()
-            var mLastKnowQuestion = false
-            for (wrongQuestionId in mWrongQuestionIds) {
-                if (mLastKnowQuestion || wrongQuestionId.equals("p" + mQuestionId)) {
-                    val question = QuestionNewFormat()
-                    question.questionId = "p" + wrongQuestionId
-                    mQuestions.add(question)
-                    mLastKnowQuestion = true
+            val user = getUser()
+
+            if (isFromSubjectQuestionFragment) {
+                showLoading(true)
+                //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
+                //requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+                val mSubjectQuestionIds = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<Int>
+                mSubject = intent.getStringExtra(SUBJECT_EXTRA)
+                val mQuestions = arrayListOf<QuestionNewFormat>()
+                var mLastKnowQuestion = false
+                for (subjectQuestionId in mSubjectQuestionIds) {
+                    if (mLastKnowQuestion || subjectQuestionId.equals(mQuestionId)) {
+                        val question = QuestionNewFormat()
+                        question.questionId = "p" + subjectQuestionId
+                        mQuestions.add(question)
+                        mLastKnowQuestion = true
+                    }
+                }
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions, user.getCourse())
+                }
+            } else if (isFromWrongQuestionFragment) {
+                showLoading(true)
+                val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
+                val mQuestions = arrayListOf<QuestionNewFormat>()
+                var mLastKnowQuestion = false
+                for (wrongQuestionId in mWrongQuestionIds) {
+                    if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
+                        val question = QuestionNewFormat()
+                        question.questionId = "p" + wrongQuestionId
+                        mQuestions.add(question)
+                        mLastKnowQuestion = true
+                    }
+                }
+                //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions, user.getCourse())
+                }
+                //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
+            } else if (isFromExamFragment) {
+                showLoading(true)
+                //requestGetQuestionsByExamIdRefactor(mExamId)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatByExamIdRefactor(mExamId, user.getCourse())
+                }
+            } else {
+                showLoading(true)
+                //requestGetQuestionsByModuleIdRefactor(mModuleId)
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId, user.getCourse())
                 }
             }
-            //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
-            requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions)
-            //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
-        } else if (isFromExamFragment) {
-            showLoading(true)
-            //requestGetQuestionsByExamIdRefactor(mExamId)
-            requestGetQuestionsNewFormatByExamIdRefactor(mExamId)
-        } else {
-            showLoading(true)
-            //requestGetQuestionsByModuleIdRefactor(mModuleId)
-            requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId)
-        }
 
+            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+            // Use an activity context to get the rewarded video instance.
+            mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+            mRewardedVideoAd.rewardedVideoAdListener = this
+            // RequestAdd
+            loadRewardedVideoAd()
+
+            mInterstitialAd = InterstitialAd(this)
+            mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    // Code to be executed when an ad finishes loading.
+                }
+
+                override fun onAdFailedToLoad(errorCode: Int) {
+                    // Code to be executed when an ad request fails.
+                }
+
+                override fun onAdOpened() {
+                    // Code to be executed when the ad is displayed.
+                }
+
+                override fun onAdLeftApplication() {
+                    // Code to be executed when the user has left the app.
+                }
+
+                override fun onAdClosed() {
+                    // Code to be executed when when the interstitial ad is closed.
+                }
+            }
+        }
+    }
+
+    private fun loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                AdRequest.Builder().build())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -230,10 +311,11 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     private val mCloseQuestionListener = View.OnClickListener {
         if (mCurrentQuestion > 0) {
-            if (isFromWrongQuestionFragment) {
+            if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
                 } else {
+                    requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
                     onBackPressed()
                 }
             } else {
@@ -275,8 +357,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size -1) {
             if (isFromWrongQuestionFragment) {
                 //requestSendAnsweredQuestions(mQuestions, mCourse)
-                requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
-            }
+                //requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+            } /*else if (isFromSubjectQuestionFragment) {
+                requestSendAnsweredQuestionNewFormat(mQuestionsNewFormat[mCurrentQuestion], mCourse)
+            }*/
             showQuestion()
             mCurrentQuestion++
         } else if (isAnonymous) {
@@ -284,6 +368,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         } else {
             if (isFromWrongQuestionFragment) {
                 saveWrongQuestion()
+            } else if (isFromSubjectQuestionFragment) {
+                saveQuestionSubject()
             } else if (isFromExamFragment) {
                 saveExamsAndQuestions()
             } else {
@@ -340,7 +426,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     private fun showQuestion() {
         mCurrentProgress += mProgressByQuestion
-        mQuestionsProgress.progress = mCurrentProgress
+        mQuestionsProgress.progress = mCurrentProgress.toInt()
         currentFragment = QuestionFragmentRefactor()
         val manager = getSupportFragmentManager();
         val transaction = manager.beginTransaction();
@@ -479,10 +565,16 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     }
 
+    private fun saveQuestionSubject() {
+        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        mSubjectQuestionsSaved = true
+        showQuestionsCompleteFragment()
+    }
+
     private fun saveWrongQuestion() {
         //requestSendAnsweredQuestions(mQuestions, mCourse)
         requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
-        mWrongQuestionsSaver = true
+        mWrongQuestionsSaved = true
         showQuestionsCompleteFragment()
     }
 
@@ -568,8 +660,16 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         return this.mExamAnsQuestionsSaved
     }
 
+    fun areSubjectQuestionsSaved() : Boolean {
+        return this.mSubjectQuestionsSaved
+    }
+
+    fun getSubject() : String {
+        return this.mSubject
+    }
+
     fun areWrongQuestionsSaved() : Boolean {
-        return this.mWrongQuestionsSaver
+        return this.mWrongQuestionsSaved
     }
 
     fun isAnonymousUser() : Boolean {
@@ -670,7 +770,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mQuestionsNewFormat = questions
         mModuleNumber.text = mModuleId.toString()
         mQuestiontypeText.text = "Módulo"
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -686,7 +786,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mQuestionsNewFormat = questions
         mModuleNumber.text = mExamId.toString()
         mQuestiontypeText.text = "Examen"
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -704,7 +804,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mQuestionsNewFormat.isNotEmpty()) {
             mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
         }
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -712,6 +812,30 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {
         super.onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
         showLoading(false)
+        ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
+                DialogType.OK_DIALOG, this)!!
+                .show(supportFragmentManager!!, "notAbleNow")
+        onBackPressed()
+    }
+
+    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {
+        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions)
+        mQuestionsNewFormat = questions
+        mModuleNumber.text = ":)"
+        if (mQuestionsNewFormat.isNotEmpty()) {
+            mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
+        }
+        mProgressByQuestion = 100 / questions.size.toFloat()
+        showQuestion()
+        showLoading(false)
+    }
+
+    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {
+        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable)
+        showLoading(false)
+        ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
+                DialogType.OK_DIALOG, this)!!
+                .show(supportFragmentManager!!, "notAbleNow")
         onBackPressed()
     }
 
@@ -722,7 +846,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (mQuestionsNewFormat.isNotEmpty()) {
             mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
         }
-        mProgressByQuestion = 100 / questions.size
+        mProgressByQuestion = 100 / questions.size.toFloat()
         showQuestion()
         showLoading(false)
     }
@@ -761,6 +885,58 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         } else {
             onBackPressed()
         }
+    }
+
+
+    /********************************************************************************/
+
+    fun getInterstitialAd() : InterstitialAd? {
+        if (::mInterstitialAd.isInitialized) {
+            return mInterstitialAd
+        } else {
+            return null
+        }
+    }
+
+    fun getRewardedVideoAd() : RewardedVideoAd? {
+        if (::mRewardedVideoAd.isInitialized) {
+            return mRewardedVideoAd
+        } else {
+            return null
+        }
+    }
+
+    override fun onRewarded(reward: RewardItem) {
+        //Toast.makeText(this, "onRewarded! currency: ${reward.type} amount: ${reward.amount}", Toast.LENGTH_SHORT).show()
+        // Reward the user.
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        //Toast.makeText(this, "onRewardedVideoAdLeftApplication", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdClosed() {
+        //Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(errorCode: Int) {
+        //Toast.makeText(this, "onRewardedVideoAdFailedToLoad", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        //Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        //Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoStarted() {
+        //Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoCompleted() {
+        //Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show()
     }
 
 }

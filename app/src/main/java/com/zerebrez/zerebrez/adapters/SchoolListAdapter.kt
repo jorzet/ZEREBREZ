@@ -39,7 +39,7 @@ class SchoolListAdapter (schools : List<School>, context : Context) : BaseAdapte
         val currentSchool = getItem(position) as School
 
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val schoolView = inflator.inflate(R.layout.custom_selected_school, null)
+        val schoolView = inflator.inflate(R.layout.custom_selected_school_profile, null)
         schoolView.tv_school_name.text = currentSchool.getInstituteName() + " " + currentSchool.getSchoolName()
 
         if (position.equals(0)) {

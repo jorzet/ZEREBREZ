@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -43,7 +42,7 @@ class SubjectListAdapter (subjects : List<SubjectRefactor>, context : Context) :
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val subjectView = inflator.inflate(R.layout.custom_option_sobject, null)
 
-        subjectView.tv_subject_name.text = currentSubject.subjectType.value.toUpperCase()
+        subjectView.tv_subject_name.text = currentSubject.subjectType.value
         subjectView.tv_subject_name.typeface = FontUtil.getNunitoRegular(mContext)
 
         when (currentSubject.subjectType) {

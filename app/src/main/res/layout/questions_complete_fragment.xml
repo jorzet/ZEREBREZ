@@ -125,66 +125,81 @@
 
 
             <RelativeLayout
-                android:id="@+id/rl_be_premium_container"
+                android:id="@+id/rl_be_premium_container2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="210dp"
                 android:layout_below="@+id/rl_score_questions_container"
                 android:layout_marginTop="20dp">
 
-                <ImageView
-                    android:id="@+id/iv_gray_line1"
+                <ProgressBar
+                    android:id="@+id/pb_loading_suggest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/gray_line_icon"/>
-
-                <TextView
-                    android:id="@+id/tv_premium_text_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:gravity="center"
-                    android:text="¡Se te acaban las preguntas!"
-                    android:textColor="@color/exams_text_color"
-                    android:textSize="23sp"/>
-
-                <TextView
-                    android:id="@+id/tv_premium_text_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_premium_text_1"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:text="¡No te quedes sin estudiar!"
-                    android:textColor="@color/not_exams_currently_text_color"
-                    android:textSize="20sp"
-                    android:visibility="visible"/>
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"/>
 
                 <RelativeLayout
-                    android:id="@+id/btn_be_premium"
-                    android:layout_width="200dp"
-                    android:layout_height="50dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_below="@+id/tv_premium_text_2"
-                    android:background="@drawable/be_premium_button_background">
-                    <TextView
-                        android:id="@+id/btn_be_premium_text"
+                    android:id="@+id/rl_be_premium_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_gray_line1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:src="@drawable/gray_line_icon"/>
+
+                    <TextView
+                        android:id="@+id/tv_premium_text_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         android:gravity="center"
-                        android:text="Quiero ser premium"
-                        android:textColor="@color/white"
+                        android:text="¡Se te acaban las preguntas!"
+                        android:textColor="@color/exams_text_color"
+                        android:textSize="23sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_premium_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_premium_text_1"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:text="¡No te quedes sin estudiar!"
+                        android:textColor="@color/not_exams_currently_text_color"
                         android:textSize="20sp"
                         android:visibility="visible"/>
+
+                    <RelativeLayout
+                        android:id="@+id/btn_be_premium"
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:layout_below="@+id/tv_premium_text_2"
+                        android:background="@drawable/be_premium_button_background">
+                        <TextView
+                            android:id="@+id/btn_be_premium_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="Quiero ser premium"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:visibility="visible"/>
+                    </RelativeLayout>
                 </RelativeLayout>
 
             </RelativeLayout>
@@ -194,7 +209,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/rl_be_premium_container"
+                android:layout_below="@+id/rl_be_premium_container2"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/gray_line_icon"/>
 
@@ -210,13 +225,13 @@
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/blue_background_button">
+                    android:background="@drawable/super_button_background">
                     <TextView
                         android:id="@+id/btn_super_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_centerVertical="true"
                         android:gravity="center"
                         android:text="Súper  : )"
                         android:textColor="@color/white"

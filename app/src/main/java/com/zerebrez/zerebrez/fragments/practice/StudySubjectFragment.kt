@@ -18,6 +18,7 @@ package com.zerebrez.zerebrez.fragments.practice
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,10 +29,8 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.SubjectListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
-import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.DialogType
-import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -76,6 +75,8 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
      */
     var updatedsubjects : List<SubjectRefactor> = arrayListOf()
 
+    private lateinit var studyQuestionFragment : Fragment
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (container == null)
@@ -90,7 +91,10 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
         mNotSubjectCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
 
 
-        requestGetSubjects()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetSubjects(user.getCourse())
+        }
 
         return rootView
     }
@@ -108,7 +112,8 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
         if (updatedsubjects.isNotEmpty()) {
-            goQuestionActivity(updatedsubjects[position].internalName)
+            goStudySubjectQuestionFragment(updatedsubjects[position].internalName)
+            //goQuestionActivity(updatedsubjects[position].internalName)
         } else {
             ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo", DialogType.OK_DIALOG, this)!!
                     .show(fragmentManager!!, "notAbleNow")
@@ -155,6 +160,27 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
 
     override fun onConfirmationAccept() {
 
+    }
+
+    private fun goStudySubjectQuestionFragment(selectedSubject : String) {
+        try {
+            studyQuestionFragment = StudySubjectQuestionsFragment()
+            (studyQuestionFragment as StudySubjectQuestionsFragment).setSelectedSubject(selectedSubject)
+            val transaction = fragmentManager!!.beginTransaction()
+            transaction.replace(R.id.study_questions_subject_fragment_container, studyQuestionFragment)
+            transaction.commit()
+            transaction.addToBackStack("studyQuestionFragment")
+        } catch (exception : Exception) {
+            val a = 0
+        }
+    }
+
+    fun getStudySubjectQuestionFragment() : Fragment? {
+        if (::studyQuestionFragment.isInitialized) {
+            return this.studyQuestionFragment
+        } else {
+            return  null
+        }
     }
 
     private fun goQuestionActivity(selectedSubject : String) {

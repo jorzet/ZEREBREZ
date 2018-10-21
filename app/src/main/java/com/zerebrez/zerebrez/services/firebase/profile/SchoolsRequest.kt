@@ -29,7 +29,9 @@ private const val TAG: String = "SchoolsRequest"
 
 class SchoolsRequest(activity: Activity) : Engagement(activity) {
 
-    private val INSTITUTES_REFERENCE : String = "schools/comipems"
+    private val COURSE_LABEL : String = "course_label"
+
+    private val INSTITUTES_REFERENCE : String = "schools/course_label"
 
     private val INSTITUTE_NAME_KEY : String = "name"
     private val SCHOOL_NAME_KEY : String = "name"
@@ -50,9 +52,9 @@ class SchoolsRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetSchools() {
+    fun requestGetSchools(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

@@ -18,9 +18,7 @@ package com.zerebrez.zerebrez.ui.activities
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
 import com.android.billingclient.api.BillingClient
@@ -28,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuth
 
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.payment.ProvidersFragment
-import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.services.billing.BillingManager
@@ -165,8 +162,13 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     }
 
     fun DisplayMessage(title: String, message: String){
-        ErrorDialog.newInstance(title, message,
-                DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, DIALOG_TAG)
+        try {
+
+            ErrorDialog.newInstance(title, message,
+                    DialogType.OK_DIALOG, this)!!.show(supportFragmentManager, DIALOG_TAG)
+        } catch (e : java.lang.Exception) {
+        } catch (e : kotlin.Exception) {
+        }
     }
 
     override fun onConfirmationNeutral() {

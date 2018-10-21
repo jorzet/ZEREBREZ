@@ -66,8 +66,12 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         mProgressBar = root.findViewById(R.id.pb_confirm_order)
         mCloseContainer = root.findViewById(R.id.rl_close_confirm_order)
 
-        mConfirmOrderButton.setOnClickListener{GenerateOrder()}
-        mCloseContainer.setOnClickListener{ activity!!.onBackPressed()}
+        mConfirmOrderButton.setOnClickListener {GenerateOrder()}
+        mCloseContainer.setOnClickListener {
+            if (activity != null) {
+                activity!!.onBackPressed()
+            }
+        }
 
         mPriceTextView.text = "$${PRICE}"
         mComproPagoManager = ComproPagoManager()
@@ -83,7 +87,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         val name = mNameEditText.text.toString()
         val lastName = mLastNameEditText.text.toString()
         val email = mEmailEditText.text.toString()
-        if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@")){
+        if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@") && activity != null){
             if (NetworkUtil.isConnected(this!!.activity!!)) {
                 setWaitScreen(true)
                 mComproPagoManager.GenerateOrder("$name $lastName", email, mProvider!!.internal_name, PRICE, object: ComproPagoManager.OnGenerateOrderListener{
@@ -178,9 +182,11 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     override fun onConfirmationNeutral() {
-        if (ORDER_GENERATED)
-            activity!!.finish()
-        else
+        if (ORDER_GENERATED) {
+            if (activity != null) {
+                activity!!.finish()
+            }
+        } else
             setWaitScreen(false)
     }
 

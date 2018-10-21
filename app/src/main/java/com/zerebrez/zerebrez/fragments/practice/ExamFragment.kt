@@ -30,7 +30,6 @@ import com.zerebrez.zerebrez.adapters.ExamListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.User
-import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -85,15 +84,20 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
         mExamList = rootView.findViewById(R.id.lv_exam_container)
         mNotExamsCurrentlyTextView = rootView.findViewById(R.id.tv_not_exams_currently)
 
-        requestGetExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamsRefactor(user.getCourse())
+        }
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-
-        requestGetExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetExamsRefactor(user.getCourse())
+        }
 
     }
 
@@ -147,7 +151,10 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
     override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
         super.onGetExamsRefactorSuccess(exams)
         mUpdatedExams = exams
-        requestGetFreeExamsRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetFreeExamsRefactor(user.getCourse())
+        }
     }
 
     override fun onGetExamsRefactorFail(throwable: Throwable) {

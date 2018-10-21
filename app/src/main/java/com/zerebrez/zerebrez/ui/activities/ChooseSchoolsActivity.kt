@@ -47,6 +47,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
      */
     private val TAG : String = "ChooseSchoolsActivity"
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SHOW_BACK_BUTTON : String = "show_back_button"
 
     companion object {
         val UPDATE_USER_SCHOOLS : String = "update_user_schools"
@@ -89,6 +90,7 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
      * Some variables
      */
     private var showContinueButton : Boolean = false
+    private var showBackButton : Boolean = false
     private var hasChanges : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,6 +140,16 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
         mThirdSchoolContainer.visibility = View.GONE
 
         showContinueButton = intent.extras.getBoolean(SHOW_CONTINUE_BUTTON)
+        showBackButton = intent.extras.getBoolean(SHOW_BACK_BUTTON)
+
+        val actionBar = supportActionBar
+
+        if (showBackButton) {
+            actionBar!!.setDisplayHomeAsUpEnabled(true)
+        } else {
+            actionBar!!.setDisplayHomeAsUpEnabled(false)
+        }
+
         if (showContinueButton) {
             // this is shown after signUp fragment
             mContinueText.setText(resources.getString(R.string.continue_text))
@@ -166,7 +178,10 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
         }
 
-        requestGetSchools()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetSchools(user.getCourse())
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

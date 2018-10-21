@@ -27,10 +27,12 @@ private const val TAG: String = "TipsRequest"
 
 class TipsRequest(activity: Activity) : Engagement(activity) {
 
+    private val COURSE_LABEL : String = "course_label"
     private val USERS_REFERENCE : String = "users"
-    private val TIPS_REFERENCE : String = "tips/comipems"
+    private val TIPS_REFERENCE : String = "tips/course_label"
 
     private val PROFILE_KEY : String = "profile"
+    private val COURSE_KEY : String = "course"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
@@ -63,27 +65,45 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
                         val map = (post as HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
-                        val user = User()
+                        if (map.containsKey(PROFILE_KEY)) {
+                            val user = User()
+                            val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
-                        val profile = map.get(PROFILE_KEY) as HashMap<String, String>
-                        for (key2 in profile.keys) {
-                            if (key2.equals(PREMIUM_KEY)) {
-                                val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                            if (profileMap.containsKey(COURSE_KEY)) {
+                                val course = profileMap.get(COURSE_KEY) as String
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
+                                user.setCourse(course)
+                                val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
+
+                                for (key2 in courseMap.keys) {
+                                    if (key2.equals(PREMIUM_KEY)) {
+
+                                        val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
+
+                                        if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                            val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                            user.setPremiumUser(isPremium)
+                                        }
+
+                                        if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                            val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                            user.setTimeStamp(timeStamp)
+                                        }
+                                    }
                                 }
 
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
+
+                                Log.d(TAG, "profile data ------ " + user.getUUID())
+                                onRequestListenerSucces.onSuccess(user)
+                            } else {
+                                val error = GenericError()
+                                onRequestLietenerFailed.onFailed(error)
                             }
-                        }
 
-                        Log.d(TAG, "profile data ------ " + user.getUUID())
-                        onRequestListenerSucces.onSuccess(user)
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -98,9 +118,9 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
         }
     }
 
-    fun requestGetTips() {
+    fun requestGetTips(course : String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(TIPS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(TIPS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

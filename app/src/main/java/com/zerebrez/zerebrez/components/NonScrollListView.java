@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zerebrez.zerebrez.adapters;
+package com.zerebrez.zerebrez.components;
 
 import android.content.Context;
 import android.util.AttributeSet;

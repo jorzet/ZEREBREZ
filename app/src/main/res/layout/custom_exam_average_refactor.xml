@@ -24,7 +24,7 @@
         android:background="@color/line_1_background_color"/>
 
 
-    <com.zerebrez.zerebrez.adapters.ExamScoreCanvas
+    <com.zerebrez.zerebrez.components.ExamScoreCanvas
         android:id="@+id/bc_exams_average"
         android:layout_width="match_parent"
         android:layout_height="350dp"

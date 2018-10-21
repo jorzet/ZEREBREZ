@@ -28,6 +28,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.fragments.init.InitFragment
+import com.zerebrez.zerebrez.fragments.init.InitFragmentRefactor
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.enums.DialogType
@@ -93,7 +94,10 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     override fun onGetModulesSucces(result: List<Module>) {
         super.onGetModulesSucces(result)
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
         //goInitFragment()
     }
 
@@ -127,7 +131,8 @@ class StartFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
     private fun goInitFragment() {
         val manager = getFragmentManager();
         val transaction = manager!!.beginTransaction();
-        transaction.replace(R.id.fragment_container, InitFragment())
+        //transaction.replace(R.id.fragment_container, InitFragment())
+        transaction.replace(R.id.fragment_container, InitFragmentRefactor())
         transaction.commit();
     }
 

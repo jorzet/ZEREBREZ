@@ -10,12 +10,14 @@
     <dimen name="comipems_image_height">300dp</dimen>
 
     <!--main container-->
-    <dimen name="height_top_tablayout">100dp</dimen>
+    <dimen name="height_top_tablayout">80dp</dimen>
 
     <!--question module fragment-->
     <dimen name="width_table">100dp</dimen>
     <dimen name="width_square">90dp</dimen>
     <dimen name="height_square">90dp</dimen>
+    <dimen name="width_empty_square">60dp</dimen>
+    <dimen name="height_empty_square">60dp</dimen>
     <dimen name="width_square_padding">50dp</dimen>
     <dimen name="height_square_padding">50dp</dimen>
 

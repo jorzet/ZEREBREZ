@@ -23,7 +23,7 @@
                     android:layout_width="@dimen/width_table"
                     android:layout_height="match_parent"
                     android:columnCount="1"
-                    android:columnWidth="100dp">
+                    android:columnWidth="80dp">
                 </GridLayout>
 
 
@@ -31,20 +31,18 @@
                     android:id="@+id/table_center"
                     android:layout_width="@dimen/width_table"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/table_left"
                     android:layout_toEndOf="@+id/table_left"
                     android:columnCount="1"
-                    android:columnWidth="100dp">
+                    android:columnWidth="80dp">
                 </GridLayout>
 
                 <GridLayout
                     android:id="@+id/table_right"
                     android:layout_width="@dimen/width_table"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/table_center"
                     android:layout_toEndOf="@+id/table_center"
                     android:columnCount="1"
-                    android:columnWidth="100dp">
+                    android:columnWidth="80dp">
                 </GridLayout>
 
             </RelativeLayout>

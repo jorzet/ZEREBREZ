@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <TextView
+        android:id="@+id/tv_not_subject_questions_currently"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/not_subject_questions_text"
+        android:textColor="@color/not_exams_currently_text_color"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/sv_main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp">
+
+                <GridLayout
+                    android:id="@+id/table_left"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+
+                <GridLayout
+                    android:id="@+id/table_center"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/table_left"
+                    android:layout_toEndOf="@+id/table_left"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+                <GridLayout
+                    android:id="@+id/table_right"
+                    android:layout_width="@dimen/width_table"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/table_center"
+                    android:layout_toEndOf="@+id/table_center"
+                    android:columnCount="1"
+                    android:columnWidth="100dp">
+                </GridLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_question_subjects"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/com_facebook_blue"
+        android:visibility="gone"/>
+</RelativeLayout>

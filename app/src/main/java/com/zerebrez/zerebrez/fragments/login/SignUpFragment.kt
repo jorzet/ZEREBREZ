@@ -67,6 +67,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      * tags
      */
     private val SHOW_CONTINUE_BUTTON : String = "show_continue_button"
+    private val SHOW_BACK_BUTTON : String = "show_back_button"
     private val SELECTED_COURSE : String = "selected_course"
 
     /*
@@ -163,15 +164,20 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     private fun goChooseSchoolActivity() {
-        val intent = Intent(activity, ChooseSchoolsActivity::class.java)
-        intent.putExtra(SHOW_CONTINUE_BUTTON, true)
-        startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, ChooseSchoolsActivity::class.java)
+            intent.putExtra(SHOW_CONTINUE_BUTTON, true)
+            intent.putExtra(SHOW_BACK_BUTTON, false)
+            startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     private fun signInWithGoogle() {
-        val signInIntent = Auth.GoogleSignInApi.getSignInIntent((activity as LoginActivity).getGoogleApiClient())
-        startActivityForResult(signInIntent, LoginActivity.RC_SIGN_IN)
+        if (activity != null) {
+            val signInIntent = Auth.GoogleSignInApi.getSignInIntent((activity as LoginActivity).getGoogleApiClient())
+            startActivityForResult(signInIntent, LoginActivity.RC_SIGN_IN)
+        }
     }
 
     private val onSendFormListener = object : TextView.OnEditorActionListener {
@@ -199,7 +205,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val email = mEmailEditText.text.toString()
         val password = mPasswordEditText.text.toString()
 
-        if (!email.equals("") && !password.equals("")) {
+        if (!email.equals("") && !password.equals("") && activity != null) {
             mUser = User(email, password)
 
             mLogInView.visibility = View.GONE
@@ -234,9 +240,16 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                         if (json != null) {
                             val email = json.getString("email")
                             val birthday = json.getString("birthday")
-                            mUser = User()
-                            mUser.setEmail(email)
-                            mUser.setPassword(birthday)
+                            val user = getUser()
+                            if (user != null) {
+                                mUser = user
+                                mUser.setEmail(email)
+                                mUser.setPassword(birthday)
+                            } else {
+                                mUser = User()
+                                mUser.setEmail(email)
+                                mUser.setPassword(birthday)
+                            }
                             saveUser(mUser)
                             requestLinkAnonymousUserWithFacebookProvider(loginResult.accessToken)
                         } else {
@@ -329,58 +342,14 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSendUserSuccess(success: Boolean) {
         super.onSendUserSuccess(success)
-        requestGetInstitutes()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
     }
 
     override fun onSendUserFail(throwable: Throwable) {
         super.onSendUserFail(throwable)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveSessionData(false)
-        }
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
-    }
-
-    /*
-     * Listeners to send institutes choosen
-     */
-    override fun onGetInstitutesSuccess(institutes: List<Institute>) {
-        super.onGetInstitutesSuccess(institutes)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveInstitutes(institutes)
-        }
-        requestGetExams()
-    }
-
-    override fun onGetInstitutesFail(throwable: Throwable) {
-        super.onGetInstitutesFail(throwable)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveSessionData(false)
-        }
-        mLogInView.visibility = View.VISIBLE
-        mLoginAnotherProvidersView.visibility = View.VISIBLE
-        mLoadingProgresBar.visibility = View.GONE
-    }
-
-    /*
-     * Listeners to gets exams
-     */
-    override fun onGetExamsSuccess(exams: List<Exam>) {
-        super.onGetExamsSuccess(exams)
-        if (context != null) {
-            val dataHelper = DataHelper(context!!)
-            dataHelper.saveExams(exams)
-        }
-
-        requestGetImagesPath()
-    }
-
-    override fun onGetExamsFail(throwable: Throwable) {
-        super.onGetExamsFail(throwable)
         if (context != null) {
             val dataHelper = DataHelper(context!!)
             dataHelper.saveSessionData(false)
@@ -533,9 +502,17 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val credential = GoogleAuthProvider.getCredential(idToken, null);
         val email = account.getEmail()
         val randomPass = account.getId()
-        mUser = User()
-        mUser.setEmail(email!!)
-        mUser.setPassword(randomPass!!)
+        val user = getUser()
+        if (user != null) {
+            mUser = user
+            mUser.setEmail(email!!)
+            mUser.setPassword(randomPass!!)
+        } else {
+            mUser = User()
+            mUser.setEmail(email!!)
+            mUser.setPassword(randomPass!!)
+        }
+
         saveUser(mUser)
         requestLinkAnonymousUserWithGoogleProvider(credential)
     }

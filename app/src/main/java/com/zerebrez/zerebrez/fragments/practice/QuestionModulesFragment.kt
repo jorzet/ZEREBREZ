@@ -88,14 +88,20 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         mCenterTableLayout = rootView.findViewById(R.id.table_center)
         mRightTableLayout = rootView.findViewById(R.id.table_right)
 
-        requestGetModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetModulesRefactor(user.getCourse())
+        }
 
         return rootView
     }
 
     override fun onResume() {
         super.onResume()
-        requestGetModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetModulesRefactor(user.getCourse())
+        }
     }
 
     /*
@@ -161,7 +167,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             val number = mModuleList.get(i).getId().toString()
 
             text.text = number
-            text.typeface = FontUtil.getNunitoSemiBold(context!!)
+            text.typeface = FontUtil.getNunitoBold(context!!)
 
             // params for module
             val param = GridLayout.LayoutParams()
@@ -169,8 +175,8 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
             if (number.equals("-1")) {
                 view.background = resources.getDrawable(R.drawable.empty_square)
                 text.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
+                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
                 param.bottomMargin = 2
                 param.rightMargin = 2
                 param.leftMargin = 2
@@ -302,7 +308,10 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
     override fun onGetModulesRefactorSuccess(modules: List<Module>) {
         super.onGetModulesRefactorSuccess(modules)
         mUpdatedModules = modules
-        requestGetFreeModulesRefactor()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetFreeModulesRefactor(user.getCourse())
+        }
     }
 
     override fun onGetModulesRefactorFail(throwable: Throwable) {

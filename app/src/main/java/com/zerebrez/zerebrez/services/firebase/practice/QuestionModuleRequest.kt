@@ -32,8 +32,9 @@ private const val TAG: String = "QuestionModuleRequest"
 
 class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
-    private val FREE_MODULES_REFERENCE : String = "freeUser/comipems/modules"
-    private val MODULES_REFERENCE : String = "modules/comipems"
+    private val COURSE_LABEL : String = "course_label"
+    private val FREE_MODULES_REFERENCE : String = "freeUser/course_label/modules"
+    private val MODULES_REFERENCE : String = "modules/course_label"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
@@ -56,9 +57,9 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetFreeModulesRefactor() {
+    fun requestGetFreeModulesRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_MODULES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_MODULES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -92,9 +93,9 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetModulesRefactor() {
+    fun requestGetModulesRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

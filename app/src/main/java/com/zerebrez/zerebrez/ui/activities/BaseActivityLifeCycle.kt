@@ -22,10 +22,12 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.request.RequestManager
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
 import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,7 +37,7 @@ import retrofit2.Response
  * jorzet.94@gmail.com
  */
 
-open class BaseActivityLifeCycle : AppCompatActivity() {
+open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialogListener {
 
     companion object {
         val SET_CHECKED_TAG : String = "set_checked_tag"
@@ -147,6 +149,19 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
+    fun requestSendAnsweredQuestionNewFormat(question : QuestionNewFormat, course: String) {
+        mRequestManager.requestSendAnsweredQuestionNewFormat(question, course,
+                object : RequestManager.OnSendAnsweredQuestionNewFormatListener {
+                    override fun onSendAnsweredQuestionNewFormatLoaded(success: Boolean) {
+                        onSendAnsweredQuestionNewFormatSuccess(success)
+                    }
+
+                    override fun onSendAnsweredQuestionNewFormatError(throwable: Throwable) {
+                        onSendAnsweredQuestionNewFormatFail(throwable)
+                    }
+                })
+    }
+
     fun requestSendAnsweredModules(module : Module, course: String) {
         mRequestManager.requestSendAnsweredModules(module, course, object : RequestManager.OnSendAnsweredModulesListener {
             override fun onSendAnsweredModulesLoaded(success: Boolean) {
@@ -179,18 +194,6 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
             override fun onSendSelectedSchoolsError(throwable: Throwable) {
                 onSendSelectedSchoolsFail(throwable)
-            }
-        })
-    }
-
-    fun requestGetExamScores() {
-        mRequestManager.requestGetExamScores(object : RequestManager.OnGetExamScoresListener {
-            override fun onGetExamScoresLoaded(result: List<ExamScore>) {
-                onGetExamScoresSuccess(result)
-            }
-
-            override fun onGetExamScoresError(throwable: Throwable) {
-                onGetExamScoresFail(throwable)
             }
         })
     }
@@ -243,8 +246,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestGetInstitutes() {
-        mRequestManager.requestGetInstitutes(object : RequestManager.OnGetInstitutesListener {
+    fun requestGetInstitutes(course: String) {
+        mRequestManager.requestGetInstitutes(course, object : RequestManager.OnGetInstitutesListener {
             override fun onGetInstitutesLoaded(institutes: List<Institute>) {
                 onGetInstitutesSuccess(institutes)
             }
@@ -255,20 +258,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestGetExams() {
-        mRequestManager.requestGetExams(object : RequestManager.OnGetExamsListener {
-            override fun onGetExamsLoaded(exams: List<Exam>) {
-                onGetExamsSuccess(exams)
-            }
-
-            override fun onGetExamError(throwable: Throwable) {
-                onGetExamsFail(throwable)
-            }
-        })
-    }
-
-    fun requestGetImagesPath() {
-        mRequestManager.requestGetImagesPath(object : RequestManager.OnGetImagesPathListener {
+    fun requestGetImagesPath(course: String) {
+        mRequestManager.requestGetImagesPath(course, object : RequestManager.OnGetImagesPathListener {
             override fun onGetImagesPathLoaded(images: List<Image>) {
                 onGetImagesPathSuccess(images)
             }
@@ -313,6 +304,9 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+                        ErrorDialog.newInstance("Felicidades ya eres PREMIUM",
+                                DialogType.OK_DIALOG ,this)!!
+                                .show(supportFragmentManager, "paywaySuccess")
                         setUserPremium()
                     }
                 }
@@ -362,6 +356,12 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     }
 
     open fun onSendAnsweredQuestionsNewFormatFail(throwable: Throwable) {
+    }
+
+    open fun onSendAnsweredQuestionNewFormatSuccess(success : Boolean) {
+    }
+
+    open fun onSendAnsweredQuestionNewFormatFail(throwable: Throwable) {
     }
 
     open fun onSendAnsweredModulesSuccess(success: Boolean) {
@@ -521,8 +521,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
      * REQUEST QUESTIONS NEW FORMAT
      */
 
-    fun requestGetQuestionsNewFormatByModuleIdRefactor(moduleId : Int) {
-        mRequestManager.requestGetQuestionsNewFormatByModuleIdRefactor(moduleId, object : RequestManager.OnGetQuestionsNewFormatByModuleIdRefactorListener {
+    fun requestGetQuestionsNewFormatByModuleIdRefactor(moduleId : Int, course: String) {
+        mRequestManager.requestGetQuestionsNewFormatByModuleIdRefactor(moduleId, course, object : RequestManager.OnGetQuestionsNewFormatByModuleIdRefactorListener {
             override fun onGetQuestionsNewFormatByModuleIdRefactorLoaded(questions: List<QuestionNewFormat>) {
                 onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions)
             }
@@ -533,8 +533,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestGetQuestionsNewFormatByExamIdRefactor(examId : Int) {
-        mRequestManager.requestGetQuestionsNewFormatByExamIdRefactor(examId, object : RequestManager.OnGetQuestionsNewFormatByExamIdRefactorListener {
+    fun requestGetQuestionsNewFormatByExamIdRefactor(examId : Int, course: String) {
+        mRequestManager.requestGetQuestionsNewFormatByExamIdRefactor(examId, course, object : RequestManager.OnGetQuestionsNewFormatByExamIdRefactorListener {
             override fun onGetQuestionsNewFormatByExamIdRefactorLoaded(questions: List<QuestionNewFormat>) {
                 onGetQuestionsNewFormatByExamIdRefactorSuccess(questions)
             }
@@ -545,8 +545,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat : List<QuestionNewFormat>) {
-        mRequestManager.requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat, object : RequestManager.OnGetWrongQuestionsNewFormatByQuestionIdRefactorListener {
+    fun requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat : List<QuestionNewFormat>, course: String) {
+        mRequestManager.requestGetWrongQuestionsNewFormatByQuestionIdRefactor(wrongQuestionsNewFormat, course, object : RequestManager.OnGetWrongQuestionsNewFormatByQuestionIdRefactorListener {
             override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorLoaded(questions: List<QuestionNewFormat>) {
                 onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions)
             }
@@ -557,8 +557,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
         })
     }
 
-    fun requestGetQuestionsNewFormatBySubject(subject: String) {
-        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
+    fun requestGetQuestionsNewFormatBySubject(subject: String, course: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, course, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
             override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
                 onGetQuestionsNewFormatBySubjectSuccess(questions)
             }
@@ -578,8 +578,8 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
     open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
 
-    fun requestGetSchools() {
-        mRequestManager.requestGetSchools(object : RequestManager.OnGetSchoolsListener {
+    fun requestGetSchools(course: String) {
+        mRequestManager.requestGetSchools(course, object : RequestManager.OnGetSchoolsListener {
             override fun onGetSchoolsLoaded(institutes: List<Institute>) {
                 onGetSchoolsSuccess(institutes)
             }
@@ -594,4 +594,33 @@ open class BaseActivityLifeCycle : AppCompatActivity() {
 
     open fun onGetSchoolsSuccess(institutes: List<Institute>) {}
     open fun onGetSchoolsFail(throwable: Throwable) {}
+
+
+    fun requestGetQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat: List<QuestionNewFormat>, course: String) {
+        mRequestManager.requestGetQuestionsNewFormatBySubjectQuestionId(subjectQuestionsNewFormat, course, object : RequestManager.OnGetSubjectQuestionsNewFormatBySubjectQuestionIdListener {
+            override fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdLoaded(questions: List<QuestionNewFormat>) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions)
+            }
+
+            override fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdError(throwable: Throwable) {
+                onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable)
+            }
+
+        })
+    }
+
+    open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {}
+    open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {}
+
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
+    }
 }

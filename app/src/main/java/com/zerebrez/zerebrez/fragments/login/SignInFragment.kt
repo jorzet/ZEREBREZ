@@ -18,6 +18,8 @@ package com.zerebrez.zerebrez.fragments.login
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +53,8 @@ import com.zerebrez.zerebrez.ui.activities.LoginActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.zerebrez.zerebrez.BuildConfig
+import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.utils.FontUtil
 
 /**
@@ -74,6 +78,8 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mLoginAnotherProvidersView : View
     private lateinit var mLoadingProgresBar : ProgressBar
     private lateinit var mTextLoginWith : TextView
+    private lateinit var mForgotPassword : TextView
+    private lateinit var mSendEmail : TextView
 
     /*
      * Objects
@@ -101,15 +107,21 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mLoginAnotherProvidersView = rootView.findViewById(R.id.rl_login_other_provider)
         mLoadingProgresBar = rootView.findViewById(R.id.pb_loading)
         mTextLoginWith = rootView.findViewById(R.id.tv_login_with)
+        mForgotPassword = rootView.findViewById(R.id.tv_i_forgot_my_password)
+        mSendEmail = rootView.findViewById(R.id.tv_support_email)
 
-        mSinginButton.setTypeface(FontUtil.getNunitoSemiBold(context!!))
-        mTextLoginWith.setTypeface(FontUtil.getNunitoBold(context!!))
+        mSinginButton.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mTextLoginWith.typeface = FontUtil.getNunitoBold(context!!)
+        mForgotPassword.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
 
 
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)
         mSinginGoogleButton.setOnClickListener(mSinginGoogleButtonListener)
         mPasswordEditText.setOnEditorActionListener(onSendFormListener)
+        mForgotPassword.setOnClickListener(mForgotPasswordListener)
+        mSendEmail.setOnClickListener(mSendEmailListener)
 
         return rootView
     }
@@ -146,9 +158,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     private fun goContentActivity() {
-        val intent = Intent(activity, ContentActivity::class.java)
-        startActivity(intent)
-        activity!!.finish()
+        if (activity != null) {
+            val intent = Intent(activity, ContentActivity::class.java)
+            startActivity(intent)
+            activity!!.finish()
+        }
     }
 
     private fun signInWithGoogle() {
@@ -174,6 +188,47 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         }
     }
 
+    private val mForgotPasswordListener = View.OnClickListener {
+
+    }
+
+    private val mSendEmailListener = View.OnClickListener {
+        goSendEmailActivity()
+    }
+
+    /*
+     * This method open the native mail app to send an email to soporte@zerebrez.com
+     */
+    private fun goSendEmailActivity() {
+        //val intent = Intent(activity, SendEmailActivity::class.java)
+        //activity!!.startActivity(intent)
+        val emailIntent = Intent(Intent.ACTION_SENDTO,
+                Uri.fromParts("mailto", resources.getString(R.string.support_email_text), null))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        var userUUID = ""
+        val versionName = BuildConfig.VERSION_NAME
+        if (userFirebase != null) {
+            userUUID = userFirebase.uid
+        }
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Sistema Operativo: " + getAndroidVersion() +
+                "\n\n\n Versión app: " + versionName +
+                "\n\n\n Cuenta: " + userUUID +
+                "\n Correo: " + "" +
+                "\n\n\n Aquí escribe tu mensaje" + "" +
+                "\n\n\n (Para un mejor soporte no borres el sistema operativo ni la cuenta)")
+        startActivity(Intent.createChooser(emailIntent, "Enviando email..."))
+    }
+
+    /*
+     * This method returns the devices current API version
+     */
+    fun getAndroidVersion(): String {
+        val release = Build.VERSION.RELEASE
+        val sdkVersion = Build.VERSION.SDK_INT
+        return "Android SDK: $sdkVersion ($release)"
+    }
+
     /*
      * email password button listener
      */
@@ -185,7 +240,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         if (!email.equals("") && !password.equals("")) {
             mUser = User(email, password)
 
-            if (NetworkUtil.isConnected(context!!)) {
+            if (NetworkUtil.isConnected(context!!) && activity != null) {
 
                 mLogInView.visibility = View.GONE
                 mLoginAnotherProvidersView.visibility = View.GONE
@@ -285,7 +340,9 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
         saveUser(mUser)
-        requestGetImagesPath()
+        if (mUser != null && !mUser.getCourse().equals("")) {
+            requestGetImagesPath(mUser.getCourse())
+        }
         //goContentActivity()
         //requestModules()
     }
@@ -315,7 +372,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onSendUserSuccess(success: Boolean) {
         super.onSendUserSuccess(success)
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
     }
 
     override fun onSendUserFail(throwable: Throwable) {
@@ -534,8 +594,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onGetCoursesSuccess(courses: List<String>) {
         super.onGetCoursesSuccess(courses)
-
-        requestGetInstitutes()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetInstitutes(user.getCourse())
+        }
     }
 
     override fun onGetCoursesFail(throwable: Throwable) {
@@ -576,8 +638,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                 saveUser(user)
             }
         }
-
-        requestGetImagesPath()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetImagesPath(user.getCourse())
+        }
     }
 
     override fun onGetInstitutesFail(throwable: Throwable) {
@@ -661,16 +725,18 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         })
     }
 
-    override fun onGetUserWithFacebookSuccess(user: User) {
-        super.onGetUserWithFacebookSuccess(user)
+    override fun onGetUserWithProviderSuccess(user: User) {
+        super.onGetUserWithProviderSuccess(user)
         if (context != null) {
-            requestGetImagesPath()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetImagesPath(user.getCourse())
+            }
             mNotLogedIn = false
         }
     }
 
-    override fun onGetUserWithFacebookFail(throwable: Throwable) {
-        super.onGetUserWithFacebookFail(throwable)
+    override fun onGetUserWithProviderFail(throwable: Throwable) {
+        super.onGetUserWithProviderFail(throwable)
         if (context != null) {
             mUser = User()
             mUser.setCourse("comipems")
@@ -692,7 +758,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         super.onSignInUserWithFacebookProviderSuccess(success)
         if (context != null) {
             Log.d(TAG, "login with facebook success")
-            requestGetUserWithFacebook()
+            requestGetUserWithProvider()
             //requestGetImagesPath()
             //goContentActivity()
             //requestModules()
@@ -728,7 +794,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     override fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
         super.onSignInUserWithGoogleProviderSuccess(success)
         if (context != null) {
-            requestGetImagesPath()
+            requestGetUserWithProvider()
             //goContentActivity()
             //requestModules()
         }

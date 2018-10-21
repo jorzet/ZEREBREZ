@@ -85,7 +85,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_centerHorizontal="true"
                         android:gravity="center"
-                        android:text="Y obtén gratis todos los módulos y examenes que se agreguen !por solo $99¡"
+                        android:text="Y obtén gratis todos los módulos y examenes que se agreguen ¡por solo $99!"
                         android:textColor="@color/get_all_exams_and_questions_text_color"
                         android:textSize="12sp"/>
 
@@ -105,11 +105,11 @@
             <RelativeLayout
                 android:id="@+id/btn_be_premium"
                 android:layout_width="200dp"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/rl_payment_text_image_container"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/green_button" >
+                android:layout_marginTop="50dp"
+                android:background="@drawable/be_premium_button_background" >
 
                 <TextView
                     android:id="@+id/btn_be_premium_text"
@@ -130,7 +130,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/btn_be_premium"
                 android:layout_marginTop="30dp"
-                android:background="@drawable/oranage_button" >
+                android:background="@drawable/oranage_button"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/btn_get_free_exams_questions_text"

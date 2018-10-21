@@ -2,8 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/question_background_color">
+
+    <TextView
+        android:id="@+id/tv_answer_the_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Responde:"
+        android:textColor="@color/white"
+        android:textSize="19sp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_option"
@@ -18,7 +32,7 @@
         android:textSize="19sp" />
 
     <katex.hourglass.in.mathlib.MathView
-        android:id="@+id/mv_otion"
+        android:id="@+id/mv_option"
         app:setTextColor="@color/white"
         app:setTextSize="10sp"
         app:setText="$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$$"
@@ -35,10 +49,21 @@
         android:id="@+id/iv_option"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_below="@+id/mv_otion"
+        android:layout_below="@+id/mv_option"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <com.felipecsl.gifimageview.library.GifImageView
+        android:id="@+id/giv_option"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:minHeight="300dp"
+        android:layout_below="@+id/iv_option"
+        android:layout_marginTop="10dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:visibility="gone"/>
 
 </RelativeLayout>

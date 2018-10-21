@@ -32,8 +32,9 @@ private const val TAG: String = "ExamsRequest"
 
 class ExamsRequest(activity: Activity) : Engagement(activity) {
 
-    private val FREE_EXAMS_REFERENCE : String = "freeUser/comipems/exams"
-    private val EXAMS_REFERENCE : String = "exams/comipems"
+    private val COURSE_LABEL : String = "course_label"
+    private val FREE_EXAMS_REFERENCE : String = "freeUser/course_label/exams"
+    private val EXAMS_REFERENCE : String = "exams/course_label"
     private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_EXAMS_REFERENCE : String = "answeredExams"
@@ -59,9 +60,9 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
-    fun requestGetFreeExamsRefactor() {
+    fun requestGetFreeExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -95,9 +96,9 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         })
     }
 
-    fun requestGetExamsRefactor() {
+    fun requestGetExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -185,24 +186,26 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                             val profileMap = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
 
-                            course = profileMap.get(COURSE_KEY) as String
+                            if (profileMap.containsKey(COURSE_KEY)) {
+                                course = profileMap.get(COURSE_KEY) as String
 
-                            user.setCourse(course)
-                            val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
+                                user.setCourse(course)
+                                val courseMap = profileMap.get(course) as kotlin.collections.HashMap<*, *>
 
-                            if (courseMap.containsKey(PREMIUM_KEY)) {
-                                val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
+                                if (courseMap.containsKey(PREMIUM_KEY)) {
+                                    val premiumHash = courseMap.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
-                                if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
-                                    val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
-                                    user.setPremiumUser(isPremium)
+                                    if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
+                                        val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
+                                        user.setPremiumUser(isPremium)
+                                    }
+
+                                    if (premiumHash.containsKey(TIMESTAMP_KEY)) {
+                                        val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
+                                        user.setTimeStamp(timeStamp)
+                                    }
+
                                 }
-
-                                if (premiumHash.containsKey(TIMESTAMP_KEY)) {
-                                    val timeStamp = premiumHash.get(TIMESTAMP_KEY) as Long
-                                    user.setTimeStamp(timeStamp)
-                                }
-
                             }
 
                         }

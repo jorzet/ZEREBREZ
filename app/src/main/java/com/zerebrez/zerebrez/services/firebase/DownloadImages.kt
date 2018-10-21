@@ -20,9 +20,12 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.zerebrez.zerebrez.models.Image
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.DownloadImageTask
+import com.zerebrez.zerebrez.services.sharedpreferences.JsonParcer
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 /**
  * Created by Jorge Zepeda Tinoco on 28/05/18.
@@ -50,24 +53,27 @@ class DownloadImages: Service() {
             val dataHelper = DataHelper(this)
             mImages = dataHelper.getImagesPath()
 
-            // instance download image task and set listeners
-            val downloadImageTask = DownloadImageTask(this)
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                // instance download image task and set listeners
+                val downloadImageTask = DownloadImageTask(this, user.getCourse())
 
-            downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
-                override fun onSuccess(result: Any) {
-                    bi.putExtra(DOWNLOAD_COMPLETE, true)
-                    sendBroadcast(bi)
-                }
-            })
+                downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
+                    override fun onSuccess(result: Any) {
+                        bi.putExtra(DOWNLOAD_COMPLETE, true)
+                        sendBroadcast(bi)
+                    }
+                })
 
-            downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
-                override fun onFailed(result: Throwable) {
-                    bi.putExtra(DOWNLOAD_COMPLETE, false)
-                    sendBroadcast(bi)
-                }
-            })
+                downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
+                    override fun onFailed(result: Throwable) {
+                        bi.putExtra(DOWNLOAD_COMPLETE, false)
+                        sendBroadcast(bi)
+                    }
+                })
 
-            downloadImageTask.execute(mImages)
+                downloadImageTask.execute(mImages)
+            }
         } catch (exception : Exception) {}
 
     }
@@ -82,6 +88,15 @@ class DownloadImages: Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+    fun getUser() : User? {
+        val json = SharedPreferencesManager(this).getJsonUser()
+        if (json != null) {
+            return JsonParcer.getObjectFromJson(json, User::class.java) as User
+        } else {
+            return null
+        }
     }
 
 }

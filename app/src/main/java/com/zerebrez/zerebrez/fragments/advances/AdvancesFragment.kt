@@ -20,17 +20,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.AverageSubjectListAdapter
 import com.zerebrez.zerebrez.adapters.ExamScoreListAdapter
-import com.zerebrez.zerebrez.adapters.NonScrollListView
+import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
-import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
-import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 
@@ -55,6 +54,11 @@ class AdvancesFragment : BaseContentFragment() {
     private lateinit var mAnsweredQuestionTextView: TextView
     private lateinit var mExamsTextView: TextView
     private lateinit var mAverageBySubjectTextView: TextView
+    private lateinit var mLoadingNumAnsweredQuestions: ProgressBar
+    private lateinit var mLoadingHitssUser: ProgressBar
+    private lateinit var mLoadingMissesUser: ProgressBar
+    private lateinit var mLoadingUserExamsProgressBar: ProgressBar
+    private lateinit var mLoadingAverageBySubject: ProgressBar
 
     /*
      * adapters
@@ -81,6 +85,12 @@ class AdvancesFragment : BaseContentFragment() {
         mExamsTextView = rootView.findViewById(R.id.tv_exams)
         mAverageBySubjectTextView = rootView.findViewById(R.id.tv_average_by_subject)
 
+        mLoadingNumAnsweredQuestions = rootView.findViewById(R.id.pb_loading_num_answered_questions)
+        mLoadingHitssUser = rootView.findViewById(R.id.pb_loading_hits_user)
+        mLoadingMissesUser = rootView.findViewById(R.id.pb_loading_misses_user)
+        mLoadingUserExamsProgressBar = rootView.findViewById(R.id.pb_loading_user_exams)
+        mLoadingAverageBySubject = rootView.findViewById(R.id.pb_loading_average_by_subject)
+
         mQuestionTextView.typeface = FontUtil.getNunitoBold(context!!)
         mTotalQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mAnsweredQuestionTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -92,10 +102,17 @@ class AdvancesFragment : BaseContentFragment() {
 
         val user = (activity as ContentActivity).getUserProfile()
         if (user != null && !user.getCourse().equals("")) {
+            mLoadingNumAnsweredQuestions.visibility = View.VISIBLE
+            mLoadingHitssUser.visibility = View.VISIBLE
+            mLoadingMissesUser.visibility = View.VISIBLE
+            mLoadingUserExamsProgressBar.visibility = View.VISIBLE
             requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+
+            mLoadingAverageBySubject.visibility = View.VISIBLE
+            requestGetAverageSubjects(user.getCourse())
         }
 
-        requestGetAverageSubjects()
+
 
         return rootView
     }
@@ -108,6 +125,7 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetHitAndMissesAnsweredModulesAndExamsSuccess(user)
 
         if (context != null) {
+
             val mUser = (activity as ContentActivity).getUserProfile()
             if (mUser != null) {
                 mUser.setAnsweredQuestionsNewFormat(user.getAnsweredQuestionNewFormat())
@@ -123,6 +141,11 @@ class AdvancesFragment : BaseContentFragment() {
                 else
                     misses ++
             }
+
+            mLoadingNumAnsweredQuestions.visibility = View.GONE
+            mLoadingHitssUser.visibility = View.GONE
+            mLoadingMissesUser.visibility = View.GONE
+
             val total = hits + misses
             mTotalQuestionTextView.text = total.toString()
             mHitsNumberTextView.text = hits.toString()
@@ -131,10 +154,11 @@ class AdvancesFragment : BaseContentFragment() {
             val answeredExams = user.getAnsweredExams()
 
             if (answeredExams.isEmpty()) {
+                mLoadingUserExamsProgressBar.visibility = View.GONE
                 mExamList.visibility = View.GONE
                 mNotExamsDidIt.visibility = View.VISIBLE
             } else {
-
+                mLoadingUserExamsProgressBar.visibility = View.GONE
                 examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
                 mExamList.adapter = examScoreListAdapter
             }
@@ -146,6 +170,12 @@ class AdvancesFragment : BaseContentFragment() {
 
     override fun onGetHitAndMissesAnsweredModulesAndExamsFail(throwable: Throwable) {
         super.onGetHitAndMissesAnsweredModulesAndExamsFail(throwable)
+
+        mLoadingNumAnsweredQuestions.visibility = View.GONE
+        mLoadingHitssUser.visibility = View.GONE
+        mLoadingMissesUser.visibility = View.GONE
+        mLoadingUserExamsProgressBar.visibility = View.GONE
+
         mExamList.visibility = View.GONE
         mNotExamsDidIt.visibility = View.VISIBLE
         if (activity != null)
@@ -156,65 +186,11 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetAverageSubjectsSuccess(subjects2)
 
         if (context != null) {
+            mLoadingAverageBySubject.visibility = View.GONE
             if (subjects2.isEmpty()) {
                 // TODO it is hardcoded
-                val subjects = arrayListOf<Subject>()
+                val subjects = setSubjectsInZero()
 
-                val subject1 = Subject()
-                subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
-                subject1.setSubjectAverage(0.0)
-                subjects.add(subject1)
-
-                val subject2 = Subject()
-                subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-                subject2.setSubjectAverage(0.0)
-                subjects.add(subject2)
-
-                val subject3 = Subject()
-                subject3.setSubjectType(SubjectType.SPANISH)
-                subject3.setSubjectAverage(0.0)
-                subjects.add(subject3)
-
-                val subject4 = Subject()
-                subject4.setSubjectType(SubjectType.MATHEMATICS)
-                subject4.setSubjectAverage(0.0)
-                subjects.add(subject4)
-
-                val subject5 = Subject()
-                subject5.setSubjectType(SubjectType.CHEMISTRY)
-                subject5.setSubjectAverage(0.0)
-                subjects.add(subject5)
-
-
-                val subject6 = Subject()
-                subject6.setSubjectType(SubjectType.PHYSICS)
-                subject6.setSubjectAverage(0.0)
-                subjects.add(subject6)
-
-                val subject7 = Subject()
-                subject7.setSubjectType(SubjectType.BIOLOGY)
-                subject7.setSubjectAverage(0.0)
-                subjects.add(subject7)
-
-                val subject8 = Subject()
-                subject8.setSubjectType(SubjectType.GEOGRAPHY)
-                subject8.setSubjectAverage(0.0)
-                subjects.add(subject8)
-
-                val subject9 = Subject()
-                subject9.setSubjectType(SubjectType.MEXICO_HISTORY)
-                subject9.setSubjectAverage(0.0)
-                subjects.add(subject9)
-
-                val subject10 = Subject()
-                subject10.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-                subject10.setSubjectAverage(0.0)
-                subjects.add(subject10)
-
-                val subject11 = Subject()
-                subject11.setSubjectType(SubjectType.FCE)
-                subject11.setSubjectAverage(0.0)
-                subjects.add(subject11)
             } else {
                 averageSubjectListAdapter = AverageSubjectListAdapter(subjects2, context!!)
                 mAverageSubjectList.adapter = averageSubjectListAdapter
@@ -227,63 +203,9 @@ class AdvancesFragment : BaseContentFragment() {
 
         if (context != null) {
             // TODO it is hardcoded
-            val subjects = arrayListOf<Subject>()
+            mLoadingAverageBySubject.visibility = View.GONE
 
-            val subject1 = Subject()
-            subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
-            subject1.setSubjectAverage(0.0)
-            subjects.add(subject1)
-
-            val subject2 = Subject()
-            subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-            subject2.setSubjectAverage(0.0)
-            subjects.add(subject2)
-
-            val subject3 = Subject()
-            subject3.setSubjectType(SubjectType.SPANISH)
-            subject3.setSubjectAverage(0.0)
-            subjects.add(subject3)
-
-            val subject4 = Subject()
-            subject4.setSubjectType(SubjectType.MATHEMATICS)
-            subject4.setSubjectAverage(0.0)
-            subjects.add(subject4)
-
-            val subject5 = Subject()
-            subject5.setSubjectType(SubjectType.CHEMISTRY)
-            subject5.setSubjectAverage(0.0)
-            subjects.add(subject5)
-
-
-            val subject6 = Subject()
-            subject6.setSubjectType(SubjectType.PHYSICS)
-            subject6.setSubjectAverage(0.0)
-            subjects.add(subject6)
-
-            val subject7 = Subject()
-            subject7.setSubjectType(SubjectType.BIOLOGY)
-            subject7.setSubjectAverage(0.0)
-            subjects.add(subject7)
-
-            val subject8 = Subject()
-            subject8.setSubjectType(SubjectType.GEOGRAPHY)
-            subject8.setSubjectAverage(0.0)
-            subjects.add(subject8)
-
-            val subject9 = Subject()
-            subject9.setSubjectType(SubjectType.MEXICO_HISTORY)
-            subject9.setSubjectAverage(0.0)
-            subjects.add(subject9)
-
-            val subject10 = Subject()
-            subject10.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-            subject10.setSubjectAverage(0.0)
-            subjects.add(subject10)
-
-            val subject11 = Subject()
-            subject11.setSubjectType(SubjectType.FCE)
-            subject11.setSubjectAverage(0.0)
-            subjects.add(subject11)
+            val subjects = setSubjectsInZero()
 
             if (subjects.isEmpty()) {
                 mAverageSubjectList.visibility = View.GONE
@@ -293,6 +215,68 @@ class AdvancesFragment : BaseContentFragment() {
                 mAverageSubjectList.adapter = averageSubjectListAdapter
             }
         }
+    }
+
+    fun setSubjectsInZero() : List<Subject> {
+        val subjects = arrayListOf<Subject>()
+
+        val subject1 = Subject()
+        subject1.setSubjectType(SubjectType.VERBAL_HABILITY)
+        subject1.setSubjectAverage(0.0)
+        subjects.add(subject1)
+
+        val subject2 = Subject()
+        subject2.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
+        subject2.setSubjectAverage(0.0)
+        subjects.add(subject2)
+
+        val subject3 = Subject()
+        subject3.setSubjectType(SubjectType.SPANISH)
+        subject3.setSubjectAverage(0.0)
+        subjects.add(subject3)
+
+        val subject4 = Subject()
+        subject4.setSubjectType(SubjectType.MATHEMATICS)
+        subject4.setSubjectAverage(0.0)
+        subjects.add(subject4)
+
+        val subject5 = Subject()
+        subject5.setSubjectType(SubjectType.CHEMISTRY)
+        subject5.setSubjectAverage(0.0)
+        subjects.add(subject5)
+
+
+        val subject6 = Subject()
+        subject6.setSubjectType(SubjectType.PHYSICS)
+        subject6.setSubjectAverage(0.0)
+        subjects.add(subject6)
+
+        val subject7 = Subject()
+        subject7.setSubjectType(SubjectType.BIOLOGY)
+        subject7.setSubjectAverage(0.0)
+        subjects.add(subject7)
+
+        val subject8 = Subject()
+        subject8.setSubjectType(SubjectType.GEOGRAPHY)
+        subject8.setSubjectAverage(0.0)
+        subjects.add(subject8)
+
+        val subject9 = Subject()
+        subject9.setSubjectType(SubjectType.MEXICO_HISTORY)
+        subject9.setSubjectAverage(0.0)
+        subjects.add(subject9)
+
+        val subject10 = Subject()
+        subject10.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
+        subject10.setSubjectAverage(0.0)
+        subjects.add(subject10)
+
+        val subject11 = Subject()
+        subject11.setSubjectType(SubjectType.FCE)
+        subject11.setSubjectAverage(0.0)
+        subjects.add(subject11)
+
+        return subjects
     }
 
 }

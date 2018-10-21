@@ -14,10 +14,10 @@
                 android:endColor="@color/background"
                 android:angle="270"/>
             <padding
-                android:left="15dp"
-                android:right="15dp"
-                android:bottom="15dp"
-                android:top="15dp">
+                android:left="10dp"
+                android:right="10dp"
+                android:bottom="10dp"
+                android:top="10dp">
             </padding>
         </shape>
     </item>

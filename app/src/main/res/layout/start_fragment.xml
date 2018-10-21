@@ -64,7 +64,7 @@
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:text="C O M E N Z A R"
-            android:background="@drawable/start_button"/>
+            android:background="@drawable/start_button_background"/>
 
         <Button
             android:id="@+id/has_account"
