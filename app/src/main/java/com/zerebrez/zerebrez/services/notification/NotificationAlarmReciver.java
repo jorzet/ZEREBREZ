@@ -51,8 +51,7 @@ public class NotificationAlarmReciver extends BroadcastReceiver {
             }
         }
         //Trigger the notification
-        NotificationScheduler.showNotification(context, ContentActivity.class,
-                "You have 5 unwatched videos", "Watch them now?");
+        NotificationScheduler.showNotification(context);
 
     }
 }

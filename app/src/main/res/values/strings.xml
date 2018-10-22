@@ -111,7 +111,7 @@
     <string name="not_exams_did_it">Por el momento no tienes examenes resueltos</string>
 
     <!--wrong questions-->
-    <string name="not_wrong_questions_text">Por el momento no tienes preguntas erroneas que repasar</string>
+    <string name="not_wrong_questions_text">Por el momento no tienes preguntas erróneas que repasar</string>
 
     <!--study subject fragment-->
     <string name="not_subject_questions_text">Por el momento no hay preguntas para esta materia</string>
