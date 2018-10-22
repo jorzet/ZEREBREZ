@@ -4,7 +4,33 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateTint="@color/background"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_not_suscription_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/not_suscription_info_text"
+        android:textColor="@color/not_exams_currently_text_color"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+
     <RelativeLayout
+        android:id="@+id/rl_you_are_premium_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
@@ -18,45 +44,41 @@
             android:textColor="@color/become_user_premium_text_color"
             android:textSize="30sp"/>
 
-        <ImageView
-            android:id="@+id/iv_lock_open"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/tv_you_are_premium"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/lock_open_icon"/>
-
-
-        <ImageView
-            android:id="@+id/iv_gray_line1"
-            android:layout_width="200dp"
-            android:layout_height="2dp"
-            android:layout_below="@+id/iv_lock_open"
-            android:layout_marginTop="30dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/paymen_line_color"/>
-
         <TextView
-            android:id="@+id/tv_are_you_premium"
+            android:id="@+id/tv_user_course"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_gray_line1"
+            android:layout_below="@+id/tv_you_are_premium"
             android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="@string/you_have_acces_of_all_contents_text"
+            android:text="@string/user_course_text"
             android:textColor="@color/you_have_acces_of_all_contents_text_color"
             android:textSize="20sp"/>
 
-        <ImageView
-            android:id="@+id/iv_gray_line2"
-            android:layout_width="200dp"
-            android:layout_height="2dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/tv_are_you_premium"
+        <TextView
+            android:id="@+id/tv_expiration_date_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_user_course"
             android:layout_marginTop="30dp"
-            android:background="@color/paymen_line_color"/>
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="@string/expiration_date_text"
+            android:textColor="@color/expiration_date_text_color"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/tv_expiration_date_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_expiration_date_1"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="@string/expiration_date_text"
+            android:textColor="@color/expiration_date_text_color"
+            android:textSize="20sp"/>
 
     </RelativeLayout>
 

@@ -157,7 +157,7 @@ public class NotificationScheduler {
                         .setSmallIcon(R.drawable.zerebrez_main_icon)
                         .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.zerebrez_main_icon))
                         .setContentTitle("Zerebrez")
-                        .setContentText("Es tiempo de estudiar")
+                        .setContentText("Es hora de estudiar")
                         .setAutoCancel(true)
                         .setPriority(Notification.PRIORITY_MAX)
                         .setSound(defaultSoundUri)

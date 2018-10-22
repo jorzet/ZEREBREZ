@@ -61,7 +61,7 @@
     <string name="not_selected_schools_text">No tienes escuelas</string>
 
     <!--payment-->
-    <string name="you_are_premium_text">¡Eres PREMIUM!</string>
+    <string name="you_are_premium_text">¡Ya eres PREMIUM!</string>
     <string name="are_you_premium">¿Ya eres PREMIUM?</string>
     <string name="yes_text">SÍ</string>
     <string name="not_text">NO</string>
@@ -72,6 +72,10 @@
     <string name="i_want_to_be_premium_text">QUIERO SER PREMIUM</string>
     <string name="get_free_exams_and_questions_text">OBTÉN GRATIS EXÁMENES Y PREGUNTAS</string>
     <string name="you_have_acces_of_all_contents_text">¡Tienes acceso a todo el contenido!</string>
+    <string name="user_course_text">Curso:</string>
+    <string name="expiration_date_text">Fecha de expiración:</string>
+    <string name="user_without_course_text">sin curso</string>
+    <string name="not_suscription_info_text">Ocurrió un error, vuelve a intentarlo más tarde</string>
 
 
     <!--question fragments-->

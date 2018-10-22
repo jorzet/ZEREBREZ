@@ -67,6 +67,7 @@
     <color name="questions_text_color2">#205A8F</color>
     <color name="get_all_exams_and_questions_text_color">#808080</color>
     <color name="you_have_acces_of_all_contents_text_color">#205A8F</color>
+    <color name="expiration_date_text_color">#F7921E</color>
 
 
     <!--question module fragment-->
