@@ -35,6 +35,7 @@ import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.activities.QuestionActivity
+import com.zerebrez.zerebrez.utils.FontUtil
 import java.text.Normalizer
 
 /**
@@ -94,6 +95,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mRightTableLayout = rootView.findViewById(R.id.table_right)
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
+
+        mNotWrongQuestionsCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
 
         if (activity != null) {
             val user = (activity as ContentActivity).getUserProfile()
@@ -344,19 +347,26 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                         mUpdatedQuestions.add(answeredQuestion.get(i))
                     }
                 }
+                if (mUpdatedQuestions.isNotEmpty()) {
+                    updateQuestionList(mUpdatedQuestions)
+                    drawQuestions()
+                } else {
+                    mNotWrongQuestionsCurrently.visibility = View.VISIBLE
+                }
 
-                updateQuestionList(mUpdatedQuestions)
-                drawQuestions()
+                if (activity != null)
+                    (activity as ContentActivity).showLoading(false)
             }
-            if (activity != null)
-                (activity as ContentActivity).showLoading(false)
         } catch (exception : Exception) {}
     }
 
     override fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {
         super.onGetWrongQuestionsAndProfileRefactorFail(throwable)
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+        if (context != null) {
+            mNotWrongQuestionsCurrently.visibility = View.VISIBLE
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        }
     }
 
     fun limpiarTexto(cadena: String?): String? {

@@ -212,12 +212,12 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         //val dataHelper = DataHelper(this)
         //if (!dataHelper.areImagesDownloaded()) {
 
-        if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
+        //if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
             startDownloadImages()
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-        }
+        //} else {
+        //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        //}
         //}
     }
 

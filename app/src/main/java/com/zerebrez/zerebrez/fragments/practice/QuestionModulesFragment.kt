@@ -88,7 +88,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
         mCenterTableLayout = rootView.findViewById(R.id.table_center)
         mRightTableLayout = rootView.findViewById(R.id.table_right)
 
-        val user = getUser()
+        val user = (activity as ContentActivity).getUser()
         if (user != null && !user.getCourse().equals("")) {
             requestGetModulesRefactor(user.getCourse())
         }
@@ -98,7 +98,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
 
     override fun onResume() {
         super.onResume()
-        val user = getUser()
+        val user = (activity as ContentActivity).getUser()
         if (user != null && !user.getCourse().equals("")) {
             requestGetModulesRefactor(user.getCourse())
         }

@@ -64,7 +64,7 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
      * Attributes
      */
     private var mTotalExamsAndModules = ""
-    private var mPromoCourseWithPrice = "Y obtén gratis todos los módulos y examenes que se agreguen !por solo \$"
+    private var mPromoCourseWithPrice = "Y obtén gratis todos los módulos y examenes que se agreguen ¡por solo \$"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 

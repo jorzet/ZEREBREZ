@@ -238,7 +238,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val password = mPasswordEditText.text.toString()
 
         if (!email.equals("") && !password.equals("")) {
-            mUser = User(email, password)
+            mUser = User(email.replace(" ", ""), password)
 
             if (NetworkUtil.isConnected(context!!) && activity != null) {
 
@@ -339,10 +339,11 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
      */
     override fun onDoLogInSuccess(success: Boolean) {
         super.onDoLogInSuccess(success)
-        saveUser(mUser)
-        if (mUser != null && !mUser.getCourse().equals("")) {
-            requestGetImagesPath(mUser.getCourse())
-        }
+        //saveUser(mUser)
+        //if (mUser != null && !mUser.getCourse().equals("")) {
+        //    requestGetImagesPath(mUser.getCourse())
+        //}
+        requestGetUserWithProvider()
         //goContentActivity()
         //requestModules()
     }
@@ -729,6 +730,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         super.onGetUserWithProviderSuccess(user)
         if (context != null) {
             if (user != null && !user.getCourse().equals("")) {
+                saveUser(user)
                 requestGetImagesPath(user.getCourse())
             }
             mNotLogedIn = false

@@ -150,10 +150,12 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
      */
     override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
         super.onGetExamsRefactorSuccess(exams)
-        mUpdatedExams = exams
-        val user = getUser()
-        if (user != null && !user.getCourse().equals("")) {
-            requestGetFreeExamsRefactor(user.getCourse())
+        if (context != null) {
+            mUpdatedExams = exams
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetFreeExamsRefactor(user.getCourse())
+            }
         }
     }
 
@@ -163,23 +165,26 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
 
     override fun onGetFreeExamsRefactorSuccess(freeExams: List<Exam>) {
         super.onGetFreeExamsRefactorSuccess(freeExams)
+        if (context != null) {
 
-
-        for (i in 0 .. mUpdatedExams.size - 1) {
-            for (freeModule in freeExams) {
-                if (mUpdatedExams.get(i).getExamId().equals(freeModule.getExamId())) {
-                    mUpdatedExams.get(i).setFreeExam(true)
+            for (i in 0..mUpdatedExams.size - 1) {
+                for (freeModule in freeExams) {
+                    if (mUpdatedExams.get(i).getExamId().equals(freeModule.getExamId())) {
+                        mUpdatedExams.get(i).setFreeExam(true)
+                    }
                 }
             }
-        }
 
-        requestGetAnsweredExamsAndProfileRefactor()
+            requestGetAnsweredExamsAndProfileRefactor()
+        }
     }
 
     override fun onGetFreeExamsRefactorFail(throwable: Throwable) {
         super.onGetFreeExamsRefactorFail(throwable)
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+        if (context != null) {
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        }
     }
 
     override fun onGetAnsweredExamsAndProfileRefactorSuccess(user: User) {
@@ -211,15 +216,17 @@ class ExamFragment : BaseContentFragment(), AdapterView.OnItemClickListener, Err
 
                 }
             } catch (exception : Exception) {}
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
         }
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetAnsweredExamsAndProfileRefactorFail(throwable: Throwable) {
         super.onGetAnsweredExamsAndProfileRefactorFail(throwable)
-        if (activity != null)
-            (activity as ContentActivity).showLoading(false)
+        if (context != null) {
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        }
     }
 
 }
