@@ -50,7 +50,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
      */
     private var mQuestionList = arrayListOf<QuestionNewFormat>()
     private var mUpdatedQuestions = arrayListOf<QuestionNewFormat>()
-    private var mSubjectQuestionsId = arrayListOf<Int>()
+    private var mSubjectQuestionsId = arrayListOf<String>()
     private lateinit var mUser : User
 
     /*
@@ -295,9 +295,9 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                 param.setGravity(Gravity.CENTER)
                 val c = count
                 if (mUser.isPremiumUser()) {
-                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
+                    mSubjectQuestionsId.add(currentQuestion.questionId)
                 } else if (!mUser.isPremiumUser() && c < mNumberOfFreeQuestionSubject.toInt()){
-                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
+                    mSubjectQuestionsId.add(currentQuestion.questionId)
                 }
 
                 view.setOnClickListener(View.OnClickListener {

@@ -80,7 +80,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
      */
     private var mQuestionList = arrayListOf<QuestionNewFormat>()
     private var mUpdatedQuestions = arrayListOf<QuestionNewFormat>()
-    private var mWrongQuestionsId = arrayListOf<Int>()
+    private var mWrongQuestionsId = arrayListOf<String>()
     private lateinit var mUser : User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -288,7 +288,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
-                mWrongQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p","")))
+                mWrongQuestionsId.add(currentQuestion.questionId)
                 view.setOnClickListener(View.OnClickListener {
                     Log.d(TAG, "onClick: number --- " + number)
                     goQuestionActivity(Integer.parseInt(number))
