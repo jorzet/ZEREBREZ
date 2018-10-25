@@ -195,7 +195,9 @@ class ErrorDialog : DialogFragment(){
     }
 
     override fun show(fragmentManager : FragmentManager, tag : String) {
-        super.show(fragmentManager, tag)
+        if (context != null) {
+            super.show(fragmentManager, tag)
+        }
     }
 
     private val mYesButtonListener = View.OnClickListener {
