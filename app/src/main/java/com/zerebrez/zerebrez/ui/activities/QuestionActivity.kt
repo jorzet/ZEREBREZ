@@ -192,6 +192,19 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 mQuestionsId = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<String>
                 mSubject = intent.getStringExtra(SUBJECT_EXTRA)
 
+                if (mQuestionId != -1) {
+                    val questionsIds = arrayListOf<String>()
+                    for (i in 0..mQuestionsId.size - 1) {
+                        if (mQuestionsId[i].equals("p" + mQuestionId)) {
+                            for (j in i..mQuestionsId.size - 1) {
+                                questionsIds.add(mQuestionsId[j])
+                            }
+                            break;
+                        }
+                    }
+                    mQuestionsId = questionsIds
+                }
+
                 mModuleNumber.text = ":)"
                 mQuestiontypeText.text =  mSubject
 
@@ -204,6 +217,19 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             } else if (isFromWrongQuestionFragment) {
                 showLoading(true)
                 mQuestionsId = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<String>
+
+                if (mQuestionId != -1) {
+                    val questionsIds = arrayListOf<String>()
+                    for (i in 0..mQuestionsId.size - 1) {
+                        if (mQuestionsId[i].equals("p" + mQuestionId)) {
+                            for (j in i..mQuestionsId.size - 1) {
+                                questionsIds.add(mQuestionsId[j])
+                            }
+                            break;
+                        }
+                    }
+                    mQuestionsId = questionsIds
+                }
 
                 mModuleNumber.text = ":)"
                 mProgressByQuestion = 100 / mQuestionsId.size.toFloat()
@@ -715,6 +741,11 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     override fun onGetQuestionNewFormatSuccess(question: QuestionNewFormat) {
         super.onGetQuestionNewFormatSuccess(question)
         mCurrentQuestionNewFormat = question
+
+        if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
+            mQuestiontypeText.text = question.subject.value
+        }
+
         showQuestion()
         showLoading(false)
     }
