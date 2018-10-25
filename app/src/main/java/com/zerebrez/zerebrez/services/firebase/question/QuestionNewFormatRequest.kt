@@ -28,6 +28,11 @@ import org.json.JSONObject
 import java.text.Normalizer
 import java.util.ArrayList
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "QuestionsRequest"
 
 class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
@@ -163,9 +168,6 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                     Log.d(TAG, post.toString())
 
-                    /*
-                 * mapping map to module object
-                 */
                     val questions = arrayListOf<QuestionNewFormat>()
 
                     // get question id from response

@@ -28,6 +28,11 @@ import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "ExamsRequest"
 
 class ExamsRequest(activity: Activity) : Engagement(activity) {

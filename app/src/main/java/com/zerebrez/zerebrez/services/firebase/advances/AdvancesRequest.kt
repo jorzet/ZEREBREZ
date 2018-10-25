@@ -27,6 +27,10 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.HashMap
 import java.text.Normalizer
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
 
 private const val TAG: String = "AdvancesRequest"
 

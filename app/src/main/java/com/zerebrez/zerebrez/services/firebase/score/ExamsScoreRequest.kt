@@ -28,6 +28,11 @@ import org.json.JSONObject
 import java.util.ArrayList
 import java.util.HashMap
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "ExamsScoreRequest"
 
 class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
