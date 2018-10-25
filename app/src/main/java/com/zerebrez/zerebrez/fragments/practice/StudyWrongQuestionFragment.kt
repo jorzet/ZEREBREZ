@@ -64,6 +64,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     private lateinit var mRightTableLayout : GridLayout
     private lateinit var mNotWrongQuestionsCurrently : TextView
     private lateinit var mMainContainer : View
+    private lateinit var mShowMoreQuestionsButton: View
+    private lateinit var mShowMoreQuestionsTextView: TextView
 
     /*
      * Data accessor
@@ -73,7 +75,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     /*
      * Variables
      */
-    private var mTotalQuestions : Int = 0
+    private var mTotalQuestionsToShow : Int = 20
 
     /*
      * Objects
@@ -95,8 +97,13 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         mRightTableLayout = rootView.findViewById(R.id.table_right)
         mNotWrongQuestionsCurrently = rootView.findViewById(R.id.tv_not_wrong_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
+        mShowMoreQuestionsButton = rootView.findViewById(R.id.rl_show_more_button)
+        mShowMoreQuestionsTextView = rootView.findViewById(R.id.tv_show_more)
 
         mNotWrongQuestionsCurrently.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mShowMoreQuestionsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+
+        mShowMoreQuestionsButton.setOnClickListener(mShowMoreQuestionsListener)
 
         if (activity != null) {
             val user = (activity as ContentActivity).getUserProfile()
@@ -196,124 +203,138 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     private fun drawQuestions() {
 
         var cnt : Int = 0
+        var count : Int = 0
+
+        if (mTotalQuestionsToShow < mUpdatedQuestions.size) {
+            mShowMoreQuestionsButton.visibility = View.VISIBLE
+        } else {
+            mShowMoreQuestionsButton.visibility = View.GONE
+        }
 
         for (i in 0 .. mQuestionList.size - 1) {
 
-            val view = LayoutInflater.from(context).inflate(R.layout.custom_wrong_question, null, false)
-            val image : ImageView = view.findViewById(R.id.image)
+            if (count < mTotalQuestionsToShow) {
 
-            val number = mQuestionList.get(i).questionId.replace("p","")
+                val view = LayoutInflater.from(context).inflate(R.layout.custom_wrong_question, null, false)
+                val image: ImageView = view.findViewById(R.id.image)
 
-            // params for module
-            val param = GridLayout.LayoutParams()
+                val number = mQuestionList.get(i).questionId.replace("p", "")
 
-            if (number.equals("-1")) {
-                view.background = resources.getDrawable(R.drawable.empty_square)
-                image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-            } else if(number.equals("-2")) {
-                val randomNumber = Math.random()
-                var rand = 0
-                if (randomNumber > 0.5) {
-                    rand = 1
-                }
-                if (rand.equals(0)) {
-                    view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                // params for module
+                val param = GridLayout.LayoutParams()
+
+                if (number.equals("-1")) {
+                    view.background = resources.getDrawable(R.drawable.empty_square)
+                    image.visibility = View.GONE
+                    param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
+                } else if (number.equals("-2")) {
+                    val randomNumber = Math.random()
+                    var rand = 0
+                    if (randomNumber > 0.5) {
+                        rand = 1
+                    }
+                    if (rand.equals(0)) {
+                        view.background = resources.getDrawable(R.drawable.square_first_module_background)
+                    } else {
+                        view.background = resources.getDrawable(R.drawable.square_second_module_background)
+                    }
+                    image.visibility = View.GONE
+                    param.height = resources.getDimension(R.dimen.height_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
                 } else {
-                    view.background = resources.getDrawable(R.drawable.square_second_module_background)
-                }
-                image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-            } else {
-                val currentQuestion = mQuestionList.get(i)
-                val subject = limpiarTexto(currentQuestion.subject.value)
-                when (subject) {
-                    limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                        image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                    val currentQuestion = mQuestionList.get(i)
+                    val subject = limpiarTexto(currentQuestion.subject.value)
+                    when (subject) {
+                        limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                            image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.SPANISH.value) -> {
+                            image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.PHYSICS.value) -> {
+                            image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.FCE.value) -> {
+                            image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.FCE2.value) -> {
+                            image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.NONE.value) -> {
+                            //image.background = resources.getDrawable(R.drawable.main_icon)
+                        }
                     }
-                    limpiarTexto(SubjectType.SPANISH.value) -> {
-                        image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.PHYSICS.value) -> {
-                        image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                        image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.FCE.value) -> {
-                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.FCE2.value) -> {
-                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.NONE.value) -> {
-                        //image.background = resources.getDrawable(R.drawable.main_icon)
-                    }
-                }
 
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-                mWrongQuestionsId.add(currentQuestion.questionId)
-                view.setOnClickListener(View.OnClickListener {
-                    Log.d(TAG, "onClick: number --- " + number)
-                    goQuestionActivity(Integer.parseInt(number))
-                })
-            }
+                    param.height = resources.getDimension(R.dimen.height_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
+                    //mWrongQuestionsId.add(currentQuestion.questionId)
+                    view.setOnClickListener(View.OnClickListener {
+                        Log.d(TAG, "onClick: number --- " + number)
+                        goQuestionActivity(Integer.parseInt(number))
+                    })
+
+                    count++
+                }
 
 
 
-            when (cnt) {
-                0 -> {
-                    mLeftTableLayout.addView(view)
-                    view.setLayoutParams(param)
+                when (cnt) {
+                    0 -> {
+                        mLeftTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
+                    1 -> {
+                        mCenterTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
+                    2 -> {
+                        mRightTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
                 }
-                1 -> {
-                    mCenterTableLayout.addView(view)
-                    view.setLayoutParams(param)
-                }
-                2 -> {
-                    mRightTableLayout.addView(view)
-                    view.setLayoutParams(param)
+
+                cnt++
+                if (cnt == 3) {
+                    cnt = 0
                 }
             }
-
-            cnt++
-            if (cnt==3) { cnt = 0 }
         }
 
     }
@@ -345,6 +366,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 for (i in 0..answeredQuestion.size - 1) {
                     if (!answeredQuestion.get(i).wasOK) {
                         mUpdatedQuestions.add(answeredQuestion.get(i))
+                        mWrongQuestionsId.add(answeredQuestion[i].questionId)
                     }
                 }
                 if (mUpdatedQuestions.isNotEmpty()) {
@@ -382,5 +404,13 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
             limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
         }
         return limpio
+    }
+
+    private val mShowMoreQuestionsListener = View.OnClickListener {
+        mTotalQuestionsToShow += 20
+        mLeftTableLayout.removeAllViews()
+        mCenterTableLayout.removeAllViews()
+        mRightTableLayout.removeAllViews()
+        drawQuestions()
     }
 }

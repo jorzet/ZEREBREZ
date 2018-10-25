@@ -17,6 +17,7 @@
 package com.zerebrez.zerebrez.ui.activities
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
