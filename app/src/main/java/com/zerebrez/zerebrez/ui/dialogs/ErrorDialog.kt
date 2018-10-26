@@ -30,6 +30,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
+import java.lang.Exception
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.
@@ -195,9 +196,10 @@ class ErrorDialog : DialogFragment(){
     }
 
     override fun show(fragmentManager : FragmentManager, tag : String) {
-        if (context != null) {
+        try {
             super.show(fragmentManager, tag)
-        }
+        } catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) { }
     }
 
     private val mYesButtonListener = View.OnClickListener {
