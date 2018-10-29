@@ -85,6 +85,8 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     private var mWrongQuestionsId = arrayListOf<String>()
     private lateinit var mUser : User
 
+    private var isRequesting : Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         if (container == null)
@@ -108,6 +110,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
         if (activity != null) {
             val user = (activity as ContentActivity).getUserProfile()
             if (user != null && !user.getCourse().equals("")) {
+                isRequesting = true
                 requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
             }
         }
@@ -132,9 +135,12 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
     override fun onResume() {
         super.onResume()
         if (activity != null) {
-            val user = (activity as ContentActivity).getUserProfile()
-            if (user != null && !user.getCourse().equals("")) {
-                requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+            if (!isRequesting) {
+                isRequesting = true
+                val user = (activity as ContentActivity).getUserProfile()
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetWrongQuestionsAndProfileRefactor(user.getCourse())
+                }
             }
         }
     }

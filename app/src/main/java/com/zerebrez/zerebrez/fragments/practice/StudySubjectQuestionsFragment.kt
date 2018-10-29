@@ -93,9 +93,9 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
             mLoadingQuestionSubject.visibility = View.VISIBLE
             /*if (activity != null)
                 (activity as ContentActivity).showLoading(true)*/
-            isRequesting = true
             val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
+                isRequesting = true
                 requestGetQuestionsNewFormatBySubject(mSelectedSubject, user.getCourse())
             }
         }
@@ -245,7 +245,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
                 } else {
                     val currentQuestion = mQuestionList.get(i)
-                    val subject = limpiarTexto(currentQuestion.subject.value)
+                    val subject = limpiarTexto(mSelectedSubject)
                     if (count >= mNumberOfFreeQuestionSubject.toInt() && !mUser.isPremiumUser()) {
                         view.background = resources.getDrawable(R.drawable.not_premium_module_background)
                     } else if (currentQuestion.wasOK) {
@@ -259,6 +259,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                             image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                         }
                         limpiarTexto(SubjectType.SPANISH.value) -> {
+                            mSubject = SubjectType.SPANISH.value
+                            image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.SPANISH2.value) -> {
                             mSubject = SubjectType.SPANISH.value
                             image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                         }

@@ -182,7 +182,8 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                     if (questions.isNotEmpty()) {
                         mQuestionSize = questions.size
                         mQuestions = questions
-                        requestQuestionsNewFormat(course)
+                        onRequestListenerSucces.onSuccess(questions)
+                        //requestQuestionsNewFormat(course)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
