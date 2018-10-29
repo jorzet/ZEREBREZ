@@ -193,6 +193,12 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 }, TIME_DELAY)
 
             } else {
+                if (activity != null) {
+                    (activity as QuestionActivity).showLoading(false)
+                    if (questionNewFormat!!.stepByStepData.isNotEmpty()) {
+                        (activity as QuestionActivity).enableDisableAnswerButton(true)
+                    }
+                }
                 mOptionA.isEnabled = true
                 mOptionB.isEnabled = true
                 mOptionC.isEnabled = true

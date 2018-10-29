@@ -38,12 +38,13 @@ private const val TAG: String = "QuestionsRequest"
 class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     private val COURSE_LABEL : String = "course_label"
+    private val SUBJECT_LABEL : String = "subject_label"
     private val QUESTION_ID : String = "question_id"
 
     private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label/question_id"
     private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label"
     private val MODULES_REFERENCE : String = "modules/course_label"
-    private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label"
+    private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label/subject_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
     private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
     private val USERS_REFERENCE : String = "users"
@@ -156,7 +157,8 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetQuestionNewFormatBySubject(subject: String, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course) + "/" + subject)
+        mFirebaseDatabase = mFirebaseInstance
+                .getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course).replace(SUBJECT_LABEL, subject))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

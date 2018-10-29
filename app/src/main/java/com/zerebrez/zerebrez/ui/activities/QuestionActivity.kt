@@ -480,37 +480,12 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * @return
      *      The current question according to moduleId
      */
-    /*fun getQuestion() : Question? {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size) {
-            mShowAnswer.isEnabled = mQuestions.get(mCurrentQuestion).hasStepByStep()
-            if (isFromWrongQuestionFragment) {
-                mQuestiontypeText.text = mQuestions.get(mCurrentQuestion).getSubjectType().value
-            }
-            return mQuestions.get(mCurrentQuestion)
-        }
-
-        return null
-    }*/
-
-    /**
-     * @return
-     *      The current question according to moduleId
-     */
     fun getQuestionNewFormat() : QuestionNewFormat? {
         if (::mCurrentQuestionNewFormat.isInitialized) {
             return mCurrentQuestionNewFormat
         } else {
             return null
         }
-        /*if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size) {
-            mShowAnswer.isEnabled = mQuestionsNewFormat.get(mCurrentQuestion).stepByStepData.isNotEmpty()
-            if (isFromWrongQuestionFragment) {
-                mQuestiontypeText.text = mQuestionsNewFormat.get(mCurrentQuestion).subject.value
-            }
-            return mQuestionsNewFormat.get(mCurrentQuestion)
-        }
-
-        return null*/
     }
 
     fun getCorrectQuestions() : Int {
@@ -520,23 +495,6 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     fun getIncorrectQuestion() : Int {
         return this.mIncorrectQiestions
     }
-
-    /**
-     * @param answer
-     * @param wasOK
-     *      The method set answed choosed by user and set if answer was correct or not
-     */
-    /*fun setQuestionAnswer(answer : String, wasOK : Boolean) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size) {
-            mQuestions.get(mCurrentQuestion).setOptionChoosed(answer)
-            mQuestions.get(mCurrentQuestion).setWasOK(wasOK)
-            if (wasOK) {
-                mCorrectQuestions++
-            } else {
-                mIncorrectQiestions++
-            }
-        }
-    }*/
 
     /**
      * @param answer
