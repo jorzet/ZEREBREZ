@@ -156,8 +156,15 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
             var hasEquation = false
 
+            // check if has equations
             for (quetionType in questionNewFormat!!.questionTypes) {
                 if (quetionType.equals("eq")) {
+                    hasEquation = true
+                }
+            }
+
+            for (optionType in questionNewFormat!!.optionsTypes) {
+                if (optionType.equals("eq")) {
                     hasEquation = true
                 }
             }
