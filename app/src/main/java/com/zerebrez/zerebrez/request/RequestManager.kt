@@ -47,6 +47,24 @@ class RequestManager(activity : Activity) {
 
     private val mActivity = activity
 
+    fun requestSendPasswordResetEmail(email: String, onSendPasswordResetEmailListener: OnSendPasswordResetEmailListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailFail(result)
+            }
+        })
+
+        firebase.requestSendPasswordResetEmail(email)
+    }
+
     fun requestDoLogIn(user : User?, onDoLogInListener : OnDoLogInListener) {
         val firebase = Firebase(mActivity)
 
@@ -432,6 +450,11 @@ class RequestManager(activity : Activity) {
 
     interface OnFirebaseLogIn {
         fun onFireBaseLogIn(success : Boolean)
+    }
+
+    interface OnSendPasswordResetEmailListener {
+        fun onSendPasswordResetEmailLoaded(success : Boolean)
+        fun onSendPasswordResetEmailFail(throwable: Throwable)
     }
 
     interface OnDoLogInListener {

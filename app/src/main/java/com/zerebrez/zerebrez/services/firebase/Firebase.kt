@@ -133,6 +133,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         requestFirebaseLogIn(user)
     }
 
+    fun requestSendPasswordResetEmail(email: String) {
+        requestFirebaseSendPasswordResetEmail(email)
+    }
+
     fun requestUpdateUser(user : User) {
         requestFirebaseUpdateUserEmail(user)
     }

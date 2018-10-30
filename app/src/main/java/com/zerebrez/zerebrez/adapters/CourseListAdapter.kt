@@ -72,8 +72,7 @@ class CourseListAdapter (context : Context, courses : List<Course>) : BaseAdapte
     }
 
     override fun getItem(position: Int): Any? {
-        //if (mCourses!= null && mCourses.isNotEmpty() && mCourses.get(position).isActive) {
-        if (mCourses!= null && mCourses.isNotEmpty()) {
+        if (mCourses!= null && mCourses.isNotEmpty() && mCourses.get(position).isActive) {
             return mCourses.get(position)
         } else {
             return null
@@ -87,9 +86,9 @@ class CourseListAdapter (context : Context, courses : List<Course>) : BaseAdapte
     override fun getCount(): Int {
         var count = 0
         for (course in mCourses) {
-            //if (course.isActive) {
+            if (course.isActive) {
                 count++
-            //}
+            }
         }
         return count
     }

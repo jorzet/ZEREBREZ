@@ -675,4 +675,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onGetFreeSubjectsQuestionsSuccess(numberOfFreeQuestionSubjects : Long) {}
     open fun onGetFreeSubjectsQuestionsFail(throwable: Throwable) {}
 
+    fun requestSendPasswordResetEmail(email: String) {
+        mRequestManager.requestSendPasswordResetEmail(email, object : RequestManager.OnSendPasswordResetEmailListener {
+            override fun onSendPasswordResetEmailLoaded(success: Boolean) {
+                onSendPasswordResetEmailSuccess(success)
+            }
+
+            override fun onSendPasswordResetEmailFail(throwable: Throwable) {
+                onSendPasswordResetEmailFail(throwable)
+            }
+        })
+    }
+
+    open fun onSendPasswordResetEmailSuccess(success: Boolean) {}
+    open fun onSendPasswordResetEmailFail(throwable: Throwable) {}
+
 }
