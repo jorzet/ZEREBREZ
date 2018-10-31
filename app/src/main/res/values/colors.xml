@@ -154,4 +154,8 @@
     <color name="biology_subject_color">#2B659A</color>
     <color name="mexico_history_subject_color">#BADF3D</color>
 
+    <!--questions-->
+    <color name="not_selected_question_color">#D7D7D7</color>
+    <color name="selected_question_color">#A0A0A0</color>
+
 </resources>

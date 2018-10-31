@@ -61,6 +61,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var CURRENT_COURSE : String = "current_course"
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
+    private val CURRENT_QUESTION_ID : String = "current_question_id"
     private val EXAM_ID : String = "exam_id"
     private val SELECTED_SUBJECT : String = "selected_subject"
     private val ANONYMOUS_USER : String = "anonymous_user"
@@ -72,6 +73,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val MISSES_EXTRA = "misses_extra"
     private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
     private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
+    private val QUESTION_IDS_LIST : String = "questions_ids_list"
     private val SUBJECT_EXTRA : String = "subject_extra"
 
     /*
@@ -89,6 +91,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private lateinit var mControlsBar : View
     private lateinit var progressBarHolder : FrameLayout
     private lateinit var mQuestionsProgress : ProgressBar
+    private lateinit var mShowQuestionsButton : View
+    private lateinit var mShowQuestionsText: TextView
 
     /*
      * Variables
@@ -152,12 +156,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mControlsBar = findViewById(R.id.bottom_bar)
         progressBarHolder = findViewById(R.id.progressBarHolder)
         mQuestionsProgress = findViewById(R.id.pb_questions_progress)
+        mShowQuestionsButton = findViewById(R.id.rl_show_questions)
+        mShowQuestionsText = findViewById(R.id.tv_show_questions)
 
         //mBackQuestion.setOnClickListener(mBackQuestionListener)
         mCloseQuestion.setOnClickListener(mCloseQuestionListener)
         mNextQuestion.setOnClickListener(mNextQuestionListener)
         mShowExpandedQuestion.setOnClickListener(mShowExpandedQuestionListener)
         mShowAnswer.setOnClickListener(mShowAnswerListener)
+        mShowQuestionsButton.setOnClickListener(mShowQuestionsListener)
 
         mShowAnswer.isEnabled = false
         setNextQuestionEnable(false)
@@ -166,6 +173,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mModuleNumber.typeface = FontUtil.getNunitoBold(baseContext)
         mNextQuestionText.typeface = FontUtil.getNunitoBlack(baseContext)
         mShowAnswerText.typeface = FontUtil.getNunitoBlack(baseContext)
+        mShowQuestionsText.typeface = FontUtil.getNunitoBlack(baseContext)
 
         inAnimation = AlphaAnimation(0f, 1f)
         inAnimation.duration = 200
@@ -462,6 +470,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     }
 
+    private val mShowQuestionsListener = View.OnClickListener {
+        showQuestions()
+    }
+
 
     /*
      * This method show the correspond fragment according to question type
@@ -592,6 +604,19 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private fun showAnswer() {
         val intent = Intent(this, ShowAnswerActivity::class.java)
         this.startActivityForResult(intent, SHOW_QUESTION_RESULT_CODE)
+    }
+
+    private fun showQuestions() {
+        val mQuestionIds = arrayListOf<String>()
+        mQuestionIds.addAll(mQuestionsId)
+
+        val intent = Intent(this, ShowQuestionsActivity::class.java)
+        intent.putExtra(FROM_SUBJECT_QUESTION, isFromSubjectQuestionFragment)
+        intent.putExtra(FROM_EXAM_FRAGMENT, isFromExamFragment)
+        intent.putExtra(FROM_WRONG_QUESTION, isFromWrongQuestionFragment)
+        intent.putExtra(QUESTION_IDS_LIST, mQuestionIds)
+        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestion)
+        this.startActivity(intent)
     }
 
     private fun showQuestionsCompleteFragment() {

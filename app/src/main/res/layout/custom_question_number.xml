@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/width_question_row_spam"
+    android:layout_height="@dimen/height_question_row_spam">
+
+    <RelativeLayout
+        android:id="@+id/question_number_background"
+        android:layout_width="@dimen/width_question_row"
+        android:layout_height="@dimen/height_question_row"
+        android:background="@drawable/unselected_question_background"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/question_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:stretchColumns="1"/>
+
+    </RelativeLayout>
+</RelativeLayout>
