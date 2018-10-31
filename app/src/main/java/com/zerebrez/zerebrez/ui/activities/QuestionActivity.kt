@@ -123,8 +123,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     /*
      * Objects
      */
-    //private lateinit var mQuestions : List<Question>
-    private lateinit var mQuestionsNewFormat: List<QuestionNewFormat>
+    private var mAnsweredQuestions = arrayListOf<QuestionNewFormat>()
+    private lateinit var mQuestionsId: List<String>
+    private lateinit var mCurrentQuestionNewFormat: QuestionNewFormat
     private lateinit var mModuleList : List<Module>
     private lateinit var mExamList : List<Exam>
     private lateinit var currentFragment : Fragment
@@ -172,100 +173,130 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         outAnimation.duration = 200
 
         if (intent != null) {
-            mCourse = intent.getStringExtra(CURRENT_COURSE)
-            mModuleId = intent.getIntExtra(MODULE_ID, -1)
-            mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
-            mExamId = intent.getIntExtra(EXAM_ID, -1)
-            isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
-            isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
-            isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
-            isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
+            try {
 
-            val user = getUser()
+                mCourse = intent.getStringExtra(CURRENT_COURSE)
+                mModuleId = intent.getIntExtra(MODULE_ID, -1)
+                mQuestionId = intent.getIntExtra(QUESTION_ID, -1)
+                mExamId = intent.getIntExtra(EXAM_ID, -1)
+                isAnonymous = intent.getBooleanExtra(ANONYMOUS_USER, false)
+                isFromSubjectQuestionFragment = intent.getBooleanExtra(FROM_SUBJECT_QUESTION, false)
+                isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
+                isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
 
-            if (isFromSubjectQuestionFragment) {
-                showLoading(true)
-                //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
-                //requestGetQuestionsNewFormatBySubject(mSelectedSubject)
-                val mSubjectQuestionIds = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<Int>
-                mSubject = intent.getStringExtra(SUBJECT_EXTRA)
-                val mQuestions = arrayListOf<QuestionNewFormat>()
-                var mLastKnowQuestion = false
-                for (subjectQuestionId in mSubjectQuestionIds) {
-                    if (mLastKnowQuestion || subjectQuestionId.equals(mQuestionId)) {
-                        val question = QuestionNewFormat()
-                        question.questionId = "p" + subjectQuestionId
-                        mQuestions.add(question)
-                        mLastKnowQuestion = true
+                val user = getUser()
+
+                if (isFromSubjectQuestionFragment) {
+                    showLoading(true)
+                    //val mSelectedSubject = intent.getStringExtra(SELECTED_SUBJECT)
+                    //requestGetQuestionsNewFormatBySubject(mSelectedSubject)
+
+                    mQuestionsId = intent.getSerializableExtra(SUBJECT_QUESTIONS_LIST) as List<String>
+                    mSubject = intent.getStringExtra(SUBJECT_EXTRA)
+
+                    if (mQuestionId != -1) {
+                        val questionsIds = arrayListOf<String>()
+                        for (i in 0..mQuestionsId.size - 1) {
+                            if (mQuestionsId[i].equals("p" + mQuestionId)) {
+                                for (j in i..mQuestionsId.size - 1) {
+                                    questionsIds.add(mQuestionsId[j])
+                                }
+                                break;
+                            }
+                        }
+                        mQuestionsId = questionsIds
+                    }
+
+                    mModuleNumber.text = ":)"
+                    mQuestiontypeText.text = mSubject
+
+                    mProgressByQuestion = 100 / mQuestionsId.size.toFloat()
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                        //requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions, user.getCourse())
+                    }
+                } else if (isFromWrongQuestionFragment) {
+                    showLoading(true)
+                    mQuestionsId = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<String>
+
+                    if (mQuestionId != -1) {
+                        val questionsIds = arrayListOf<String>()
+                        for (i in 0..mQuestionsId.size - 1) {
+                            if (mQuestionsId[i].equals("p" + mQuestionId)) {
+                                for (j in i..mQuestionsId.size - 1) {
+                                    questionsIds.add(mQuestionsId[j])
+                                }
+                                break;
+                            }
+                        }
+                        mQuestionsId = questionsIds
+                    }
+
+                    mModuleNumber.text = ":)"
+                    mProgressByQuestion = 100 / mQuestionsId.size.toFloat()
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                        //requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions, user.getCourse())
+                    }
+
+                } else if (isFromExamFragment) {
+                    showLoading(true)
+
+                    mModuleNumber.text = mExamId.toString()
+                    mQuestiontypeText.text = "Examen"
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        requestGetQuestionsIdByExamId(mExamId, user.getCourse())
+                        //requestGetQuestionsNewFormatByExamIdRefactor(mExamId, user.getCourse())
+                    }
+                } else {
+                    showLoading(true)
+
+                    mModuleNumber.text = mModuleId.toString()
+                    mQuestiontypeText.text = "Módulo"
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        requestGetQuestionsIdByModuleId(mModuleId, user.getCourse())
+                        //requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId, user.getCourse())
                     }
                 }
-                if (user != null && !user.getCourse().equals("")) {
-                    requestGetQuestionsNewFormatBySubjectQuestionId(mQuestions, user.getCourse())
-                }
-            } else if (isFromWrongQuestionFragment) {
-                showLoading(true)
-                val mWrongQuestionIds = intent.getSerializableExtra(WRONG_QUESTIONS_LIST) as List<Int>
-                val mQuestions = arrayListOf<QuestionNewFormat>()
-                var mLastKnowQuestion = false
-                for (wrongQuestionId in mWrongQuestionIds) {
-                    if (mLastKnowQuestion || wrongQuestionId.equals(mQuestionId)) {
-                        val question = QuestionNewFormat()
-                        question.questionId = "p" + wrongQuestionId
-                        mQuestions.add(question)
-                        mLastKnowQuestion = true
+
+                // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+                MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+                // Use an activity context to get the rewarded video instance.
+                mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+                mRewardedVideoAd.rewardedVideoAdListener = this
+                // RequestAdd
+                loadRewardedVideoAd()
+
+                mInterstitialAd = InterstitialAd(this)
+                mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+                mInterstitialAd.loadAd(AdRequest.Builder().build())
+                mInterstitialAd.adListener = object : AdListener() {
+                    override fun onAdLoaded() {
+                        // Code to be executed when an ad finishes loading.
+                    }
+
+                    override fun onAdFailedToLoad(errorCode: Int) {
+                        // Code to be executed when an ad request fails.
+                    }
+
+                    override fun onAdOpened() {
+                        // Code to be executed when the ad is displayed.
+                    }
+
+                    override fun onAdLeftApplication() {
+                        // Code to be executed when the user has left the app.
+                    }
+
+                    override fun onAdClosed() {
+                        // Code to be executed when when the interstitial ad is closed.
                     }
                 }
-                //requestGetWrongQuestionsByQuestionIdRefactor(mQuestions)
-                if (user != null && !user.getCourse().equals("")) {
-                    requestGetWrongQuestionsNewFormatByQuestionIdRefactor(mQuestions, user.getCourse())
-                }
-                //mQuestions = DataHelper(baseContext).getWrongQuestionsByQuestionId(Integer(mQuestionId))
-            } else if (isFromExamFragment) {
-                showLoading(true)
-                //requestGetQuestionsByExamIdRefactor(mExamId)
-                if (user != null && !user.getCourse().equals("")) {
-                    requestGetQuestionsNewFormatByExamIdRefactor(mExamId, user.getCourse())
-                }
-            } else {
-                showLoading(true)
-                //requestGetQuestionsByModuleIdRefactor(mModuleId)
-                if (user != null && !user.getCourse().equals("")) {
-                    requestGetQuestionsNewFormatByModuleIdRefactor(mModuleId, user.getCourse())
-                }
-            }
-
-            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-            MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
-            // Use an activity context to get the rewarded video instance.
-            mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
-            mRewardedVideoAd.rewardedVideoAdListener = this
-            // RequestAdd
-            loadRewardedVideoAd()
-
-            mInterstitialAd = InterstitialAd(this)
-            mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
-            mInterstitialAd.loadAd(AdRequest.Builder().build())
-            mInterstitialAd.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    // Code to be executed when an ad finishes loading.
-                }
-
-                override fun onAdFailedToLoad(errorCode: Int) {
-                    // Code to be executed when an ad request fails.
-                }
-
-                override fun onAdOpened() {
-                    // Code to be executed when the ad is displayed.
-                }
-
-                override fun onAdLeftApplication() {
-                    // Code to be executed when the user has left the app.
-                }
-
-                override fun onAdClosed() {
-                    // Code to be executed when when the interstitial ad is closed.
-                }
-            }
+            } catch (e: java.lang.Exception) {
+            } catch (e: kotlin.Exception) {}
         }
     }
 
@@ -285,7 +316,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
-            DataHelper(baseContext).saveCurrentQuestionNewFormat(mQuestionsNewFormat.get(mCurrentQuestion))
+            DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
             showAnswer()
         }
     }
@@ -315,7 +346,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
                 } else {
-                    requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+                    requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
                     onBackPressed()
                 }
             } else {
@@ -354,15 +385,20 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
         //if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size -1) {
+        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size -1) {
             if (isFromWrongQuestionFragment) {
                 //requestSendAnsweredQuestions(mQuestions, mCourse)
                 //requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
             } /*else if (isFromSubjectQuestionFragment) {
                 requestSendAnsweredQuestionNewFormat(mQuestionsNewFormat[mCurrentQuestion], mCourse)
             }*/
-            showQuestion()
+            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
             mCurrentQuestion++
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+            }
+            //showQuestion()
         } else if (isAnonymous) {
             saveModulesAndQuestions()
         } else {
@@ -408,9 +444,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     showAnswer()
                 }
             }*/
-            if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size) {
+            /*if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size) {
                 if (mQuestionsNewFormat.get(mCurrentQuestion).stepByStepData.isNotEmpty()) {
                     DataHelper(baseContext).saveCurrentQuestionNewFormat(mQuestionsNewFormat.get(mCurrentQuestion))
+                    showAnswer()
+                }
+            }*/
+            if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
+                if (mCurrentQuestionNewFormat.stepByStepData.isNotEmpty()) {
+                    DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
                     showAnswer()
                 }
             }
@@ -438,32 +480,12 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * @return
      *      The current question according to moduleId
      */
-    /*fun getQuestion() : Question? {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size) {
-            mShowAnswer.isEnabled = mQuestions.get(mCurrentQuestion).hasStepByStep()
-            if (isFromWrongQuestionFragment) {
-                mQuestiontypeText.text = mQuestions.get(mCurrentQuestion).getSubjectType().value
-            }
-            return mQuestions.get(mCurrentQuestion)
-        }
-
-        return null
-    }*/
-
-    /**
-     * @return
-     *      The current question according to moduleId
-     */
     fun getQuestionNewFormat() : QuestionNewFormat? {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size) {
-            mShowAnswer.isEnabled = mQuestionsNewFormat.get(mCurrentQuestion).stepByStepData.isNotEmpty()
-            if (isFromWrongQuestionFragment) {
-                mQuestiontypeText.text = mQuestionsNewFormat.get(mCurrentQuestion).subject.value
-            }
-            return mQuestionsNewFormat.get(mCurrentQuestion)
+        if (::mCurrentQuestionNewFormat.isInitialized) {
+            return mCurrentQuestionNewFormat
+        } else {
+            return null
         }
-
-        return null
     }
 
     fun getCorrectQuestions() : Int {
@@ -479,27 +501,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * @param wasOK
      *      The method set answed choosed by user and set if answer was correct or not
      */
-    /*fun setQuestionAnswer(answer : String, wasOK : Boolean) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size) {
-            mQuestions.get(mCurrentQuestion).setOptionChoosed(answer)
-            mQuestions.get(mCurrentQuestion).setWasOK(wasOK)
-            if (wasOK) {
-                mCorrectQuestions++
-            } else {
-                mIncorrectQiestions++
-            }
-        }
-    }*/
-
-    /**
-     * @param answer
-     * @param wasOK
-     *      The method set answed choosed by user and set if answer was correct or not
-     */
     fun setQuestionNewFormatAnswer(answer : String, wasOK : Boolean) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsNewFormat.size) {
-            mQuestionsNewFormat.get(mCurrentQuestion).chosenOption = answer
-            mQuestionsNewFormat.get(mCurrentQuestion).wasOK = wasOK
+        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
+            mCurrentQuestionNewFormat.chosenOption = answer
+            mCurrentQuestionNewFormat.wasOK = wasOK
             if (wasOK) {
                 mCorrectQuestions++
             } else {
@@ -521,13 +526,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         module.setId(Integer(mModuleId))
         module.setAnsweredModule(true)
         //module.setQuestions(mQuestions)
-        module.setQuestionsNewFormat(mQuestionsNewFormat)
+        module.setQuestionsNewFormat(mAnsweredQuestions)
         module.setCorrectQuestions(mCorrectQuestions)
         module.setIncorrectQuestions(mIncorrectQiestions)
 
         requestSendAnsweredModules(module, mCourse)
         //requestSendAnsweredQuestions(mQuestions, mCourse)
-        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
         mModulesAndQuestionsSaved = true
 
         // this is called on QuestionsCompleteFragment
@@ -546,17 +551,18 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         //if (NetworkUtil.isConnected(baseContext)) {
         //    requestSendAnsweredExams(mExamList)
         //} else {
+
         val exam = Exam()
         exam.setExamId(Integer(mExamId))
         //exam.setQuestions(mQuestions)
-        exam.setQuestionsNewFormat(mQuestionsNewFormat)
+        exam.setQuestionsNewFormat(mAnsweredQuestions)
         exam.setHits(mCorrectQuestions)
         exam.setMisses(mIncorrectQiestions)
         exam.setAnsweredExam(true)
 
             requestSendAnsweredExams(exam, mCourse)
             //requestSendAnsweredQuestions(mQuestions, mCourse)
-        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
             mExamAnsQuestionsSaved = true
             showQuestionsCompleteFragment()
             // this is called on QuestionsCompleteFragment
@@ -566,47 +572,16 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private fun saveQuestionSubject() {
-        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
         mSubjectQuestionsSaved = true
         showQuestionsCompleteFragment()
     }
 
     private fun saveWrongQuestion() {
         //requestSendAnsweredQuestions(mQuestions, mCourse)
-        requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
+        requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
         mWrongQuestionsSaved = true
         showQuestionsCompleteFragment()
-    }
-
-    override fun onSendAnsweredModulesSuccess(success: Boolean) {
-        super.onSendAnsweredModulesSuccess(success)
-        //requestSendAnsweredQuestions(mModuleList)
-    }
-
-    override fun onSendAnsweredModulesFail(throwable: Throwable) {
-        super.onSendAnsweredModulesFail(throwable)
-    }
-
-    override fun onSendAnsweredQuestionsSuccess(success: Boolean) {
-        super.onSendAnsweredQuestionsSuccess(success)
-        /*if (isAnonymous) {
-            goLogInActivity()
-        } else {
-            onBackPressed()
-        }*/
-    }
-
-    override fun onSendAnsweredQuestionsFail(throwable: Throwable) {
-        super.onSendAnsweredQuestionsFail(throwable)
-    }
-
-    override fun onSendAnsweredExamsSuccess(success: Boolean) {
-        super.onSendAnsweredExamsSuccess(success)
-        //onBackPressed()
-    }
-
-    override fun onSendAnsweredExamsFail(throwable: Throwable) {
-        super.onSendAnsweredExamsFail(throwable)
     }
 
     private fun showAnswerMessage() {
@@ -708,154 +683,43 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         this.finish()
     }
 
-    /*
-     * LISTENER REQUEST QUESTIONS OLD FORMAT
-     */
-    /*
-    override fun onGetQuestionsByModuleIdRefactorSuccess(questions: List<Question>) {
-        super.onGetQuestionsByModuleIdRefactorSuccess(questions)
-        mQuestions = questions
-        mModuleNumber.text = mModuleId.toString()
-        mQuestiontypeText.text = "Módulo"
-        mProgressByQuestion = 100 / questions.size
-        showQuestion()
-        showLoading(false)
-    }
 
-    override fun onGetQuestionsByModuleIdRefactorFail(throwable: Throwable) {
-        super.onGetQuestionsByModuleIdRefactorFail(throwable)
-        showLoading(false)
-        onBackPressed()
-    }
-
-    override fun onGetQuestionsByExamIdRefactorSuccess(questions: List<Question>) {
-        super.onGetQuestionsByExamIdRefactorSuccess(questions)
-        mQuestions = questions
-        mModuleNumber.text = mExamId.toString()
-        mQuestiontypeText.text = "Examen"
-        mProgressByQuestion = 100 / questions.size
-        showQuestion()
-        showLoading(false)
-    }
-
-    override fun onGetQuestionsByExamIdRefactorFail(throwable: Throwable) {
-        super.onGetQuestionsByExamIdRefactorFail(throwable)
-        showLoading(false)
-        onBackPressed()
-    }
-
-    override fun onGetWrongQuestionsByQuestionIdRefactorSuccess(questions: List<Question>) {
-        super.onGetWrongQuestionsByQuestionIdRefactorSuccess(questions)
-        mQuestions = questions
-        mModuleNumber.text = ":)"
-        if (mQuestions.isNotEmpty()) {
-            mQuestiontypeText.text =  mQuestions.get(mCurrentQuestion).getSubjectType().value
+    override fun onGetQuestionsIdSuccess(questionsId: List<String>) {
+        super.onGetQuestionsIdSuccess(questionsId)
+        mQuestionsId = questionsId
+        mProgressByQuestion = 100 / questionsId.size.toFloat()
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
         }
-        mProgressByQuestion = 100 / questions.size
-        showQuestion()
-        showLoading(false)
     }
 
-    override fun onGetWrongQuestionsByQuestionIdRefactorFail(throwable: Throwable) {
-        super.onGetWrongQuestionsByQuestionIdRefactorFail(throwable)
-        showLoading(false)
-        onBackPressed()
-    }*/
-
-    /*
-     * LISTENER REQUEST QUESTIONS NEW FORMAT
-     */
-    override fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions: List<QuestionNewFormat>) {
-        super.onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions)
-        mQuestionsNewFormat = questions
-        mModuleNumber.text = mModuleId.toString()
-        mQuestiontypeText.text = "Módulo"
-        mProgressByQuestion = 100 / questions.size.toFloat()
-        showQuestion()
-        showLoading(false)
-    }
-
-    override fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {
-        super.onGetQuestionsNewFormatByModuleIdRefactorFail(throwable)
+    override fun onGetQuestionsIdFail(throwable: Throwable) {
+        super.onGetQuestionsIdFail(throwable)
         showLoading(false)
         onBackPressed()
     }
 
-    override fun onGetQuestionsNewFormatByExamIdRefactorSuccess(questions: List<QuestionNewFormat>) {
-        super.onGetQuestionsNewFormatByExamIdRefactorSuccess(questions)
-        mQuestionsNewFormat = questions
-        mModuleNumber.text = mExamId.toString()
-        mQuestiontypeText.text = "Examen"
-        mProgressByQuestion = 100 / questions.size.toFloat()
-        showQuestion()
-        showLoading(false)
-    }
+    override fun onGetQuestionNewFormatSuccess(question: QuestionNewFormat) {
+        super.onGetQuestionNewFormatSuccess(question)
+        mCurrentQuestionNewFormat = question
 
-    override fun onGetQuestionsNewFormatByExamIdRefactorFail(throwable: Throwable) {
-        super.onGetQuestionsNewFormatByExamIdRefactorFail(throwable)
-        showLoading(false)
-        onBackPressed()
-    }
-
-    override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions: List<QuestionNewFormat>) {
-        super.onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions)
-        mQuestionsNewFormat = questions
-        mModuleNumber.text = ":)"
-        if (mQuestionsNewFormat.isNotEmpty()) {
-            mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
+        if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
+            mQuestiontypeText.text = question.subject.value
         }
-        mProgressByQuestion = 100 / questions.size.toFloat()
+
         showQuestion()
         showLoading(false)
     }
 
-    override fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {
-        super.onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable)
-        showLoading(false)
+    override fun ongetQuestionNewFormatFail(throwable: Throwable) {
+        super.ongetQuestionNewFormatFail(throwable)
         ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
                 DialogType.OK_DIALOG, this)!!
                 .show(supportFragmentManager!!, "notAbleNow")
-        onBackPressed()
     }
 
-    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {
-        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions)
-        mQuestionsNewFormat = questions
-        mModuleNumber.text = ":)"
-        if (mQuestionsNewFormat.isNotEmpty()) {
-            mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
-        }
-        mProgressByQuestion = 100 / questions.size.toFloat()
-        showQuestion()
-        showLoading(false)
-    }
 
-    override fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {
-        super.onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable)
-        showLoading(false)
-        ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo",
-                DialogType.OK_DIALOG, this)!!
-                .show(supportFragmentManager!!, "notAbleNow")
-        onBackPressed()
-    }
-
-    override fun onGetQuestionsNewFormatBySubjectSuccess(questions: List<QuestionNewFormat>) {
-        super.onGetQuestionsNewFormatBySubjectSuccess(questions)
-        mQuestionsNewFormat = questions
-        mModuleNumber.text = ":)"
-        if (mQuestionsNewFormat.isNotEmpty()) {
-            mQuestiontypeText.text =  mQuestionsNewFormat.get(mCurrentQuestion).subject.value
-        }
-        mProgressByQuestion = 100 / questions.size.toFloat()
-        showQuestion()
-        showLoading(false)
-    }
-
-    override fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {
-        super.onGetQuestionsNewFormatBySubjectFail(throwable)
-        showLoading(false)
-        onBackPressed()
-    }
 
     fun showLoading(showLoading : Boolean) {
         if (showLoading) {

@@ -28,6 +28,11 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.text.Normalizer
 import java.util.HashMap
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "WrongQuestionRequest"
 
 class WrongQuestionRequest(activity: Activity) : Engagement(activity) {

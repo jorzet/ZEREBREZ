@@ -412,6 +412,53 @@ abstract class Engagement constructor(activity: Activity) : AbstractPendingReque
         }
     }
 
+    fun requestFirebaseSendPasswordResetEmail(email: String) {
+        mAuth = FirebaseAuth.getInstance()
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(mActivity) { task ->
+            if (task.isSuccessful) {
+                // link success, update UI with the signed-in user's information
+                Log.d(TAG, "linkWithCredential:success")
+                onRequestListenerSucces.onSuccess(task.isSuccessful)
+
+            } else {
+                // If link fails, display a message to the user.
+                Log.w(TAG, "linkWithCredential:failure", task.exception)
+                if (task.exception is FirebaseAuthUserCollisionException) {
+                    val exception = task.exception as FirebaseAuthUserCollisionException
+                    val error = FirebaseError()
+                    if (exception.errorCode.equals("ERROR_INVALID_EMAIL")){
+                        error.setErrorType(LoginErrorType.INVALID_EMAIL)
+                    } else if (exception.errorCode.equals("ERROR_INVALID_CREDENTIAL")){
+                        error.setErrorType(LoginErrorType.INVALID_CREDENTIAL)
+                    } else if (exception.errorCode.equals("ERROR_WRONG_PASSWORD")){
+                        error.setErrorType(LoginErrorType.WRONG_PASSWORD)
+                    } else if (exception.errorCode.equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")) {
+                        error.setErrorType(LoginErrorType.ACCOUNT_EXIST_WITH_DIFFERENT_CREDENTIAL)
+                    } else if (exception.errorCode.equals("ERROR_USER_DISABLED")){
+                        error.setErrorType(LoginErrorType.USER_DISABLED)
+                    } else if (exception.errorCode.equals("ERROR_EMAIL_ALREADY_IN_USE")){
+                        error.setErrorType(LoginErrorType.EMAIL_ADLREADY_IN_USE)
+                    } else if (exception.errorCode.equals("ERROR_WEAK_PASSWORD")){
+                        error.setErrorType(LoginErrorType.WEAK_PASSWORD)
+                    } else if (exception.errorCode.equals("ERROR_USER_NOT_FOUND")){
+                        error.setErrorType(LoginErrorType.USER_NOT_FOUND)
+                    } else if (exception.errorCode.equals("ERROR_CREDENTIAL_ALREADY_IN_USE")){
+                        error.setErrorType(LoginErrorType.ERROR_CREDENTIAL_ALREADY_IN_USE)
+                    } else {
+                        error.setErrorType(LoginErrorType.DEFAULT)
+                    }
+
+                    onRequestLietenerFailed.onFailed(error)
+                } else {
+                    val error = GenericError()
+                    error.setErrorType(ErrorType.GOOGLE_NOT_LINKED)
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+        }
+
+    }
+
     protected fun getCurrentUser() : FirebaseUser? {
         return FirebaseAuth.getInstance().currentUser
     }

@@ -29,6 +29,7 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
+                android:id="@+id/questions_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -63,6 +64,28 @@
                     android:columnWidth="100dp">
                 </GridLayout>
 
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_show_more_button"
+                android:layout_width="160dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/questions_container"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/link_email_account_button_background"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_show_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Mostrar más"
+                    android:textSize="17sp"
+                    android:textColor="@color/white"/>
             </RelativeLayout>
 
         </RelativeLayout>

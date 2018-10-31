@@ -40,6 +40,7 @@ import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.SendQuestionRequestTask
+import com.zerebrez.zerebrez.request.SendQuestionsRequestTask
 import org.json.JSONArray
 import java.text.Normalizer
 import kotlin.collections.ArrayList
@@ -130,6 +131,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestLogIn(user : User?) {
         requestFirebaseLogIn(user)
+    }
+
+    fun requestSendPasswordResetEmail(email: String) {
+        requestFirebaseSendPasswordResetEmail(email)
     }
 
     fun requestUpdateUser(user : User) {
@@ -574,35 +579,19 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
 
     fun requestSendAnsweredQuestionsNewFormat(questions: List<QuestionNewFormat>, course: String) {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        val user = getCurrentUser()
-        if (user != null) {
-            val userUpdates = HashMap<String, Any>()
+        val sendQuestionsTask = SendQuestionsRequestTask(mActivity, questions)
 
-            for (question in questions) {
-                if (!question.chosenOption.equals("") && question.subject != null) {
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + IS_CORRECT_REFERENCE, question.wasOK)
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + SUBJECT_REFERENCE, question.subject.value)
-                    userUpdates.put(user.uid + "/" + ANSWERED_QUESTION_MODULE + "/" + course + "/" + question.questionId + "/" + CHOSEN_OPTION_REFERENCE, question.chosenOption)
-                }
+        sendQuestionsTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
+            override fun onSuccess(result: Any) {
+                Log.d(TAG, "send questions success")
             }
-
-            mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
-                override fun onComplete(task: Task<Void>) {
-                    if (task.isComplete) {
-                        Log.d(TAG, "complete requestSendAnsweredQuestions")
-                        onRequestListenerSucces.onSuccess(true)
-                    } else {
-                        Log.d(TAG, "cancelled requestSendAnsweredQuestions")
-                        val error = GenericError()
-                        error.setErrorType(ErrorType.ANSWERED_QUESTIONS_NOT_SENDED)
-                        onRequestLietenerFailed.onFailed(error)
-                    }
-                }
-            })
-        }
+        })
+        sendQuestionsTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
+            override fun onFailed(result: Throwable) {
+                Log.d(TAG, "send questions fail")
+            }
+        })
+        sendQuestionsTask.execute(course)
     }
 
     fun requestSendAnsweredQuestionNewFormat(question: QuestionNewFormat, course: String) {

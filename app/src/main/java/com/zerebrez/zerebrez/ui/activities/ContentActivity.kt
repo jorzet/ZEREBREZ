@@ -551,46 +551,6 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onGetModulesSucces(result: List<Module>) {
-        super.onGetModulesSucces(result)
-    }
-
-    override fun onGetModulesFail(throwable: Throwable) {
-        super.onGetModulesFail(throwable)
-    }
-
-    override fun onGetCoursesSuccess(courses: List<String>) {
-        super.onGetCoursesSuccess(courses)
-    }
-
-    override fun onGetCoursesFail(throwable: Throwable) {
-        super.onGetCoursesFail(throwable)
-    }
-
-    override fun onGetUserDataSuccess(user: User) {
-        super.onGetUserDataSuccess(user)
-    }
-
-    override fun onGetUserDataFail(throwable: Throwable) {
-        super.onGetUserDataFail(throwable)
-    }
-
-    override fun onGetExamsSuccess(exams: List<Exam>) {
-        super.onGetExamsSuccess(exams)
-    }
-
-    override fun onGetExamsFail(throwable: Throwable) {
-        super.onGetExamsFail(throwable)
-    }
-
-    override fun onGetImagesPathSuccess(images: List<Image>) {
-        super.onGetImagesPathSuccess(images)
-    }
-
-    override fun onGetImagesPathFail(throwable: Throwable) {
-        super.onGetImagesPathFail(throwable)
-    }
-
     fun getUserProfile(): User? {
         if (::mUser.isInitialized) {
             return this.mUser

@@ -28,15 +28,23 @@ import org.json.JSONObject
 import java.text.Normalizer
 import java.util.ArrayList
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "QuestionsRequest"
 
 class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     private val COURSE_LABEL : String = "course_label"
+    private val SUBJECT_LABEL : String = "subject_label"
+    private val QUESTION_ID : String = "question_id"
 
+    private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label/question_id"
     private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label"
     private val MODULES_REFERENCE : String = "modules/course_label"
-    private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label"
+    private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label/subject_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
     private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
     private val USERS_REFERENCE : String = "users"
@@ -65,6 +73,11 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         //}
     }
 
+
+    /*******************************************************************************************/
+    /**************************   This section is to get all questions  ************************/
+    /*******************************************************************************************/
+
     fun requestGetQuestionsNewFormatByModuleId(moduleId : Int, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course) + "/m" + moduleId)
@@ -77,73 +90,14 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                 if (post != null) {
                     val map = (post as List<String>)
 
-                    Log.d(TAG, post.toString())
-
-                    /*
-                     * mapping map to question array object
-                     */
-
-                    val questions = arrayListOf<QuestionNewFormat>()
-
+                    val questionsId = arrayListOf<String>()
                     // get question id from response
                     for (q in map) {
-                        val question = QuestionNewFormat()
-                        question.questionId = q
-                        questions.add(question)
+                        questionsId.add(q)
                     }
 
-                    if (questions.isNotEmpty()) {
-                        mQuestionSize = questions.size
-                        mQuestions = questions
-                        requestQuestionsNewFormat(course)
-                    } else {
-                        val error = GenericError()
-                        onRequestLietenerFailed.onFailed(error)
-                    }
-                } else {
-                    val error = GenericError()
-                    onRequestLietenerFailed.onFailed(error)
-                }
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }
-
-    fun requestGetQuestionNewFormatBySubject(subject: String, course: String) {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course) + "/" + subject)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                if (post != null) {
-                    val map = (post as List<String>)
-
-                    Log.d(TAG, post.toString())
-
-                    /*
-                 * mapping map to module object
-                 */
-                    val questions = arrayListOf<QuestionNewFormat>()
-
-                    // get question id from response
-                    for (q in map) {
-                        val question = QuestionNewFormat()
-                        question.questionId = q
-                        questions.add(question)
-                    }
-
-                    if (questions.isNotEmpty()) {
-                        mQuestionSize = questions.size
-                        mQuestions = questions
-                        requestQuestionsNewFormat(course)
+                    if (questionsId.isNotEmpty()) {
+                        onRequestListenerSucces.onSuccess(questionsId)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -174,11 +128,48 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                 if (post != null) {
                     val map = (post as List<String>)
 
+                    val questionsId = arrayListOf<String>()
+
+                    // get question id from response
+                    for (q in map) {
+                        questionsId.add(q)
+                    }
+
+                    if (questionsId.isNotEmpty()) {
+                        onRequestListenerSucces.onSuccess(questionsId)
+                    } else {
+                        val error = GenericError()
+                        onRequestLietenerFailed.onFailed(error)
+                    }
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
+    }
+
+    fun requestGetQuestionNewFormatBySubject(subject: String, course: String) {
+        // Get a reference to our posts
+        mFirebaseDatabase = mFirebaseInstance
+                .getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course).replace(SUBJECT_LABEL, subject))
+        mFirebaseDatabase.keepSynced(true)
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val map = (post as List<String>)
+
                     Log.d(TAG, post.toString())
 
-                    /*
-                 * mapping map to module object
-                 */
                     val questions = arrayListOf<QuestionNewFormat>()
 
                     // get question id from response
@@ -191,7 +182,8 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                     if (questions.isNotEmpty()) {
                         mQuestionSize = questions.size
                         mQuestions = questions
-                        requestQuestionsNewFormat(course)
+                        onRequestListenerSucces.onSuccess(questions)
+                        //requestQuestionsNewFormat(course)
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -327,6 +319,85 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         }
     }
 
+    /*******************************************************************************************/
+    /**********************   This section is to get question by question   ********************/
+    /*******************************************************************************************/
+
+    fun requestQuestionNewFormat(questionId: String, course: String) {
+        // Get a reference to our posts
+        mFirebaseDatabase = mFirebaseInstance.getReference(
+                COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
+        mFirebaseDatabase.keepSynced(true)
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val questionMap = (post as java.util.HashMap<*, *>)
+                    Log.d(TAG, "user data ------ " + questionMap.size)
+
+                    val question = Gson().fromJson(JSONObject(questionMap).toString(), QuestionNewFormat::class.java)
+                    question.questionId = questionId
+                    if (questionMap.containsKey("subject")) {
+                        val subject = limpiarTexto(questionMap.get("subject") as String)
+                        when (subject) {
+                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                                question.subject = SubjectType.VERBAL_HABILITY
+                            }
+                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                                question.subject = SubjectType.MATHEMATICAL_HABILITY
+                            }
+                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                                question.subject = SubjectType.MATHEMATICS
+                            }
+                            limpiarTexto(SubjectType.SPANISH.value) -> {
+                                question.subject = SubjectType.SPANISH
+                            }
+                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                                question.subject = SubjectType.BIOLOGY
+                            }
+                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                                question.subject = SubjectType.CHEMISTRY
+                            }
+                            limpiarTexto(SubjectType.PHYSICS.value) -> {
+                                question.subject = SubjectType.PHYSICS
+                            }
+                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                                question.subject = SubjectType.GEOGRAPHY
+                            }
+                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                                question.subject = SubjectType.UNIVERSAL_HISTORY
+                            }
+                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                                question.subject = SubjectType.MEXICO_HISTORY
+                            }
+                            limpiarTexto(SubjectType.FCE.value) -> {
+                                question.subject = SubjectType.FCE
+                            }
+                            limpiarTexto(SubjectType.FCE2.value) -> {
+                                question.subject = SubjectType.FCE2
+                            }
+                        }
+                    }
+
+                    onRequestListenerSucces.onSuccess(question)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
+    }
+
+    /*
+     * This method clear non ascii chars
+     */
     fun limpiarTexto(cadena: String?): String? {
         var limpio: String? = null
         if (cadena != null) {
@@ -341,5 +412,4 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         }
         return limpio
     }
-
 }

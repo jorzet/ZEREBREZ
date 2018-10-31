@@ -17,6 +17,7 @@
 package com.zerebrez.zerebrez.ui.activities
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -557,17 +558,6 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         })
     }
 
-    fun requestGetQuestionsNewFormatBySubject(subject: String, course: String) {
-        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, course, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
-            override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
-                onGetQuestionsNewFormatBySubjectSuccess(questions)
-            }
-
-            override fun onGetQuestionsNewFormatBySubjectError(throwable: Throwable) {
-                onGetQuestionsNewFormatBySubjectFail(throwable)
-            }
-        })
-    }
 
     open fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {}
@@ -575,8 +565,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetQuestionsNewFormatByExamIdRefactorFail(throwable: Throwable) {}
     open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {}
-    open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
-    open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
+
 
     fun requestGetSchools(course: String) {
         mRequestManager.requestGetSchools(course, object : RequestManager.OnGetSchoolsListener {
@@ -611,6 +600,48 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
 
     open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {}
     open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {}
+
+
+    fun requestGetQuestionsIdByExamId(examId: Int, course: String) {
+        mRequestManager.requestGetQuestionsIdByExamId(examId, course, object: RequestManager.OnGetQuestionsIdListener {
+            override fun onGetQuestionsIdLoaded(questionsId: List<String>) {
+                onGetQuestionsIdSuccess(questionsId)
+            }
+            override fun onGetQuestionsIdError(throwable: Throwable) {
+                onGetQuestionsIdFail(throwable)
+            }
+        })
+    }
+
+    fun requestGetQuestionsIdByModuleId(moduleId: Int, course: String) {
+        mRequestManager.requestGetQuestionsIdByModuleId(moduleId, course, object: RequestManager.OnGetQuestionsIdListener {
+            override fun onGetQuestionsIdLoaded(questionsId: List<String>) {
+                onGetQuestionsIdSuccess(questionsId)
+            }
+            override fun onGetQuestionsIdError(throwable: Throwable) {
+                onGetQuestionsIdFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionsIdSuccess(questionsId: List<String>) {}
+    open fun onGetQuestionsIdFail(throwable: Throwable) {}
+
+
+    fun requestGetQuestionNewFormat(questionId: String, course: String) {
+        mRequestManager.requestGetQuestionNewFormat(questionId, course, object : RequestManager.OnGetQuestionNewFormatListener {
+            override fun onGetQuestionNewFormatLoaded(question: QuestionNewFormat) {
+                onGetQuestionNewFormatSuccess(question)
+            }
+
+            override fun onGetQuestionNewFormatError(throwable: Throwable) {
+                ongetQuestionNewFormatFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetQuestionNewFormatSuccess(question: QuestionNewFormat) {}
+    open fun ongetQuestionNewFormatFail(throwable: Throwable) {}
 
     override fun onConfirmationCancel() {
 

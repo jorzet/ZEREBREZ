@@ -35,6 +35,9 @@ enum class SubjectType constructor(val value : String)  {
     @SerializedName("Español")
     @Expose
     SPANISH("Español"),
+    @SerializedName("Espanol")
+    @Expose
+    SPANISH2("Espanol"),
     @SerializedName("Ingles")
     @Expose
     ENGLISH("Ingles"),

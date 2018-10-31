@@ -36,8 +36,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 
-
-
 /*
 * Created by Jorge Zepeda Tinoco on 27/02/18.
 * jorzet.94@gmail.com

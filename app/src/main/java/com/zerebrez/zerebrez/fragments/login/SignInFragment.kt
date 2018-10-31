@@ -189,7 +189,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     private val mForgotPasswordListener = View.OnClickListener {
-
+        sendPasswordResetEmail()
     }
 
     private val mSendEmailListener = View.OnClickListener {
@@ -227,6 +227,26 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val release = Build.VERSION.RELEASE
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"
+    }
+
+    /*
+     * This method send a request to reset password
+     */
+    fun sendPasswordResetEmail(){
+        val email = mEmailEditText.text.toString().replace(" ", "")
+        if (mForgotPassword.text.toString().equals("Escribe tu correo")) {
+            if (email != null && !email.equals("")) {
+                mLogInView.visibility = View.GONE
+                mLoginAnotherProvidersView.visibility = View.GONE
+                mLoadingProgresBar.visibility = View.VISIBLE
+                requestSendPasswordResetEmail(email)
+            } else {
+                ErrorDialog.newInstance("Error", "Necesitas ingresar un email",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "loginError")
+            }
+        } else {
+            mForgotPassword.text = "Escribe tu correo"
+        }
     }
 
     /*
@@ -831,6 +851,25 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                 }
             })
         }
+    }
+
+    override fun onSendPasswordResetEmailSuccess(success: Boolean) {
+        super.onSendPasswordResetEmailSuccess(success)
+        mForgotPassword.text = "Se enviaron las instrucciones a tu correo"
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+    }
+
+    override fun onSendPasswordResetEmailFail(throwable: Throwable) {
+        super.onSendPasswordResetEmailFail(throwable)
+        mForgotPassword.text = "Escribe tu correo"
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+        ErrorDialog.newInstance("Error", "Necesitas ingresar un email",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "loginError")
+
     }
 
 }

@@ -53,12 +53,12 @@
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/text_2"
-        android:background="@drawable/green_button">
+        android:background="@drawable/link_email_account_button_background">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
+            android:layout_centerVertical="true"
             android:text="  E N T E N D I D O  "
             android:textColor="@color/white"
             android:textSize="18sp"/>
