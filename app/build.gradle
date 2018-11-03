@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'io.fabric'
+
 android {
     signingConfigs {
         config {
@@ -69,6 +71,7 @@ dependencies {
     implementation 'com.felipecsl:gifimageview:2.2.0'
 
     implementation 'com.google.android.gms:play-services-ads:17.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
     implementation 'com.android.support:multidex:1.0.3'
 }

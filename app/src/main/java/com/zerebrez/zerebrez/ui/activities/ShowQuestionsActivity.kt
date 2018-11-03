@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -106,9 +107,19 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
         }
 
         val mGridLayoutManager = GridLayoutManager(this, 6)
-        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId)
+        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId,
+                object: ShowQuestionsAdapter.OnQuestionSelectedListener {
+                    override fun onQuestionSelected(questionId: String) {
+                        val intent = Intent()
+                        intent.putExtra(REQUEST_NEW_QUESTION, questionId)
+                        setResult(SHOW_QUESTIONS_RESULT_CODE, intent)
+                        finish()
+                    }
+                })
+
         mQuestionsGrid.adapter = mShowQuestionsAdapter
         mQuestionsGrid.layoutManager = mGridLayoutManager
+
 
 
     }
@@ -124,7 +135,15 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
         }
 
         val mGridLayoutManager = GridLayoutManager(this, 6)
-        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId)
+        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId,
+                object: ShowQuestionsAdapter.OnQuestionSelectedListener {
+                    override fun onQuestionSelected(questionId: String) {
+                        val intent = Intent()
+                        intent.putExtra(REQUEST_NEW_QUESTION, questionId)
+                        setResult(SHOW_QUESTIONS_RESULT_CODE, intent)
+                        finish()
+                    }
+                })
         mQuestionsGrid.adapter = mShowQuestionsAdapter
         mQuestionsGrid.layoutManager = mGridLayoutManager
     }
@@ -132,5 +151,7 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
     private val mReturnToQuestionListener = View.OnClickListener {
         onBackPressed()
     }
+
+
 
 }

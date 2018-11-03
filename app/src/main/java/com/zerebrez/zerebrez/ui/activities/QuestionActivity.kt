@@ -326,6 +326,12 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
             DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
             showAnswer()
+        } else if (resultCode.equals(SHOW_QUESTIONS_RESULT_CODE)) {
+            val questionId = data!!.getStringExtra(REQUEST_NEW_QUESTION)
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetQuestionNewFormat(questionId, user.getCourse())
+            }
         }
     }
 
@@ -615,8 +621,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         intent.putExtra(FROM_EXAM_FRAGMENT, isFromExamFragment)
         intent.putExtra(FROM_WRONG_QUESTION, isFromWrongQuestionFragment)
         intent.putExtra(QUESTION_IDS_LIST, mQuestionIds)
-        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestion)
-        this.startActivity(intent)
+        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestionNewFormat.questionId)
+        this.startActivityForResult(intent, SHOW_QUESTIONS_RESULT_CODE)
     }
 
     private fun showQuestionsCompleteFragment() {
