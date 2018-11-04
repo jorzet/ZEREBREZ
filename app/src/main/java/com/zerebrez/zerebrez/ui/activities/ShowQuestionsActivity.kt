@@ -25,8 +25,7 @@ import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ShowQuestionsAdapter
 import com.zerebrez.zerebrez.utils.FontUtil
 import android.support.v7.widget.GridLayoutManager
-
-
+import com.zerebrez.zerebrez.models.QuestionNewFormat
 
 /**
  * Created by Jorge Zepeda Tinoco on 31/10/18.
@@ -43,6 +42,7 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
     private val FROM_EXAM_FRAGMENT : String = "from_exam_fragment"
     private val QUESTION_IDS_LIST : String = "questions_ids_list"
     private val CURRENT_QUESTION_ID : String = "current_question_id"
+    private val ANSWERED_QUESTIONS : String = "answered_questions"
 
     /*
      * UI accessors
@@ -60,11 +60,13 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
      * Objects
      */
     private lateinit var mQuestionsId : List<String>
+    private lateinit var mAnsweredQuestions : List<QuestionNewFormat>
+    private var mQuestions = arrayListOf<QuestionNewFormat>()
 
     /*
      * Variables
      */
-    private lateinit var mCurrentQuestionId : String
+    private var mCurrentQuestionId : Int = -1
     private var isFromSubjectQuestionFragment : Boolean = false
     private var isFromWrongQuestionFragment : Boolean = false
     private var isFromExamFragment : Boolean = false
@@ -87,31 +89,31 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
         isFromWrongQuestionFragment = intent.getBooleanExtra(FROM_WRONG_QUESTION, false)
         isFromExamFragment = intent.getBooleanExtra(FROM_EXAM_FRAGMENT, false)
         mQuestionsId = intent.getSerializableExtra(QUESTION_IDS_LIST) as List<String>
-        mCurrentQuestionId = intent.getStringExtra(CURRENT_QUESTION_ID)
+        mCurrentQuestionId = intent.getIntExtra(CURRENT_QUESTION_ID, 0)
+        mAnsweredQuestions = intent.getSerializableExtra(ANSWERED_QUESTIONS) as List<QuestionNewFormat>
 
-        if (isFromSubjectQuestionFragment) {
-
-        } else if (isFromWrongQuestionFragment) {
-
-        } else if (isFromExamFragment) {
-
-        } else {
-
+        for (questionId in mQuestionsId) {
+            val questionNewFormat = QuestionNewFormat()
+            questionNewFormat.questionId = questionId
+            mQuestions.add(questionNewFormat)
         }
 
-
-        val user = getUser()
-        if (user != null && !user.getCourse().equals("")) {
-
-            mIsRequestiong = true
+        for (answeredQuestion in mAnsweredQuestions) {
+            for (question in mQuestions) {
+                if (answeredQuestion.questionId.equals(question.questionId)) {
+                    question.wasOK = answeredQuestion.wasOK
+                    question.answered = true
+                }
+            }
         }
 
         val mGridLayoutManager = GridLayoutManager(this, 6)
-        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId,
+        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestions, mCurrentQuestionId,
                 object: ShowQuestionsAdapter.OnQuestionSelectedListener {
-                    override fun onQuestionSelected(questionId: String) {
+                    override fun onQuestionSelected(questionId: String, position: Int) {
                         val intent = Intent()
                         intent.putExtra(REQUEST_NEW_QUESTION, questionId)
+                        intent.putExtra(QUESTION_POSITION, position)
                         setResult(SHOW_QUESTIONS_RESULT_CODE, intent)
                         finish()
                     }
@@ -120,26 +122,17 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
         mQuestionsGrid.adapter = mShowQuestionsAdapter
         mQuestionsGrid.layoutManager = mGridLayoutManager
 
-
-
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (!mIsRequestiong) {
-            val user = getUser()
-            if (user != null && !user.getCourse().equals("")) {
-
-            }
-        }
-
         val mGridLayoutManager = GridLayoutManager(this, 6)
-        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestionsId, mCurrentQuestionId,
+        mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestions, mCurrentQuestionId,
                 object: ShowQuestionsAdapter.OnQuestionSelectedListener {
-                    override fun onQuestionSelected(questionId: String) {
+                    override fun onQuestionSelected(questionId: String, position: Int) {
                         val intent = Intent()
                         intent.putExtra(REQUEST_NEW_QUESTION, questionId)
+                        intent.putExtra(QUESTION_POSITION, position)
                         setResult(SHOW_QUESTIONS_RESULT_CODE, intent)
                         finish()
                     }
@@ -151,7 +144,5 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
     private val mReturnToQuestionListener = View.OnClickListener {
         onBackPressed()
     }
-
-
 
 }

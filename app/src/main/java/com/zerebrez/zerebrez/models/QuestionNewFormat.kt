@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.zerebrez.zerebrez.models.enums.SubjectType
+import java.io.Serializable
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -62,5 +63,6 @@ data class QuestionNewFormat (
 
         var questionId : String = "",
         var chosenOption : String = "",
-        var wasOK : Boolean = false
-)
+        var wasOK : Boolean = false,
+        var answered : Boolean = false // important this is just used in ShowQuestionsActivity
+) : Serializable
