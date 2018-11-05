@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
@@ -62,6 +63,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
     private val CURRENT_QUESTION_ID : String = "current_question_id"
+    private val ANSWERED_QUESTIONS : String = "answered_questions"
     private val EXAM_ID : String = "exam_id"
     private val SELECTED_SUBJECT : String = "selected_subject"
     private val ANONYMOUS_USER : String = "anonymous_user"
@@ -103,6 +105,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mQuestionId : Int = 0
     private var mExamId : Int = 0
     private var mCurrentQuestion : Int = 0
+    private var mCurrentQuestionSkiped : Int = 0
     private var mCorrectQuestions : Int = 0
     private var mIncorrectQiestions : Int = 0
     private var isAnonymous : Boolean = false
@@ -115,6 +118,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mWrongQuestionsSaved = false
     private var mSubjectQuestionsSaved = false
     private var mShowPaymentFragment = false
+    private var mUserSkipQuestions = false
     private var mProgressByQuestion : Float = 0.0F
     private var mCurrentProgress : Float = 0.0F
 
@@ -128,6 +132,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * Objects
      */
     private var mAnsweredQuestions = arrayListOf<QuestionNewFormat>()
+    private var mQuestionsAux = arrayListOf<QuestionNewFormat>()
     private lateinit var mQuestionsId: List<String>
     private lateinit var mCurrentQuestionNewFormat: QuestionNewFormat
     private lateinit var mModuleList : List<Module>
@@ -208,6 +213,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                             if (mQuestionsId[i].equals("p" + mQuestionId)) {
                                 for (j in i..mQuestionsId.size - 1) {
                                     questionsIds.add(mQuestionsId[j])
+                                    val questionAux = QuestionNewFormat()
+                                    questionAux.questionId = mQuestionsId[j]
+                                    mQuestionsAux.add(questionAux)
                                 }
                                 break;
                             }
@@ -234,6 +242,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                             if (mQuestionsId[i].equals("p" + mQuestionId)) {
                                 for (j in i..mQuestionsId.size - 1) {
                                     questionsIds.add(mQuestionsId[j])
+                                    val questionAux = QuestionNewFormat()
+                                    questionAux.questionId = mQuestionsId[j]
+                                    mQuestionsAux.add(questionAux)
                                 }
                                 break;
                             }
@@ -326,6 +337,22 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
             DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
             showAnswer()
+        } else if (resultCode.equals(SHOW_QUESTIONS_RESULT_CODE)) {
+            val questionId = data!!.getStringExtra(REQUEST_NEW_QUESTION)
+            val questionPosition = data.getIntExtra(QUESTION_POSITION, -1)
+
+            if (questionPosition != -1) {
+                if (questionPosition != mCurrentQuestion) {
+                    mUserSkipQuestions = true
+                }
+                mCurrentQuestion = questionPosition
+                mCurrentQuestionSkiped = questionPosition
+            }
+
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetQuestionNewFormat(questionId, user.getCourse())
+            }
         }
     }
 
@@ -394,30 +421,61 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         setNextQuestionEnable(false)
         //if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size -1) {
+            Log.d("QUESTION_SIZE"," mCurrentQuestion " )
             if (isFromWrongQuestionFragment) {
                 //requestSendAnsweredQuestions(mQuestions, mCourse)
                 //requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
             } /*else if (isFromSubjectQuestionFragment) {
                 requestSendAnsweredQuestionNewFormat(mQuestionsNewFormat[mCurrentQuestion], mCourse)
             }*/
+            mQuestionsAux[mCurrentQuestion].answered = true
             mAnsweredQuestions.add(mCurrentQuestionNewFormat)
             mCurrentQuestion++
+            mCurrentQuestionSkiped++
             val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
                 requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
             }
             //showQuestion()
-        } else if (isAnonymous) {
-            saveModulesAndQuestions()
         } else {
-            if (isFromWrongQuestionFragment) {
-                saveWrongQuestion()
-            } else if (isFromSubjectQuestionFragment) {
-                saveQuestionSubject()
-            } else if (isFromExamFragment) {
-                saveExamsAndQuestions()
+            if (mUserSkipQuestions) {
+                Log.d("QUESTION_SIZE"," mUserSkipQuestions ")
+                val questionsSize = mQuestionsAux.size
+                var count = 0
+                for (questionAux in mQuestionsAux) {
+                    mCurrentQuestionSkiped = count
+                    count++
+                    if (!questionAux.answered) {
+                        questionAux.answered = true
+                        mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                        val user = getUser()
+                        if (user != null && !user.getCourse().equals("")) {
+                            requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
+                        }
+                        break
+                    }
+                }
+                Log.d("QUESTION_SIZE"," :---: " + (questionsSize - 1) + " :-----------: " + count)
+                // if all questions are answered then change status
+                if (questionsSize == count) {
+                    mUserSkipQuestions = false
+                }
+
             } else {
-                saveModulesAndQuestions()
+                Log.d("QUESTION_SIZE"," else")
+                if (isAnonymous) {
+                    saveModulesAndQuestions()
+                } else {
+                    if (isFromWrongQuestionFragment) {
+                        saveWrongQuestion()
+                    } else if (isFromSubjectQuestionFragment) {
+                        saveQuestionSubject()
+                    } else if (isFromExamFragment) {
+                        saveExamsAndQuestions()
+                    } else {
+                        saveModulesAndQuestions()
+                    }
+                }
             }
         }
     }
@@ -615,8 +673,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         intent.putExtra(FROM_EXAM_FRAGMENT, isFromExamFragment)
         intent.putExtra(FROM_WRONG_QUESTION, isFromWrongQuestionFragment)
         intent.putExtra(QUESTION_IDS_LIST, mQuestionIds)
-        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestion)
-        this.startActivity(intent)
+        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestionSkiped)
+        intent.putExtra(ANSWERED_QUESTIONS, mAnsweredQuestions)
+        this.startActivityForResult(intent, SHOW_QUESTIONS_RESULT_CODE)
     }
 
     private fun showQuestionsCompleteFragment() {
@@ -708,9 +767,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         this.finish()
     }
 
-
     override fun onGetQuestionsIdSuccess(questionsId: List<String>) {
         super.onGetQuestionsIdSuccess(questionsId)
+        for (questionId in questionsId) {
+            val questionAux = QuestionNewFormat()
+            questionAux.questionId = questionId
+            mQuestionsAux.add(questionAux)
+        }
         mQuestionsId = questionsId
         mProgressByQuestion = 100 / questionsId.size.toFloat()
         val user = getUser()

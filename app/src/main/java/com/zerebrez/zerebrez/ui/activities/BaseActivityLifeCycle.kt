@@ -44,6 +44,8 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val SET_CHECKED_TAG : String = "set_checked_tag"
         val SHOW_PAYMENT_FRAGMENT : String = "show_payment_fragment"
         val UPDATE_WRONG_QUESTIONS : String = "update_wrong_questions"
+        val REQUEST_NEW_QUESTION : String = "request_new_question"
+        val QUESTION_POSITION : String = "question_position"
         val SHOW_QUESTION_RESULT_CODE : Int = 1
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
@@ -51,6 +53,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val RC_CHOOSE_SCHOOL : Int = 5
         val UPDATE_USER_SCHOOLS_RESULT_CODE = 6
         val UPDATE_WRONG_QUESTIONS_RESULT_CODE = 7
+        val SHOW_QUESTIONS_RESULT_CODE = 8
     }
 
     private lateinit var mRequestManager : RequestManager
@@ -642,6 +645,21 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
 
     open fun onGetQuestionNewFormatSuccess(question: QuestionNewFormat) {}
     open fun ongetQuestionNewFormatFail(throwable: Throwable) {}
+
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String) {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(course,object : RequestManager.OnGetWrongQuestionAndProfileListener {
+            override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
+                onGetWrongQuestionsAndProfileRefactorSuccess(user)
+            }
+
+            override fun onGetWrongQuestionsAndProfileError(throwable: Throwable) {
+                onGetWrongQuestionsAndProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetWrongQuestionsAndProfileRefactorSuccess(user : User) {}
+    open fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {}
 
     override fun onConfirmationCancel() {
 
