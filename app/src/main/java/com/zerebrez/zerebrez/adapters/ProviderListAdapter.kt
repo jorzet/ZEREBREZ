@@ -39,16 +39,21 @@ import java.io.Serializable
  * jorzet.94@gmail.com
  */
 
-class ProviderListAdapter(providers: List<Provider>, context: Context, fragment: ProvidersFragment) : RecyclerView.Adapter<ViewHolder>(), ViewHolder.OnButtonClickListener {
+class ProviderListAdapter(providers: List<Provider>, context: Context, fragment: ProvidersFragment):
+        RecyclerView.Adapter<ViewHolder>(), ViewHolder.OnButtonClickListener {
 
-    var providers: List<Provider> = providers
-    var context: Context = context
-    var mProvidersFragment: ProvidersFragment = fragment
+    private var providers: List<Provider> = providers
+    private var mContext: Context = context
+    private var mProvidersFragment: ProvidersFragment = fragment
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = providers.get(position)
-        holder.bind(item, context)
+        if (holder != null) {
+            if (providers != null && providers.isNotEmpty()) {
+                val item = providers.get(position)
+                holder.bind(item, mContext)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -57,11 +62,15 @@ class ProviderListAdapter(providers: List<Provider>, context: Context, fragment:
     }
 
     override fun getItemCount(): Int {
-        return providers.size
+        if (providers != null && providers.isNotEmpty()) {
+            return providers.size
+        } else {
+            return 0
+        }
     }
 
     override fun onButtonClicked(position: Int) {
-        var bundle: Bundle = Bundle()
+        val bundle = Bundle()
         bundle.putSerializable("Provider",providers.get(position) as Serializable)
         mProvidersFragment.ShowConfirmOrderFragment(bundle)
     }
@@ -71,6 +80,7 @@ class ViewHolder(view: View, clickListener: OnButtonClickListener ) : RecyclerVi
     val mProviderImageView = view.findViewById(R.id.iv_provider_icon) as ImageView
     val mComisionTextView = view.findViewById(R.id.tv_providers_comision) as TextView
     val clickListener = clickListener
+
     interface OnButtonClickListener {
         fun onButtonClicked(position: Int)
     }

@@ -124,8 +124,8 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
     }
 
     private void setmRecyclerView(List<Provider> providers){
-        if (mRecyclerView != null) {
-            mProviderAdapter = new ProviderListAdapter(providers,getActivity(), this);
+        if (mRecyclerView != null && getActivity() != null) {
+            mProviderAdapter = new ProviderListAdapter(providers, getActivity(), this);
             if (mRecyclerView.getAdapter() == null) {
                 mRecyclerView.setAdapter(mProviderAdapter);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
