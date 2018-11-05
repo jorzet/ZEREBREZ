@@ -106,6 +106,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mExamId : Int = 0
     private var mCurrentQuestion : Int = 0
     private var mCurrentQuestionSkiped : Int = 0
+    private var mLastKnownQuestion : Int = 0
     private var mCorrectQuestions : Int = 0
     private var mIncorrectQiestions : Int = 0
     private var isAnonymous : Boolean = false
@@ -119,6 +120,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mSubjectQuestionsSaved = false
     private var mShowPaymentFragment = false
     private var mUserSkipQuestions = false
+    private var mUserFinishQuestons = false
     private var mProgressByQuestion : Float = 0.0F
     private var mCurrentProgress : Float = 0.0F
 
@@ -345,7 +347,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 if (questionPosition != mCurrentQuestion) {
                     mUserSkipQuestions = true
                 }
-                mCurrentQuestion = questionPosition
+                //mCurrentQuestion = questionPosition
                 mCurrentQuestionSkiped = questionPosition
             }
 
@@ -376,7 +378,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private val mCloseQuestionListener = View.OnClickListener {
-        if (mCurrentQuestion > 0) {
+        if (mLastKnownQuestion > 0) {
             if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
@@ -419,8 +421,88 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
+        mLastKnownQuestion ++
         //if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size -1) {
+
+        var questionsToAnswer = 0
+
+        for (questionAux in mQuestionsAux) {
+            if (!questionAux.answered) {
+                questionsToAnswer++
+            }
+        }
+
+        if (questionsToAnswer == 1) {
+            mUserFinishQuestons = true
+        }
+
+        if (questionsToAnswer > 0) {
+            if (!mUserFinishQuestons) {
+                if (mCurrentQuestionSkiped <= mCurrentQuestion) {
+                    val questionsSize = mQuestionsAux.size
+                    var count = 0
+                    for (questionAux in mQuestionsAux) {
+                        mCurrentQuestionSkiped = count
+                        count++
+                        if (!questionAux.answered) {
+                            questionAux.answered = true
+                            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                            val user = getUser()
+                            if (user != null && !user.getCourse().equals("")) {
+                                mQuestionsAux[mCurrentQuestionSkiped - 1].answered = true
+                                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                                requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
+                            }
+                            break
+                        }
+                    }
+                } else {
+                    val user = getUser()
+                    if (user != null && !user.getCourse().equals("")) {
+                        mQuestionsAux[mCurrentQuestion].answered = true
+                        mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                        mCurrentQuestion++
+                        mCurrentQuestionSkiped++
+                        requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                    }
+                }
+            } else {
+                var count = 0
+                for (questionAux in mQuestionsAux) {
+                    mCurrentQuestionSkiped = count
+                    count++
+                    if (!questionAux.answered) {
+                        questionAux.answered = true
+                        mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                        val user = getUser()
+                        if (user != null && !user.getCourse().equals("")) {
+                            mCurrentQuestion = mCurrentQuestionSkiped
+                            mQuestionsAux[mCurrentQuestionSkiped - 1].answered = true
+                            requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
+                        }
+                        break
+                    }
+                }
+            }
+        } else {
+            Log.d("QUESTION_SIZE"," else")
+            if (isAnonymous) {
+                saveModulesAndQuestions()
+            } else {
+                if (isFromWrongQuestionFragment) {
+                    saveWrongQuestion()
+                } else if (isFromSubjectQuestionFragment) {
+                    saveQuestionSubject()
+                } else if (isFromExamFragment) {
+                    saveExamsAndQuestions()
+                } else {
+                    saveModulesAndQuestions()
+                }
+            }
+        }
+
+
+        /*if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size -1) {
             Log.d("QUESTION_SIZE"," mCurrentQuestion " )
             if (isFromWrongQuestionFragment) {
                 //requestSendAnsweredQuestions(mQuestions, mCourse)
@@ -430,11 +512,40 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             }*/
             mQuestionsAux[mCurrentQuestion].answered = true
             mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-            mCurrentQuestion++
-            mCurrentQuestionSkiped++
             val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
-                requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                if (mCurrentQuestion < mCurrentQuestionSkiped) {
+                    val questionsSize = mQuestionsAux.size
+                    var count = 0
+                    var questionsToAnswer = 0
+                    for (questionAux in mQuestionsAux) {
+                        if (!questionAux.answered) {
+                            questionsToAnswer++
+                        }
+                    }
+                    for (questionAux in mQuestionsAux) {
+                        mCurrentQuestionSkiped = count
+                        count++
+                        if (!questionAux.answered) {
+                            questionAux.answered = true
+                            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                            val user = getUser()
+                            if (user != null && !user.getCourse().equals("")) {
+                                mCurrentQuestion = mCurrentQuestionSkiped
+                                requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
+                            }
+                            break
+                        }
+                        if (questionsToAnswer == 1) {
+                            mUserSkipQuestions = false
+                            mCurrentQuestion = mQuestionsId.size
+                        }
+                    }
+                } else {
+                    mCurrentQuestion++
+                    mCurrentQuestionSkiped++
+                    requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                }
             }
             //showQuestion()
         } else {
@@ -442,6 +553,14 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 Log.d("QUESTION_SIZE"," mUserSkipQuestions ")
                 val questionsSize = mQuestionsAux.size
                 var count = 0
+                var questionsToAnswer = 0
+
+                for (questionAux in mQuestionsAux) {
+                    if (!questionAux.answered) {
+                        questionsToAnswer++
+                    }
+                }
+
                 for (questionAux in mQuestionsAux) {
                     mCurrentQuestionSkiped = count
                     count++
@@ -457,7 +576,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
                 Log.d("QUESTION_SIZE"," :---: " + (questionsSize - 1) + " :-----------: " + count)
                 // if all questions are answered then change status
-                if (questionsSize == count) {
+                if (questionsToAnswer == 1) {
                     mUserSkipQuestions = false
                 }
 
@@ -477,7 +596,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     }
                 }
             }
-        }
+        }*/
     }
 
     /*

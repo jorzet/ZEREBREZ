@@ -14,10 +14,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:textStyle="bold"/>
 
         <ImageView
@@ -26,7 +26,7 @@
             android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/tv_module_number"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:background="@color/black"/>
 
         <TextView
@@ -36,12 +36,13 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/iv_vertical_line"
             android:layout_toStartOf="@+id/rl_show_questions"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
             android:ellipsize="end"
             android:lines="1"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="17sp"/>
+            android:textSize="15sp"/>
 
         <RelativeLayout
             android:id="@+id/rl_show_questions"
@@ -62,7 +63,7 @@
 
         <RelativeLayout
             android:id="@+id/iv_close_question"
-            android:layout_width="70dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true">
             <ImageView
