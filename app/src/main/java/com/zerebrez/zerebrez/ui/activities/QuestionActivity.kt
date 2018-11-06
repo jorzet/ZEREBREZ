@@ -436,56 +436,49 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             mUserFinishQuestons = true
         }
 
-        if (questionsToAnswer > 0) {
-            if (!mUserFinishQuestons) {
-                if (mCurrentQuestionSkiped <= mCurrentQuestion) {
-                    val questionsSize = mQuestionsAux.size
-                    var count = 0
-                    for (questionAux in mQuestionsAux) {
-                        mCurrentQuestionSkiped = count
-                        count++
-                        if (!questionAux.answered) {
-                            questionAux.answered = true
-                            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-                            val user = getUser()
-                            if (user != null && !user.getCourse().equals("")) {
-                                mQuestionsAux[mCurrentQuestionSkiped - 1].answered = true
-                                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-                                requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
-                            }
+        Log.d("mNextQuestionListener"," questionsToAnswer: " + questionsToAnswer)
+        if (!mUserFinishQuestons) {
+            Log.d("mNextQuestionListener"," mUserFinishQuestons: " + mUserFinishQuestons)
+
+            Log.d("mNextQuestionListener"," mCurrentQuestionSkiped: " + mCurrentQuestionSkiped + " --- mCurrentQuestion: " + mCurrentQuestion)
+
+            Log.d("mNextQuestionListener","next")
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+
+                if (mCurrentQuestion != mCurrentQuestionSkiped) {
+                    mCurrentQuestion = mCurrentQuestionSkiped
+                }
+
+                if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
+                    mCurrentQuestionSkiped = 0
+                    mCurrentQuestion = mCurrentQuestionSkiped
+                }
+
+                mQuestionsAux[mCurrentQuestion].answered = true
+                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                mCurrentQuestionSkiped++
+                mCurrentQuestion = mCurrentQuestionSkiped
+                Log.d("mNextQuestionListener"," next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
+
+
+                if (mQuestionsAux[mCurrentQuestionSkiped].answered) {
+                    for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
+                        mCurrentQuestionSkiped = i
+                        mCurrentQuestion = mCurrentQuestionSkiped
+                        if (!mQuestionsAux[i].answered) {
+                            requestGetQuestionNewFormat(mQuestionsAux[i].questionId, user.getCourse())
+                            Log.d("mNextQuestionListener", " next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
                             break
                         }
                     }
                 } else {
-                    val user = getUser()
-                    if (user != null && !user.getCourse().equals("")) {
-                        mQuestionsAux[mCurrentQuestion].answered = true
-                        mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-                        mCurrentQuestion++
-                        mCurrentQuestionSkiped++
-                        requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
-                    }
+                    requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
                 }
-            } else {
-                var count = 0
-                for (questionAux in mQuestionsAux) {
-                    mCurrentQuestionSkiped = count
-                    count++
-                    if (!questionAux.answered) {
-                        questionAux.answered = true
-                        mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-                        val user = getUser()
-                        if (user != null && !user.getCourse().equals("")) {
-                            mCurrentQuestion = mCurrentQuestionSkiped
-                            mQuestionsAux[mCurrentQuestionSkiped - 1].answered = true
-                            requestGetQuestionNewFormat(questionAux.questionId, user.getCourse())
-                        }
-                        break
-                    }
-                }
+
             }
         } else {
-            Log.d("QUESTION_SIZE"," else")
+            Log.d("mNextQuestionListener"," else-- mAnsweredQuestions.size: " + mAnsweredQuestions.size)
             if (isAnonymous) {
                 saveModulesAndQuestions()
             } else {
