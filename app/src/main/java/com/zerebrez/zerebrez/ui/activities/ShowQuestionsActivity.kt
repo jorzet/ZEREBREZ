@@ -49,6 +49,7 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
      */
     private lateinit var mReturnToQuestionButton: View
     private lateinit var mReturnToQuestionText: TextView
+    private lateinit var mSelectQuestionToAnswerText: TextView
     private lateinit var mQuestionsGrid: RecyclerView
 
     /*
@@ -79,9 +80,11 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
 
         mReturnToQuestionButton = findViewById(R.id.rl_return_to_answer)
         mReturnToQuestionText = findViewById(R.id.tv_return_to_answer)
+        mSelectQuestionToAnswerText = findViewById(R.id.tv_question_to_answer)
         mQuestionsGrid = findViewById(R.id.rv_questions)
 
         mReturnToQuestionText.typeface = FontUtil.getNunitoBlack(baseContext)
+        mSelectQuestionToAnswerText.typeface = FontUtil.getNunitoBlack(baseContext)
 
         mReturnToQuestionButton.setOnClickListener(mReturnToQuestionListener)
 

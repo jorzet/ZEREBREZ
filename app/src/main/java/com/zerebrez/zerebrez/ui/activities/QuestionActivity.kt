@@ -421,6 +421,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
+        enableDisableShowQuestionsButton(true)
+
         mLastKnownQuestion ++
         //if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
 
@@ -450,15 +452,18 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     mCurrentQuestion = mCurrentQuestionSkiped
                 }
 
-                if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
-                    mCurrentQuestionSkiped = 0
-                    mCurrentQuestion = mCurrentQuestionSkiped
-                }
-
                 mQuestionsAux[mCurrentQuestion].answered = true
                 mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-                mCurrentQuestionSkiped++
+
+
+                if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
+                    mCurrentQuestionSkiped = 0
+                } else {
+                    mCurrentQuestionSkiped++
+                }
+
                 mCurrentQuestion = mCurrentQuestionSkiped
+
                 Log.d("mNextQuestionListener"," next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
 
 
@@ -478,7 +483,14 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
             }
         } else {
+
+
+            mQuestionsAux[mCurrentQuestion].answered = true
+            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+
             Log.d("mNextQuestionListener"," else-- mAnsweredQuestions.size: " + mAnsweredQuestions.size)
+            Log.d("mNextQuestionListener"," else-- mQuestionsId.size: " + mQuestionsId.size)
+
             if (isAnonymous) {
                 saveModulesAndQuestions()
             } else {
@@ -836,6 +848,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     fun enableDisableAnswerButton(showButton: Boolean) {
         mShowAnswer.isEnabled = showButton
+    }
+
+    fun enableDisableShowQuestionsButton(showButton: Boolean) {
+        mShowQuestionsButton.isEnabled = showButton
     }
 
     override fun onConfirmationCancel() {

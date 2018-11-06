@@ -422,7 +422,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
-                (activity as QuestionActivity).setNextQuestionEnable(true)
+                if (activity != null) {
+                    (activity as QuestionActivity).setNextQuestionEnable(true)
+                    (activity as QuestionActivity).enableDisableShowQuestionsButton(false)
+                }
             }
             R.id.option_b -> {
                 when (answer) {
@@ -470,7 +473,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
-                (activity as QuestionActivity).setNextQuestionEnable(true)
+                if (activity != null) {
+                    (activity as QuestionActivity).setNextQuestionEnable(true)
+                    (activity as QuestionActivity).enableDisableShowQuestionsButton(false)
+                }
             }
             R.id.option_c -> {
                 when (answer) {
@@ -518,7 +524,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
-                (activity as QuestionActivity).setNextQuestionEnable(true)
+                if (activity != null) {
+                    (activity as QuestionActivity).setNextQuestionEnable(true)
+                    (activity as QuestionActivity).enableDisableShowQuestionsButton(false)
+                }
             }
             R.id.option_d -> {
                 when (answer) {
@@ -567,7 +576,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                 mOptionB.setOnClickListener(null)
                 mOptionC.setOnClickListener(null)
                 mOptionD.setOnClickListener(null)
-                (activity as QuestionActivity).setNextQuestionEnable(true)
+                if (activity != null) {
+                    (activity as QuestionActivity).setNextQuestionEnable(true)
+                    (activity as QuestionActivity).enableDisableShowQuestionsButton(false)
+                }
             }
         }
 
