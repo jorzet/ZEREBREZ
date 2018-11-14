@@ -34,32 +34,40 @@ private const val TAG: String = "SchoolsRequest"
 
 class SchoolsRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
+
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
 
+    /*
+     * Node references
+     */
     private val INSTITUTES_REFERENCE : String = "schools/course_label"
 
+    /*
+     * Json keys
+     */
     private val INSTITUTE_NAME_KEY : String = "name"
     private val SCHOOL_NAME_KEY : String = "name"
     private val SCHOOL_SCORE_KEY : String = "score"
 
-    private val INSTITUTE_TAG : String = "institute"
-    private val SCHOOL_TAG : String = "school"
-
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetSchools(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {

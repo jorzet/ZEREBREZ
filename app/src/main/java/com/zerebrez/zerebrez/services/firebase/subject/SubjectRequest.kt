@@ -35,20 +35,30 @@ import java.util.*
 
 class SubjectRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
     private val TAG: String = "SubjectRequest"
+
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
     private val SUBJECT_REFERENCE: String = "subjects/course_label"
 
-    private val mActivity: Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-    }
 
     fun requestGetSubjects(course: String) {
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course))
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

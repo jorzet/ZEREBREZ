@@ -16,6 +16,7 @@
 
 package com.zerebrez.zerebrez.request
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
@@ -24,9 +25,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.zerebrez.zerebrez.models.Error.GenericError
-import com.zerebrez.zerebrez.models.Question
 import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.models.enums.ErrorType
+import com.zerebrez.zerebrez.services.firebase.Engagement
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -35,17 +36,31 @@ import com.zerebrez.zerebrez.models.enums.ErrorType
 
 class SendQuestionsRequestTask(activity : Activity, questions: List<QuestionNewFormat>): AbstractRequestTask<Any, Void, String>() {
 
+    /*
+     * Tags
+     */
     private val TAG : String = "SendQuestionRequestTask"
-    private val USERS_REFERENCE : String = "users"
+
+    /*
+     * Json keys
+     */
     private val ANSWERED_QUESTION_MODULE : String = "answeredQuestions"
     private val IS_CORRECT_REFERENCE : String = "isCorrect"
     private val SUBJECT_REFERENCE : String = "subject"
     private val CHOSEN_OPTION_REFERENCE : String = "chosenOption"
 
+    /*
+     * Objects
+     */
+    @SuppressLint("StaticFieldLeak")
     private val mActivity : Activity = activity
     private val mQuestions = questions
+
+    /*
+     * Database Object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var mFirebaseInstance: FirebaseDatabase = FirebaseDatabase.getInstance(Engagement.USERS_DATABASE_REFERENCE)
 
     override fun onPreExecute() {
         super.onPreExecute()
@@ -57,7 +72,8 @@ class SendQuestionsRequestTask(activity : Activity, questions: List<QuestionNewF
 
         val course = params[0] as String
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase = mFirebaseInstance.getReference()
+
         mFirebaseDatabase.keepSynced(true)
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {

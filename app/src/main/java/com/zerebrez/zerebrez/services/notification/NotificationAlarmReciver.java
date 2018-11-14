@@ -31,6 +31,9 @@ import com.zerebrez.zerebrez.ui.activities.ContentActivity;
 
 public class NotificationAlarmReciver extends BroadcastReceiver {
 
+    /*
+     * Tags
+     */
     private static final String TAG = "AlarmReceiver";
 
     @Override

@@ -36,10 +36,15 @@ private const val TAG: String = "AdvancesRequest"
 
 class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
-    private val USERS_REFERENCE : String = "users"
+    /*
+     * Node references
+     */
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
 
+    /*
+     * Json keys
+     */
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
@@ -48,27 +53,22 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
     private val SUBJECT_KEY : String = "subject"
     private val CHOOSEN_OPTION_KEY : String = "chosenOption"
     private val ANSWERED_EXAM_KEY : String = "answeredExams"
-    private val ANSWERED_MODULE_KEY : String = "answeredModules"
     private val CORRECT_KEY : String = "correct"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
 
     fun requestGetHitAndMissesAnsweredModulesAndExams(course: String) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -198,7 +198,10 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference

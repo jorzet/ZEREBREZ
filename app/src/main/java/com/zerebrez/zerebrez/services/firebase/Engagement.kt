@@ -40,6 +40,18 @@ private const val TAG : String = "Engagement"
 
 abstract class Engagement constructor(activity: Activity) : AbstractPendingRequest(){
 
+    /*
+     * Data bases references
+     */
+    companion object {
+        val QUESTIONS_DATABASE_REFERENCE : String= "https://zerebrez-qstns.firebaseio.com/"
+        val USERS_DATABASE_REFERENCE : String= "https://zerebrez-srs.firebaseio.com/"
+        val SETTINGS_DATABASE_REFERENCE : String= "https://zerebrez-sttngs.firebaseio.com/"
+    }
+
+    /*
+     * Objects
+     */
     private val mActivity : Activity = activity
     private lateinit var mAuth : FirebaseAuth
 
@@ -463,19 +475,12 @@ abstract class Engagement constructor(activity: Activity) : AbstractPendingReque
         return FirebaseAuth.getInstance().currentUser
     }
 
-    open fun onFirebaseLogIn(success: Boolean) {
-    }
+    open fun onFirebaseLogIn(success: Boolean) {}
 
-    open fun onEmailUpdatedSuccess(user : User) {
-    }
+    open fun onEmailUpdatedSuccess(user : User) {}
+    open fun onEmailUpdatedFail(throwable: Throwable) {}
 
-    open fun onEmailUpdatedFail(throwable: Throwable) {
-    }
-
-    open fun onPasswordUpdatedSuccess(success: Boolean) {
-    }
-
-    open fun onPasswordUpdatedFail(throwable: Throwable) {
-    }
+    open fun onPasswordUpdatedSuccess(success: Boolean) {}
+    open fun onPasswordUpdatedFail(throwable: Throwable) {}
 
 }

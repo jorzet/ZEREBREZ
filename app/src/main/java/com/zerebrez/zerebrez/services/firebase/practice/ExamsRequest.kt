@@ -37,15 +37,22 @@ private const val TAG: String = "ExamsRequest"
 
 class ExamsRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to replace
+     */
     private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
     private val FREE_EXAMS_REFERENCE : String = "freeUser/course_label/exams"
     private val EXAMS_REFERENCE : String = "exams/course_label"
-    private val USERS_REFERENCE : String = "users"
-    private val PROFILE_REFERENCE : String = "profile"
-    private val ANSWERED_EXAMS_REFERENCE : String = "answeredExams"
+
+    /*
+     * Json keys
+     */
     private val COURSE_KEY : String = "course"
     private val PROFILE_KEY : String = "profile"
-
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
@@ -53,22 +60,19 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
     private val CORRECT_KEY : String = "correct"
     private val INCORRECT_KEY : String = "incorrect"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetFreeExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -103,8 +107,12 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -173,7 +181,10 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference

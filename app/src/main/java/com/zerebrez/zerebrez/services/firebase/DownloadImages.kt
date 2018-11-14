@@ -34,15 +34,23 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 class DownloadImages: Service() {
 
+    /*
+     * Tags
+     */
     companion object {
         const val TAG : String = "DownloadImages"
         const val DOWNLOAD_IMAGES_BR = "com.zerebrez.zerebrez.services.firebase.DownloadImages"
         const val DOWNLOAD_COMPLETE = "download_complete"
     }
 
-
+    /*
+     * Broadcast intent
+     */
     var bi = Intent(DOWNLOAD_IMAGES_BR)
 
+    /*
+     * images list path
+     */
     private lateinit var mImages : List<Image>
 
     override fun onCreate() {
@@ -54,6 +62,7 @@ class DownloadImages: Service() {
             mImages = dataHelper.getImagesPath()
 
             val user = getUser()
+            // check if user is not null and has course
             if (user != null && !user.getCourse().equals("")) {
                 // instance download image task and set listeners
                 val downloadImageTask = DownloadImageTask(this, user.getCourse())
@@ -90,6 +99,9 @@ class DownloadImages: Service() {
         return null
     }
 
+    /*
+     * This method returns current user
+     */
     fun getUser() : User? {
         val json = SharedPreferencesManager(this).getJsonUser()
         if (json != null) {

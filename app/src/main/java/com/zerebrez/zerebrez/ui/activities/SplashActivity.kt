@@ -27,6 +27,7 @@ import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.zerebrez.zerebrez.BuildConfig
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
@@ -50,9 +51,17 @@ class SplashActivity : BaseActivityLifeCycle() {
      */
     private val SHOW_START = "show_start"
 
-    /* UI accessors */
+    /*
+     * UI accessors
+     */
     private lateinit var mProgressBar : ProgressBar
     private lateinit var mComipemsImageView : ImageView
+
+    /*
+     * version values
+     */
+    private var mVersionName : String = ""
+    private var mVersionCode : Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,12 +71,11 @@ class SplashActivity : BaseActivityLifeCycle() {
         mProgressBar = findViewById(R.id.pb_progressbar_init)
         mComipemsImageView = findViewById(R.id.tv_comipems)
 
-        try {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        } catch (exception : Exception) {}
+        mVersionName = BuildConfig.VERSION_NAME
+        mVersionCode = BuildConfig.VERSION_CODE
 
-
-        initHandler()
+        requestGetMinimumVersion()
+        //initHandler()
     }
 
     private fun initHandler() {
@@ -150,6 +158,12 @@ class SplashActivity : BaseActivityLifeCycle() {
         this.finish()
     }
 
+    private fun goUpdateApp() {
+        val intent = Intent(this, UpdateAppActivity::class.java)
+        this.startActivity(intent)
+        this.finish()
+    }
+
     private fun initNotificationService() {
         val dataHelper = DataHelper(this)
         val notifcationTime = dataHelper.getNotificationTime()
@@ -158,5 +172,24 @@ class SplashActivity : BaseActivityLifeCycle() {
         } else {
 
         }
+    }
+
+    override fun onGetMinimumVersionSuccess(minimumVersion: String) {
+        super.onGetMinimumVersionSuccess(minimumVersion)
+
+        val minVerDatabase = minimumVersion.replace(".","").toInt()
+        val minVerLocal = mVersionName.replace(".","").toInt()
+
+        if (minVerLocal < minVerDatabase) {
+            goUpdateApp()
+        } else {
+            initHandler()
+        }
+
+    }
+
+    override fun onGetMinimumVersionFail(throwable: Throwable) {
+        super.onGetMinimumVersionFail(throwable)
+        initHandler()
     }
 }

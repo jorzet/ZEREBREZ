@@ -32,33 +32,34 @@ private const val TAG: String = "TipsRequest"
 
 class TipsRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
-    private val USERS_REFERENCE : String = "users"
     private val TIPS_REFERENCE : String = "tips/course_label"
 
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val COURSE_KEY : String = "course"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetUserTips() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -125,8 +126,12 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetTips(course : String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(TIPS_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(TIPS_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

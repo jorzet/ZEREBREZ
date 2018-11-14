@@ -661,6 +661,21 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetWrongQuestionsAndProfileRefactorSuccess(user : User) {}
     open fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {}
 
+    fun requestGetMinimumVersion() {
+        mRequestManager.requestGetMinimumVersion(object : RequestManager.OnGetMinimumVersionListener {
+            override fun onGetMinimumVersionLoaded(minimumVersion: String) {
+                onGetMinimumVersionSuccess(minimumVersion)
+            }
+
+            override fun onGetMinimumVersionError(throwable: Throwable) {
+                onGetMinimumVersionFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetMinimumVersionSuccess(minimumVersion: String) {}
+    open fun onGetMinimumVersionFail(throwable: Throwable) {}
+
     override fun onConfirmationCancel() {
 
     }

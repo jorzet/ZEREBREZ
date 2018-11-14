@@ -27,13 +27,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
-import com.zerebrez.zerebrez.models.enums.QuestionType
-import com.zerebrez.zerebrez.models.enums.RequestType
 import com.zerebrez.zerebrez.services.database.DataHelper
-import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
-import java.util.*
 import kotlin.collections.HashMap
-import org.json.JSONObject
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
@@ -41,7 +36,6 @@ import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.SendQuestionRequestTask
 import com.zerebrez.zerebrez.request.SendQuestionsRequestTask
-import org.json.JSONArray
 import java.text.Normalizer
 import kotlin.collections.ArrayList
 
@@ -62,15 +56,25 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     private val mActivity : Activity = activity
 
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
 
+    /*
+     * Node references
+     */
     private val INSTITUTES_REFERENCE : String = "schools/course_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
     private val COURSES_REFERENCE : String = "freeUser"
-    private val USERS_REFERENCE : String = "users"
     private val PROFILE_REFERENCE : String = "profile"
     private val IMAGES_REFERENCE : String = "images/course_label"
     private val SELECTED_SCHOOLS_REFERENCE : String = "selectedSchools"
+    private val MINIMUM_VERSION_REFERENCE : String = "minimumVersion/android"
+
+    /*
+     * Json keys
+     */
     private val COURSE_KEY : String = "course"
     private val PREMIUM_KEY : String = "premium"
     private val IS_PREMIUM_KEY : String = "isPremium"
@@ -79,55 +83,17 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val PAYMENT_CONFIRMED_IN_KEY : String = "paymentConfirmedIn"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
-    private val ANSWERED_QUESTION_MODULE : String = "answeredQuestions"
     private val ANSWERED_EXAMS : String = "answeredExams"
-    private val IS_CORRECT_REFERENCE : String = "isCorrect"
-    private val SUBJECT_REFERENCE : String = "subject"
     private val CORRECT_REFERENCE : String = "correct"
     private val INCORRECT_REFERENCE : String = "incorrect"
-    private val CHOSEN_OPTION_REFERENCE : String = "chosenOption"
     private val INSTITUTION_ID : String = "institutionId"
     private val SCHOOL_ID : String = "schoolId"
 
-
-    private lateinit var mRequestType : RequestType
-
-    private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
-
     /*
-     * This is an override method that returns a boolean this value is to
-     * check if the Firebase login was success of not and according to the
-     * request type it going to call the correspond method to get the data
+     * Database object
      */
-    /*override fun onFirebaseLogIn(success: Boolean) {
-        super.onFirebaseLogIn(success)
-        if (success) {
-            when (mRequestType) {
-                RequestType.USER_LOGIN -> {
+    private lateinit var mFirebaseDatabase: DatabaseReference
 
-                }
-                RequestType.MODULES -> {
-                    //getModules()
-                }
-                RequestType.QUESTIONS -> {
-                    // TODO
-                    //getQuestions()
-                }
-            }
-
-        } else {
-            Log.d(TAG, "error firebase log in");
-        }
-    }*/
 
     fun requestLogIn(user : User?) {
         requestFirebaseLogIn(user)
@@ -141,333 +107,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         requestFirebaseUpdateUserEmail(user)
     }
 
-    /*
-     * This method set the request type and calls requestFirebaseLogIn()
-     * then the override method called onFirebaseLogIn() gets the Firebase
-     * login response
-     */
-    /*fun requestGetModules() {
-        mRequestType = RequestType.MODULES
-        requestFirebaseLogIn()
-    }*/
-
-    /*
-     *
-     */
-    fun requestGetQuestions() {
-        mRequestType = RequestType.QUESTIONS
-        //requestFirebaseLogIn()
-    }
-
-
-    /*
-     * This method init an inistance of Firebase and gets the module reference
-     * then cast the response in module object list and set a response on listener
-     */
-    /*
-    fun requestGetModules() {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                if (post != null) {
-                    val map = (post as kotlin.collections.HashMap<String, String>)
-                    val mModules = arrayListOf<Module>()
-
-                    Log.d(TAG, post.toString())
-
-                    /*
-                 * mapping map to module object
-                 */
-                    for (key in map.keys) {
-                        println(key)
-                        val module = Module()
-                        val questions = arrayListOf<Question>()
-
-                        // get question id from response
-                        val list = map.get(key) as List<String>
-                        for (q in list) {
-                            val question = Question()
-                            question.setQuestionId(Integer(q.replace("p", "")))
-                            question.setModuleId(Integer(key.replace("m", "")))
-                            questions.add(question)
-                        }
-
-                        // set module id and question id
-                        module.setId(Integer(key.replace("m", "")))
-                        module.setQuestions(questions)
-
-                        // add module to list
-                        mModules.add(module)
-                    }
-
-                    /*
-                  * sort module list because service doesn't return it in order
-                  */
-                    Collections.sort(mModules, object : Comparator<Module> {
-                        override fun compare(o1: Module, o2: Module): Int {
-                            return extractInt(o1) - extractInt(o2)
-                        }
-
-                        internal fun extractInt(s: Module): Int {
-                            val num = s.getId().toString()
-                            // return 0 if no digits found
-                            return if (num.isEmpty()) 0 else Integer.parseInt(num)
-                        }
-                    })
-
-                    getQuestions(mModules)
-                    //val dataHelper = DataHelper(mActivity)
-                    //dataHelper.insertModules(mModules)
-                    //dataHelper.getModules()
-                    //onRequestListenerSucces.onSuccess(mModules)
-                } else {
-                    onRequestListenerSucces.onSuccess(Any())
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                //onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }*/
-
-    /*
-     * This method gets all questions from Firebase and add it in its correspond module
-     */
-    /*fun getQuestions(modules : List<Module>) {
-        // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_REFERENCE)
-        mFirebaseDatabase.keepSynced(true)
-        // Attach a listener to read the data at our posts reference
-        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
-                val mQuestions = arrayListOf<Question>()
-
-                Log.d(TAG, post.toString())
-
-                /*
-                 * mapping map to module object
-                 */
-                for ( key in map.keys) {
-                    println(key)
-
-                    val question = Question()
-                    // getting question id
-                    val questionId = Integer(key.replace("p",""))
-                    question.setQuestionId(questionId)
-
-                    //getting values
-                    // get text value
-                    val json = JSONObject(map.get(key))
-                    if (json.has("text")) {
-                        Log.d(TAG,"json has text value ------")
-                        val texts = json.getJSONArray("text")
-                        val text = arrayListOf<String>()
-                        for (i in 0 .. texts.length() - 1) {
-                            text.add(texts.get(i).toString())
-                        }
-
-                        question.setText(text)
-                    } else {
-                        Log.d(TAG,"json has not text value ******  " + json.toString())
-                    }
-
-                    if (json.has("equation")) {
-                        Log.d(TAG,"json has text value ------")
-                        val equations = json.getJSONArray("equation")
-                        val equation = arrayListOf<String>()
-                        for (i in 0 .. equations.length() - 1) {
-                            equation.add(equations.get(i).toString())
-                        }
-
-                        question.setEquations(equation)
-                    } else {
-                        Log.d(TAG,"json has not equation value ******  " + json.toString())
-                    }
-
-                    if (json.has("image")) {
-                        Log.d(TAG,"json has text value ------")
-                        val images = json.getJSONArray("image")
-                        val image = arrayListOf<String>()
-                        for (i in 0 .. images.length() - 1) {
-                            image.add(images.get(i).toString())
-                        }
-
-                        question.setImages(image)
-                    } else {
-                        Log.d(TAG,"json has not image value ******  " + json.toString())
-                    }
-
-                    /*
-                     * here it is get the step by step
-                     */
-                    if (json.has("stepByStepText")) {
-                        Log.d(TAG,"json has text value ------")
-                        val texts = json.getJSONArray("stepByStepText")
-                        val stepByStepText = arrayListOf<String>()
-                        for (i in 0 .. texts.length() - 1) {
-                            stepByStepText.add(texts.get(i).toString())
-                        }
-
-                        question.setStepByStepText(stepByStepText)
-                    } else {
-                        Log.d(TAG,"json has not text value ******  " + json.toString())
-                    }
-
-                    if (json.has("stepByStepEquation")) {
-                        Log.d(TAG,"json has text value ------")
-                        val equations = json.getJSONArray("stepByStepEquation")
-                        val stepByStepEquation = arrayListOf<String>()
-                        for (i in 0 .. equations.length() - 1) {
-                            stepByStepEquation.add(equations.get(i).toString())
-                        }
-
-                        question.setStepByStepEquations(stepByStepEquation)
-                    } else {
-                        Log.d(TAG,"json has not equation value ******  " + json.toString())
-                    }
-
-                    if (json.has("stepByStepImage")) {
-                        Log.d(TAG,"json has text value ------")
-                        val images = json.getJSONArray("stepByStepImage")
-                        val stepByStepImage = arrayListOf<String>()
-                        for (i in 0 .. images.length() - 1) {
-                            stepByStepImage.add(images.get(i).toString())
-                        }
-
-                        question.setStepByStepImages(stepByStepImage)
-                    } else {
-                        Log.d(TAG,"json has not image value ******  " + json.toString())
-                    }
-
-
-                    /*
-                     * Here it is get the subjects
-                     */
-                    if (json.has("subject")) {
-                        val subject = limpiarTexto(json.getString("subject"))
-                        when (subject) {
-                            limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                                question.setSubjectType(SubjectType.VERBAL_HABILITY)
-                            }
-                            limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                                question.setSubjectType(SubjectType.MATHEMATICAL_HABILITY)
-                            }
-                            limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                                question.setSubjectType(SubjectType.MATHEMATICS)
-                            }
-                            limpiarTexto(SubjectType.SPANISH.value) -> {
-                                question.setSubjectType(SubjectType.SPANISH)
-                            }
-                            limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                                question.setSubjectType(SubjectType.BIOLOGY)
-                            }
-                            limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                                question.setSubjectType(SubjectType.CHEMISTRY)
-                            }
-                            limpiarTexto(SubjectType.PHYSICS.value) -> {
-                                question.setSubjectType(SubjectType.PHYSICS)
-                            }
-                            limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                                question.setSubjectType(SubjectType.GEOGRAPHY)
-                            }
-                            limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                                question.setSubjectType(SubjectType.UNIVERSAL_HISTORY)
-                            }
-                            limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                                question.setSubjectType(SubjectType.MEXICO_HISTORY)
-                            }
-                            limpiarTexto(SubjectType.FCE.value) -> {
-                                question.setSubjectType(SubjectType.FCE)
-                            }
-                        }
-                    }
-
-                    if (json.has("answer")) {
-                        val answer = json.getString("answer")
-                        question.setAnswer(answer)
-                    }
-
-                    val mapOptionText = map.get(key)
-                    var optionText = JSONArray()
-
-                    if (json.has("optionsEquation")) {
-                        optionText = json.getJSONArray("optionsEquation")
-                        question.setQuestionType(QuestionType.EQUATION.toString())
-                    } else if(json.has("optionsImage")) {
-                        optionText = json.getJSONArray("optionsImage")
-                        question.setQuestionType(QuestionType.IMAGE.toString())
-                    } else if (json.has("optionsText")){
-                        optionText = json.getJSONArray("optionsText")
-                        question.setQuestionType(QuestionType.TEXT.toString())
-                    }
-
-                    if (optionText.length() > 0)
-                        question.setOptionOne(optionText.get(0).toString())
-                    if (optionText.length() > 1)
-                        question.setOptionTwo(optionText.get(1).toString())
-                    if (optionText.length() > 2)
-                        question.setOptionThree(optionText.get(2).toString())
-                    if (optionText.length() > 3)
-                        question.setOptionFour(optionText.get(3).toString())
-
-
-                    if (json.has("year")) {
-                        val year = json.getString("year")
-                        question.setYear(year)
-                    }
-
-                    mQuestions.add(question)
-
-                }
-
-                val updatedModules = arrayListOf<Module>()
-                for (module in modules) {
-                    val updateQuestions = arrayListOf<Question>()
-                    for (question in mQuestions) {
-                        for (currentQuestion in module.getQuestions()) {
-                            if (currentQuestion.getQuestionId().equals(question.getQuestionId())
-                            && module.getId().equals(currentQuestion.getModuleId())) {
-                                //question.setModuleId(module.getId())
-                                updateQuestions.add(question)
-                            }
-                        }
-                    }
-                    if (!updateQuestions.isEmpty()) {
-                        module.setQuestions(updateQuestions)
-                    }
-                    updatedModules.add(module)
-                }
-
-                val dataHelper = DataHelper(mActivity)
-                dataHelper.saveModules(updatedModules)
-                //dataHelper.saveQuestions(mQuestions)
-                dataHelper.saveQuestionsNewFormat(mQuestions)
-
-
-                // send modules in onSuccess listener
-                onRequestListenerSucces.onSuccess(updatedModules)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("The read failed: " + databaseError.code)
-                onRequestLietenerFailed.onFailed(databaseError.toException())
-            }
-        })
-    }*/
-
     fun requestGetCourses() {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(COURSES_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(COURSES_REFERENCE)
+
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -545,8 +190,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestSendUser(userCache : User) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
         mFirebaseDatabase.keepSynced(true)
+
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -612,8 +261,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestSendAnsweredModules(module : Module, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
         mFirebaseDatabase.keepSynced(true)
+
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -652,8 +305,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestSendAnsweredExams(exam : Exam, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
         mFirebaseDatabase.keepSynced(true)
+
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -681,8 +338,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestSendSelectedSchools(userCache: User, schools : List<School>) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
         mFirebaseDatabase.keepSynced(true)
+
         val user = getCurrentUser()
         if (user != null) {
             val userUpdates = HashMap<String, Any>()
@@ -713,7 +374,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -880,8 +544,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestGetInstitutes(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -935,8 +603,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestGetExams() {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(EXAMS_REFERENCE)
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -984,8 +656,12 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestGetImagesPath(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(IMAGES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(IMAGES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -1070,6 +746,36 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     fun requestUpdateUserPassword(user : User) {
         requestChangeUserPassword(user)
+    }
+
+    fun requestGetMinimumVersion() {
+        // Get a reference to our posts
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(MINIMUM_VERSION_REFERENCE)
+
+        mFirebaseDatabase.keepSynced(true)
+
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val minimumVersion = post as String
+                    Log.d(TAG, "minimum version ------ $minimumVersion" )
+                    onRequestListenerSucces.onSuccess(minimumVersion)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
     }
 
     fun limpiarTexto(cadena: String?): String? {

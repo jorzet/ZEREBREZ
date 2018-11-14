@@ -32,9 +32,15 @@ private const val TAG : String = "CheckUserWithFacebook"
 
 class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
 
-    private val USERS_REFERENCE : String = "users"
-
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -44,25 +50,21 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
     private val INSTITUTE_ID_KEY : String = "institutionId"
     private val SCHOOL_ID_KEY : String = "schoolId"
 
-    private val INSTITUTE_TAG : String = "institute"
-    private val SCHOOL_TAG : String = "school"
-
+    /*
+     * Database objects
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
     private var mFirebaseInstance: FirebaseDatabase
 
     init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
+        mFirebaseInstance = FirebaseDatabase.getInstance(Engagement.USERS_DATABASE_REFERENCE)
     }
 
     fun requestGetUserWithProvider() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = mFirebaseInstance.getReference(user.uid)
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
