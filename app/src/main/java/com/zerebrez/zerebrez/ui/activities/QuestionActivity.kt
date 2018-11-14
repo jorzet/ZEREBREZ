@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
@@ -61,6 +62,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var CURRENT_COURSE : String = "current_course"
     private val MODULE_ID : String = "module_id"
     private val QUESTION_ID : String = "question_id"
+    private val CURRENT_QUESTION_ID : String = "current_question_id"
+    private val ANSWERED_QUESTIONS : String = "answered_questions"
     private val EXAM_ID : String = "exam_id"
     private val SELECTED_SUBJECT : String = "selected_subject"
     private val ANONYMOUS_USER : String = "anonymous_user"
@@ -72,6 +75,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private val MISSES_EXTRA = "misses_extra"
     private val WRONG_QUESTIONS_LIST = "wrong_questions_list"
     private val SUBJECT_QUESTIONS_LIST : String = "subject_questions_list"
+    private val QUESTION_IDS_LIST : String = "questions_ids_list"
     private val SUBJECT_EXTRA : String = "subject_extra"
 
     /*
@@ -89,6 +93,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private lateinit var mControlsBar : View
     private lateinit var progressBarHolder : FrameLayout
     private lateinit var mQuestionsProgress : ProgressBar
+    private lateinit var mShowQuestionsButton : View
+    private lateinit var mShowQuestionsText: TextView
 
     /*
      * Variables
@@ -99,6 +105,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mQuestionId : Int = 0
     private var mExamId : Int = 0
     private var mCurrentQuestion : Int = 0
+    private var mCurrentQuestionSkiped : Int = 0
+    private var mLastKnownQuestion : Int = 0
     private var mCorrectQuestions : Int = 0
     private var mIncorrectQiestions : Int = 0
     private var isAnonymous : Boolean = false
@@ -111,6 +119,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     private var mWrongQuestionsSaved = false
     private var mSubjectQuestionsSaved = false
     private var mShowPaymentFragment = false
+    private var mUserSkipQuestions = false
+    private var mUserFinishQuestons = false
     private var mProgressByQuestion : Float = 0.0F
     private var mCurrentProgress : Float = 0.0F
 
@@ -124,6 +134,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      * Objects
      */
     private var mAnsweredQuestions = arrayListOf<QuestionNewFormat>()
+    private var mQuestionsAux = arrayListOf<QuestionNewFormat>()
     private lateinit var mQuestionsId: List<String>
     private lateinit var mCurrentQuestionNewFormat: QuestionNewFormat
     private lateinit var mModuleList : List<Module>
@@ -152,12 +163,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mControlsBar = findViewById(R.id.bottom_bar)
         progressBarHolder = findViewById(R.id.progressBarHolder)
         mQuestionsProgress = findViewById(R.id.pb_questions_progress)
+        mShowQuestionsButton = findViewById(R.id.rl_show_questions)
+        mShowQuestionsText = findViewById(R.id.tv_show_questions)
 
         //mBackQuestion.setOnClickListener(mBackQuestionListener)
         mCloseQuestion.setOnClickListener(mCloseQuestionListener)
         mNextQuestion.setOnClickListener(mNextQuestionListener)
         mShowExpandedQuestion.setOnClickListener(mShowExpandedQuestionListener)
         mShowAnswer.setOnClickListener(mShowAnswerListener)
+        mShowQuestionsButton.setOnClickListener(mShowQuestionsListener)
 
         mShowAnswer.isEnabled = false
         setNextQuestionEnable(false)
@@ -166,6 +180,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         mModuleNumber.typeface = FontUtil.getNunitoBold(baseContext)
         mNextQuestionText.typeface = FontUtil.getNunitoBlack(baseContext)
         mShowAnswerText.typeface = FontUtil.getNunitoBlack(baseContext)
+        mShowQuestionsText.typeface = FontUtil.getNunitoBlack(baseContext)
 
         inAnimation = AlphaAnimation(0f, 1f)
         inAnimation.duration = 200
@@ -200,6 +215,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                             if (mQuestionsId[i].equals("p" + mQuestionId)) {
                                 for (j in i..mQuestionsId.size - 1) {
                                     questionsIds.add(mQuestionsId[j])
+                                    val questionAux = QuestionNewFormat()
+                                    questionAux.questionId = mQuestionsId[j]
+                                    mQuestionsAux.add(questionAux)
                                 }
                                 break;
                             }
@@ -226,6 +244,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                             if (mQuestionsId[i].equals("p" + mQuestionId)) {
                                 for (j in i..mQuestionsId.size - 1) {
                                     questionsIds.add(mQuestionsId[j])
+                                    val questionAux = QuestionNewFormat()
+                                    questionAux.questionId = mQuestionsId[j]
+                                    mQuestionsAux.add(questionAux)
                                 }
                                 break;
                             }
@@ -318,6 +339,22 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
             DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
             showAnswer()
+        } else if (resultCode.equals(SHOW_QUESTIONS_RESULT_CODE)) {
+            val questionId = data!!.getStringExtra(REQUEST_NEW_QUESTION)
+            val questionPosition = data.getIntExtra(QUESTION_POSITION, -1)
+
+            if (questionPosition != -1) {
+                if (questionPosition != mCurrentQuestion) {
+                    mUserSkipQuestions = true
+                }
+                //mCurrentQuestion = questionPosition
+                mCurrentQuestionSkiped = questionPosition
+            }
+
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetQuestionNewFormat(questionId, user.getCourse())
+            }
         }
     }
 
@@ -341,7 +378,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private val mCloseQuestionListener = View.OnClickListener {
-        if (mCurrentQuestion > 0) {
+        if (mLastKnownQuestion > 0) {
             if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
                 if (isAnonymous) {
                     goLogInActivityStartFragment()
@@ -384,32 +421,88 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     private val mNextQuestionListener = View.OnClickListener {
         setNextQuestionEnable(false)
+        enableDisableShowQuestionsButton(true)
+
+        mLastKnownQuestion ++
         //if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestions.size -1) {
-        if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size -1) {
-            if (isFromWrongQuestionFragment) {
-                //requestSendAnsweredQuestions(mQuestions, mCourse)
-                //requestSendAnsweredQuestionsNewFormat(mQuestionsNewFormat, mCourse)
-            } /*else if (isFromSubjectQuestionFragment) {
-                requestSendAnsweredQuestionNewFormat(mQuestionsNewFormat[mCurrentQuestion], mCourse)
-            }*/
-            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
-            mCurrentQuestion++
+
+        var questionsToAnswer = 0
+
+        for (questionAux in mQuestionsAux) {
+            if (!questionAux.answered) {
+                questionsToAnswer++
+            }
+        }
+
+        if (questionsToAnswer == 1) {
+            mUserFinishQuestons = true
+        }
+
+        Log.d("mNextQuestionListener"," questionsToAnswer: " + questionsToAnswer)
+        if (!mUserFinishQuestons) {
+            Log.d("mNextQuestionListener"," mUserFinishQuestons: " + mUserFinishQuestons)
+
+            Log.d("mNextQuestionListener"," mCurrentQuestionSkiped: " + mCurrentQuestionSkiped + " --- mCurrentQuestion: " + mCurrentQuestion)
+
+            Log.d("mNextQuestionListener","next")
             val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
-                requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+
+                if (mCurrentQuestion != mCurrentQuestionSkiped) {
+                    mCurrentQuestion = mCurrentQuestionSkiped
+                }
+
+                mQuestionsAux[mCurrentQuestion].answered = true
+                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+
+
+                if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
+                    mCurrentQuestionSkiped = 0
+                } else {
+                    mCurrentQuestionSkiped++
+                }
+
+                mCurrentQuestion = mCurrentQuestionSkiped
+
+                Log.d("mNextQuestionListener"," next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
+
+
+                if (mQuestionsAux[mCurrentQuestionSkiped].answered) {
+                    for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
+                        mCurrentQuestionSkiped = i
+                        mCurrentQuestion = mCurrentQuestionSkiped
+                        if (!mQuestionsAux[i].answered) {
+                            requestGetQuestionNewFormat(mQuestionsAux[i].questionId, user.getCourse())
+                            Log.d("mNextQuestionListener", " next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
+                            break
+                        }
+                    }
+                } else {
+                    requestGetQuestionNewFormat(mQuestionsId[mCurrentQuestion], user.getCourse())
+                }
+
             }
-            //showQuestion()
-        } else if (isAnonymous) {
-            saveModulesAndQuestions()
         } else {
-            if (isFromWrongQuestionFragment) {
-                saveWrongQuestion()
-            } else if (isFromSubjectQuestionFragment) {
-                saveQuestionSubject()
-            } else if (isFromExamFragment) {
-                saveExamsAndQuestions()
-            } else {
+
+
+            mQuestionsAux[mCurrentQuestion].answered = true
+            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+
+            Log.d("mNextQuestionListener"," else-- mAnsweredQuestions.size: " + mAnsweredQuestions.size)
+            Log.d("mNextQuestionListener"," else-- mQuestionsId.size: " + mQuestionsId.size)
+
+            if (isAnonymous) {
                 saveModulesAndQuestions()
+            } else {
+                if (isFromWrongQuestionFragment) {
+                    saveWrongQuestion()
+                } else if (isFromSubjectQuestionFragment) {
+                    saveQuestionSubject()
+                } else if (isFromExamFragment) {
+                    saveExamsAndQuestions()
+                } else {
+                    saveModulesAndQuestions()
+                }
             }
         }
     }
@@ -460,6 +553,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             showAnswerMessage()
         }
 
+    }
+
+    private val mShowQuestionsListener = View.OnClickListener {
+        showQuestions()
     }
 
 
@@ -594,6 +691,20 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         this.startActivityForResult(intent, SHOW_QUESTION_RESULT_CODE)
     }
 
+    private fun showQuestions() {
+        val mQuestionIds = arrayListOf<String>()
+        mQuestionIds.addAll(mQuestionsId)
+
+        val intent = Intent(this, ShowQuestionsActivity::class.java)
+        intent.putExtra(FROM_SUBJECT_QUESTION, isFromSubjectQuestionFragment)
+        intent.putExtra(FROM_EXAM_FRAGMENT, isFromExamFragment)
+        intent.putExtra(FROM_WRONG_QUESTION, isFromWrongQuestionFragment)
+        intent.putExtra(QUESTION_IDS_LIST, mQuestionIds)
+        intent.putExtra(CURRENT_QUESTION_ID, mCurrentQuestionSkiped)
+        intent.putExtra(ANSWERED_QUESTIONS, mAnsweredQuestions)
+        this.startActivityForResult(intent, SHOW_QUESTIONS_RESULT_CODE)
+    }
+
     private fun showQuestionsCompleteFragment() {
         mCompleteQuestionsFragmentContainer.visibility = View.VISIBLE
         showHideControlBar(false)
@@ -683,9 +794,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         this.finish()
     }
 
-
     override fun onGetQuestionsIdSuccess(questionsId: List<String>) {
         super.onGetQuestionsIdSuccess(questionsId)
+        for (questionId in questionsId) {
+            val questionAux = QuestionNewFormat()
+            questionAux.questionId = questionId
+            mQuestionsAux.add(questionAux)
+        }
         mQuestionsId = questionsId
         mProgressByQuestion = 100 / questionsId.size.toFloat()
         val user = getUser()
@@ -733,6 +848,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
     fun enableDisableAnswerButton(showButton: Boolean) {
         mShowAnswer.isEnabled = showButton
+    }
+
+    fun enableDisableShowQuestionsButton(showButton: Boolean) {
+        mShowQuestionsButton.isEnabled = showButton
     }
 
     override fun onConfirmationCancel() {

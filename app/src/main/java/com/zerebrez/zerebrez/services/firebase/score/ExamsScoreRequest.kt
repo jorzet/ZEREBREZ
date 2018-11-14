@@ -37,11 +37,20 @@ private const val TAG: String = "ExamsScoreRequest"
 
 class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
-    private val EXAM_SCORES_REFERENCE : String = "scores/exams/course_label/processedData"
-    private val USERS_REFERENCE : String = "users"
-    private val PROFILE_REFERENCE : String = "profile"
 
+    /*
+     * Node references
+     */
+    private val EXAM_SCORES_REFERENCE : String = "scores/exams/course_label/processedData"
+
+    /*
+     * Json keys
+     */
+    private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
@@ -49,21 +58,17 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
     private val CORRECT_KEY : String = "correct"
     private val INCORRECT_KEY : String = "incorrect"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetExamScores(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAM_SCORES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(EXAM_SCORES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -99,7 +104,10 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -114,7 +122,7 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
                         val user = User()
                         for (key in map.keys) {
                             println(key)
-                            if (key.equals(PROFILE_REFERENCE)) {
+                            if (key.equals(PROFILE_KEY)) {
                                 val profile = map.get(key) as kotlin.collections.HashMap<String, String>
                                 if (profile.containsKey(PREMIUM_KEY)) {
                                     val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>

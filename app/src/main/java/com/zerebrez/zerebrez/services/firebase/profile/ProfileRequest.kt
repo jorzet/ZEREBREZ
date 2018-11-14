@@ -33,10 +33,25 @@ private const val TAG: String = "ProfileRequest"
 
 class ProfileRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
+
+    /*
+     * Label to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
-    private val USERS_REFERENCE : String = "users"
+
+    /*
+     * Node references
+     */
     private val INSTITUTES_REFERENCE : String = "schools/course_label"
 
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -49,31 +64,26 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
     private val METHOD_KEY : String = "method"
     private val PAYMENT_CONFIRMED_IN_KEY : String = "paymentConfirmedIn"
 
-    private val INSTITUTE_TAG : String = "institute"
-    private val SCHOOL_TAG : String = "school"
-
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
 
+    /*
+     * Objects
+     */
     private lateinit var mUserSchools : List<School>
-    private var mSchools = arrayListOf<School>()
-    private var mCurrentSchool : Int = 0
     private var mUserSchoolsSize : Int = 0
 
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetProfileRefactor() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -176,8 +186,12 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
 
     private fun requestSchool(schools: List<School>, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

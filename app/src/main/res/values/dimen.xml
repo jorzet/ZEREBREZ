@@ -35,6 +35,12 @@
     <dimen name="width_row">100dp</dimen>
     <dimen name="height_row">100dp</dimen>
 
+    <!--custom question and custom wrong question xml-->
+    <dimen name="width_question_row">50dp</dimen>
+    <dimen name="height_question_row">50dp</dimen>
+    <dimen name="width_question_row_spam">65dp</dimen>
+    <dimen name="height_question_row_spam">65dp</dimen>
+
     <!--advances fragment-->
     <dimen name="advances_module_image_width_image">70dp</dimen>
     <dimen name="advances_module_image_height_image">70dp</dimen>

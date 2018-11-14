@@ -1428,4 +1428,30 @@ class RequestManager(activity : Activity) {
         fun onGetQuestionsIdError(throwable: Throwable)
     }
 
+    fun requestGetMinimumVersion(onGetMinimumVersionListener: OnGetMinimumVersionListener) {
+        val questionsRequest = Firebase(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetMinimumVersionListener
+                        .onGetMinimumVersionLoaded(result as String)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetMinimumVersionListener
+                        .onGetMinimumVersionError(result)
+            }
+        })
+
+        questionsRequest.requestGetMinimumVersion()
+
+    }
+
+    interface OnGetMinimumVersionListener {
+        fun onGetMinimumVersionLoaded(minimumVersion: String)
+        fun onGetMinimumVersionError(throwable: Throwable)
+    }
+
 }

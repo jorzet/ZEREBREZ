@@ -37,42 +37,32 @@ private const val TAG: String = "QuestionsRequest"
 
 class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
     private val SUBJECT_LABEL : String = "subject_label"
     private val QUESTION_ID : String = "question_id"
 
-    private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label/question_id"
-    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "questions/newFormat/course_label"
+    /*
+     * Node references
+     */
+    private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "course_label/question_id"
+    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "course_label"
     private val MODULES_REFERENCE : String = "modules/course_label"
     private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label/subject_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
-    private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
-    private val USERS_REFERENCE : String = "users"
 
-    private val IS_PREMIUM_KEY : String = "isPremium"
-    private val TIMESTAMP_KEY : String = "timeStamp"
-    private val PREMIUM_KEY : String = "premium"
-    private val IS_CORRECT_KEY : String = "isCorrect"
-    private val SUBJECT_KEY : String = "subject"
-    private val CHOOSEN_OPTION_KEY : String = "chosenOption"
-
+    /*
+     * Variables
+     */
     private lateinit var mQuestions : List<QuestionNewFormat>
-    private var mCurrentQuestion : Int = 0
     private var mQuestionSize : Int = 0
-    private var mLastWrongQuestion : Boolean = false
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
-
 
     /*******************************************************************************************/
     /**************************   This section is to get all questions  ************************/
@@ -80,8 +70,12 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetQuestionsNewFormatByModuleId(moduleId : Int, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course) + "/m" + moduleId)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course) + "/m" + moduleId)
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -118,8 +112,12 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetQuestionsNewFormatByExamId(examId : Int, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course) + "/e" + examId)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course) + "/e" + examId)
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -157,9 +155,12 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetQuestionNewFormatBySubject(subject: String, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
                 .getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course).replace(SUBJECT_LABEL, subject))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -227,7 +228,9 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestQuestionsNewFormat(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
+                .getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -325,9 +328,12 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
     fun requestQuestionNewFormat(questionId: String, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(
-                COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
+                .getReference(COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

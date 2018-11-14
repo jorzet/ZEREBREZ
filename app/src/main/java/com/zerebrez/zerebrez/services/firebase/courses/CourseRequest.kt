@@ -33,23 +33,31 @@ import java.util.*
 
 class CourseRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
     private val TAG : String = "CourseRequest"
 
+    /*
+     * Labels to be replace
+     */
     private val COURSE_LABEL : String = "course_label"
 
+    /*
+     * Node references
+     */
     private val COURSES_REFERENCE : String = "courses"
     private val PRICE_REFERENCE : String = "price/course_label/android"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-    }
 
     fun requestGetCourses() {
-        mFirebaseDatabase = mFirebaseInstance.getReference(COURSES_REFERENCE)
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(COURSES_REFERENCE)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -94,7 +102,10 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
     }
 
     fun requestGetCoursePrice(course: String) {
-        mFirebaseDatabase = mFirebaseInstance.getReference(PRICE_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(PRICE_REFERENCE.replace(COURSE_LABEL, course))
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

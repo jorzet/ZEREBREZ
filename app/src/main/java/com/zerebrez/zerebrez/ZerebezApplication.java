@@ -17,8 +17,10 @@
 package com.zerebrez.zerebrez;
 
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.zerebrez.zerebrez.services.firebase.Engagement;
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -27,10 +29,24 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ZerebezApplication extends MultiDexApplication {
 
+    private static final String TAG = "ZerebezApplication";
+
     @Override
     public void onCreate() {
         super.onCreate();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        try {
+            FirebaseDatabase
+                    .getInstance(Engagement.Companion.getQUESTIONS_DATABASE_REFERENCE())
+                    .setPersistenceEnabled(true);
+            FirebaseDatabase
+                    .getInstance(Engagement.Companion.getUSERS_DATABASE_REFERENCE())
+                    .setPersistenceEnabled(true);
+            FirebaseDatabase
+                    .getInstance(Engagement.Companion.getSETTINGS_DATABASE_REFERENCE())
+                    .setPersistenceEnabled(true);
+        } catch (Exception e) {
+            Log.d(TAG, "cannot set persistence database");
+        }
     }
 
 }
