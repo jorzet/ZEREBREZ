@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:text="curso: "
                     android:textSize="20sp"
-                    android:textColor="@color/exams_text_color2"/>
+                    android:textColor="@color/exams_text_color3"/>
 
                 <TextView
                     android:id="@+id/tv_course"
@@ -53,7 +53,7 @@
                     android:layout_toRightOf="@+id/tv_course_text"
                     android:text="COMIPEMS"
                     android:textSize="20sp"
-                    android:textColor="@color/exams_text_color2"/>
+                    android:textColor="@color/exams_text_color3"/>
 
             </RelativeLayout>
 
@@ -156,7 +156,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="VINCULA TUS CUENTAS"
                     android:textSize="20sp"
-                    android:textColor="@color/exams_text_color2"/>
+                    android:textColor="@color/exams_text_color3"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -285,7 +285,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/log_out_text"
                     android:textSize="20sp"
-                    android:textColor="@color/log_out_text_color"/>
+                    android:textColor="@color/exams_text_color3"/>
 
                 <ImageView
                     android:id="@+id/iv_gary_line3"
@@ -305,7 +305,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/notification_text"
                     android:textSize="20sp"
-                    android:textColor="@color/notification_text_color"/>
+                    android:textColor="@color/exams_text_color3"/>
 
                 <TextView
                     android:id="@+id/tv_time_to_notify"
@@ -384,7 +384,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/support_email_text"
                     android:textSize="20sp"
-                    android:textColor="@color/restor_purchase_text_color"/>
+                    android:textColor="@color/exams_text_color3"/>
 
                 <ImageView
                     android:id="@+id/iv_gary_line4"
@@ -412,14 +412,24 @@
                         android:lines="2"
                         android:gravity="center"
                         android:text="@string/terms_and_privacy"
-                        android:textColor="@color/terms_and_privacy_text_color"
+                        android:textColor="@color/exams_text_color3"
                         android:textSize="20sp"/>
                 </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_version_app"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_terms_and_privacy_container"
+                    android:textSize="10sp"
+                    android:textColor="@color/exams_text_color3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"/>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/rl_terms_and_privacy_container"
+                    android:layout_below="@+id/tv_version_app"
                     android:layout_marginTop="40dp">
 
                 </RelativeLayout>

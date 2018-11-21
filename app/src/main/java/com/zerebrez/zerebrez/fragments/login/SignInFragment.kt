@@ -80,6 +80,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mTextLoginWith : TextView
     private lateinit var mForgotPassword : TextView
     private lateinit var mSendEmail : TextView
+    private lateinit var mVersionApp : TextView
 
     /*
      * Objects
@@ -109,12 +110,15 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mTextLoginWith = rootView.findViewById(R.id.tv_login_with)
         mForgotPassword = rootView.findViewById(R.id.tv_i_forgot_my_password)
         mSendEmail = rootView.findViewById(R.id.tv_support_email)
+        mVersionApp = rootView.findViewById(R.id.tv_version_app)
 
         mSinginButton.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTextLoginWith.typeface = FontUtil.getNunitoBold(context!!)
         mForgotPassword.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mVersionApp.typeface = FontUtil.getNunitoSemiBold(context!!)
 
+        mVersionApp.text = BuildConfig.VERSION_NAME
 
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)

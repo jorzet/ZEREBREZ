@@ -114,6 +114,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTimeTextView: TextView
     private lateinit var mMobileDataTextView: TextView
     private lateinit var mTermsAndPrivacyTextView: TextView
+    private lateinit var mVersionApp : TextView
     private lateinit var mLoadingUserSchoolsProgressBar: ProgressBar
 
     /*
@@ -162,6 +163,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
         mLoadingUserSchoolsProgressBar = rootView.findViewById(R.id.pb_loading_user_schools)
+        mVersionApp = rootView.findViewById(R.id.tv_version_app)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
         mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -177,7 +179,9 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mTimeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         //mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTermsAndPrivacyTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mVersionApp.typeface = FontUtil.getNunitoSemiBold(context!!)
 
+        mVersionApp.text = BuildConfig.VERSION_NAME
 
         // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)

@@ -58,9 +58,8 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
         // generate random color
         //val color = ColorGenerator.MATERIAL.getColor(getItem(position))
 
-        val color = ColorUtils.mExamColors[position%ColorUtils.mExamColors.size]
-
-        examView.rl_background.setBackgroundColor(mContext.resources.getColor(color))
+        val background = mContext.resources.getDrawable(ColorUtils.mExamColors[position%ColorUtils.mExamColors.size])
+        examView.rl_background.background = background
 
         return examView
     }

@@ -17,7 +17,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:text="ESCUELA DE COMPUTO"
-            android:textColor="@color/exams_text_color2"
+            android:textColor="@color/exams_text_color3"
             android:textSize="15sp" />
     </RelativeLayout>
 

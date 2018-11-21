@@ -378,6 +378,7 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                 if (mUpdatedQuestions.isNotEmpty()) {
                     updateQuestionList(mUpdatedQuestions)
                     drawQuestions()
+                    mNotWrongQuestionsCurrently.visibility = View.GONE
                 } else {
                     mNotWrongQuestionsCurrently.visibility = View.VISIBLE
                 }

@@ -64,6 +64,7 @@
     <color name="become_user_premium_text_color">#205A8F</color>
     <color name="paymen_line_color">#5E87AC</color>
     <color name="exams_text_color2">#205A8F</color>
+    <color name="exams_text_color3">#101E45</color>
     <color name="questions_text_color2">#205A8F</color>
     <color name="get_all_exams_and_questions_text_color">#808080</color>
     <color name="you_have_acces_of_all_contents_text_color">#205A8F</color>

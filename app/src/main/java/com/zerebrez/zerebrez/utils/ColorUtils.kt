@@ -40,10 +40,10 @@ class ColorUtils {
          * Define all color for courses
          */
         val mExamColors = intArrayOf(
-                R.color.comipems_background,
-                R.color.secundary_background,
-                R.color.unam_1_background,
-                R.color.unam_2_background,
-                R.color.ipn_1_background)
+                R.drawable.comipems_background,
+                R.drawable.secundary_background,
+                R.drawable.unam_1_background,
+                R.drawable.unam_2_background,
+                R.drawable.ipn_1_background)
     }
 }

@@ -169,8 +169,24 @@
                     android:text="@string/support_email_text"
                     android:textSize="14sp"
                     android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"
                     android:layout_marginTop="40dp"/>
+
+                <TextView
+                    android:id="@+id/tv_version_app"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_support_email"
+                    android:textSize="10sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_version_app"
+                    android:layout_marginTop="40dp">
+                </RelativeLayout>
 
             </RelativeLayout>
 
