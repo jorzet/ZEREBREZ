@@ -166,11 +166,11 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mVersionApp = rootView.findViewById(R.id.tv_version_app)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
-        mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mCourse.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mCourseTextView.typeface = FontUtil.getNunitoRegular(context!!)
+        mCourse.typeface = FontUtil.getNunitoRegular(context!!)
         mNotSelectedSchools.typeface = FontUtil.getNunitoSemiBold(context!!)
         mEditSchoolsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mLinktYourAccountsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mLinktYourAccountsTextView.typeface = FontUtil.getNunitoRegular(context!!)
         mChangePasswordText.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLogOut.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -602,7 +602,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     /*
      * This method returns the devices current API version
      */
-    fun getAndroidVersion(): String {
+    private fun getAndroidVersion(): String {
         val release = Build.VERSION.RELEASE
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"

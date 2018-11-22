@@ -107,8 +107,8 @@
 
                     <RelativeLayout
                         android:id="@+id/rl_squere_1"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
                         android:background="@drawable/hits_misses_background">
 
                         <ImageView
@@ -149,8 +149,8 @@
 
                     <RelativeLayout
                         android:id="@+id/rl_squere_2"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
                         android:layout_toRightOf="@+id/rl_squere_1"
                         android:layout_toEndOf="@+id/rl_squere_1"
                         android:layout_marginLeft="25dp"
@@ -217,7 +217,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/exams_text"
                     android:textColor="@color/exams_text_color"
                     android:textSize="25sp"/>
@@ -227,7 +227,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="60dp"
                     android:layout_below="@+id/tv_exams"
-                    android:layout_marginTop="30dp">
+                    android:layout_marginTop="10dp">
 
                     <ProgressBar
                         android:id="@+id/pb_loading_user_exams"
@@ -277,7 +277,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="@string/average_by_subjet"
                     android:textColor="@color/average_by_subject_text_color"
@@ -288,7 +288,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="60dp"
                     android:layout_below="@+id/tv_average_by_subject"
-                    android:layout_marginTop="30dp">
+                    android:layout_marginTop="20dp">
 
                     <ProgressBar
                         android:id="@+id/pb_loading_average_by_subject"

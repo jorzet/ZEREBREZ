@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="curso: "
-                    android:textSize="20sp"
+                    android:textSize="17sp"
                     android:textColor="@color/exams_text_color3"/>
 
                 <TextView
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/tv_course_text"
                     android:text="COMIPEMS"
-                    android:textSize="20sp"
+                    android:textSize="17sp"
                     android:textColor="@color/exams_text_color3"/>
 
             </RelativeLayout>
