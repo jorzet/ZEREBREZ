@@ -46,7 +46,6 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
     /*
      * Adapter
      */
-    private lateinit var optionQuestionAdapter : OptionQuestionAdapterRefactor
     private lateinit var questionAnswerAdapterRefactor: QuestionAnswerAdapterRefactor
 
     /*
@@ -73,7 +72,7 @@ class ShowAnswerActivity: BaseActivityLifeCycle() {
 
             //optionQuestionAdapter = OptionQuestionAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext)
             //mAnswerList.adapter = optionQuestionAdapter
-            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(true, questionNewFormat, mImagesPath, baseContext!!)
+            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(true, questionNewFormat, mImagesPath, getUser()!!, baseContext!!)
 
             val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
             mAnswerList.setLayoutManager(linearLayoutManager)

@@ -331,7 +331,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                if (currentFragment is QuestionFragmentRefactor) {
+                if (::currentFragment.isInitialized && currentFragment is QuestionFragmentRefactor) {
                     (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
                 }
             }

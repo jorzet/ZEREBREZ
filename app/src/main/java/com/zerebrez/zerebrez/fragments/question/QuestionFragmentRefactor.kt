@@ -238,7 +238,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             }
 
             //optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
-            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
+            questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(false, questionNewFormat!!, mImagesPath, getUser()!!, context!!)
 
             setOptions()
             setAnswers()

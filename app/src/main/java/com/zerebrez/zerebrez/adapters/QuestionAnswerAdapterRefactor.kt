@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.adapters
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,6 +33,11 @@ import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
 import com.felipecsl.gifimageview.library.GifImageView
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.storage.FirebaseStorage
+import com.zerebrez.zerebrez.models.User
+import com.bumptech.glide.Glide
 import com.zerebrez.zerebrez.utils.GifDataDownloader
 
 /**
@@ -39,10 +45,15 @@ import com.zerebrez.zerebrez.utils.GifDataDownloader
  * jorzet.94@gmail.com
  */
 
-class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : QuestionNewFormat, imagesPath : List<Image>, context: Context) : RecyclerView.Adapter<QuestionAnswerViewHolder>() {
+class QuestionAnswerAdapterRefactor (isAnswer : Boolean,
+                                     questionNewFormat : QuestionNewFormat,
+                                     imagesPath : List<Image>,
+                                     user: User,
+                                     context: Context) : RecyclerView.Adapter<QuestionAnswerViewHolder>() {
 
     private val mQuestionNewFormat = questionNewFormat
     private val mImagesPath : List<Image> = imagesPath
+    private val mUser: User = user
     private val mContext : Context = context
     private val mIsAnswer : Boolean = isAnswer
 
@@ -114,6 +125,28 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
                             holder.mOptionGifImage.setImageBitmap(bitmap)
                             holder.mOptionGifImage.startAnimation()
 
+                            FirebaseStorage
+                                    .getInstance()
+                                    .getReference()
+                                    .child(mUser.getCourse() + "/images/${nameInStorage}")
+                                    .getDownloadUrl()
+                                    .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                        override fun onSuccess(uri: Uri?) {
+                                            object : GifDataDownloader() {
+                                                override fun onPostExecute(bytes: ByteArray) {
+                                                    holder.mOptionGifImage.setBytes(bytes)
+                                                    holder.mOptionGifImage.startAnimation()
+                                                }
+                                            }.execute(uri.toString())
+                                            /*Glide.with(mContext)
+                                                    .load(uri.toString())
+                                                    .into(holder.mOptionImage);*/
+                                        }
+                                    }).addOnFailureListener(object: OnFailureListener {
+                                        override fun onFailure(exception: java.lang.Exception) {
+
+                                        }
+                                    })
                             /*object : GifDataDownloader() {
                             override fun onPostExecute(bytes: ByteArray) {
                                 holder.mOptionGifImage.setBytes(bytes)
