@@ -132,15 +132,11 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean,
                                     .getDownloadUrl()
                                     .addOnSuccessListener(object: OnSuccessListener<Uri> {
                                         override fun onSuccess(uri: Uri?) {
-                                            object : GifDataDownloader() {
-                                                override fun onPostExecute(bytes: ByteArray) {
-                                                    holder.mOptionGifImage.setBytes(bytes)
-                                                    holder.mOptionGifImage.startAnimation()
-                                                }
-                                            }.execute(uri.toString())
-                                            /*Glide.with(mContext)
+
+                                            Glide.with(mContext)
+                                                    .asGif()
                                                     .load(uri.toString())
-                                                    .into(holder.mOptionImage);*/
+                                                    .into(holder.mOptionImage);
                                         }
                                     }).addOnFailureListener(object: OnFailureListener {
                                         override fun onFailure(exception: java.lang.Exception) {
@@ -156,8 +152,8 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean,
 
                             holder.mOptionText.visibility = View.GONE
                             holder.mOptionMath.visibility = View.GONE
-                            holder.mOptionImage.visibility = View.GONE
-                            holder.mOptionGifImage.visibility = View.VISIBLE
+                            holder.mOptionImage.visibility = View.VISIBLE
+                            holder.mOptionGifImage.visibility = View.GONE
                         } else {
                             holder.mOptionImage.setImageBitmap(getBitmap(nameInStorage))
                             holder.mOptionText.visibility = View.GONE

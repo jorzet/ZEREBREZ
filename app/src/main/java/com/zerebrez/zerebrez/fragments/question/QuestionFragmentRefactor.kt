@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.fragments.question
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -38,9 +39,14 @@ import com.zerebrez.zerebrez.ui.activities.QuestionActivity
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
 import android.widget.ScrollView
+import com.bumptech.glide.Glide
 import com.zerebrez.zerebrez.adapters.QuestionAnswerAdapterRefactor
 import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.felipecsl.gifimageview.library.GifImageView
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.custom_question_refactor.view.*
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/05/18.
@@ -275,9 +281,27 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "img" -> {
                                 val nameInStoregeA = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeA.contains(".gif")) {
-                                    mGifImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
+                                    FirebaseStorage
+                                            .getInstance()
+                                            .getReference()
+                                            .child(getUser()!!.getCourse() + "/images/${nameInStoregeA}")
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                                override fun onSuccess(uri: Uri?) {
+
+                                                    Glide.with(activity!!)
+                                                            .asGif()
+                                                            .load(uri.toString())
+                                                            .into(mImageAnswerA);
+                                                }
+                                            }).addOnFailureListener(object: OnFailureListener {
+                                                override fun onFailure(exception: java.lang.Exception) {
+
+                                                }
+                                            })
+                                    /*mGifImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
                                     mGifImageAnswerA.startAnimation()
-                                    mGifImageAnswerA.visibility = View.VISIBLE
+                                    mGifImageAnswerA.visibility = View.VISIBLE*/
                                 } else {
                                     mImageAnswerA.setImageBitmap(getBitmap(nameInStoregeA))
                                     mImageAnswerA.visibility = View.VISIBLE
@@ -299,9 +323,27 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "img" -> {
                                 val nameInStoregeB = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeB.contains(".gif")) {
-                                    mGifImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
+                                    FirebaseStorage
+                                            .getInstance()
+                                            .getReference()
+                                            .child(getUser()!!.getCourse() + "/images/${nameInStoregeB}")
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                                override fun onSuccess(uri: Uri?) {
+
+                                                    Glide.with(activity!!)
+                                                            .asGif()
+                                                            .load(uri.toString())
+                                                            .into(mImageAnswerB);
+                                                }
+                                            }).addOnFailureListener(object: OnFailureListener {
+                                                override fun onFailure(exception: java.lang.Exception) {
+
+                                                }
+                                            })
+                                    /*mGifImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
                                     mGifImageAnswerB.startAnimation()
-                                    mGifImageAnswerB.visibility = View.VISIBLE
+                                    mGifImageAnswerB.visibility = View.VISIBLE*/
                                 } else {
                                     mImageAnswerB.setImageBitmap(getBitmap(nameInStoregeB))
                                     mImageAnswerB.visibility = View.VISIBLE
@@ -323,9 +365,27 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "img" -> {
                                 val nameInStoregeC = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeC.contains(".gif")) {
-                                    mGifImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
+                                    FirebaseStorage
+                                            .getInstance()
+                                            .getReference()
+                                            .child(getUser()!!.getCourse() + "/images/${nameInStoregeC}")
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                                override fun onSuccess(uri: Uri?) {
+
+                                                    Glide.with(activity!!)
+                                                            .asGif()
+                                                            .load(uri.toString())
+                                                            .into(mImageAnswerC);
+                                                }
+                                            }).addOnFailureListener(object: OnFailureListener {
+                                                override fun onFailure(exception: java.lang.Exception) {
+
+                                                }
+                                            })
+                                    /*mGifImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
                                     mGifImageAnswerC.startAnimation()
-                                    mGifImageAnswerC.visibility = View.VISIBLE
+                                    mGifImageAnswerC.visibility = View.VISIBLE*/
                                 } else {
                                     mImageAnswerC.setImageBitmap(getBitmap(nameInStoregeC))
                                     mImageAnswerC.visibility = View.VISIBLE
@@ -347,9 +407,27 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                             "img" -> {
                                 val nameInStoregeD = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeD.contains(".gif")) {
-                                    mGifImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
+                                    FirebaseStorage
+                                            .getInstance()
+                                            .getReference()
+                                            .child(getUser()!!.getCourse() + "/images/${nameInStoregeD}")
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                                override fun onSuccess(uri: Uri?) {
+
+                                                    Glide.with(activity!!)
+                                                            .asGif()
+                                                            .load(uri.toString())
+                                                            .into(mImageAnswerD);
+                                                }
+                                            }).addOnFailureListener(object: OnFailureListener {
+                                                override fun onFailure(exception: java.lang.Exception) {
+
+                                                }
+                                            })
+                                    /*mGifImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
                                     mGifImageAnswerD.startAnimation()
-                                    mGifImageAnswerD.visibility = View.VISIBLE
+                                    mGifImageAnswerD.visibility = View.VISIBLE*/
                                 } else {
                                     mImageAnswerD.setImageBitmap(getBitmap(nameInStoregeD))
                                     mImageAnswerD.visibility = View.VISIBLE
