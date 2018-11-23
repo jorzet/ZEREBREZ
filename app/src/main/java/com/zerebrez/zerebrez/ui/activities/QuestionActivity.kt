@@ -462,6 +462,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     mCurrentQuestionSkiped++
                 }
 
+                if (mQuestionsAux[mQuestionsAux.size - 1].answered) {
+
+                }
+
                 mCurrentQuestion = mCurrentQuestionSkiped
 
                 Log.d("mNextQuestionListener"," next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
