@@ -47,6 +47,14 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.custom_question_refactor.view.*
+import android.R.attr.y
+import android.R.attr.x
+import android.graphics.Point
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.Display
+
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/05/18.
@@ -66,6 +74,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     /*
      * UI accessors
      */
+    private lateinit var  mQuestionContainer : View
+    private lateinit var mOptionsContainer : View
     private lateinit var mQuestionList : RecyclerView
     private lateinit var mQuestion : TextView
     private lateinit var mOptionA : View
@@ -118,6 +128,8 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             return null
 
         val rootView = inflater.inflate(R.layout.question_fragment_refactor, container, false)!!
+        mQuestionContainer = rootView.findViewById(R.id.question_container)
+        mOptionsContainer = rootView.findViewById(R.id.ll_options_container)
         mQuestionList = rootView.findViewById(R.id.nslv_container)
         //mQuestion = rootView.findViewById(R.id.tv_question)
         mOptionA = rootView.findViewById(R.id.option_a)
@@ -253,6 +265,12 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
         return rootView
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        defineOptionsHeight()
+    }
+
     private fun setOptions() {
         //mQuestionList.adapter = optionQuestionAdapter
         val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -275,10 +293,23 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                                 mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 mEquationAnswerA.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
                                 mEquationAnswerA.visibility = View.VISIBLE
                             }
                             "img" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
+
                                 val nameInStoregeA = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeA.contains(".gif")) {
                                     FirebaseStorage
@@ -317,10 +348,22 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                                 mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 mEquationAnswerB.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
                                 mEquationAnswerB.visibility = View.VISIBLE
                             }
                             "img" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 val nameInStoregeB = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeB.contains(".gif")) {
                                     FirebaseStorage
@@ -359,10 +402,22 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                                 mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 mEquationAnswerC.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
                                 mEquationAnswerC.visibility = View.VISIBLE
                             }
                             "img" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 val nameInStoregeC = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeC.contains(".gif")) {
                                     FirebaseStorage
@@ -401,10 +456,22 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                                 mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
                             }
                             "eq" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 mEquationAnswerD.setDisplayText("$$" + questionNewFormat!!.optionsData[i] + "$$")
                                 mEquationAnswerD.visibility = View.VISIBLE
                             }
                             "img" -> {
+                                val param : LinearLayout.LayoutParams
+                                param = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        1.0f)
+                                mOptionsContainer.layoutParams = param
                                 val nameInStoregeD = getNameInStorage(questionNewFormat!!.optionsData[i], mImagesPath)
                                 if (nameInStoregeD.contains(".gif")) {
                                     FirebaseStorage
@@ -750,20 +817,69 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
     }
 
     fun showExpandedQuestion(showExpanded : Boolean) {
-        val param : LinearLayout.LayoutParams
-        if (showExpanded) {
-            param = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0.18f)
 
-        } else {
+        if (showExpanded) {
+
+            var param : LinearLayout.LayoutParams
             param = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f)
+            mOptionsContainer.layoutParams = param
+
+            param = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0.18f)
+            mQuestionContainerView.layoutParams = param
+
+        } else {
+            val param = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f)
+            mQuestionContainerView.layoutParams = param
         }
-        mQuestionContainerView.layoutParams = param
+
+    }
+
+    fun defineOptionsHeight() {
+
+        /*Handler().postDelayed(object : Runnable {
+            override fun run() {
+                try {
+                    val height = mQuestionContainer.height
+
+                    val buttonsHeight = mOptionA.height +
+                            mOptionB.height +
+                            mOptionC.height +
+                            mOptionD.height +
+                            resources.getDimension(R.dimen.question_bottom_bar_height) +
+                            resources.getDimension(R.dimen.margin_anwer_buttons_top) +
+                            (resources.getDimension(R.dimen.margin_anwer_button_top) * 3)
+
+                            if (buttonsHeight < height) {
+                        val param: LinearLayout.LayoutParams
+                        param = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                buttonsHeight.toInt())
+                        mOptionsContainer.layoutParams = param
+                    }
+                } catch (e: java.lang.Exception) {
+                    Log.d("", e.stackTrace.toString())
+                } catch (e: kotlin.Exception) {
+                    Log.d("", e.stackTrace.toString())
+                }
+            }
+
+        }, 50)*/
+    }
+
+    fun convertPixelsToDp(px: Float): Float {
+        val resources = this.getResources()
+        val metrics = resources.getDisplayMetrics()
+        val dp = px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+        return dp
     }
 
     fun isAnswered() : Boolean {

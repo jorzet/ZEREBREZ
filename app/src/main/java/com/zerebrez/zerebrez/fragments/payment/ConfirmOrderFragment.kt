@@ -104,7 +104,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         val lastName = mLastNameEditText.text.toString()
         val email = mEmailEditText.text.toString()
         if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@") && activity != null){
-            if (NetworkUtil.isConnected(this!!.activity!!)) {
+            if (NetworkUtil.isConnected(this.activity!!)) {
                 setWaitScreen(true)
                 mComproPagoManager.GenerateOrder("$name $lastName", email, mProvider!!.internal_name, PRICE, object: ComproPagoManager.OnGenerateOrderListener{
                     override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
