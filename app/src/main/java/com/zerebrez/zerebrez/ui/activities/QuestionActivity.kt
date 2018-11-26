@@ -462,8 +462,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     mCurrentQuestionSkiped++
                 }
 
+                var hasNextQuestion = false
                 if (mQuestionsAux[mQuestionsAux.size - 1].answered) {
-
+                    for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
+                        if (mQuestionsAux[i].answered) {
+                            hasNextQuestion = true
+                        }
+                    }
                 }
 
                 mCurrentQuestion = mCurrentQuestionSkiped
@@ -472,6 +477,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
 
                 if (mQuestionsAux[mCurrentQuestionSkiped].answered) {
+                    if (hasNextQuestion) {
+                        mCurrentQuestionSkiped = 0
+                    }
                     for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
                         mCurrentQuestionSkiped = i
                         mCurrentQuestion = mCurrentQuestionSkiped
