@@ -145,11 +145,11 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         if (getChartStart(true) >= 80) {
             drawUserHits(80, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
-                    width - 290, width - 90);
+                    width - 250, width - 140);
         }
 
         drawUserHits(userHits, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
-                width - 290, width - 90);
+                width - 250, width - 140);
 
         // draw progress bar
         drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight + mTextTopWidth);
@@ -163,7 +163,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     }
 
     private void drawProgressBar(int userHits, int left, int top, int right, int bottom) {
-        int progressHeight = height;
+        int progressHeight = height - mTextTopWidth;
 
         int newRange = maxHits - getChartStart(true);
         int newMaxHits = getChartStart(true) < 80 ? newRange : 80;
@@ -171,7 +171,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
         newUserHits = newUserHits - minPixs;
 
-        int progress = progressHeight - newUserHits;
+        int progress = mTextTopWidth + progressHeight - newUserHits;
 
         /*
          * here is drawn the progressbar background
@@ -221,14 +221,20 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
         newSchoolHits = newSchoolHits - minPixs;
 
-        int yPos = mTextTopWidth + mTextTopWidth + progressHeight - newSchoolHits;
+        int yPos;
+        if (getChartStart(true) == hits) {
+            yPos = mTextTopWidth + progressHeight - newSchoolHits;
+        } else  {
+            yPos = mTextTopWidth + mTextTopWidth + progressHeight - newSchoolHits;
+        }
+
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
         /*
          * Draw school name
          */
         // fake ractangle where text going to center
-        Rect areaRectSchool =  null;
+        Rect areaRectSchool;
         if (getChartStart(true) == hits) {
             areaRectSchool = new Rect(leftSchool, yPos - 20, rightSchool, yPos);
         } else {
@@ -254,7 +260,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw school hits
          */
         // fake ractangle where text going to center
-        Rect areaRectHits = null;
+        Rect areaRectHits;
         if (getChartStart(true) == hits) {
             areaRectHits = new Rect(leftHits, yPos - 20, rightHits, yPos);
         } else {
@@ -298,7 +304,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     }
 
     public void drawUserHits(int hits, int textUserHitsSize, int textUserHitsColor, int leftHits, int rightHits) {
-        int progressHeight = height ;
+        int progressHeight = height - mTextTopWidth;
 
         int newRange = maxHits - getChartStart(true);
 
@@ -309,12 +315,12 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         newUserHits = newUserHits - minPixs;
 
         int yPos;
-
         if (getChartStart(true) == hits) {
-            yPos = progressHeight - newUserHits;
-        } else {
             yPos = mTextTopWidth + progressHeight - newUserHits;
+        } else {
+            yPos = mTextTopWidth + mTextTopWidth + progressHeight - newUserHits;
         }
+
 
 
         int xPos = width/2;
@@ -324,7 +330,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw user hits
          */
         // fake ractangle where text going to center
-        Rect areaRectuserHits = null;
+        Rect areaRectuserHits;
         if (getChartStart(true) == hits) {
             areaRectuserHits = new Rect(leftHits, yPos - 20, rightHits, yPos );
         } else {
