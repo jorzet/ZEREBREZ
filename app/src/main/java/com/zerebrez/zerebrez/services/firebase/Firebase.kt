@@ -32,6 +32,7 @@ import kotlin.collections.HashMap
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.SendQuestionRequestTask
@@ -77,6 +78,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
      */
     private val COURSE_KEY : String = "course"
     private val PREMIUM_KEY : String = "premium"
+    private val COMPROPAGO_KEY : String = "comproPago"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val DEVELOPERS_DEBUG_KEY : String = "developersDebug"
     private val METHOD_KEY : String = "method"
@@ -88,6 +90,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val INCORRECT_REFERENCE : String = "incorrect"
     private val INSTITUTION_ID : String = "institutionId"
     private val SCHOOL_ID : String = "schoolId"
+    private val EMAIL_KEY : String = "email"
+    private val BILLING_ID_KEY : String = "id"
+    private val STATUS_KEY : String = "status"
 
     /*
      * Database object
@@ -206,6 +211,43 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + METHOD_KEY, userCache.getPayGayMethod())
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + PAYMENT_CONFIRMED_IN_KEY, "Android")
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+            }
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+
+            mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isComplete) {
+                        Log.d(TAG, "complete requestSendUser")
+                        onRequestListenerSucces.onSuccess(true)
+                    } else {
+                        Log.d(TAG, "cancelled requestSendUser")
+                        val error = GenericError()
+                        error.setErrorType(ErrorType.USER_NOT_SENDED)
+                        onRequestLietenerFailed.onFailed(error)
+                    }
+                }
+            })
+        }
+    }
+
+    fun requestSendUserComproPago(userCache : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        // Get a reference to our posts
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
+        mFirebaseDatabase.keepSynced(true)
+
+        val user = getCurrentUser()
+        if (user != null) {
+            val userUpdates = HashMap<String, Any>()
+            if (!userCache.getCourse().equals("")) {
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + COURSE_KEY, userCache.getCourse())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + EMAIL_KEY, userCache.getEmail())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + BILLING_ID_KEY, billingId)
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + STATUS_KEY, comproPagoStatus)
             }
             //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
             //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())

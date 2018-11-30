@@ -23,6 +23,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.request.RequestManager
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
@@ -308,6 +309,12 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+
+                        val user = getUser()
+                        if (user != null && !user.getCourse().equals("")) {
+                            requestSendUserComproPago(user, chargeResponse.id, ComproPagoStatus.CHARGE_SUCCESS)
+                        }
+
                         ErrorDialog.newInstance("Felicidades ya eres PREMIUM",
                                 DialogType.OK_DIALOG ,this)!!
                                 .show(supportFragmentManager, "paywaySuccess")
@@ -676,15 +683,25 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetMinimumVersionSuccess(minimumVersion: String) {}
     open fun onGetMinimumVersionFail(throwable: Throwable) {}
 
-    override fun onConfirmationCancel() {
+    override fun onConfirmationCancel() {}
 
+    override fun onConfirmationNeutral() {}
+
+    override fun onConfirmationAccept() {}
+
+
+    fun requestSendUserComproPago(user : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        mRequestManager.requestSendUserComproPago(user, billingId, comproPagoStatus, object : RequestManager.OnSendUserComproPagoListener {
+            override fun onSendUserComproPagoLoaded(success: Boolean) {
+                onSendUserComproPagoSuccess(success)
+            }
+
+            override fun onSendUserComproPagoError(throwable: Throwable) {
+                onSendUserComproPagoFail(throwable)
+            }
+        })
     }
 
-    override fun onConfirmationNeutral() {
-
-    }
-
-    override fun onConfirmationAccept() {
-
-    }
+    open fun onSendUserComproPagoSuccess(success: Boolean) {}
+    open fun onSendUserComproPagoFail(throwable: Throwable) {}
 }

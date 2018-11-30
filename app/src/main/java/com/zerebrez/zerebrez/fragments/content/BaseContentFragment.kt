@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.request.RequestManager
 
 /**
@@ -215,91 +216,61 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    open fun onDoLogInSuccess(success : Boolean) {
-    }
+    open fun onDoLogInSuccess(success : Boolean) {}
 
-    open fun onDoLogInFail(throwable: Throwable) {
-    }
+    open fun onDoLogInFail(throwable: Throwable) {}
 
-    open fun onUpdateUserSuccess(success: Boolean) {
-    }
+    open fun onUpdateUserSuccess(success: Boolean) {}
 
-    open fun onUpdateUserFail(throwable: Throwable) {
-    }
+    open fun onUpdateUserFail(throwable: Throwable) {}
 
-    open fun onSendUserSuccess(success: Boolean) {
-    }
+    open fun onSendUserSuccess(success: Boolean) {}
 
-    open fun onSendUserFail(throwable: Throwable) {
-    }
+    open fun onSendUserFail(throwable: Throwable) {}
 
-    open fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
-    }
+    open fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {}
 
-    open fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
-    }
+    open fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {}
 
-    open fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
-    }
+    open fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {}
 
-    open fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {
-    }
+    open fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {}
 
-    open fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {
-    }
+    open fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {}
 
-    open fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
-    }
+    open fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {}
 
-    open fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {
-    }
+    open fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {}
 
-    open fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {
-    }
+    open fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {}
 
-    open fun onGetModulesSucces(result : List<Module>) {
-    }
+    open fun onGetModulesSucces(result : List<Module>) {}
 
-    open fun onGetModulesFail(throwable: Throwable) {
-    }
+    open fun onGetModulesFail(throwable: Throwable) {}
 
-    open fun onGetCoursesSuccess(courses : List<String>) {
-    }
+    open fun onGetCoursesSuccess(courses : List<String>) {}
 
-    open fun onGetCoursesFail(throwable: Throwable) {
-    }
+    open fun onGetCoursesFail(throwable: Throwable) {}
 
-    open fun onGetUserDataSuccess(user : User) {
-    }
+    open fun onGetUserDataSuccess(user : User) {}
 
-    open fun onGetUserDataFail(throwable: Throwable) {
-    }
+    open fun onGetUserDataFail(throwable: Throwable) {}
 
-    open fun onGetInstitutesSuccess(institutes : List<Institute>) {
-    }
+    open fun onGetInstitutesSuccess(institutes : List<Institute>) {}
 
-    open fun onGetInstitutesFail(throwable: Throwable) {
-    }
+    open fun onGetInstitutesFail(throwable: Throwable) {}
 
-    open fun onGetExamsSuccess(exams : List<Exam>) {
-    }
+    open fun onGetExamsSuccess(exams : List<Exam>) {}
 
-    open fun onGetExamsFail(throwable: Throwable) {
-    }
+    open fun onGetExamsFail(throwable: Throwable) {}
 
-    open fun onGetImagesPathSuccess(images : List<Image>) {
-    }
+    open fun onGetImagesPathSuccess(images : List<Image>) {}
 
-    open fun onGetImagesPathFail(throwable: Throwable) {
-    }
+    open fun onGetImagesPathFail(throwable: Throwable) {}
 
-    open fun onGetExamScoresSuccess(examScores : List<ExamScore>) {
-    }
+    open fun onGetExamScoresSuccess(examScores : List<ExamScore>) {}
 
-    open fun onGetExamScoresFail(throwable: Throwable) {
-    }
-
-
+    open fun onGetExamScoresFail(throwable: Throwable) {}
 
 
     /*

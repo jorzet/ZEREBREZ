@@ -20,6 +20,7 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.services.firebase.CheckUserWithProviderRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
@@ -135,6 +136,25 @@ class RequestManager(activity : Activity) {
         })
 
         firebase.requestSendUser(user)
+    }
+
+
+    fun requestSendUserComproPago(user: User, billingId: String, comproPagoStatus: ComproPagoStatus, onSendUserComproPagoListener: OnSendUserComproPagoListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onSendUserComproPagoListener.onSendUserComproPagoLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onSendUserComproPagoListener.onSendUserComproPagoError(result)
+            }
+        })
+
+        firebase.requestSendUserComproPago(user, billingId, comproPagoStatus)
     }
 
     /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
@@ -475,6 +495,11 @@ class RequestManager(activity : Activity) {
     interface OnSendUserListener {
         fun onSendUserLoaded(success: Boolean)
         fun onSendUserError(throwable: Throwable)
+    }
+
+    interface OnSendUserComproPagoListener {
+        fun onSendUserComproPagoLoaded(success: Boolean)
+        fun onSendUserComproPagoError(throwable: Throwable)
     }
 
     interface OnGetModulesListener {

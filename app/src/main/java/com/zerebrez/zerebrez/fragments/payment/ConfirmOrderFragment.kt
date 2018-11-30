@@ -30,6 +30,7 @@ import com.zerebrez.zerebrez.models.OrderResponse
 
 import com.zerebrez.zerebrez.models.Provider
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
@@ -133,6 +134,12 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
                         ORDER_GENERATED=true
                         setPendingPayment(true)
                         setPaymentId(orderResponse.id)
+
+                        val user = getUser()
+                        if (user != null && !user.getCourse().equals("")) {
+                            requestSendUserComproPago(user, orderResponse.id, ComproPagoStatus.CHARGE_PENDING)
+                        }
+
                         ErrorDialog.newInstance("Orden de pago generada", "Las instrucciones de pago llegarán al corrreo proporcionado, una vez realizado el pago obtendrás tu suscripción.",
                                 DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
                     }else

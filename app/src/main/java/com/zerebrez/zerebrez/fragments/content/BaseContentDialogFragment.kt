@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.request.RequestManager
 
 /**
@@ -57,7 +58,21 @@ abstract class BaseContentDialogFragment : BaseDialogFragment() {
     }
 
 
+    fun requestSendUserComproPago(user : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        mRequestManager.requestSendUserComproPago(user, billingId, comproPagoStatus, object : RequestManager.OnSendUserComproPagoListener {
+            override fun onSendUserComproPagoLoaded(success: Boolean) {
+                onSendUserComproPagoSuccess(success)
+            }
+
+            override fun onSendUserComproPagoError(throwable: Throwable) {
+                onSendUserComproPagoFail(throwable)
+            }
+        })
+    }
+
     open fun onGetProfileRefactorSuccess(user: User) {}
     open fun onGetProfileRefactorFail(throwable: Throwable) {}
+    open fun onSendUserComproPagoSuccess(success: Boolean) {}
+    open fun onSendUserComproPagoFail(throwable: Throwable) {}
 
 }
