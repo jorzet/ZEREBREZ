@@ -91,7 +91,7 @@ class SchoolsAverageFragment : BaseContentFragment() {
 
     override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {
         super.onGetScoreLast128QuestionsExamFail(throwable)
-        schoolAverageCanvas.setUserHits(100)
+        schoolAverageCanvas.setUserHits(0)
         schoolAverageCanvas.invalidate()
         mNot128ExmanQuestionDitIt.visibility = View.VISIBLE
         if (activity != null)

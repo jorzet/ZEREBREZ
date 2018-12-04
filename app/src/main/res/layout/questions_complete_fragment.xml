@@ -52,7 +52,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="¡C O M P L E T A D O!"
                         android:textColor="@color/answered_questions_text_color"
-                        android:textSize="28sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"/>
 
                 </RelativeLayout>
@@ -66,14 +66,14 @@
 
                     <RelativeLayout
                         android:id="@+id/rl_squere_1"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
                         android:background="@drawable/hits_misses_background">
 
                         <ImageView
                             android:id="@+id/iv_hits"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
                             android:layout_marginTop="10dp"
                             android:layout_centerHorizontal="true"
                             android:src="@drawable/tick_circle_icon"/>
@@ -86,14 +86,14 @@
                             android:layout_centerHorizontal="true"
                             android:text="210"
                             android:textColor="@color/score_hits_text_color"
-                            android:textSize="20sp"/>
+                            android:textSize="17sp"/>
 
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/rl_squere_2"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
                         android:layout_toRightOf="@+id/rl_squere_1"
                         android:layout_toEndOf="@+id/rl_squere_1"
                         android:layout_marginLeft="25dp"
@@ -102,8 +102,8 @@
 
                         <ImageView
                             android:id="@+id/iv_misses"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
                             android:layout_marginTop="10dp"
                             android:layout_centerHorizontal="true"
                             android:src="@drawable/cross_circle_icon"/>
@@ -116,7 +116,7 @@
                             android:layout_centerHorizontal="true"
                             android:text="61"
                             android:textColor="@color/score_misses_text_color"
-                            android:textSize="20sp"/>
+                            android:textSize="17sp"/>
 
                     </RelativeLayout>
                 </RelativeLayout>
@@ -162,7 +162,7 @@
                         android:layout_marginRight="20dp"
                         android:gravity="center"
                         android:text="¡Se te acaban las preguntas!"
-                        android:textColor="@color/exams_text_color"
+                        android:textColor="@color/tips_text_color"
                         android:textSize="23sp"/>
 
                     <TextView
@@ -176,8 +176,8 @@
                         android:layout_centerHorizontal="true"
                         android:gravity="center"
                         android:text="¡No te quedes sin estudiar!"
-                        android:textColor="@color/not_exams_currently_text_color"
-                        android:textSize="20sp"
+                        android:textColor="@color/tips_text_color"
+                        android:textSize="@dimen/premium_suggestion_text_size"
                         android:visibility="visible"/>
 
                     <RelativeLayout

@@ -166,12 +166,12 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int progressHeight = height - mTextTopWidth;
 
         int newRange = maxHits - getChartStart(true);
-        int newMaxHits = getChartStart(true) < 80 ? newRange : 80;
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
         int newUserHits = ((userHits * progressHeight) / newMaxHits);
         int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
         newUserHits = newUserHits - minPixs;
 
-        int progress = mTextTopWidth + progressHeight - newUserHits;
+        int progress = progressHeight - newUserHits;
 
         /*
          * here is drawn the progressbar background
@@ -216,7 +216,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         int progressHeight = height - mTextTopWidth;
 
         int newRange = maxHits - getChartStart(true);
-        int newMaxHits = getChartStart(true) < 80 ? newRange : 80;
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
         int newSchoolHits = ((hits * progressHeight) / newMaxHits);
         int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
         newSchoolHits = newSchoolHits - minPixs;
@@ -225,7 +225,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         if (getChartStart(true) == hits) {
             yPos = mTextTopWidth + progressHeight - newSchoolHits;
         } else  {
-            yPos = mTextTopWidth + mTextTopWidth + progressHeight - newSchoolHits;
+            yPos = mTextTopWidth + progressHeight - newSchoolHits;
         }
 
         int xPos = width/2;
@@ -308,7 +308,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         int newRange = maxHits - getChartStart(true);
 
-        int newMaxHits = getChartStart(true) < 80 ? newRange : 80;
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
 
         int newUserHits = ((hits * progressHeight) / newMaxHits);
         int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
@@ -318,7 +318,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         if (getChartStart(true) == hits) {
             yPos = mTextTopWidth + progressHeight - newUserHits;
         } else {
-            yPos = mTextTopWidth + mTextTopWidth + progressHeight - newUserHits;
+            yPos = mTextTopWidth + progressHeight - newUserHits;
         }
 
 

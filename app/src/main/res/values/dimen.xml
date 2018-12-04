@@ -43,6 +43,8 @@
     <dimen name="height_question_row">50dp</dimen>
     <dimen name="width_question_row_spam">65dp</dimen>
     <dimen name="height_question_row_spam">65dp</dimen>
+    <dimen name="premium_suggestion_text_size">15sp</dimen>
+    <dimen name="free_suggestion_text_size">18sp</dimen>
 
     <!--advances fragment-->
     <dimen name="advances_module_image_width_image">70dp</dimen>

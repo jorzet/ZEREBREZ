@@ -103,7 +103,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
 
         mQuestionTypeText.typeface = FontUtil.getNunitoRegular(context!!)
-        mNumAnsweedQuestions.typeface = FontUtil.getNunitoRegular(context!!)
+        mNumAnsweedQuestions.typeface = FontUtil.getNunitoSemiBold(context!!)
         mHitsNumber.typeface = FontUtil.getNunitoRegular(context!!)
         mMissesNumber.typeface = FontUtil.getNunitoRegular(context!!)
         mBePremiumButtonText.typeface = FontUtil.getNunitoRegular(context!!)
@@ -233,6 +233,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
 
             mBePremiumText1.text = "Recomendación"
             mBePremiumText2.text = randomTip
+            //mBePremiumText2.textSize = context.resources.getDimension(R.dimen.premium_suggestion_text_size)
             mBePremiumContainer.visibility = View.VISIBLE
             mBePremiumButton.visibility = View.GONE
         }
@@ -244,6 +245,7 @@ class QuestionsCompleteFragment : BaseContentFragment() {
         if (context != null) {
             mLoadingSuggestion.visibility = View.GONE
             mBePremiumContainer.visibility = View.VISIBLE
+            //mBePremiumText2.textSize = resources.getDimension(R.dimen.free_suggestion_text_size)
         }
     }
 
