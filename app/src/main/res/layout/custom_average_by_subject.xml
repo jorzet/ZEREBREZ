@@ -11,8 +11,8 @@
 
         <RelativeLayout
             android:id="@+id/rl_image_by_subject_container"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_centerVertical="true">
             <ImageView
                 android:id="@+id/iv_average_by_subject"
