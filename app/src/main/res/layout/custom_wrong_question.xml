@@ -4,7 +4,6 @@
     android:layout_width="@dimen/width_row"
     android:layout_height="@dimen/height_row"
     android:background="@drawable/unchecked_module_background"
-    android:padding="10dp"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true">
 

@@ -157,8 +157,8 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     private fun setWaitScreen(set: Boolean) {
-        mScrollView.setVisibility(if (set) View.GONE else View.VISIBLE)
-        mProgressBar.setVisibility(if (set) View.VISIBLE else View.GONE)
+        mScrollView.visibility = if (set) View.GONE else View.VISIBLE
+        mProgressBar.visibility = if (set) View.VISIBLE else View.GONE
     }
 
     private fun ImageView.loadUrl(url: String) {

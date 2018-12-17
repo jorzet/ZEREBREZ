@@ -20,6 +20,7 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import com.zerebrez.zerebrez.fragments.payment.PendingPaymentFragment
 import com.zerebrez.zerebrez.fragments.profile.PaymentFragment
 import com.zerebrez.zerebrez.fragments.profile.ProfileFragment
 import com.zerebrez.zerebrez.fragments.profile.YouArePremiumFragment
@@ -43,7 +44,12 @@ class ProfileViewPager (context : Context, fm: FragmentManager, tabCount : Int) 
                 if (DataHelper(mContext).isPremiumUser()) {
                     fragment = YouArePremiumFragment()
                 } else {
-                    fragment = PaymentFragment()
+                    // if has pending payment show pending payment fragment
+                    if (DataHelper(mContext).hasPendingPayment()) {
+                        fragment = PendingPaymentFragment()
+                    } else {
+                        fragment = PaymentFragment()
+                    }
                 }
             }
         }

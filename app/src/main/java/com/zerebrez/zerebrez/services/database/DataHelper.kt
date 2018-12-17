@@ -143,6 +143,11 @@ class DataHelper(context: Context) {
         return null
     }
 
+    fun hasPendingPayment() : Boolean{
+        val pendingPayment = SharedPreferencesManager(mContext).getPendingPayment()
+        return pendingPayment
+    }
+
     /*fun getQuestionsByModuleId(moduleId : Integer) : List<Question>{
         val json = SharedPreferencesManager(mContext).getJsonModules()
         Log.d(TAG, json)
