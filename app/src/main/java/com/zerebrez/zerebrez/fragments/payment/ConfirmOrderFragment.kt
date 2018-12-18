@@ -83,7 +83,10 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         mProgressBar = root.findViewById(R.id.pb_confirm_order)
         mCloseContainer = root.findViewById(R.id.rl_close_confirm_order)
 
-        mConfirmOrderButton.setOnClickListener {GenerateOrder()}
+        mConfirmOrderButton.setOnClickListener {
+            //OnFakeGenerateOrderSuccess()
+            GenerateOrder()
+        }
         mCloseContainer.setOnClickListener {
             if (activity != null) {
                 activity!!.onBackPressed()
@@ -124,6 +127,19 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
             Toast.makeText(activity, "Es necesario llenar todos los campos", Toast.LENGTH_SHORT).show()
     }
 
+    fun OnFakeGenerateOrderSuccess() {
+        ORDER_GENERATED=true
+        setPendingPayment(true)
+        setPaymentId("sdagIDSNFLDSJZBSF")
+
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestSendUserComproPago(user, "DSBNVIAEBSC34251KDBL", ComproPagoStatus.CHARGE_PENDING)
+        }
+
+        ErrorDialog.newInstance("Orden de pago generada", "Las instrucciones de pago llegarán al corrreo proporcionado, una vez realizado el pago obtendrás tu suscripción.",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
+    }
 
     fun OnGenerateOrderSuccess(response: Response<OrderResponse>?){
         if(response!=null){

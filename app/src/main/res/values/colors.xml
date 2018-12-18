@@ -72,6 +72,8 @@
     <color name="tips_text_color">#101E45</color>
     <color name="payment_text_color_1">#101E45</color>
     <color name="payment_text_color_2">#205A8F</color>
+    <color name="payment_email_text_color">#FBA428</color>
+    <color name="change_payment_method_background_color">#FF0416</color>
 
 
     <!--question module fragment-->

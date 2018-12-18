@@ -18,35 +18,41 @@
             android:layout_centerHorizontal="true"
             android:text="Pendiente de pago"
             android:textColor="@color/payment_text_color_1"
-            android:textStyle="bold"/>
+            android:textSize="25sp"/>
 
         <TextView
             android:id="@+id/tv_instruction_send_to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_pending_payment"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:layout_centerHorizontal="true"
             android:textColor="@color/payment_text_color_2"
-            android:text="Las instrucciones se enviaron a:" />
+            android:text="Las instrucciones se enviaron a:"
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/tv_email_to_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_instruction_send_to"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:text="email@email.com"/>
+            android:text="email@email.com"
+            android:textColor="@color/payment_email_text_color"
+            android:textSize="20sp"/>
 
         <Button
+            android:id="@+id/btn_change_payment_method"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_below="@+id/tv_email_to_send"
-            android:layout_marginTop="10dp"
-            android:text="Cambiar forma de pago"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/change_payment_method_background_button"
+            android:text="   Cambiar forma de pago   "/>
 
     </RelativeLayout>
 
