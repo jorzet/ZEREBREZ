@@ -70,6 +70,8 @@
     <color name="you_have_acces_of_all_contents_text_color">#205A8F</color>
     <color name="expiration_date_text_color">#F7921E</color>
     <color name="tips_text_color">#101E45</color>
+    <color name="payment_text_color_1">#101E45</color>
+    <color name="payment_text_color_2">#205A8F</color>
 
 
     <!--question module fragment-->

@@ -4,4 +4,52 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/tv_pending_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="Pendiente de pago"
+            android:textColor="@color/payment_text_color_1"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_instruction_send_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_pending_payment"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/payment_text_color_2"
+            android:text="Las instrucciones se enviaron a:" />
+
+        <TextView
+            android:id="@+id/tv_email_to_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_instruction_send_to"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="email@email.com"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_email_to_send"
+            android:layout_marginTop="10dp"
+            android:text="Cambiar forma de pago"/>
+
+    </RelativeLayout>
+
+
+
 </RelativeLayout>
