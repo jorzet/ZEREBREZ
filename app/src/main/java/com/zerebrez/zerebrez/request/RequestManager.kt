@@ -157,6 +157,24 @@ class RequestManager(activity : Activity) {
         firebase.requestSendUserComproPago(user, billingId, comproPagoStatus)
     }
 
+    fun requestRemoveCompropagoNode(user: User, onRemoveComproPagoNodeListener: OnRemoveComproPagoNodeListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeError(result)
+            }
+        })
+
+        firebase.requestRemoveCompropagoNode(user)
+    }
+
     /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
         val firebase = Firebase(mActivity)
 
@@ -500,6 +518,11 @@ class RequestManager(activity : Activity) {
     interface OnSendUserComproPagoListener {
         fun onSendUserComproPagoLoaded(success: Boolean)
         fun onSendUserComproPagoError(throwable: Throwable)
+    }
+
+    interface OnRemoveComproPagoNodeListener {
+        fun onRemoveComproPagoNodeLoaded(success: Boolean)
+        fun onRemoveComproPagoNodeError(throwable: Throwable)
     }
 
     interface OnGetModulesListener {

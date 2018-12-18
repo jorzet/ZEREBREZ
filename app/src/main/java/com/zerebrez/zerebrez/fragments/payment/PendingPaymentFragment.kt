@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.utils.FontUtil
 
 class PendingPaymentFragment : BaseContentFragment() {
@@ -45,7 +46,20 @@ class PendingPaymentFragment : BaseContentFragment() {
     }
 
     private val mChangePaymentMethodListener = View.OnClickListener {
+        val user = getUser()
+        if (user != null) {
+            requestRemoveCompropagoNode(user)
+            SharedPreferencesManager(context!!).storePendingPayment(false)
+            SharedPreferencesManager(context!!).storePaymentId("")
+        }
+    }
 
+    override fun onRemoveCompropagoNodeSuccess(success: Boolean) {
+        super.onRemoveCompropagoNodeSuccess(success)
+    }
+
+    override fun onRemoveCompropagoNodeFail(throwable: Throwable) {
+        super.onRemoveCompropagoNodeFail(throwable)
     }
 
 }

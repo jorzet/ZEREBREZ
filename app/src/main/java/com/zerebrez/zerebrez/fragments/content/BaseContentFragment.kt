@@ -661,4 +661,19 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onSendPasswordResetEmailSuccess(success: Boolean) {}
     open fun onSendPasswordResetEmailFail(throwable: Throwable) {}
 
+
+    fun requestRemoveCompropagoNode(user: User) {
+        mRequestManager.requestRemoveCompropagoNode(user, object : RequestManager.OnRemoveComproPagoNodeListener {
+            override fun onRemoveComproPagoNodeLoaded(success: Boolean) {
+                onRemoveCompropagoNodeSuccess(success)
+            }
+
+            override fun onRemoveComproPagoNodeError(throwable: Throwable) {
+                onRemoveCompropagoNodeFail(throwable)
+            }
+        })
+    }
+
+    open fun onRemoveCompropagoNodeSuccess(success: Boolean) {}
+    open fun onRemoveCompropagoNodeFail(throwable: Throwable) {}
 }

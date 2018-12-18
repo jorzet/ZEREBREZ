@@ -231,6 +231,23 @@ open class Firebase(activity: Activity) : Engagement(activity) {
         }
     }
 
+
+    fun requestRemoveCompropagoNode(userCache : User) {
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
+        mFirebaseDatabase.keepSynced(true)
+
+        val user = getCurrentUser()
+        if (user != null) {
+            mFirebaseDatabase
+                    .child(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY)
+                    .removeValue()
+
+        }
+    }
+
     fun requestSendUserComproPago(userCache : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
