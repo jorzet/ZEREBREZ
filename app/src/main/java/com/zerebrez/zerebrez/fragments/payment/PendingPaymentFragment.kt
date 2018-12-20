@@ -6,12 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.ui.activities.ContentActivity
+import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
 
-class PendingPaymentFragment : BaseContentFragment() {
+class PendingPaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener {
 
     private lateinit var mPendingPaymentTextView : TextView
     private lateinit var mInstructionsSendTo: TextView
@@ -30,9 +34,9 @@ class PendingPaymentFragment : BaseContentFragment() {
         mEmailToSend = rootView.findViewById(R.id.tv_email_to_send)
         mChangePaymentMethod = rootView.findViewById(R.id.btn_change_payment_method)
 
-        val user = getUser()
-        if (user != null) {
-            mEmailToSend.text = user.getEmail()
+        val userFirebase = FirebaseAuth.getInstance().currentUser
+        if (userFirebase != null) {
+            mEmailToSend.text = userFirebase.getEmail()
         }
 
         mPendingPaymentTextView.typeface = FontUtil.getNunitoBold(context!!)
@@ -56,10 +60,28 @@ class PendingPaymentFragment : BaseContentFragment() {
 
     override fun onRemoveCompropagoNodeSuccess(success: Boolean) {
         super.onRemoveCompropagoNodeSuccess(success)
+        if (activity != null) {
+            (activity as ContentActivity).changePendingPaymentMethodFragmentToPaywayFragment()
+        }
     }
 
     override fun onRemoveCompropagoNodeFail(throwable: Throwable) {
         super.onRemoveCompropagoNodeFail(throwable)
+        ErrorDialog.newInstance("Error",
+                "No se pudo cambiar el método de pago, intentalo más tarde",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
+    }
+
+    override fun onConfirmationCancel() {
+
+    }
+
+    override fun onConfirmationNeutral() {
+
+    }
+
+    override fun onConfirmationAccept() {
+
     }
 
 }

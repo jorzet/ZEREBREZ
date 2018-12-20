@@ -47,6 +47,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val UPDATE_WRONG_QUESTIONS : String = "update_wrong_questions"
         val REQUEST_NEW_QUESTION : String = "request_new_question"
         val QUESTION_POSITION : String = "question_position"
+        val REFRESH_FRAGMENT : String = "refresh_fragment"
         val SHOW_QUESTION_RESULT_CODE : Int = 1
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
@@ -311,8 +312,16 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
 
                         val user = getUser()
-                        if (user != null && !user.getCourse().equals("")) {
-                            requestSendUserComproPago(user, chargeResponse.id, ComproPagoStatus.CHARGE_SUCCESS)
+                        if (user != null) {
+
+                            val userFirebase = FirebaseAuth.getInstance().currentUser
+                            if (userFirebase != null && !userFirebase.email.equals("")) {
+                                user.setEmail(userFirebase.email!!)
+                            }
+
+                            if (!user.getCourse().equals("")) {
+                                requestSendUserComproPago(user, chargeResponse.id, ComproPagoStatus.CHARGE_SUCCESS)
+                            }
                         }
 
                         ErrorDialog.newInstance("Felicidades ya eres PREMIUM",

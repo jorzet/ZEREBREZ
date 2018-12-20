@@ -236,6 +236,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onActivityResult(requestCode, resultCode, data)
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
+
         if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
                 !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE) &&
                 !resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
@@ -243,6 +244,12 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             //if (showPayment) {
                 goPaymentFragment()
             //}
+        }
+
+        if (data != null) {
+            if (data.getBooleanExtra(REFRESH_FRAGMENT, false)) {
+                changePendingPaymentMethodFragmentToPaywayFragment()
+            }
         }
     }
 
@@ -557,6 +564,16 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         } else {
             return null
         }
+    }
+
+    public fun changePendingPaymentMethodFragmentToPaywayFragment() {
+        val tab = mBottomTabLayout.getTabAt(3)
+        tab!!.select()
+        currentTab = NodeType.PROFILE
+        setTopTabIcons()
+        // go to payment fragment
+        mViewPager.currentItem = 1
+        mViewPager.adapter!!.notifyDataSetChanged()
     }
 
 }

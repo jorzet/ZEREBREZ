@@ -126,8 +126,8 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     }
 
     /*
-                 * Dialog listeners
-                 */
+     * Dialog listeners
+     */
     override fun onConfirmationCancel() {
 
     }

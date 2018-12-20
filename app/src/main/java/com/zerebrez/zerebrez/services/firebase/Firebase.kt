@@ -241,10 +241,22 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
         val user = getCurrentUser()
         if (user != null) {
+
             mFirebaseDatabase
                     .child(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY)
-                    .removeValue()
-
+                    .removeValue().addOnCompleteListener(object: OnCompleteListener<Void> {
+                        override fun onComplete(task: Task<Void>) {
+                            if (task.isComplete) {
+                                Log.d(TAG, "complete requestSendUser")
+                                onRequestListenerSucces.onSuccess(true)
+                            } else {
+                                Log.d(TAG, "cancelled requestSendUser")
+                                val error = GenericError()
+                                error.setErrorType(ErrorType.USER_NOT_SENDED)
+                                onRequestLietenerFailed.onFailed(error)
+                            }
+                        }
+                    })
         }
     }
 

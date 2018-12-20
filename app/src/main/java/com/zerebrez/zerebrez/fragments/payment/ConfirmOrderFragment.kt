@@ -16,7 +16,10 @@
 
 package com.zerebrez.zerebrez.fragments.payment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +36,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.NetworkUtil
 import retrofit2.Response
@@ -146,7 +150,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
             if(response.code()<300 && response.code()>199){
                 val orderResponse = response.body()
                 if (orderResponse != null) {
-                    if(!orderResponse.short_id.equals("")) {
+                    if(orderResponse.short_id != null && !orderResponse.short_id.equals("")) {
                         ORDER_GENERATED=true
                         setPendingPayment(true)
                         setPaymentId(orderResponse.id)
@@ -223,6 +227,10 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     override fun onConfirmationNeutral() {
         if (ORDER_GENERATED) {
             if (activity != null) {
+
+                val data = Intent()
+                data.putExtra(BaseActivityLifeCycle.REFRESH_FRAGMENT, true)
+                activity!!.setResult(AppCompatActivity.RESULT_OK, data)
                 activity!!.finish()
             }
         } else
@@ -230,6 +238,8 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     override fun onConfirmationAccept() {
+        if (ORDER_GENERATED) {
 
+        }
     }
 }
