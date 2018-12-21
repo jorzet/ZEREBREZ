@@ -53,6 +53,7 @@ class SharedPreferencesManager(context: Context) {
     private val REMINDER_SATUS : String = "reminder_status"
     private val HAS_PENDING_PAYMENT : String = "has_pending_payment"
     private val PAYMENT_ID : String = "payment_id"
+    private val COURSE_PRICE : String = "course_price"
 
     /*
      * fragment tags
@@ -487,6 +488,17 @@ class SharedPreferencesManager(context: Context) {
     fun getPaymentId() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(PAYMENT_ID, "")
+    }
+
+    fun saveCoursePrice(coursePrice : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(COURSE_PRICE, coursePrice)
+        editor.apply()
+    }
+
+    fun getCoursePrice() : String {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(COURSE_PRICE, "")
     }
 
 }

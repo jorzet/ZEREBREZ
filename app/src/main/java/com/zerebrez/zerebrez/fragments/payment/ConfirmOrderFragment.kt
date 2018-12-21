@@ -36,6 +36,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.NetworkUtil
@@ -49,7 +50,7 @@ import retrofit2.Response
 class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDialogListener{
 
     private val TAG = "ProvidersFragment"
-    private val PRICE = 99.0f
+    private var PRICE = 99.0f
     private var ORDER_GENERATED = false
 
     private lateinit var mNameEditText: EditText
@@ -87,6 +88,10 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         mProgressBar = root.findViewById(R.id.pb_confirm_order)
         mCloseContainer = root.findViewById(R.id.rl_close_confirm_order)
 
+        PRICE = SharedPreferencesManager(context!!).getCoursePrice().toFloat()
+
+        mPriceTextView.text = "$${PRICE}"
+
         mConfirmOrderButton.setOnClickListener {
             //OnFakeGenerateOrderSuccess()
             GenerateOrder()
@@ -97,7 +102,6 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
             }
         }
 
-        mPriceTextView.text = "$${PRICE}"
         mComproPagoManager = ComproPagoManager()
 
         //Show provider information
@@ -227,7 +231,6 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     override fun onConfirmationNeutral() {
         if (ORDER_GENERATED) {
             if (activity != null) {
-
                 val data = Intent()
                 data.putExtra(BaseActivityLifeCycle.REFRESH_FRAGMENT, true)
                 activity!!.setResult(AppCompatActivity.RESULT_OK, data)

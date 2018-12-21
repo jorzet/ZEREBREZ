@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Module
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.PaywayActivityRefactor
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.FontUtil
@@ -189,6 +190,7 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         super.onGetCoursePriceSuccess(coursePrice)
         if (context != null) {
             if (coursePrice != null && !coursePrice.equals("")) {
+                SharedPreferencesManager(context!!).saveCoursePrice(coursePrice)
                 mPromoCourseWithPriceTextView.text = mPromoCourseWithPrice + coursePrice + "!"
             }
         }
@@ -197,6 +199,7 @@ class PaymentFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     override fun onGetCoursePriceFail(throwable: Throwable) {
         super.onGetCoursePriceFail(throwable)
         if (context != null) {
+            SharedPreferencesManager(context!!).saveCoursePrice("99")
             mPromoCourseWithPriceTextView.text = mPromoCourseWithPrice + "99!"
         }
     }
