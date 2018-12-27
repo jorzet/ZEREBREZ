@@ -676,4 +676,19 @@ abstract class BaseContentFragment : BaseFragment() {
 
     open fun onRemoveCompropagoNodeSuccess(success: Boolean) {}
     open fun onRemoveCompropagoNodeFail(throwable: Throwable) {}
+
+    fun requestGetCourseExamMaxScore(course: String) {
+        mRequestManager.requestGetCourseExamMaxScore(course, object: RequestManager.OnGetCourseExamMaxScore {
+            override fun onGetCourseExamMaxScoreLoaded(score: String) {
+                onGetCourseExamMaxScoreSuccess(score)
+            }
+
+            override fun onGetCourseExamMaxScoreError(throwable: Throwable) {
+                onGetCourseExamMexScoreFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCourseExamMaxScoreSuccess(score: String) {}
+    open fun onGetCourseExamMexScoreFail(throwable: Throwable) {}
 }

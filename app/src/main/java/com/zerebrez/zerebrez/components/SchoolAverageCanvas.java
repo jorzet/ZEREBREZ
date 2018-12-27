@@ -90,6 +90,10 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         this.userHits = userHits;
     }
 
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
+
     private int getChartStart(boolean considerUserHits) {
         List<Integer> scores = new ArrayList<>();
         for (int i = 0; i < mSchools.size(); i++) {

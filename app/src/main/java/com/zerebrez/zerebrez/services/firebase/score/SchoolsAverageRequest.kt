@@ -51,6 +51,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
      * Node references
      */
     private val INSTITUTES_REFERENCE : String = "schools/course_label"
+    private val SCORE_REFERENCE : String = "scores/course_label"
 
     /*
      * Json keys
@@ -327,6 +328,36 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                 }
             })
         }
+    }
+
+    fun requestGetCourseExamMaxScore(course: String) {
+        // Get a reference to our posts
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(SCORE_REFERENCE.replace(COURSE_LABEL, course))
+
+        mFirebaseDatabase.keepSynced(true)
+
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val score = (post as Long).toString()
+                    Log.d(TAG, "price data ------ " )
+                    onRequestListenerSucces.onSuccess(score)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
     }
 
 

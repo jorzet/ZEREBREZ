@@ -101,6 +101,47 @@ class SubjectListAdapter (subjects : List<SubjectRefactor>, context : Context) :
                 subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.fce_subject_background)
                 subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
             }
+
+            SubjectType.PHILOSOPHY_AREA -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.history_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.PHILOSOPHY_AREA_4 -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.history_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.PHILOSOPHY -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.history_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.LITERATURE -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.verbal_habilitiy_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.verbal_habilitiy_subject_color))
+            }
+            SubjectType.CHEMISTRY_AREA -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.chemistry_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.chemistry_subject_color))
+            }
+            SubjectType.CHEMISTRY_AREA_2 -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.chemistry_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.chemistry_subject_color))
+            }
+            SubjectType.MATEMATICS_AREA -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.mathematics_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+            }
+            SubjectType.MATEMATICS_AREA_1_2 -> {
+                subjectView.image.background = mContext.resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                subjectView.image_container.background = mContext.resources.getDrawable(R.drawable.mathematics_subject_background)
+                subjectView.tv_subject_name.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+            }
         }
 
         return subjectView

@@ -133,6 +133,54 @@ class AverageSubjectListAdapter (subjects : List<Subject>, context : Context) : 
                 averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
                 averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
             }
+            SubjectType.PHILOSOPHY_AREA -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_history_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.PHILOSOPHY_AREA_4 -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_history_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.PHILOSOPHY -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.filo_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_history_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.history_subject_color))
+            }
+            SubjectType.LITERATURE -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.hab_ver_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_hab_ver_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.verbal_habilitiy_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.verbal_habilitiy_subject_color))
+            }
+            SubjectType.CHEMISTRY_AREA -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.quim_plus_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_fce_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
+            }
+            SubjectType.CHEMISTRY_AREA_2 -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.quim_plus_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_fce_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.fce_subject_color))
+            }
+            SubjectType.MATEMATICS_AREA -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.mat_plus_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_mathematics_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+            }
+            SubjectType.MATEMATICS_AREA_1_2 -> {
+                averageBySubject.iv_average_by_subject.background = mContext.resources.getDrawable(R.drawable.mat_plus_subject_icon_blue)
+                averageBySubject.pb_average_by_subject.progressDrawable = mContext.resources.getDrawable(R.drawable.progress_mathematics_subject)
+                averageBySubject.tv_average_by_subject.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+                averageBySubject.subject_type.setTextColor(mContext.resources.getColor(R.color.mathematics_subject_color))
+            }
         }
 
         return averageBySubject

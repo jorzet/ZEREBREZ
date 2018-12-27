@@ -69,7 +69,11 @@ class SchoolsAverageFragment : BaseContentFragment() {
                 schoolAverageCanvas.setSchools(schools)
                 schoolAverageCanvas.invalidate()
                 //schoolAverageCanvas.setUserHits(1)
-                requestGetScoreLast128QuestionsExam()
+
+                val user = getUser()
+                if (user != null && !user.getCourse().equals("")) {
+                    requestGetCourseExamMaxScore(user.getCourse())
+                }
             }
         }
     }
@@ -80,13 +84,33 @@ class SchoolsAverageFragment : BaseContentFragment() {
             (activity as ContentActivity).showLoading(false)
     }
 
-    override fun onGetScoreLast128QuestionsExamSuccess(score: Int) {
-        super.onGetScoreLast128QuestionsExamSuccess(score)
-        schoolAverageCanvas.setUserHits(score)
-        schoolAverageCanvas.invalidate()
-        mNot128ExmanQuestionDitIt.visibility = View.GONE
+
+    override fun onGetCourseExamMaxScoreSuccess(score: String) {
+        super.onGetCourseExamMaxScoreSuccess(score)
+
+        if (context != null) {
+            schoolAverageCanvas.setMaxHits(score.toInt())
+            schoolAverageCanvas.invalidate()
+            mNot128ExmanQuestionDitIt.text = "Aún no tienes examenes de ${score} preguntas contestados"
+            requestGetScoreLast128QuestionsExam()
+        }
+    }
+
+    override fun onGetCourseExamMexScoreFail(throwable: Throwable) {
+        super.onGetCourseExamMexScoreFail(throwable)
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetScoreLast128QuestionsExamSuccess(score: Int) {
+        super.onGetScoreLast128QuestionsExamSuccess(score)
+        if (context != null) {
+            schoolAverageCanvas.setUserHits(score)
+            schoolAverageCanvas.invalidate()
+            mNot128ExmanQuestionDitIt.visibility = View.GONE
+            if (activity != null)
+                (activity as ContentActivity).showLoading(false)
+        }
     }
 
     override fun onGetScoreLast128QuestionsExamFail(throwable: Throwable) {

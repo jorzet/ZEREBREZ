@@ -28,6 +28,7 @@ import com.zerebrez.zerebrez.adapters.ExamScoreListAdapter
 import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.Subject
+import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -65,6 +66,11 @@ class AdvancesFragment : BaseContentFragment() {
      */
     private lateinit var examScoreListAdapter : ExamScoreListAdapter
     private lateinit var averageSubjectListAdapter: AverageSubjectListAdapter
+
+    /*
+     * Objects
+     */
+    private lateinit var subjects : List<SubjectRefactor>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -109,7 +115,10 @@ class AdvancesFragment : BaseContentFragment() {
             requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
 
             mLoadingAverageBySubject.visibility = View.VISIBLE
-            requestGetAverageSubjects(user.getCourse())
+
+            requestGetSubjects(user.getCourse())
+
+
         }
 
 
@@ -119,6 +128,24 @@ class AdvancesFragment : BaseContentFragment() {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {
+        super.onGetSubjectsSuccess(subjects)
+
+        if (context != null) {
+            this.subjects = subjects
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetAverageSubjects(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetSubjectsFail(throwable: Throwable) {
+        super.onGetSubjectsFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
     }
 
     override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
@@ -192,7 +219,8 @@ class AdvancesFragment : BaseContentFragment() {
                 val subjects = setSubjectsInZero()
 
             } else {
-                averageSubjectListAdapter = AverageSubjectListAdapter(subjects2, context!!)
+                val subjects = getSubjects(subjects2)
+                averageSubjectListAdapter = AverageSubjectListAdapter(subjects, context!!)
                 mAverageSubjectList.adapter = averageSubjectListAdapter
             }
         }
@@ -277,6 +305,27 @@ class AdvancesFragment : BaseContentFragment() {
         subjects.add(subject11)
 
         return subjects
+    }
+
+    private fun getSubjects(subjects: List<Subject>) : List<Subject>{
+        val subjects2 = arrayListOf<Subject>()
+
+        for (subject2 in this.subjects) {
+            val subject = Subject()
+            subject.setSubjectType(subject2.subjectType)
+            subject.setSubjectAverage(0.0)
+            subjects2.add(subject)
+        }
+
+        for (subject in subjects) {
+            for (subject2 in subjects2) {
+                if (subject2.getsubjectType().equals(subject.getsubjectType())) {
+                    subject2.setSubjectAverage(subject.getSubjectAverage())
+                }
+            }
+        }
+
+        return subjects2
     }
 
 }

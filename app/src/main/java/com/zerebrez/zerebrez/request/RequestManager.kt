@@ -1182,6 +1182,24 @@ class RequestManager(activity : Activity) {
         schoolsAverageRequest.requestGetScoreLast128QuestionsExam()
     }
 
+    fun requestGetCourseExamMaxScore(course: String, onGetCourseExamMaxScore: OnGetCourseExamMaxScore) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreLoaded(result as String)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetCourseExamMaxScore(course)
+    }
+
     interface OnGetUserSelectedSchoolsRefactorListener {
         fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>)
         fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable)
@@ -1191,6 +1209,13 @@ class RequestManager(activity : Activity) {
         fun onGetScoreLast128QuestionsExamLoaded(score: Int)
         fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
     }
+
+    interface  OnGetCourseExamMaxScore {
+        fun onGetCourseExamMaxScoreLoaded(score: String)
+        fun onGetCourseExamMaxScoreError(throwable: Throwable)
+    }
+
+
 
     fun requestGetSchools(course: String, onGetSchoolsListener : OnGetSchoolsListener) {
         val schoolsRequest = SchoolsRequest(mActivity)

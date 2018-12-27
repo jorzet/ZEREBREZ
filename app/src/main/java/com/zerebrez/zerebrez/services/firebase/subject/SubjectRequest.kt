@@ -112,6 +112,30 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
                                 limpiarTexto(SubjectType.FCE2.value) -> {
                                     subject.subjectType = SubjectType.FCE2
                                 }
+                                limpiarTexto("filosofiaarea") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA
+                                }
+                                limpiarTexto("filosofia(area4)") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA_4
+                                }
+                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY
+                                }
+                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                    subject.subjectType = SubjectType.LITERATURE
+                                }
+                                limpiarTexto("quimicaarea") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA
+                                }
+                                limpiarTexto("quimica(area2)") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA_2
+                                }
+                                limpiarTexto("matematicasarea") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA
+                                }
+                                limpiarTexto("matematicas(area1y2)") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA_1_2
+                                }
                             }
                         }
                         subjects.add(subject)

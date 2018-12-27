@@ -298,6 +298,30 @@ class StudyWrongQuestionFragment : BaseContentFragment() {
                         limpiarTexto(SubjectType.FCE2.value) -> {
                             image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                         }
+                        limpiarTexto(SubjectType.PHILOSOPHY_AREA.value) -> {
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.PHILOSOPHY_AREA_4.value) -> {
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.LITERATURE.value) -> {
+                            image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.CHEMISTRY_AREA.value) -> {
+                            image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.CHEMISTRY_AREA_2.value) -> {
+                            image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.MATEMATICS_AREA.value) -> {
+                            image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                        }
+                        limpiarTexto(SubjectType.MATEMATICS_AREA_1_2.value) -> {
+                            image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                        }
                         limpiarTexto(SubjectType.NONE.value) -> {
                             //image.background = resources.getDrawable(R.drawable.main_icon)
                         }
