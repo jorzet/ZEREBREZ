@@ -21,6 +21,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 
 import com.zerebrez.zerebrez.R;
@@ -234,6 +237,25 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
 
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
+
+
+        /*
+         * Draw percentage line
+         */
+        Rect firstLine = new Rect(xPos - mProgressBarWidth - offset,
+                yPos - mLineProgressBarWidth/2,
+                xPos - mProgressBarWidth,
+                yPos + mLineProgressBarWidth/2);
+        paint.setColor(getResources().getColor(R.color.school_text_color));
+        canvas.drawRect(firstLine, paint);
+
+        Rect secondLine = new Rect(xPos + mProgressBarWidth,
+                yPos - mLineProgressBarWidth/2,
+                xPos + mProgressBarWidth + offset,
+                yPos + mLineProgressBarWidth/2);
+        paint.setColor(getResources().getColor(R.color.my_score_text_color));
+        canvas.drawRect(secondLine, paint);
+
         /*
          * Draw school name
          */
@@ -258,7 +280,37 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         paint.setColor(textSchoolColor);
         paint.setTextSize(textSizeSchool);
         paint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
-        canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
+
+        TextPaint textPaint = new TextPaint();
+        textPaint.setColor(textSchoolColor);
+        textPaint.setTextSize(textSizeSchool);
+        textPaint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
+        textPaint.measureText(text, 0, text.length());
+
+        StaticLayout staticLayout = new StaticLayout(text, textPaint, xPos - offset - firstLine.width() - offset - offset,
+                Layout.Alignment.ALIGN_OPPOSITE, 1, 1, true);
+
+        if (staticLayout.getLineCount() > 1) {
+            //boundsSchool.left += areaRectSchool.width() / 2.0f;
+
+            canvas.save();
+            float textHeight = getTextHeight(text, textPaint);
+            int numberOfTextLines = staticLayout.getLineCount();
+            float textYCoordinate = boundsSchool.top - paint.ascent() -
+                    ((numberOfTextLines * textHeight) / 2);
+
+            //text will be drawn from left
+            float textXCoordinate = areaRectSchool.width() / 2.0f - offset - offset ;
+
+            canvas.translate(textXCoordinate, textYCoordinate);
+
+            //draws static layout on canvas
+            staticLayout.draw(canvas);
+            canvas.restore();
+
+        } else {
+            canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
+        }
 
         /*
          * Draw school hits
@@ -288,22 +340,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
         canvas.drawText(hitsText, boundsHits.left, boundsHits.top - paint.ascent(), paint);
 
-        /*
-         * Draw percentage line
-         */
-        Rect firstLine = new Rect(xPos - mProgressBarWidth - offset,
-                yPos - mLineProgressBarWidth/2,
-                xPos - mProgressBarWidth,
-                yPos + mLineProgressBarWidth/2);
-        paint.setColor(getResources().getColor(R.color.school_text_color));
-        canvas.drawRect(firstLine, paint);
 
-        Rect secondLine = new Rect(xPos + mProgressBarWidth,
-                yPos - mLineProgressBarWidth/2,
-                xPos + mProgressBarWidth + offset,
-                yPos + mLineProgressBarWidth/2);
-        paint.setColor(getResources().getColor(R.color.my_score_text_color));
-        canvas.drawRect(secondLine, paint);
 
     }
 
@@ -363,5 +400,15 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                 yPos + mLineProgressBarWidth/2);
         paint.setColor(getResources().getColor(R.color.my_score_text_color));
         canvas.drawRect(secondLine, paint);
+    }
+
+    /**
+     * @return text height
+     */
+    private float getTextHeight(String text, Paint paint) {
+
+        Rect rect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), rect);
+        return rect.height();
     }
 }

@@ -36,6 +36,7 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
+import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
@@ -63,6 +64,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     private lateinit var mScrollView: ScrollView
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mCloseContainer: RelativeLayout
+    private lateinit var mCourseDescriptionTextView: TextView
 
     private var mProvider: Provider? = null
     private lateinit var mComproPagoManager: ComproPagoManager
@@ -75,20 +77,30 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.confirm_order_fragment, container, false)!!
 
-        mNameEditText = root.findViewById(R.id.et_order_name)
-        mLastNameEditText = root.findViewById(R.id.et_order_last_name)
-        mEmailEditText = root.findViewById(R.id.et_order_mail)
-        mPriceTextView = root.findViewById(R.id.tv_suscription_price)
-        mProvierImageView = root.findViewById(R.id.iv_order_provider_icon)
-        mComissionTextView = root.findViewById(R.id.tv_order_provider_comision)
-        mConfirmOrderButton = root.findViewById(R.id.btn_order_confirm)
-        mScrollView = root.findViewById(R.id.sv_confirm_order)
-        mProgressBar = root.findViewById(R.id.pb_confirm_order)
-        mCloseContainer = root.findViewById(R.id.rl_close_confirm_order)
+        val rootView = inflater.inflate(R.layout.confirm_order_fragment, container, false)!!
+
+        mNameEditText = rootView.findViewById(R.id.et_order_name)
+        mLastNameEditText = rootView.findViewById(R.id.et_order_last_name)
+        mEmailEditText = rootView.findViewById(R.id.et_order_mail)
+        mPriceTextView = rootView.findViewById(R.id.tv_suscription_price)
+        mProvierImageView = rootView.findViewById(R.id.iv_order_provider_icon)
+        mComissionTextView = rootView.findViewById(R.id.tv_order_provider_comision)
+        mConfirmOrderButton = rootView.findViewById(R.id.btn_order_confirm)
+        mScrollView = rootView.findViewById(R.id.sv_confirm_order)
+        mProgressBar = rootView.findViewById(R.id.pb_confirm_order)
+        mCloseContainer = rootView.findViewById(R.id.rl_close_confirm_order)
+        mCourseDescriptionTextView = rootView.findViewById(R.id.tv_suscription_details)
 
         PRICE = SharedPreferencesManager(context!!).getCoursePrice().toFloat()
+        val user = getUser()
+
+        if (user != null && !user.getCourse().equals("")) {
+            val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
+            if (course != null) {
+                mCourseDescriptionTextView.text = course.comproPagoDescription
+            }
+        }
 
         mPriceTextView.text = "$${PRICE}"
 
@@ -108,7 +120,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         SetEmailIfUser()
         ShowProviderInformation()
 
-        return root
+        return rootView
     }
 
     private fun GenerateOrder() {
@@ -118,16 +130,28 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@") && activity != null){
             if (NetworkUtil.isConnected(this.activity!!)) {
                 setWaitScreen(true)
-                mComproPagoManager.GenerateOrder("$name $lastName", email, mProvider!!.internal_name, PRICE, object: ComproPagoManager.OnGenerateOrderListener{
-                    override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
-                        OnGenerateOrderSuccess(response)
+
+                if (context != null) {
+                    val user = getUser()
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
+                        if (course != null) {
+                            mComproPagoManager.GenerateOrder(course, "$name $lastName", email, mProvider!!.internal_name, PRICE, object : ComproPagoManager.OnGenerateOrderListener {
+                                override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
+                                    OnGenerateOrderSuccess(response)
+                                }
+
+                                override fun onGenerateOrderFailure(throwable: Throwable?) {
+                                    OnGenerateOrderError(throwable)
+                                }
+
+                            })
+                        }
                     }
 
-                    override fun onGenerateOrderFailure(throwable: Throwable?) {
-                        OnGenerateOrderError(throwable)
-                    }
+                }
 
-                })
             } else
                 SendRequestErrorMessage()
         }

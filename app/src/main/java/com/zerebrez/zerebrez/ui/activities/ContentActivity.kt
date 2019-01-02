@@ -54,6 +54,7 @@ import com.zerebrez.zerebrez.fragments.practice.StudySubjectQuestionsFragment
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 /**
  * This class call all components and adapters to build home view
@@ -196,6 +197,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
         //requestGetExamScores()
         requestGetProfileRefactor()
+        requestGetCoursesRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
         mBottomTabLayout.setOnTabSelectedListener(onBottomTabLayoutListener)
@@ -462,6 +464,15 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
         super.onGetProfileRefactorFail(throwable)
+    }
+
+    override fun onGetCoursesRefactorSuccess(courses: List<Course>) {
+        super.onGetCoursesRefactorSuccess(courses)
+        DataHelper(this).saveCourses(courses)
+    }
+
+    override fun onGetCoursesRefactorFail(throwable: Throwable) {
+        super.onGetCoursesRefactorFail(throwable)
     }
 
     /*override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {

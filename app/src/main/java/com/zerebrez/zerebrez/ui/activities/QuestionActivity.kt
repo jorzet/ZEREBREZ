@@ -669,13 +669,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         exam.setMisses(mIncorrectQiestions)
         exam.setAnsweredExam(true)
 
-            requestSendAnsweredExams(exam, mCourse)
-            //requestSendAnsweredQuestions(mQuestions, mCourse)
+        requestSendAnsweredExams(exam, mCourse)
+        //requestSendAnsweredQuestions(mQuestions, mCourse)
         requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
-            mExamAnsQuestionsSaved = true
-            showQuestionsCompleteFragment()
-            // this is called on QuestionsCompleteFragment
-            //onBackPressed()
+        mExamAnsQuestionsSaved = true
+        showQuestionsCompleteFragment()
+        // this is called on QuestionsCompleteFragment
+        //onBackPressed()
         //}
 
     }

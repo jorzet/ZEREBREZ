@@ -91,6 +91,9 @@ class ExamsAverageFragment : BaseContentFragment() {
 
     override fun onGetExamScoreRefactorFail(throwable: Throwable) {
         super.onGetExamScoreRefactorFail(throwable)
+
+        examsAverageListView.visibility = View.GONE
+        notExamsDidIt.visibility = View.VISIBLE
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
     }

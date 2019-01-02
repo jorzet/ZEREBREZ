@@ -27,6 +27,7 @@ import com.zerebrez.zerebrez.adapters.AverageSubjectListAdapter
 import com.zerebrez.zerebrez.adapters.ExamScoreListAdapter
 import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
 import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.User
@@ -71,6 +72,7 @@ class AdvancesFragment : BaseContentFragment() {
      * Objects
      */
     private lateinit var subjects : List<SubjectRefactor>
+    private var mUpdatedExams : List<Exam> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -112,7 +114,7 @@ class AdvancesFragment : BaseContentFragment() {
             mLoadingHitssUser.visibility = View.VISIBLE
             mLoadingMissesUser.visibility = View.VISIBLE
             mLoadingUserExamsProgressBar.visibility = View.VISIBLE
-            requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+            requestGetExamsRefactor(user.getCourse())
 
             mLoadingAverageBySubject.visibility = View.VISIBLE
 
@@ -146,6 +148,32 @@ class AdvancesFragment : BaseContentFragment() {
         super.onGetSubjectsFail(throwable)
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
+        super.onGetExamsRefactorSuccess(exams)
+        if (context != null) {
+            mUpdatedExams = exams
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetExamsRefactorFail(throwable: Throwable) {
+        super.onGetExamsRefactorFail(throwable)
+
+        mLoadingNumAnsweredQuestions.visibility = View.GONE
+        mLoadingHitssUser.visibility = View.GONE
+        mLoadingMissesUser.visibility = View.GONE
+        mLoadingUserExamsProgressBar.visibility = View.GONE
+
+        mExamList.visibility = View.GONE
+        mNotExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+
     }
 
     override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
@@ -185,6 +213,15 @@ class AdvancesFragment : BaseContentFragment() {
                 mExamList.visibility = View.GONE
                 mNotExamsDidIt.visibility = View.VISIBLE
             } else {
+
+                // update answeredExams List
+                for (i in 0..mUpdatedExams.size - 1) {
+                    for (answeredExam in answeredExams) {
+                        if (mUpdatedExams.get(i).getExamId().equals(answeredExam.getExamId())) {
+                            answeredExam.setDescription(mUpdatedExams[i].getDescription())
+                        }
+                    }
+                }
                 mLoadingUserExamsProgressBar.visibility = View.GONE
                 examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
                 mExamList.adapter = examScoreListAdapter

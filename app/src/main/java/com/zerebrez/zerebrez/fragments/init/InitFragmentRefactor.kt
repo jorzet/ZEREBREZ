@@ -92,10 +92,12 @@ class InitFragmentRefactor : BaseContentFragment(), AdapterView.OnItemClickListe
 
             mCourses = courses
 
+            DataHelper(context!!).saveCourses(courses)
+
             if (context != null) {
                 val courseListAdapter = CourseListAdapter(context!!, mCourses)
                 mCourseListView.adapter = courseListAdapter
-                mCourseListView.setOnItemClickListener(this)
+                mCourseListView.onItemClickListener = this
             } else {
                 if (activity != null) {
                     activity!!.onBackPressed()

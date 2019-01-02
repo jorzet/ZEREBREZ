@@ -148,6 +148,39 @@ class DataHelper(context: Context) {
         return pendingPayment
     }
 
+    fun saveCourses(courses: List<Course>) {
+        val json = JsonParcer.parceObjectListToJson(courses)
+        SharedPreferencesManager(mContext).storeJsonCourses(json)
+    }
+
+    fun getCourses(): List<Course> {
+        val json = SharedPreferencesManager(mContext).getJsonCourses()
+        val courses = arrayListOf<Course>()
+        val coursesArray = JSONArray(json)
+        for (i in 0 .. coursesArray.length() - 1) {
+            courses.add(JsonParcer.getObjectFromJson(coursesArray.get(i).toString(), Course::class.java) as Course)
+        }
+
+        return courses
+    }
+
+    fun getCourseFromUserCourse(course: String): Course? {
+        val json = SharedPreferencesManager(mContext).getJsonCourses()
+        val courses = arrayListOf<Course>()
+        val coursesArray = JSONArray(json)
+        for (i in 0 .. coursesArray.length() - 1) {
+            courses.add(JsonParcer.getObjectFromJson(coursesArray.get(i).toString(), Course::class.java) as Course)
+        }
+
+        for (mCourse in courses) {
+            if (mCourse.id.equals(course)) {
+                return mCourse
+            }
+        }
+
+        return null
+    }
+
     /*fun getQuestionsByModuleId(moduleId : Integer) : List<Question>{
         val json = SharedPreferencesManager(mContext).getJsonModules()
         Log.d(TAG, json)

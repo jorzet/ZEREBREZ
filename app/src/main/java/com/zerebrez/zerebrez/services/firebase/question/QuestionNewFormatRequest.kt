@@ -47,8 +47,8 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
     /*
      * Node references
      */
-    private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "course_label/question_id"
-    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "course_label"
+    private val COURSE_QUESTION_NEW_FORMAT_REFERENCE : String = "course_label/question_id"
+    private val COURSE_QUESTIONS_NEW_FORMAT_REFERENCE : String = "course_label"
     private val MODULES_REFERENCE : String = "modules/course_label"
     private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label/subject_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
@@ -230,7 +230,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
                 .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
-                .getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
+                .getReference(COURSE_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -330,7 +330,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
                 .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
-                .getReference(COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
+                .getReference(COURSE_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
 
         mFirebaseDatabase.keepSynced(true)
 

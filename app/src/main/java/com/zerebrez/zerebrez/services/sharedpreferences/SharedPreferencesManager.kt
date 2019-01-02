@@ -17,6 +17,7 @@
 package com.zerebrez.zerebrez.services.sharedpreferences
 
 import android.content.Context
+import com.zerebrez.zerebrez.models.Course
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -49,6 +50,7 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_IMAGES_PATH : String = "json_images_path"
     private val JSON_CURRENT_QUESTION : String = "json_current_question"
     private val JSON_CURRENT_QUESTION_NEW_FORMAT : String = "json_current_question_new_format"
+    private val JSON_COURSES : String = "json_courses"
     private val NOTIFICATION_TIME : String = "notification_time"
     private val REMINDER_SATUS : String = "reminder_status"
     private val HAS_PENDING_PAYMENT : String = "has_pending_payment"
@@ -499,6 +501,17 @@ class SharedPreferencesManager(context: Context) {
     fun getCoursePrice() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(COURSE_PRICE, "")
+    }
+
+    fun storeJsonCourses(jsonCourses: String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(JSON_COURSES, jsonCourses)
+        editor.apply()
+    }
+
+    fun getJsonCourses() : String{
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(JSON_COURSES, "")
     }
 
 }

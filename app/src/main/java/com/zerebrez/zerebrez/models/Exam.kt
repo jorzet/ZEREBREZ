@@ -31,6 +31,7 @@ class Exam {
     private var questionsNewFormat : List<QuestionNewFormat> = arrayListOf()
     private var answeredExam : Boolean = false
     private var isFreeExam : Boolean = false
+    private var description : String = ""
 
     fun setExamId(examId : Integer) {
         this.examId = examId
@@ -118,5 +119,13 @@ class Exam {
 
     fun isFreeExam() : Boolean {
         return this.isFreeExam
+    }
+
+    fun setDescription(description : String) {
+        this.description = description
+    }
+
+    fun getDescription() : String {
+        return this.description
     }
 }

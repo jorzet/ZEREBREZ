@@ -36,14 +36,6 @@ public class ComproPagoManager {
     private static final String SK_TEST = "sk_test_7be79c8752725ac584";
     private static final String PK_LIVE = "pk_live_518507516122571bf3";
     private static final String SK_LIVE = "sk_live_5be40752805f3573e6";
-    private OrderRequest orderRequest = new OrderRequest("comipems",
-                                                        0.0f,
-                                                        "COMIPEMS 12 meses",
-                                                          "",
-                                                      "",
-                                                      "",
-                                                        "",
-                                                            "MXN");
 
     public ComproPagoManager() {
         comproPagoAPI = RetrofitClientInstance.getRetrofitInstance(BASE_URL).create(ComproPagoAPI.class);
@@ -64,7 +56,16 @@ public class ComproPagoManager {
         });
     }
 
-    public void GenerateOrder(String customerName, String customerEmail, String paymentType, Float orderPrice, final OnGenerateOrderListener onGenerateOrderListener) {
+    public void GenerateOrder(Course course, String customerName, String customerEmail, String paymentType, Float orderPrice, final OnGenerateOrderListener onGenerateOrderListener) {
+
+        OrderRequest orderRequest = new OrderRequest(course.getId(),
+                0.0f,
+                course.getComproPagoDescription(),
+                "",
+                "",
+                "",
+                "",
+                "MXN");
         orderRequest.setCustomer_name(customerName);
         orderRequest.setCustomer_email(customerEmail);
         orderRequest.setPayment_type(paymentType);

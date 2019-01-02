@@ -713,4 +713,19 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
 
     open fun onSendUserComproPagoSuccess(success: Boolean) {}
     open fun onSendUserComproPagoFail(throwable: Throwable) {}
+
+    fun requestGetCoursesRefactor() {
+        mRequestManager.requestGetCoursesrefactor(object : RequestManager.OnGetCourseRefactorListener {
+            override fun onGetCoursesRefactorLoaded(courses: List<Course>) {
+                onGetCoursesRefactorSuccess(courses)
+            }
+
+            override fun onGetCoursesRefactorError(throwable: Throwable) {
+                onGetCoursesRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
+    open fun onGetCoursesRefactorFail(throwable: Throwable) {}
 }

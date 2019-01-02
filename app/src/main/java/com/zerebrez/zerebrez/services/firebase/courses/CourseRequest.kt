@@ -74,7 +74,7 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
                         courses.add(course)
                     }
 
-                    Collections.sort(courses, object : Comparator<Course> {
+                    /*Collections.sort(courses, object : Comparator<Course> {
                         override fun compare(o1: Course, o2: Course): Int {
                             return extractInt(o1) - extractInt(o2)
                         }
@@ -84,7 +84,7 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
                             // return 0 if no digits found
                             return if (num.isEmpty()) 0 else Integer.parseInt(num)
                         }
-                    })
+                    })*/
 
                     Log.d(TAG, "courses data ------ " )
                     onRequestListenerSucces.onSuccess(courses)
