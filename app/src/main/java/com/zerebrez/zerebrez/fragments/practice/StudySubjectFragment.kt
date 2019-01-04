@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.zerebrez.zerebrez.adapters.SubjectListAdapter
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.enums.DialogType
+import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -112,7 +113,7 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
         if (updatedsubjects.isNotEmpty()) {
-            goStudySubjectQuestionFragment(updatedsubjects[position].internalName)
+            goStudySubjectQuestionFragment(updatedsubjects[position].internalName, updatedsubjects[position].subjectType)
             //goQuestionActivity(updatedsubjects[position].internalName)
         } else {
             ErrorDialog.newInstance("Ocurrió un problema, vuelve a intentarlo", DialogType.OK_DIALOG, this)!!
@@ -162,10 +163,11 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
 
     }
 
-    private fun goStudySubjectQuestionFragment(selectedSubject : String) {
+    private fun goStudySubjectQuestionFragment(selectedSubject : String, selectedSubjectType: SubjectType) {
         try {
             studyQuestionFragment = StudySubjectQuestionsFragment()
             (studyQuestionFragment as StudySubjectQuestionsFragment).setSelectedSubject(selectedSubject)
+            (studyQuestionFragment as StudySubjectQuestionsFragment).setSelectedSubjectType(selectedSubjectType)
             val transaction = fragmentManager!!.beginTransaction()
             transaction.replace(R.id.study_questions_subject_fragment_container, studyQuestionFragment)
             transaction.commit()

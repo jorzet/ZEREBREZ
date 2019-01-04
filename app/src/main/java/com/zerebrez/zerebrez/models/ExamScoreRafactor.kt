@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ data class ExamScoreRafactor (
         @Expose
         var best: Double = 0.0,
         // this is to identify exam exmp. e1, e2, e3
+        var examDescription: String,
         var examId: String = "",
         var userScore : Integer = Integer(0),
         var totalNumberOfQuestions : Integer = Integer(0)

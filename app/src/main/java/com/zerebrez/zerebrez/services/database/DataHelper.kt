@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@ class DataHelper(context: Context) {
     private val mContext : Context = context
 
     val dbHelper = DataBase(context)
+
+    fun setisAfterLogIn(afterLogin: Boolean) {
+        SharedPreferencesManager(mContext).storeAfterLogin(afterLogin)
+    }
+
+    fun isAfterLogIn() : Boolean {
+        return SharedPreferencesManager(mContext).getIsAfterLogIn()
+    }
 
     fun saveSessionData(hasSessionData : Boolean) {
         SharedPreferencesManager(mContext).storeLogInData(hasSessionData)

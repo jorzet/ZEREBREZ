@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ class DownloadImages: Service() {
         const val TAG : String = "DownloadImages"
         const val DOWNLOAD_IMAGES_BR = "com.zerebrez.zerebrez.services.firebase.DownloadImages"
         const val DOWNLOAD_COMPLETE = "download_complete"
+        const val DOWNLOAD_PROGRESS = "download_progress"
     }
 
     /*
@@ -52,6 +53,13 @@ class DownloadImages: Service() {
      * images list path
      */
     private lateinit var mImages : List<Image>
+
+    /*
+     * Variable
+     */
+    private var downloadProgress = 0
+    private var downloadCount = 0
+    private var downloadWithError = false
 
     override fun onCreate() {
         super.onCreate()
@@ -69,15 +77,42 @@ class DownloadImages: Service() {
 
                 downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
                     override fun onSuccess(result: Any) {
-                        bi.putExtra(DOWNLOAD_COMPLETE, true)
-                        sendBroadcast(bi)
+                        //bi.putExtra(DOWNLOAD_COMPLETE, true)
+                        //sendBroadcast(bi)
                     }
                 })
 
                 downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
                     override fun onFailed(result: Throwable) {
-                        bi.putExtra(DOWNLOAD_COMPLETE, false)
+                        //bi.putExtra(DOWNLOAD_COMPLETE, false)
+                        //sendBroadcast(bi)
+                    }
+                })
+
+                downloadImageTask.setOnDownloadStatus(object: AbstractRequestTask.OnDownloadStatusListener {
+                    override fun onImageDownloaded() {
+                        downloadCount++
+                        downloadProgress = (downloadCount * 100) / mImages.size
+                        bi.putExtra(DOWNLOAD_PROGRESS, downloadProgress)
                         sendBroadcast(bi)
+                        if (downloadCount == mImages.size - 1) {
+                            bi.putExtra(DOWNLOAD_COMPLETE, true)
+                            sendBroadcast(bi)
+                        }
+                    }
+                    override fun onImagesError() {
+                        downloadCount++
+                        downloadProgress = (downloadCount * 100) / mImages.size
+
+                        downloadWithError = true
+
+                        bi.putExtra(DOWNLOAD_PROGRESS, downloadProgress)
+                        sendBroadcast(bi)
+
+                        if (downloadCount == mImages.size - 1) {
+                            bi.putExtra(DOWNLOAD_COMPLETE, false)
+                            sendBroadcast(bi)
+                        }
                     }
                 })
 

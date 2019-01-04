@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,7 +218,7 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                 param.leftMargin = 2
                 param.topMargin = 2
                 param.setGravity(Gravity.CENTER)
-                view.setOnClickListener(View.OnClickListener {
+                view.setOnClickListener {
                     if (mUser.isPremiumUser() || module.isFreeModule()) {
                         val textView: TextView = view.findViewById(R.id.text)
                         val text: String = textView.text.toString()
@@ -227,10 +227,10 @@ class QuestionModulesFragment : BaseContentFragment(), ErrorDialog.OnErrorDialog
                     } else {
                         (activity as ContentActivity).goPaymentFragment()
                         /*ErrorDialog.newInstance("Vuelvete premium para desbloquear mas módulos",
-                                DialogType.OK_DIALOG, this)!!
-                                .show(fragmentManager!!, "")*/
+                                        DialogType.OK_DIALOG, this)!!
+                                        .show(fragmentManager!!, "")*/
                     }
-                })
+                }
 
             }
 

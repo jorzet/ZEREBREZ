@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -165,6 +165,10 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     private fun goChooseSchoolActivity() {
         if (activity != null) {
+            if (context !=  null) {
+                DataHelper(context!!).setisAfterLogIn(true)
+            }
+
             val intent = Intent(activity, ChooseSchoolsActivity::class.java)
             intent.putExtra(SHOW_CONTINUE_BUTTON, true)
             intent.putExtra(SHOW_BACK_BUTTON, false)

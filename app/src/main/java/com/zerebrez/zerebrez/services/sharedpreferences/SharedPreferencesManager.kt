@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_PREMIUM_MODULES : String = "json_premium_modules"
     private val JSON_PREMIUM_EXAMS : String = "json_premium_exams"
     private val PERSISTANCE_DATA : String = "persistance_data"
+    private val AFTER_LOGIN : String = "after_login"
     private val IMAGES_DOWNLOADED : String = "images_downloaded"
     private val IS_LOGGED_IN : String = "is_logged_in"
     private val JSON_INSTITUTES : String = "json_institutes"
@@ -512,6 +513,17 @@ class SharedPreferencesManager(context: Context) {
     fun getJsonCourses() : String{
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(JSON_COURSES, "")
+    }
+
+    fun storeAfterLogin(afterLogIn: Boolean) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(AFTER_LOGIN, afterLogIn)
+        editor.apply()
+    }
+
+    fun getIsAfterLogIn() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(AFTER_LOGIN, false)
     }
 
 }

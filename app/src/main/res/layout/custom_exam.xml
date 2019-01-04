@@ -25,7 +25,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/exam_text"
                 android:textColor="@color/exam_text_color"
-                android:textSize="17sp"
+                android:textSize="13sp"
                 android:ellipsize="end"/>
 
 

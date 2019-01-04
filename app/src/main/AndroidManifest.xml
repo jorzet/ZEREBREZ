@@ -93,6 +93,9 @@
         <activity android:name=".ui.activities.UpdateAppActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.activities.DownloadingImagesActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

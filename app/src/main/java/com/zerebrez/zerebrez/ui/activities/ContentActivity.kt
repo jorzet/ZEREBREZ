@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         //if (!dataHelper.areImagesDownloaded()) {
 
         //if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
-            startDownloadImages()
+        startDownloadImages()
         //} else {
         //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
@@ -499,11 +499,18 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     fun startDownloadImages() {
         try {
-            if (!isMyServiceRunning(DownloadImages::class.java)) {
+            if (!DataHelper(baseContext).areImagesDownloaded()) {
+                val showLoadingImagesActivity = Intent(this, DownloadingImagesActivity::class.java)
+                startActivity(showLoadingImagesActivity)
+            }
+
+            // start download after login (signin or signup)
+            if (!isMyServiceRunning(DownloadImages::class.java) && DataHelper(baseContext).isAfterLogIn()) {
                 this.startService(Intent(this, DownloadImages::class.java))
                 Log.i(TAG, "Started download service **********************")
                 //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
             }
+
         } catch (exception : Exception) {}
     }
 
@@ -533,12 +540,6 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                     Log.i(TAG, "Downloading ...")
                 }
             }
-        }
-    }
-
-    private val notificationBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(p0: Context?, p1: Intent?) {
-
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,6 +142,33 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                                 }
                                                 limpiarTexto(SubjectType.FCE.value) -> {
                                                     question.subject = SubjectType.FCE
+                                                }
+                                                limpiarTexto(SubjectType.FCE2.value) -> {
+                                                    question.subject = SubjectType.FCE2
+                                                }
+                                                limpiarTexto("filosofiaarea") -> {
+                                                    question.subject = SubjectType.PHILOSOPHY_AREA
+                                                }
+                                                limpiarTexto("filosofia(area4)") -> {
+                                                    question.subject = SubjectType.PHILOSOPHY_AREA_4
+                                                }
+                                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                                    question.subject = SubjectType.PHILOSOPHY
+                                                }
+                                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                                    question.subject = SubjectType.LITERATURE
+                                                }
+                                                limpiarTexto("quimicaarea") -> {
+                                                    question.subject = SubjectType.CHEMISTRY_AREA
+                                                }
+                                                limpiarTexto("quimica(area2)") -> {
+                                                    question.subject = SubjectType.CHEMISTRY_AREA_2
+                                                }
+                                                limpiarTexto("matematicasarea") -> {
+                                                    question.subject = SubjectType.MATEMATICS_AREA
+                                                }
+                                                limpiarTexto("matematicas(area1y2)") -> {
+                                                    question.subject = SubjectType.MATEMATICS_AREA_1_2
                                                 }
                                             }
                                         } else if (key3.equals(IS_CORRECT_KEY)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.utils.FontUtil
 import java.util.*
 
@@ -83,8 +84,15 @@ class YouArePremiumFragment : BaseContentFragment() {
                 mLoadingSuscriptionInfo.visibility = View.GONE
 
                 if (!user.getCourse().equals("")) {
-                    mUserCourseTextView.text =
-                            resources.getString(R.string.user_course_text) + " " + user.getCourse()
+                    val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
+                    if (course != null && !course.equals("")) {
+                        mUserCourseTextView.text =
+                                resources.getString(R.string.user_course_text) + " " + course.description
+                    } else {
+                        mUserCourseTextView.text =
+                                resources.getString(R.string.user_course_text) + " " +
+                                resources.getString(R.string.user_without_course_text)
+                    }
                 } else {
                     mUserCourseTextView.text =
                             resources.getString(R.string.user_course_text) + " " +

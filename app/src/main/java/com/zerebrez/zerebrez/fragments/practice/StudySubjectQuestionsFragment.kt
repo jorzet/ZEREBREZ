@@ -1,3 +1,20 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.zerebrez.zerebrez.fragments.practice
 
 import android.content.Intent
@@ -20,6 +37,11 @@ import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_subject_question.view.*
 import kotlinx.android.synthetic.main.init_fragment.*
 import java.text.Normalizer
+
+/**
+ * Created by Jorge Zepeda Tinoco on 04/01/19.
+ * jorzet.94@gmail.com
+ */
 
 class StudySubjectQuestionsFragment : BaseContentFragment() {
 
@@ -65,6 +87,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
      */
     private var mSubject : String = ""
     private lateinit var mSelectedSubject : String
+    private lateinit var mSelectedSubjectType : SubjectType
     private var mNumberOfFreeQuestionSubject : Long = 0
     private var isRequesting : Boolean = false
 
@@ -121,6 +144,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
     fun setSelectedSubject(selectedSubject: String) {
         this.mSelectedSubject = selectedSubject
+    }
+
+    fun setSelectedSubjectType(selectedSubjectType: SubjectType) {
+        this.mSelectedSubjectType = selectedSubjectType
     }
 
     private fun resetValues() {
@@ -245,7 +272,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
                 } else {
                     val currentQuestion = mQuestionList.get(i)
-                    val subject = limpiarTexto(mSelectedSubject)
+                    val subject = mSelectedSubjectType
                     if (count >= mNumberOfFreeQuestionSubject.toInt() && !mUser.isPremiumUser()) {
                         view.background = resources.getDrawable(R.drawable.not_premium_module_background)
                     } else if (currentQuestion.wasOK) {
@@ -254,91 +281,91 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                         view.background = resources.getDrawable(R.drawable.unchecked_module_background)
                     }
                     when (subject) {
-                        limpiarTexto(SubjectType.MATHEMATICS.value) -> {
+                        SubjectType.MATHEMATICS -> {
                             mSubject = SubjectType.MATHEMATICS.value
                             image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.SPANISH.value) -> {
+                        SubjectType.SPANISH -> {
                             mSubject = SubjectType.SPANISH.value
                             image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.SPANISH2.value) -> {
+                        SubjectType.SPANISH2 -> {
                             mSubject = SubjectType.SPANISH.value
                             image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
+                        SubjectType.VERBAL_HABILITY -> {
                             mSubject = SubjectType.VERBAL_HABILITY.value
                             image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
+                        SubjectType.MATHEMATICAL_HABILITY -> {
                             mSubject = SubjectType.MATHEMATICAL_HABILITY.value
                             image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.BIOLOGY.value) -> {
+                        SubjectType.BIOLOGY -> {
                             mSubject = SubjectType.BIOLOGY.value
                             image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.CHEMISTRY.value) -> {
+                        SubjectType.CHEMISTRY -> {
                             mSubject = SubjectType.CHEMISTRY.value
                             image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.PHYSICS.value) -> {
+                        SubjectType.PHYSICS -> {
                             mSubject = SubjectType.PHYSICS.value
                             image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
+                        SubjectType.GEOGRAPHY -> {
                             mSubject = SubjectType.GEOGRAPHY.value
                             image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
+                        SubjectType.MEXICO_HISTORY -> {
                             mSubject = SubjectType.MEXICO_HISTORY.value
                             image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
+                        SubjectType.UNIVERSAL_HISTORY -> {
                             mSubject = SubjectType.UNIVERSAL_HISTORY.value
                             image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.FCE.value) -> {
+                        SubjectType.FCE -> {
                             mSubject = SubjectType.FCE.value
                             image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.FCE2.value) -> {
+                        SubjectType.FCE2 -> {
                             mSubject = SubjectType.FCE2.value
                             image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.PHILOSOPHY_AREA.value) -> {
+                        SubjectType.PHILOSOPHY_AREA -> {
                             mSubject = SubjectType.PHILOSOPHY_AREA.value
                             image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.PHILOSOPHY_AREA_4.value) -> {
+                        SubjectType.PHILOSOPHY_AREA_4 -> {
                             mSubject = SubjectType.PHILOSOPHY_AREA_4.value
                             image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                        SubjectType.PHILOSOPHY -> {
                             mSubject = SubjectType.PHILOSOPHY.value
                             image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.LITERATURE.value) -> {
+                        SubjectType.LITERATURE -> {
                             mSubject = SubjectType.LITERATURE.value
                             image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.CHEMISTRY_AREA.value) -> {
+                        SubjectType.CHEMISTRY_AREA -> {
                             mSubject = SubjectType.CHEMISTRY_AREA.value
                             image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.CHEMISTRY_AREA_2.value) -> {
+                        SubjectType.CHEMISTRY_AREA_2 -> {
                             mSubject = SubjectType.CHEMISTRY_AREA_2.value
                             image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.MATEMATICS_AREA.value) -> {
+                        SubjectType.MATEMATICS_AREA -> {
                             mSubject = SubjectType.MATEMATICS_AREA.value
                             image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.MATEMATICS_AREA_1_2.value) -> {
+                        SubjectType.MATEMATICS_AREA_1_2 -> {
                             mSubject = SubjectType.MATEMATICS_AREA_1_2.value
                             image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
                         }
-                        limpiarTexto(SubjectType.NONE.value) -> {
+                        SubjectType.NONE -> {
                             //image.background = resources.getDrawable(R.drawable.main_icon)
                         }
                     }

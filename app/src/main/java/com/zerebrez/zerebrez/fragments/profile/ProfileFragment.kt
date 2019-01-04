@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -729,9 +729,12 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
                 }
             }
 
-            val course = user.getCourse()
-            if (!course.equals("")) {
-                mCourse.text = course.toUpperCase()
+            val userCourse = user.getCourse()
+            if (!userCourse.equals("")) {
+                val course = DataHelper(context!!).getCourseFromUserCourse(userCourse)
+                if (course != null && !course.equals("")) {
+                    mCourse.text = course.description
+                }
             }
 
             val userFirebase = FirebaseAuth.getInstance().currentUser

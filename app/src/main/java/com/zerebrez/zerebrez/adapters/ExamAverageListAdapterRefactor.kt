@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,11 @@ class ExamAverageListAdapterRefactor(averageExams : List<ExamScoreRafactor>, con
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val examView = inflator.inflate(R.layout.custom_exam_average_refactor, null)
 
-        examView.tv_exam_number.text = "Examen " + currentAverageExam.examId.replace("e","")
+        if (!currentAverageExam.examDescription.equals("")) {
+            examView.tv_exam_number.text = currentAverageExam.examDescription
+        } else {
+            examView.tv_exam_number.text = "Examen " + currentAverageExam.examId.replace("e", "")
+        }
         //examView.bc_exams_average.setExamScores(currentAverageExam.getOtherUsersScoreExam())
         examView.bc_exams_average.setAverageAndBeastScore(currentAverageExam.average.toFloat(), currentAverageExam.best.toInt())
         examView.bc_exams_average.setUserHits(currentAverageExam.userScore.toInt())

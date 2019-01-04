@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
     override fun onPreExecute() {
         super.onPreExecute()
 
-        if (onRequestListenerSucces == null || onRequestLietenerFailed == null)
+        if (onRequestListenerSucces == null || onRequestLietenerFailed == null || onDownloadStatusListener == null)
             return
 
     }
@@ -115,6 +115,8 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                                 mContext.openFileOutput(imageName, Context.MODE_PRIVATE).use {
                                     it.write(stream.toByteArray())
                                 }
+
+                                onDownloadStatusListener.onImageDownloaded()
                                 // Assume block needs to be inside a Try/Catch block.
                                 /*val path = Environment.getExternalStorageDirectory().toString()
                                 var fOut: OutputStream? = null
@@ -140,10 +142,14 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                                     mErrorOccurred = false
                                 }*/
                             } catch (e : kotlin.Exception) {
-                            } catch (e : java.lang.Exception) {}
+                                onDownloadStatusListener.onImagesError()
+                            } catch (e : java.lang.Exception) {
+                                onDownloadStatusListener.onImagesError()
+                            }
                         }
                         .addOnFailureListener { exception ->
                             mErrorOccurred = true
+                            onDownloadStatusListener.onImagesError()
                             Log.d(DownloadImages.TAG, "an error occurred while downliading images: " + exception.stackTrace)
                             exception.printStackTrace()
                         }
