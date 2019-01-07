@@ -67,6 +67,7 @@ import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.CacheManager
 import com.zerebrez.zerebrez.utils.FontUtil
+import java.io.File
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -343,11 +344,34 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             ok7 = true
         }
 
+        try {
+            context!!.deleteFile("images")
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                context!!.dataDir.deleteRecursively()
+            }
+            context!!.cacheDir.deleteRecursively()
+            context!!.filesDir.deleteRecursively()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()
         SharedPreferencesManager(context!!).setPersistanceDataEnable(true)
         LoginManager.getInstance().logOut()
         CacheManager.deleteCache(context!!)
+
+
+
+        if (activity != null) {
+            (activity as ContentActivity).stopDownloadImagesService()
+        }
+
+        DataHelper(context!!).setImagesDownloaded(false)
+        DataHelper(context!!).setisAfterLogIn(false)
 
         if (ok1) {
             setQuestionModuleFragmentOK()
@@ -372,6 +396,14 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
 
         goLogInActivity()
+    }
+
+    fun deleteRecursive(fileOrDirectory: File) {
+        if (fileOrDirectory.isDirectory())
+            for (child in fileOrDirectory.listFiles()) {
+                deleteRecursive(child)
+            }
+        fileOrDirectory.delete();
     }
 
     private val mTermsAndPrivacyListener = View.OnClickListener {

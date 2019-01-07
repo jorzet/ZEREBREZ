@@ -46,17 +46,26 @@
         android:layout_marginTop="10dp"
         android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/iv_option"
+    <RelativeLayout
+        android:id="@+id/rl_answer_image_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="300dp"
-        android:minWidth="300dp"
         android:layout_below="@+id/mv_option"
         android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
+        android:background="@drawable/answer_image_background">
+
+        <ImageView
+            android:id="@+id/iv_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="300dp"
+            android:minWidth="300dp"
+            android:layout_margin="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
     <com.felipecsl.gifimageview.library.GifImageView
         android:id="@+id/giv_option"
@@ -64,7 +73,7 @@
         android:layout_height="300dp"
         android:minHeight="300dp"
         android:minWidth="300dp"
-        android:layout_below="@+id/iv_option"
+        android:layout_below="@+id/rl_answer_image_container"
         android:layout_marginTop="10dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"

@@ -524,7 +524,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         return false
     }
 
-    fun stopDownloadImagesService() {
+    public fun stopDownloadImagesService() {
         this.stopService(Intent(this, DownloadImages::class.java))
         Log.i(TAG, "Stopped service ***************************")
         val dataHelper = DataHelper(this)

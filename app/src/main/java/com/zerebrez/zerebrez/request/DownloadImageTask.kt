@@ -101,7 +101,14 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
         val fileRef = storage.getReference().child(mCourse + "/images/${imageName}")
         if (fileRef != null) {
             try {
-                val localFile: File = File.createTempFile("images", "jpg")
+
+                var localFile: File
+                try {
+                    localFile = File.createTempFile("images", "jpg")
+                } catch (e: IOException) {
+                    localFile = File.createTempFile("images2", "jpg")
+                }
+
 
                 fileRef.getFile(localFile)
                         .addOnSuccessListener {
@@ -161,7 +168,7 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                             mProgress = progress.toInt()
                             mErrorOccurred = false
                         }
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 mErrorOccurred = true
             }
