@@ -19,8 +19,10 @@ package com.zerebrez.zerebrez.services.firebase
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.DownloadImageTask
@@ -42,6 +44,8 @@ class DownloadImages: Service() {
         const val DOWNLOAD_IMAGES_BR = "com.zerebrez.zerebrez.services.firebase.DownloadImages"
         const val DOWNLOAD_COMPLETE = "download_complete"
         const val DOWNLOAD_PROGRESS = "download_progress"
+        const val DOWNLOAD_ERROR = "download_error"
+        const val ERROR_WHEN_DOWNLOAD = "error_when_download"
     }
 
     /*
@@ -84,8 +88,17 @@ class DownloadImages: Service() {
 
                 downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
                     override fun onFailed(result: Throwable) {
-                        //bi.putExtra(DOWNLOAD_COMPLETE, false)
-                        //sendBroadcast(bi)
+
+                        bi.putExtra(DOWNLOAD_ERROR, true)
+
+                        if (result is GenericError) {
+                            val error = result as GenericError
+                            if (error.getErrorType().equals(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)) {
+                                bi.putExtra(ERROR_WHEN_DOWNLOAD, ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)
+                            }
+                        }
+
+                        sendBroadcast(bi)
                     }
                 })
 

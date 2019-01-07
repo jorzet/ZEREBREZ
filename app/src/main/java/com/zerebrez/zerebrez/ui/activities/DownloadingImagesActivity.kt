@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ProgressBar
 import com.zerebrez.zerebrez.R
+import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
 
@@ -60,11 +61,21 @@ class DownloadingImagesActivity: BaseActivityLifeCycle() {
                     stopReceiver()
                     finishActivity()
                 } else {
-                    val downloadProgress = intent.extras.getInt(DownloadImages.DOWNLOAD_PROGRESS)
-                    Log.i(TAG, "Downloading ..." + downloadProgress)
 
-                    if (::mDownloadingImageProgressBar.isInitialized && mDownloadingImageProgressBar != null) {
-                        mDownloadingImageProgressBar.progress = downloadProgress
+                    if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_ERROR,false)) {
+                        val errorType = intent.getSerializableExtra(DownloadImages.ERROR_WHEN_DOWNLOAD)
+                        if (errorType.equals(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)) {
+                            stopReceiver()
+                            finishActivity()
+                        }
+                    } else {
+
+                        val downloadProgress = intent.extras.getInt(DownloadImages.DOWNLOAD_PROGRESS)
+                        Log.i(TAG, "Downloading ..." + downloadProgress)
+
+                        if (::mDownloadingImageProgressBar.isInitialized && mDownloadingImageProgressBar != null) {
+                            mDownloadingImageProgressBar.progress = downloadProgress
+                        }
                     }
                 }
             }

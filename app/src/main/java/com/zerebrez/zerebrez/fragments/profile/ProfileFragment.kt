@@ -344,7 +344,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             ok7 = true
         }
 
-        try {
+        /*try {
             context!!.deleteFile("images")
 
             if (Build.VERSION.SDK_INT >= 24) {
@@ -356,7 +356,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        }*/
 
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()

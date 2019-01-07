@@ -39,6 +39,7 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
     private val DOWNLOAD_COMPLETE : String = "download_complete"
     private val CANNOT_DOWNLOAD_CONTENT : String = "cannot_download_content"
+    private val FILE_NOT_FOUND : String = "file_not_found"
 
     private var mProgress : Int = 0
     private var mDownloadComplete : Boolean = false
@@ -46,6 +47,8 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
     @SuppressLint("StaticFieldLeak")
     private var mContext : Context = context
     private val mCourse : String = course
+
+    private var isFileNotFound : Boolean = false
 
     override fun onPreExecute() {
         super.onPreExecute()
@@ -63,12 +66,17 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
                 if (image.isDownloadable()) {
                     downloadToLocalFile(image.getNameInStorage())
-                    while (!mProgress.equals(100) && !mDownloadComplete || mErrorOccurred);
-                    if (mErrorOccurred) {
-                        Log.d(DownloadImages.TAG, "an error occurred while download image")
-                        //val error = GenericError()
-                        //error.setErrorType(ErrorType.USER_NOT_SENDED)
-                        //onRequestLietenerFailed.onFailed(error)
+                    while (!mProgress.equals(100) && !mDownloadComplete) {
+                        if (mErrorOccurred) {
+                            Log.d(DownloadImages.TAG, "an error occurred while download image")
+
+                            if (isFileNotFound) {
+                                return FILE_NOT_FOUND
+                            }
+                            //val error = GenericError()
+                            //error.setErrorType(ErrorType.USER_NOT_SENDED)
+                            //onRequestLietenerFailed.onFailed(error)
+                        }
                     }
                 } else {
 
@@ -87,6 +95,10 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
         if (result.equals(DOWNLOAD_COMPLETE)) {
             onRequestListenerSucces.onSuccess(true)
+        } else if (result.equals(FILE_NOT_FOUND)) {
+            val error = GenericError()
+            error.setErrorType(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)
+            onRequestLietenerFailed.onFailed(error)
         } else {
             val error = GenericError()
             error.setErrorType(ErrorType.CANNOT_DOWNLOAD_CONTENT)
@@ -170,6 +182,9 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                         }
             } catch (e: Exception) {
                 e.printStackTrace()
+                if (e.message!!.contains("No such file or directory")) {
+                    isFileNotFound = true
+                }
                 mErrorOccurred = true
             }
 
