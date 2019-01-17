@@ -26,6 +26,13 @@ import com.zerebrez.zerebrez.adapters.ShowQuestionsAdapter
 import com.zerebrez.zerebrez.utils.FontUtil
 import android.support.v7.widget.GridLayoutManager
 import com.zerebrez.zerebrez.models.QuestionNewFormat
+import com.zerebrez.zerebrez.utils.CenterLayoutManager
+import android.R.transition.slide_left
+import android.view.animation.AnimationUtils
+import android.view.animation.Animation
+import android.R.transition.slide_right
+
+
 
 /**
  * Created by Jorge Zepeda Tinoco on 31/10/18.
@@ -110,7 +117,7 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
             }
         }
 
-        val mGridLayoutManager = GridLayoutManager(this, 6)
+        val mGridLayoutManager = CenterLayoutManager(this, 6)
         mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestions, mCurrentQuestionId,
                 object: ShowQuestionsAdapter.OnQuestionSelectedListener {
                     override fun onQuestionSelected(questionId: String, position: Int) {
@@ -124,12 +131,17 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
 
         mQuestionsGrid.adapter = mShowQuestionsAdapter
         mQuestionsGrid.layoutManager = mGridLayoutManager
+
+        try {
+            mQuestionsGrid.smoothScrollToPosition(mCurrentQuestionId)
+        } catch (e: kotlin.Exception) {
+        } catch (e: java.lang.Exception) { }
 
     }
 
     override fun onResume() {
         super.onResume()
-        val mGridLayoutManager = GridLayoutManager(this, 6)
+        val mGridLayoutManager = CenterLayoutManager(this, 6)
         mShowQuestionsAdapter = ShowQuestionsAdapter(baseContext, mQuestions, mCurrentQuestionId,
                 object: ShowQuestionsAdapter.OnQuestionSelectedListener {
                     override fun onQuestionSelected(questionId: String, position: Int) {
@@ -142,6 +154,12 @@ class ShowQuestionsActivity : BaseActivityLifeCycle() {
                 })
         mQuestionsGrid.adapter = mShowQuestionsAdapter
         mQuestionsGrid.layoutManager = mGridLayoutManager
+
+        try {
+            mQuestionsGrid.smoothScrollToPosition(mCurrentQuestionId)
+        } catch (e: kotlin.Exception) {
+        } catch (e: java.lang.Exception) { }
+
     }
 
     private val mReturnToQuestionListener = View.OnClickListener {

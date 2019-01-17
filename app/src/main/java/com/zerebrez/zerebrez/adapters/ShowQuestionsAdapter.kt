@@ -102,7 +102,7 @@ class ShowQuestionsAdapter(context: Context, questions: List<QuestionNewFormat>,
     /*
      * This method returns the QuestionNewFormat according the position
      */
-    fun getQuestionByPosition(position: Int) : QuestionNewFormat? {
+    public fun getQuestionByPosition(position: Int) : QuestionNewFormat? {
         if (mQuestios != null && mQuestios.isNotEmpty()) {
             return mQuestios[position]
         } else {
