@@ -122,6 +122,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
      * Variables
      */
     private var isAnswered : Boolean = false
+    private var op1 = false
+    private var op2 = false
+    private var op3 = false
+    private var op4 = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (container == null)
@@ -254,6 +258,10 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
             } else {
                 (activity as QuestionActivity).showHideExpandedQuestionButton(false)
             }
+            op1 = false
+            op2 = false
+            op3 = false
+            op4 = false
 
             //optionQuestionAdapter = OptionQuestionAdapterRefactor(false, questionNewFormat!!, mImagesPath, context!!)
             questionAnswerAdapterRefactor = QuestionAnswerAdapterRefactor(false, questionNewFormat!!, mImagesPath, getUser()!!, context!!)
@@ -268,6 +276,24 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Handler().postDelayed({
+            try {
+                if (op1 && op2 && op3 && op4) {
+                    val minQuestionHeight = resources.getDimension(R.dimen.min_question_height)
+                    val conHeight = mQuestionContainerView.height
+                    if (conHeight < minQuestionHeight) {
+                        val param: LinearLayout.LayoutParams
+                        param = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                1.0f)
+                        mOptionsContainer.layoutParams = param
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+            } catch (e: kotlin.Exception) {}
+        }, 3000)
+
     }
 
     private fun setOptions() {
@@ -287,6 +313,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     0 -> {
                         when (optionType) {
                             "txt" -> {
+                                op1 = true
                                 mTextAnswerA.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerA.visibility = View.VISIBLE
                                 mTextAnswerA.typeface = FontUtil.getNunitoRegular(context!!)
@@ -342,6 +369,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     1 -> {
                         when (optionType) {
                             "txt" -> {
+                                op2 = true
                                 mTextAnswerB.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerB.visibility = View.VISIBLE
                                 mTextAnswerB.typeface = FontUtil.getNunitoRegular(context!!)
@@ -396,6 +424,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     2 -> {
                         when (optionType) {
                             "txt" -> {
+                                op3 = true
                                 mTextAnswerC.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerC.visibility = View.VISIBLE
                                 mTextAnswerC.typeface = FontUtil.getNunitoRegular(context!!)
@@ -450,6 +479,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     3 -> {
                         when (optionType) {
                             "txt" -> {
+                                op4 = true
                                 mTextAnswerD.setText(questionNewFormat!!.optionsData[i])
                                 mTextAnswerD.visibility = View.VISIBLE
                                 mTextAnswerD.typeface = FontUtil.getNunitoRegular(context!!)
@@ -783,7 +813,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     (activity as QuestionActivity).setQuestionNewFormatAnswer("", false)
-                    mQuestionsScrolView.postDelayed(Runnable {
+                    mQuestionsScrolView.postDelayed({
                         //replace this line to scroll up or down
                         mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
                     }, 100L)
@@ -794,7 +824,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     (activity as QuestionActivity).setQuestionNewFormatAnswer("", false)
-                    mQuestionsScrolView.postDelayed(Runnable {
+                    mQuestionsScrolView.postDelayed({
                         //replace this line to scroll up or down
                         mQuestionsScrolView.fullScroll(ScrollView.FOCUS_UP)
                     }, 100L)
@@ -805,7 +835,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     mOptionC.background = resources.getDrawable(R.drawable.show_answer_option_background)
                     mOptionD.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     (activity as QuestionActivity).setQuestionNewFormatAnswer("", false)
-                    mQuestionsScrolView.postDelayed(Runnable {
+                    mQuestionsScrolView.postDelayed({
                         //replace this line to scroll up or down
                         mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
                     }, 100L)
@@ -816,7 +846,7 @@ class QuestionFragmentRefactor : BaseContentFragment(), View.OnClickListener {
                     mOptionC.background = resources.getDrawable(R.drawable.answer_unselected_option_background)
                     mOptionD.background = resources.getDrawable(R.drawable.show_answer_option_background)
                     (activity as QuestionActivity).setQuestionNewFormatAnswer("", false)
-                    mQuestionsScrolView.postDelayed(Runnable {
+                    mQuestionsScrolView.postDelayed({
                         //replace this line to scroll up or down
                         mQuestionsScrolView.fullScroll(ScrollView.FOCUS_DOWN)
                     }, 100L)

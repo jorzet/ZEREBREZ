@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="min_question_height">100dp</dimen>
+
     <!--secundary fragment-->
     <dimen name="secundary_image_width">150dp</dimen>
     <dimen name="secundary_image_height">250dp</dimen>

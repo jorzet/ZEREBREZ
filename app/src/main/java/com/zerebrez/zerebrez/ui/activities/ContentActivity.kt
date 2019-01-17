@@ -505,7 +505,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             }
 
             // start download after login (signin or signup)
-            if (!isMyServiceRunning(DownloadImages::class.java) && DataHelper(baseContext).isAfterLogIn()) {
+            if (!isMyServiceRunning(DownloadImages::class.java) && DataHelper(baseContext).isAfterLogIn() && !DataHelper(baseContext).areImagesDownloaded()) {
                 this.startService(Intent(this, DownloadImages::class.java))
                 Log.i(TAG, "Started download service **********************")
                 //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
