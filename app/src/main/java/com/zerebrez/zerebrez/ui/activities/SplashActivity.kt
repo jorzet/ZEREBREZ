@@ -153,12 +153,14 @@ class SplashActivity : BaseActivityLifeCycle() {
 
     private fun goContentActivity() {
         initNotificationService()
+        DataHelper(baseContext).setisAfterLogIn(false)
         val intent = Intent(this, ContentActivity::class.java)
         this.startActivity(intent)
         this.finish()
     }
 
     private fun goUpdateApp() {
+        DataHelper(baseContext).setisAfterLogIn(false)
         val intent = Intent(this, UpdateAppActivity::class.java)
         this.startActivity(intent)
         this.finish()

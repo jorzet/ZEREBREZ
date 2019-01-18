@@ -502,13 +502,19 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             if (!DataHelper(baseContext).areImagesDownloaded()) {
                 val showLoadingImagesActivity = Intent(this, DownloadingImagesActivity::class.java)
                 startActivity(showLoadingImagesActivity)
+                Log.d("DownloadService","show download images activity")
             }
 
+            val isServiceRunning = isMyServiceRunning(DownloadImages::class.java)
+            val isAfterLogIn = DataHelper(baseContext).isAfterLogIn()
+            val areImagesDownloaded = DataHelper(baseContext).areImagesDownloaded()
+            Log.d("DownloadService", "!isServiceRunning: {$isServiceRunning} && isAfterLogIn: {$isAfterLogIn} && !areImagesDownloaded: {$areImagesDownloaded}")
             // start download after login (signin or signup)
-            if (!isMyServiceRunning(DownloadImages::class.java) && DataHelper(baseContext).isAfterLogIn() && !DataHelper(baseContext).areImagesDownloaded()) {
+            if (!isServiceRunning && isAfterLogIn && !areImagesDownloaded) {
                 this.startService(Intent(this, DownloadImages::class.java))
                 Log.i(TAG, "Started download service **********************")
                 //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+                Log.d("DownloadService","start download images service")
             }
 
         } catch (exception : Exception) {}

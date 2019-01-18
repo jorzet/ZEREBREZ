@@ -58,20 +58,23 @@ class DownloadingImagesActivity: BaseActivityLifeCycle() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent != null && intent.getExtras() != null) {
                 if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_COMPLETE,false)) {
+                    Log.d("DownloadService", "DOWNLOAD_COMPLETE")
                     stopReceiver()
                     finishActivity()
                 } else {
 
                     if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_ERROR,false)) {
                         val errorType = intent.getSerializableExtra(DownloadImages.ERROR_WHEN_DOWNLOAD)
+                        Log.d("DownloadService", "ERROR_WHEN_DOWNLOAD")
                         if (errorType.equals(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)) {
+                            Log.d("DownloadService", "CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND")
                             stopReceiver()
                             finishActivity()
                         }
                     } else {
 
                         val downloadProgress = intent.extras.getInt(DownloadImages.DOWNLOAD_PROGRESS)
-                        Log.i(TAG, "Downloading ..." + downloadProgress)
+                        Log.i("DownloadService", "Downloading ..." + downloadProgress)
 
                         if (::mDownloadingImageProgressBar.isInitialized && mDownloadingImageProgressBar != null) {
                             mDownloadingImageProgressBar.progress = downloadProgress

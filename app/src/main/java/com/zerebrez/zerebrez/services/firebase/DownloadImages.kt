@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.services.firebase
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.User
@@ -70,6 +71,7 @@ class DownloadImages: Service() {
 
         // get images from data base
         try {
+            Log.d("DownloadService", "call DownloadImages service")
             val dataHelper = DataHelper(this)
             mImages = dataHelper.getImagesPath()
 
@@ -129,7 +131,13 @@ class DownloadImages: Service() {
                     }
                 })
 
-                downloadImageTask.execute(mImages)
+                val isAfterLogIn = DataHelper(baseContext).isAfterLogIn()
+                val areImagesDownloaded = DataHelper(baseContext).areImagesDownloaded()
+
+                if (isAfterLogIn && !areImagesDownloaded) {
+                    Log.d("DownloadService", "start download task")
+                    downloadImageTask.execute(mImages)
+                }
             }
         } catch (exception : Exception) {}
 
