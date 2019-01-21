@@ -124,17 +124,25 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as List<String>)
+                    val postHash = (post as HashMap<*, *>)
 
-                    val questionsId = arrayListOf<String>()
+                    if (postHash.containsKey("questions")) {
 
-                    // get question id from response
-                    for (q in map) {
-                        questionsId.add(q)
-                    }
+                        val map = (postHash.get("questions") as List<String>)
 
-                    if (questionsId.isNotEmpty()) {
-                        onRequestListenerSucces.onSuccess(questionsId)
+                        val questionsId = arrayListOf<String>()
+
+                        // get question id from response
+                        for (q in map) {
+                            questionsId.add(q)
+                        }
+
+                        if (questionsId.isNotEmpty()) {
+                            onRequestListenerSucces.onSuccess(questionsId)
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
