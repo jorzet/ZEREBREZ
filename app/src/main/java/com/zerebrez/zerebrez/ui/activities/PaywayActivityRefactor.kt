@@ -19,10 +19,11 @@ package com.zerebrez.zerebrez.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
-import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.*
 import com.google.firebase.auth.FirebaseAuth
 
 import com.zerebrez.zerebrez.R
@@ -31,6 +32,10 @@ import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.services.billing.BillingManager
 import com.zerebrez.zerebrez.utils.NetworkUtil
+import com.android.billingclient.api.BillingClient.BillingResponse
+import com.android.billingclient.api.BillingClient.SkuType
+import java.util.Arrays.asList
+import java.util.*
 
 
 /*
@@ -40,7 +45,8 @@ import com.zerebrez.zerebrez.utils.NetworkUtil
 
 private const val TAG : String = "PaywayActivityRefacor"
 
-class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener, BillingManager.OnBillingResponseListener {
+class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListener,
+        BillingManager.OnBillingResponseListener, PurchasesUpdatedListener {
 
     /*
      * UI accessors
@@ -59,7 +65,7 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     private var updatingUser : Boolean = false
 
     // ProductID
-    private val productID = "comipems"
+    private var productID = "comipems"
 
     /*
      * Fragments
@@ -84,6 +90,7 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
         mCloseContainer.setOnClickListener{onBackPressed()}
 
         mBillingManager = BillingManager(this)
+        //createBillingClient()
 
     }
 
@@ -104,6 +111,11 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     }
 
     private val mGooglePayViewListener = View.OnClickListener {
+        val user = getUser();
+        if (user != null && user.getCourse().isNotEmpty()) {
+            productID = "zerebrez.${user.getCourse().toLowerCase()}"
+        }
+
         mBillingManager.startPurchaseFlow(productID, BillingClient.SkuType.INAPP)
     }
 
@@ -180,10 +192,15 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     }
 
     override fun onConfirmationAccept() {
+        Log.d(TAG, "dialog dismiss")
     }
 
     override fun onConfirmationCancel() {
-
+        Log.d(TAG, "dialog dismiss")
+        if(purchaseOk){
+            setResult(Activity.RESULT_OK, getIntent())
+            finish()
+        }
     }
 
     fun UpdateUser(){
@@ -214,4 +231,36 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
         setWaitScreen(false)
         DisplayMessage("¡¡ Felicidades !!","Ya eres premium, disfruta de todo el contenido exclusivo para ti.")
     }
+
+    private fun createBillingClient() {
+        val mBillingClient = BillingClient.newBuilder(this).setListener(this).build()
+
+        mBillingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResponse: Int) {
+                if (billingResponse == BillingClient.BillingResponse.OK) {
+                    Log.i(TAG, "onBillingSetupFinished() response: $billingResponse")
+
+                    //setting up a listener for the queries
+                    val responseListener = SkuDetailsResponseListener {
+                        responseCode, skuDetailsList -> Log.i(TAG, "response code: $responseCode ${skuDetailsList.size}")
+                    }
+
+                    val skuList = Arrays.asList("zerebrez.comipems", "zerebrez.licenciaturaunam")
+                    mBillingManager.querySkuDetailsAsync(SkuType.INAPP, skuList, responseListener)
+                } else {
+                    Log.w(TAG, "onBillingSetupFinished() error code: $billingResponse")
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+                Log.w(TAG, "onBillingServiceDisconnected()")
+            }
+        })
+    }
+
+
+    override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
+        Log.d(TAG, "responseCode: $responseCode")
+    }
+
 }

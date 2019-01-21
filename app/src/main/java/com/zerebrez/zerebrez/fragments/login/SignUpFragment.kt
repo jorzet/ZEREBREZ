@@ -165,10 +165,6 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     private fun goChooseSchoolActivity() {
         if (activity != null) {
-            if (context !=  null) {
-                DataHelper(context!!).setisAfterLogIn(true)
-            }
-
             val intent = Intent(activity, ChooseSchoolsActivity::class.java)
             intent.putExtra(SHOW_CONTINUE_BUTTON, true)
             intent.putExtra(SHOW_BACK_BUTTON, false)
@@ -375,7 +371,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         }
 
         if (activity != null) {
-            (activity as LoginActivity).startDownloadImages()
+            //(activity as LoginActivity).startDownloadImages()
             goChooseSchoolActivity()
         }
     }

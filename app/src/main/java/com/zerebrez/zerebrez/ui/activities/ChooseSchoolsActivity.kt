@@ -312,6 +312,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                     saveUser(user)
                 }
                 if (showContinueButton) {
+                    if (baseContext !=  null) {
+                        DataHelper(baseContext!!).setisAfterLogIn(true)
+                    }
                     goContentActivity()
                 } else {
                     onBackPressed()
@@ -340,6 +343,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
 
             if (showContinueButton) {
+                if (baseContext !=  null) {
+                    DataHelper(baseContext!!).setisAfterLogIn(true)
+                }
                 goContentActivity()
             } else {
                 onBackPressed()
