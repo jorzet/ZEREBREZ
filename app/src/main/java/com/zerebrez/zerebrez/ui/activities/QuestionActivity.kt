@@ -285,7 +285,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
 
                 // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-                MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+                //MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712") //test
+                MobileAds.initialize(this, "ca-app-pub-4979517608172495/5959613048") //prod
                 // Use an activity context to get the rewarded video instance.
                 mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
                 mRewardedVideoAd.rewardedVideoAdListener = this
@@ -293,7 +294,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 loadRewardedVideoAd()
 
                 mInterstitialAd = InterstitialAd(this)
-                mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+                //mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712" //test
+                mInterstitialAd.adUnitId = "ca-app-pub-4979517608172495/5959613048" //prod
                 mInterstitialAd.loadAd(AdRequest.Builder().build())
                 mInterstitialAd.adListener = object : AdListener() {
                     override fun onAdLoaded() {
@@ -322,7 +324,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private fun loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+        mRewardedVideoAd.loadAd("ca-app-pub-4979517608172495/5959613048", // prod
+                //"ca-app-pub-3940256099942544/5224354917",// test
                 AdRequest.Builder().build())
     }
 

@@ -42,7 +42,7 @@ public class ComproPagoManager {
     }
 
     public void ListProviders(final OnListProvidersListener onListProvidersListener) {
-        Call<List<Provider>> call = comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_TEST,null));
+        Call<List<Provider>> call = comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_LIVE,null));
         call.enqueue(new Callback<List<Provider>>() {
             @Override
             public void onResponse(Call<List<Provider>> call, Response<List<Provider>> response) {
@@ -70,7 +70,7 @@ public class ComproPagoManager {
         orderRequest.setCustomer_email(customerEmail);
         orderRequest.setPayment_type(paymentType);
         orderRequest.setOrder_price(orderPrice);
-        Call<OrderResponse> call = comproPagoAPI.GenerateOrder(orderRequest,okhttp3.Credentials.basic(PK_TEST,null));
+        Call<OrderResponse> call = comproPagoAPI.GenerateOrder(orderRequest,okhttp3.Credentials.basic(PK_LIVE,null));
         call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
@@ -85,7 +85,7 @@ public class ComproPagoManager {
     }
 
     public void VerifyCharge(String paymentId, final OnVerifyChargeListener onVerifyChargeListener) {
-        Call<ChargeResponse> call = comproPagoAPI.VerifyCharge(paymentId, Credentials.basic(SK_TEST,PK_TEST));
+        Call<ChargeResponse> call = comproPagoAPI.VerifyCharge(paymentId, Credentials.basic(SK_LIVE,PK_LIVE));
         call.enqueue(new Callback<ChargeResponse>() {
             @Override
             public void onResponse(Call<ChargeResponse> call, Response<ChargeResponse> response) {
