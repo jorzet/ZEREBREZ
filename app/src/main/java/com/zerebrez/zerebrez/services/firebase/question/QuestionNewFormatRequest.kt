@@ -113,7 +113,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
     fun requestGetQuestionsNewFormatByExamId(examId : Int, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
-                .getInstance()
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
                 .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course) + "/e" + examId)
 
         mFirebaseDatabase.keepSynced(true)

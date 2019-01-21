@@ -104,7 +104,7 @@ class YouArePremiumFragment : BaseContentFragment() {
                     calendar.setTimeInMillis(user.getTimestamp())
 
                     val mYear = calendar.get(Calendar.YEAR)
-                    var mMonth = calendar.get(Calendar.MONTH).toString()
+                    var mMonth = (calendar.get(Calendar.MONTH) + 1).toString()
                     var mDay = calendar.get(Calendar.DAY_OF_MONTH).toString()
 
                     if (mMonth.length == 1) {
