@@ -44,7 +44,7 @@ class ShowAnswerMessageActivity : BaseActivityLifeCycle() {
         mText = findViewById(R.id.text_2)
         mItIsUnderstandButton = findViewById(R.id.btn_it_is_understand)
 
-        mText.setText(Html.fromHtml("<span style=\"color:#205A8F;\">La pregunta se enviara a </span>&nbsp;<span style=\"color:#F7921E;\">\"erroneas\"</span>&nbsp;<span style=\"color:#205A8F;\">para que la repases despues</span>"));
+        mText.setText(Html.fromHtml("<span style=\"color:#205A8F;\">La pregunta se enviara a </span>&nbsp;<span style=\"color:#F7921E;\">\"erroneas\"</span>&nbsp;<span style=\"color:#205A8F;\">para que la repases después</span>"));
         mItIsUnderstandButton.setOnClickListener(mItIsUnderstandButtonListener)
 
     }
