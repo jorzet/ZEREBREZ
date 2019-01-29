@@ -238,8 +238,24 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
                     val request = GraphRequest.newMeRequest(loginResult.getAccessToken()) { json, response ->
                         if (json != null) {
-                            val email = json.getString("email")
-                            val birthday = json.getString("birthday")
+
+                            var email = ""
+                            var birthday = ""
+
+                            try {
+                                if (json.has("email")) {
+                                    email = json.getString("email")
+                                }
+
+                                if (json.has("birthday")) {
+                                    birthday = json.getString("birthday")
+                                }
+                            } catch (e: java.lang.Exception) {
+                                e.printStackTrace()
+                            } catch (e: kotlin.Exception) {
+                                e.printStackTrace()
+                            }
+
                             val user = getUser()
                             if (user != null) {
                                 mUser = user
@@ -250,6 +266,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                                 mUser.setEmail(email)
                                 mUser.setPassword(birthday)
                             }
+
                             saveUser(mUser)
                             requestLinkAnonymousUserWithFacebookProvider(loginResult.accessToken)
                         } else {
@@ -260,7 +277,7 @@ class SignUpFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                     }
                     val parameters = Bundle()
                     parameters.putString("fields", "id,name,email,gender,birthday")
-                    request.setParameters(parameters)
+                    request.parameters = parameters
                     request.executeAsync()
                 }
 

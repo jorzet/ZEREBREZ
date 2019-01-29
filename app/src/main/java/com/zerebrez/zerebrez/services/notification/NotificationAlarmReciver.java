@@ -39,17 +39,22 @@ public class NotificationAlarmReciver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (intent.getAction() != null && context != null) {
+        if (intent != null && intent.getAction() != null && context != null) {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-                // Set the alarm here.
-                Log.d(TAG, "onReceive: BOOT_COMPLETED");
-                DataHelper dataHelper = new DataHelper(context);
-                String time = dataHelper.getNotificationTime();
-                String[] times = time.split(":");
-                int hour = Integer.parseInt(times[0]);
-                int minute = Integer.parseInt(times[1]);
-                NotificationScheduler.setReminder(context, NotificationAlarmReciver.class,
-                        hour, minute);
+
+                try {
+                    // Set the alarm here.
+                    Log.d(TAG, "onReceive: BOOT_COMPLETED");
+                    DataHelper dataHelper = new DataHelper(context);
+                    String time = dataHelper.getNotificationTime();
+                    String[] times = time.split(":");
+                    int hour = Integer.parseInt(times[0]);
+                    int minute = Integer.parseInt(times[1]);
+                    NotificationScheduler.setReminder(context, NotificationAlarmReciver.class,
+                            hour, minute);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return;
             }
         }

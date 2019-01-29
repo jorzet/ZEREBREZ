@@ -90,7 +90,7 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
         mCloseContainer.setOnClickListener{onBackPressed()}
 
         mBillingManager = BillingManager(this)
-        //createBillingClient()
+        createBillingClient()
 
     }
 

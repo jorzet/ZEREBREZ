@@ -517,7 +517,11 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                 Log.d("DownloadService","start download images service")
             }
 
-        } catch (exception : Exception) {}
+        } catch (exception : kotlin.Exception) {
+            exception.printStackTrace()
+        } catch (exception: java.lang.Exception) {
+            exception.printStackTrace()
+        }
     }
 
     private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {

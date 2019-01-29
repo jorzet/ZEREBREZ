@@ -172,9 +172,13 @@ class StudySubjectFragment : BaseContentFragment(), AdapterView.OnItemClickListe
             transaction.replace(R.id.study_questions_subject_fragment_container, studyQuestionFragment)
             transaction.commit()
             transaction.addToBackStack("studyQuestionFragment")
-        } catch (exception : Exception) {
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        } catch (e : kotlin.Exception) {
+            e.printStackTrace()
             val a = 0
         }
+
     }
 
     fun getStudySubjectQuestionFragment() : Fragment? {

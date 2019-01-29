@@ -652,7 +652,7 @@ abstract class BaseContentFragment : BaseFragment() {
                 onSendPasswordResetEmailSuccess(success)
             }
 
-            override fun onSendPasswordResetEmailFail(throwable: Throwable) {
+            override fun onSendPasswordResetEmailError(throwable: Throwable) {
                 onSendPasswordResetEmailFail(throwable)
             }
         })

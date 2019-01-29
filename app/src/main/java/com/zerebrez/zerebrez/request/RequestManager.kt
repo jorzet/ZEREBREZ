@@ -59,7 +59,7 @@ class RequestManager(activity : Activity) {
 
         firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
             override fun onFailed(result: Throwable) {
-                onSendPasswordResetEmailListener.onSendPasswordResetEmailFail(result)
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailError(result)
             }
         })
 
@@ -492,7 +492,7 @@ class RequestManager(activity : Activity) {
 
     interface OnSendPasswordResetEmailListener {
         fun onSendPasswordResetEmailLoaded(success : Boolean)
-        fun onSendPasswordResetEmailFail(throwable: Throwable)
+        fun onSendPasswordResetEmailError(throwable: Throwable)
     }
 
     interface OnDoLogInListener {

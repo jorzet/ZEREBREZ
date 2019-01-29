@@ -340,7 +340,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
-            DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
+            }
             showAnswer()
         } else if (resultCode.equals(SHOW_QUESTIONS_RESULT_CODE)) {
             val questionId = data!!.getStringExtra(REQUEST_NEW_QUESTION)
@@ -456,7 +458,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
 
                 mQuestionsAux[mCurrentQuestion].answered = true
-                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+
+                if (::mCurrentQuestionNewFormat.isInitialized) {
+                    mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                }
 
 
                 if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
@@ -501,7 +506,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
 
             mQuestionsAux[mCurrentQuestion].answered = true
-            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+            }
 
             Log.d("mNextQuestionListener"," else-- mAnsweredQuestions.size: " + mAnsweredQuestions.size)
             Log.d("mNextQuestionListener"," else-- mQuestionsId.size: " + mQuestionsId.size)
@@ -559,7 +566,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
             }*/
             if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
-                if (mCurrentQuestionNewFormat.stepByStepData.isNotEmpty()) {
+                if (::mCurrentQuestionNewFormat.isInitialized && mCurrentQuestionNewFormat.stepByStepData.isNotEmpty()) {
                     DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
                     showAnswer()
                 }
@@ -615,8 +622,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     fun setQuestionNewFormatAnswer(answer : String, wasOK : Boolean) {
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
-            mCurrentQuestionNewFormat.chosenOption = answer
-            mCurrentQuestionNewFormat.wasOK = wasOK
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                mCurrentQuestionNewFormat.chosenOption = answer
+                mCurrentQuestionNewFormat.wasOK = wasOK
+            }
             if (wasOK) {
                 mCorrectQuestions++
             } else {
@@ -834,8 +843,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         super.onGetQuestionNewFormatSuccess(question)
         mCurrentQuestionNewFormat = question
 
-        if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
-            mQuestiontypeText.text = question.subject.value
+        try {
+            if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
+                mQuestiontypeText.text = question.subject.value
+            }
+
+        } catch (e: kotlin.Exception) {
+            e.printStackTrace()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
 
         showQuestion()

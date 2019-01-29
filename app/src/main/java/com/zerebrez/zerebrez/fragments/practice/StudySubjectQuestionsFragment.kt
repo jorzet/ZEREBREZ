@@ -379,15 +379,14 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                     param.setGravity(Gravity.CENTER)
                     val c = count
 
-                    view.setOnClickListener(View.OnClickListener {
-
+                    view.setOnClickListener {
                         if (mUser.isPremiumUser() || c < mNumberOfFreeQuestionSubject.toInt()) {
                             Log.d(TAG, "onClick: number --- " + number)
                             goQuestionActivity(Integer.parseInt(number))
                         } else {
                             (activity as ContentActivity).goPaymentFragment()
                         }
-                    })
+                    }
                     count++
                 }
 
