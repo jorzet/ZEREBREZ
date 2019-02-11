@@ -287,7 +287,10 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     }
 
     private fun onDeleteSchool(position : Int) {
-        mSchools.removeAt(position)
+        try {
+            mSchools.removeAt(position)
+        }catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) {}
     }
 
     private val mContinueListener = View.OnClickListener {

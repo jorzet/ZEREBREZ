@@ -68,7 +68,7 @@ class TipsRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
                         if (map.containsKey(PROFILE_KEY)) {

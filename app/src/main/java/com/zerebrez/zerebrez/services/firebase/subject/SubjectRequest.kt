@@ -65,11 +65,11 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val subjects = ArrayList<SubjectRefactor>()
                     for (key in map.keys) {
-                        val subjectMap = map.get(key) as HashMap<*, *>
+                        val subjectMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val subject = Gson().fromJson(JSONObject(subjectMap).toString(), SubjectRefactor::class.java)
                         subject.subjectId = key.toString()
 

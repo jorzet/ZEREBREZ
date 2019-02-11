@@ -441,20 +441,23 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
      * Backpress override method, shows snackbar when user whants to exit
      */
     override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
+        try {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
 
-        val fragment = mPracticeViewPager.getItem(mViewPager.currentItem)
-        Snackbar.make(mCordinatorView,
-                "Presiona otra vez para SALIR de la aplicación",
-                2000)
-                .show()
+            val fragment = mPracticeViewPager.getItem(mViewPager.currentItem)
+            Snackbar.make(mCordinatorView,
+                    "Presiona otra vez para SALIR de la aplicación",
+                    2000)
+                    .show()
 
-        this.doubleBackToExitPressedOnce = true
+            this.doubleBackToExitPressedOnce = true
 
-        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+            Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+        } catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) {}
     }
 
     override fun onGetProfileRefactorSuccess(user: User) {

@@ -107,7 +107,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = post as HashMap<*, *>
+                        val map = post as kotlin.collections.HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -143,7 +143,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
                             val modules = arrayListOf<Module>()
 
                             for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                 val module = Module()
                                 module.setId(Integer(key2.replace("m", "")))
 

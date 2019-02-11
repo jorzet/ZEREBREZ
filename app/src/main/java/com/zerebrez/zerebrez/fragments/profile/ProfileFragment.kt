@@ -754,7 +754,25 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
             mLoadingUserSchoolsProgressBar.visibility = View.VISIBLE
             if (mSchools.isEmpty()) {
+                val updatedSchools = arrayListOf<School>()
+                val school1 = School()
+                val school2 = School()
+                val school3 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+                school3.setSchoolName("Sin opción")
+                updatedSchools.add(school3)
 
+                mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+                mSelectedSchoolsList.adapter = mSchoolsListAdapter
+
+                mLoadingUserSchoolsProgressBar.visibility = View.GONE
+                mEditSchoolsButton.visibility = View.VISIBLE
+                mEditSchoolsTextView.text = "Escoger"
+                mSelectedSchoolsList.visibility = View.GONE
+                mNotSelectedSchools.visibility = View.VISIBLE
             } else {
                 if (!user.getCourse().equals("")) {
                     requestGetUserSchools(mSchools, user.getCourse())

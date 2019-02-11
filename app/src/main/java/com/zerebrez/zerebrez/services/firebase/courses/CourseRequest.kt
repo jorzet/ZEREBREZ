@@ -64,11 +64,11 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val courses = ArrayList<Course>()
                     for (key in map.keys) {
-                        val courseMap = map.get(key) as HashMap<*, *>
+                        val courseMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val course = Gson().fromJson(JSONObject(courseMap).toString(), Course::class.java)
                         course.courseId = key.toString()
                         courses.add(course)

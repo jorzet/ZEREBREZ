@@ -73,16 +73,16 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
                         if (map.containsKey(PROFILE_KEY)) {
                             val user = User()
-                            val profile = map.get(PROFILE_KEY) as HashMap<String, String>
+                            val profile = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
                             for (key2 in profile.keys) {
                                 if (key2.equals(PREMIUM_KEY)) {
 
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -102,7 +102,7 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
                                     val schools = arrayListOf<School>()
                                     Log.d(TAG, "profile data ------ " + selectedSchools.size)
                                     for (i in 0..selectedSchools.size - 1) {
-                                        val institute = selectedSchools.get(i) as HashMap<String, String>
+                                        val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String, String>
                                         val school = School()
                                         if (institute.containsKey(INSTITUTE_ID_KEY)) {
                                             school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))

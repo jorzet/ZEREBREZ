@@ -167,7 +167,8 @@ class PaywayActivityRefactor : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialo
     }
 
     override fun onBillingResponseItemAlreadyOwned() {
-        DisplayMessage("Ya eres premium", "No hay necesidad de volver a comprar la suscripción. Tú ya eres un usuario premium")
+        //DisplayMessage("Ya eres premium", "No hay necesidad de volver a comprar la suscripción. Tú ya eres un usuario premium")
+        UpdateUser()
     }
 
     override fun onBillingResponseItemNotOwned() {

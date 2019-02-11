@@ -145,8 +145,11 @@ class DataHelper(context: Context) {
     fun getCurrentQuestionNewFormat() : QuestionNewFormat? {
         val json = SharedPreferencesManager(mContext).getJsonCurrentQuestionNewFormat()
         if (json != null) {
-            val currectQuestionNewFormat = JsonParcer.getObjectFromJson(json, QuestionNewFormat::class.java) as QuestionNewFormat
-            return currectQuestionNewFormat
+            try {
+                val currectQuestionNewFormat = JsonParcer.getObjectFromJson(json, QuestionNewFormat::class.java) as QuestionNewFormat
+                return currectQuestionNewFormat
+            } catch (e: java.lang.Exception) {
+            } catch (e: kotlin.Exception) {}
         }
         return null
     }

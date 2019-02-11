@@ -23,8 +23,6 @@ import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
-import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
-import java.util.HashMap
 import java.text.Normalizer
 
 /**
@@ -77,16 +75,16 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val user = User()
                         for (key in map.keys) {
                             println(key)
                             if (key.equals(PROFILE_REFERENCE)) {
-                                val profile = map.get(key) as HashMap<String, String>
+                                val profile = map.get(key) as kotlin.collections.HashMap<String, String>
                                 if (profile.containsKey(PREMIUM_KEY)) {
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -186,7 +184,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                 val answeredExams = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val exams = arrayListOf<Exam>()
                                 for (key2 in answeredExams.keys) {
-                                    val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                    val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                     val exam = Exam()
                                     exam.setExamId(Integer(key2.replace("e", "")))
 
@@ -240,7 +238,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
 
 
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val subjects = arrayListOf<Subject>()
@@ -303,7 +301,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                         if (map.containsKey(ANSWERED_QUESTION_REFERENCE)) {
                             val answeredQuestions = (map.get(ANSWERED_QUESTION_REFERENCE) as kotlin.collections.HashMap<String, String> ).get(course) as kotlin.collections.HashMap<String, String>
                             for (key2 in answeredQuestions.keys) {
-                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+                                val questionAnswered = answeredQuestions.get(key2) as kotlin.collections.HashMap<String, String>
 
                                 if (questionAnswered.containsKey(SUBJECT_KEY)) {
                                     val subjectType = limpiarTexto(questionAnswered.get(SUBJECT_KEY))

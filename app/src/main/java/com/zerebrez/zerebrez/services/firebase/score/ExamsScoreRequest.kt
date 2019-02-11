@@ -23,10 +23,8 @@ import com.google.gson.Gson
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.services.firebase.Engagement
-import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import org.json.JSONObject
 import java.util.ArrayList
-import java.util.HashMap
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -76,11 +74,11 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val examScores = ArrayList<ExamScoreRafactor>()
                     for (key in map.keys) {
-                        val examScoreMap = map.get(key) as HashMap<*, *>
+                        val examScoreMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val examScore = Gson().fromJson(JSONObject(examScoreMap).toString(), ExamScoreRafactor::class.java)
                         examScore.examId = key.toString()
                         examScores.add(examScore)
@@ -142,7 +140,7 @@ class ExamsScoreRequest(activity: Activity) : Engagement(activity) {
                                 val answeredExams = (map.get(key) as kotlin.collections.HashMap<*, *>).get(course) as kotlin.collections.HashMap<String, String>
                                 val exams = arrayListOf<Exam>()
                                 for (key2 in answeredExams.keys) {
-                                    val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
+                                    val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                     val exam = Exam()
                                     exam.setExamId(Integer(key2.replace("e", "")))
 

@@ -93,7 +93,7 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
 
                         val post = dataSnapshot.getValue()
                         if (post != null) {
-                            val map = (post as HashMap<String, String>)
+                            val map = (post as kotlin.collections.HashMap<String, String>)
                             Log.d(TAG, "profile data ------ " + map.size)
 
                             if (map.containsKey(PROFILE_KEY)) {
@@ -207,17 +207,17 @@ class ProfileRequest(activity: Activity) : Engagement(activity) {
 
                 if (post != null) {
 
-                    val institutesHash = post as HashMap<String, String>
+                    val institutesHash = post as kotlin.collections.HashMap<String, String>
 
                     for (school in schools) {
                         if (institutesHash.containsKey("institute" + school.getInstituteId().toString())) {
-                            val instituteHash = institutesHash.get("institute" + school.getInstituteId().toString()) as HashMap<String, String>
+                            val instituteHash = institutesHash.get("institute" + school.getInstituteId().toString()) as kotlin.collections.HashMap<String, String>
                             school.setInstituteName(instituteHash.get("name") as String)
 
-                            val schoolsHash = instituteHash.get("schoolsList") as HashMap<String, String>
+                            val schoolsHash = instituteHash.get("schoolsList") as kotlin.collections.HashMap<String, String>
                             for (key3 in schoolsHash.keys) {
                                 if (school.getSchoolId().equals(Integer(key3.replace("school", "")))) {
-                                    val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                    val schoolDataHash = schoolsHash.get(key3) as kotlin.collections.HashMap<String, String>
                                     for (key4 in schoolDataHash.keys) {
                                         if (key4.equals("name")) {
                                             school.setSchoolName(schoolDataHash.get("name").toString())

@@ -124,7 +124,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val postHash = (post as HashMap<*, *>)
+                    val postHash = (post as kotlin.collections.HashMap<*, *>)
 
                     if (postHash.containsKey("questions")) {
 
@@ -246,11 +246,11 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as java.util.HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val mQuestions = ArrayList<QuestionNewFormat>()
                     for (key in map.keys) {
-                        val questionMap = map.get(key) as HashMap<*, *>
+                        val questionMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val question = Gson().fromJson(JSONObject(questionMap).toString(), QuestionNewFormat::class.java)
                         question.questionId = key.toString()
                         if (questionMap.containsKey("subject")) {
@@ -372,7 +372,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val questionMap = (post as java.util.HashMap<*, *>)
+                    val questionMap = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + questionMap.size)
 
                     val question = Gson().fromJson(JSONObject(questionMap).toString(), QuestionNewFormat::class.java)

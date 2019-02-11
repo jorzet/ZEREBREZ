@@ -121,7 +121,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                     val mExams = arrayListOf<Exam>()
 
                     Log.d(TAG, post.toString())
@@ -134,7 +134,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                         val exam = Exam()
                         val questions = arrayListOf<QuestionNewFormat>()
 
-                        val examContent = (map.get(key) as HashMap<String, HashMap<Any, Any>>)
+                        val examContent = (map.get(key) as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
 
                         if (examContent.contains(QUESTIONONS_KEY)) {
                             // get question id from response
@@ -203,7 +203,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -240,7 +240,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                             val answeredExams = (map.get(ANSWERED_EXAM_KEY) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                             val exams = arrayListOf<Exam>()
                             for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                 val exam = Exam()
                                 exam.setExamId(Integer(key2.replace("e", "")))
 

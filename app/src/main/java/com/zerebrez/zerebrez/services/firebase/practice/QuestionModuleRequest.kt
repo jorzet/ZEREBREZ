@@ -26,7 +26,6 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -118,7 +117,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, String>)
+                    val map = (post as kotlin.collections.HashMap<String, String>)
                     val mModules = arrayListOf<Module>()
 
                     Log.d(TAG, post.toString())
@@ -195,7 +194,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = post as HashMap<*, *>
+                        val map = post as kotlin.collections.HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -227,11 +226,15 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                         }
 
                         if (map.containsKey(ANSWERED_MODULED_REFERENCE)) {
-                                val answeredModules = (map.get(ANSWERED_MODULED_REFERENCE) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
+                            val answeredModuleCourse = map.get(ANSWERED_MODULED_REFERENCE) as kotlin.collections.HashMap<String, String>
+
+                            if (answeredModuleCourse.containsKey(course)) {
+
+                                val answeredModules = answeredModuleCourse.get(course) as kotlin.collections.HashMap<String, String>
                                 val modules = arrayListOf<Module>()
 
                                 for (key2 in answeredModules.keys) {
-                                    val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                    val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                     val module = Module()
                                     module.setId(Integer(key2.replace("m", "")))
 
@@ -248,7 +251,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                                     modules.add(module)
                                 }
                                 user.setAnsweredModules(modules)
-
+                            }
                         }
                         Log.d(TAG, "user data ------ " + user.getUUID())
                         onRequestListenerSucces.onSuccess(user)

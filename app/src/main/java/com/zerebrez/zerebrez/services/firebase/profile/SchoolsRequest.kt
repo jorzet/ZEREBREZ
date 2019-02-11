@@ -75,7 +75,7 @@ class SchoolsRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                     val mInstitutes = arrayListOf<Institute>()
 
                     Log.d(TAG, post.toString())
@@ -84,16 +84,16 @@ class SchoolsRequest(activity: Activity) : Engagement(activity) {
                         println(key)
                         val institute = Institute()
                         institute.setInstituteId(Integer(key.replace(INSTITUTE_TAG, "")))
-                        val instituteHash = map.get(key) as HashMap<String, String>
+                        val instituteHash = map.get(key) as kotlin.collections.HashMap<String, String>
                         for (key2 in instituteHash.keys) {
                             if (key2.equals("schoolsList")) {
                                 val schools = arrayListOf<School>()
-                                val schoolsHash = instituteHash.get(key2) as HashMap<String, String>
+                                val schoolsHash = instituteHash.get(key2) as kotlin.collections.HashMap<String, String>
                                 for (key3 in schoolsHash.keys) {
                                     val school = School()
                                     school.setSchoolId(Integer(key3.replace(SCHOOL_TAG, "")))
 
-                                    val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                    val schoolDataHash = schoolsHash.get(key3) as kotlin.collections.HashMap<String, String>
                                     for (key4 in schoolDataHash.keys) {
                                         if (key4.equals(SCHOOL_NAME_KEY)) {
                                             school.setSchoolName(schoolDataHash.get(key4).toString())
