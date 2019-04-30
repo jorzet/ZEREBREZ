@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ open class AbstractRequestTask<A, B, C> : AsyncTask<A, B, C>() {
 
     protected lateinit var onRequestListenerSucces : OnRequestListenerSuccess
     protected lateinit var onRequestLietenerFailed : OnRequestListenerFailed
+    protected lateinit var onDownloadStatusListener: OnDownloadStatusListener
 
     interface OnRequestListenerSuccess {
         fun onSuccess(result: Any)
@@ -38,12 +39,21 @@ open class AbstractRequestTask<A, B, C> : AsyncTask<A, B, C>() {
         fun onFailed(result: Throwable)
     }
 
+    interface OnDownloadStatusListener {
+        fun onImageDownloaded()
+        fun onImagesError()
+    }
+
     fun setOnRequestSuccess(onRequestSuccess: OnRequestListenerSuccess) {
         this.onRequestListenerSucces = onRequestSuccess
     }
 
     fun setOnRequestFailed(onRequestFailed: OnRequestListenerFailed) {
         this.onRequestLietenerFailed = onRequestFailed
+    }
+
+    fun setOnDownloadStatus(onDownloadStatusListener: OnDownloadStatusListener) {
+        this.onDownloadStatusListener = onDownloadStatusListener
     }
 
     protected open fun getUrl() : String {

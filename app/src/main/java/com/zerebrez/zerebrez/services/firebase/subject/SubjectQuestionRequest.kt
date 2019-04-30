@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = post as HashMap<*, *>
+                        val map = post as kotlin.collections.HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -143,7 +143,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
                             val modules = arrayListOf<Module>()
 
                             for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                 val module = Module()
                                 module.setId(Integer(key2.replace("m", "")))
 

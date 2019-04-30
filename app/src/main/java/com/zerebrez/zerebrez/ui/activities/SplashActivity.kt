@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,12 +153,14 @@ class SplashActivity : BaseActivityLifeCycle() {
 
     private fun goContentActivity() {
         initNotificationService()
+        DataHelper(baseContext).setisAfterLogIn(false)
         val intent = Intent(this, ContentActivity::class.java)
         this.startActivity(intent)
         this.finish()
     }
 
     private fun goUpdateApp() {
+        DataHelper(baseContext).setisAfterLogIn(false)
         val intent = Intent(this, UpdateAppActivity::class.java)
         this.startActivity(intent)
         this.finish()

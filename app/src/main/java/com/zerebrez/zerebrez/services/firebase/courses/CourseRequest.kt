@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,17 +64,17 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val courses = ArrayList<Course>()
                     for (key in map.keys) {
-                        val courseMap = map.get(key) as HashMap<*, *>
+                        val courseMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val course = Gson().fromJson(JSONObject(courseMap).toString(), Course::class.java)
                         course.courseId = key.toString()
                         courses.add(course)
                     }
 
-                    Collections.sort(courses, object : Comparator<Course> {
+                    /*Collections.sort(courses, object : Comparator<Course> {
                         override fun compare(o1: Course, o2: Course): Int {
                             return extractInt(o1) - extractInt(o2)
                         }
@@ -84,7 +84,7 @@ class CourseRequest(activity: Activity) : Engagement(activity) {
                             // return 0 if no digits found
                             return if (num.isEmpty()) 0 else Integer.parseInt(num)
                         }
-                    })
+                    })*/
 
                     Log.d(TAG, "courses data ------ " )
                     onRequestListenerSucces.onSuccess(courses)

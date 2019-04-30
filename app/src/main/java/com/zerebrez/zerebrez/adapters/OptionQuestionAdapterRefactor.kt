@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,15 @@ import com.zerebrez.zerebrez.models.enums.QuestionType
 import kotlinx.android.synthetic.main.custom_question_refactor.view.*
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Environment
+import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.storage.FirebaseStorage
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.QuestionNewFormat
+import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_init_question.view.*
 import java.io.File
@@ -40,9 +46,14 @@ import java.io.FileInputStream
  * jorzet.94@gmail.com
  */
 
-class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : QuestionNewFormat, imagesPath : List<Image>, context: Context) : BaseAdapter() {
+class OptionQuestionAdapterRefactor(isAnswer : Boolean,
+                                    questionNewFormat : QuestionNewFormat,
+                                    imagesPath : List<Image>,
+                                    user: User,
+                                    context: Context) : BaseAdapter() {
     private val mQuestionNewFormat = questionNewFormat
     private val mImagesPath : List<Image> = imagesPath
+    private val mUser: User = user
     private val mContext : Context = context
     private val mIsAnswer : Boolean = isAnswer
 
@@ -90,10 +101,30 @@ class OptionQuestionAdapterRefactor(isAnswer : Boolean , questionNewFormat : Que
                     if (nameInStorage.contains(".gif")) {
                         questionView.giv_option.setImageBitmap(getBitmap(nameInStorage))
                         questionView.giv_option.startAnimation()
+
+                        FirebaseStorage
+                                .getInstance()
+                                .getReference()
+                                .child(mUser.getCourse() + "/images/${nameInStorage}")
+                                .getDownloadUrl()
+                                .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                    override fun onSuccess(uri: Uri?) {
+
+                                        Glide.with(mContext)
+                                                .asGif()
+                                                .load(uri.toString())
+                                                .into(questionView.iv_option);
+                                    }
+                                }).addOnFailureListener(object: OnFailureListener {
+                                    override fun onFailure(exception: java.lang.Exception) {
+
+                                    }
+                                })
+
                         questionView.tv_option.visibility = View.GONE
                         questionView.mv_option.visibility = View.GONE
-                        questionView.iv_option.visibility = View.GONE
-                        questionView.giv_option.visibility = View.VISIBLE
+                        questionView.iv_option.visibility = View.VISIBLE
+                        questionView.giv_option.visibility = View.GONE
                     } else {
                         questionView.iv_option.setImageBitmap(getBitmap(nameInStorage))
                         questionView.tv_option.visibility = View.GONE

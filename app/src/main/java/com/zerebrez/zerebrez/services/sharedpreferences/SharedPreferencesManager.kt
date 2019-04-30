@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.zerebrez.zerebrez.services.sharedpreferences
 
 import android.content.Context
+import com.zerebrez.zerebrez.models.Course
 
 /**
  * Created by Jorge Zepeda Tinoco on 29/04/18.
@@ -36,6 +37,7 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_PREMIUM_MODULES : String = "json_premium_modules"
     private val JSON_PREMIUM_EXAMS : String = "json_premium_exams"
     private val PERSISTANCE_DATA : String = "persistance_data"
+    private val AFTER_LOGIN : String = "after_login"
     private val IMAGES_DOWNLOADED : String = "images_downloaded"
     private val IS_LOGGED_IN : String = "is_logged_in"
     private val JSON_INSTITUTES : String = "json_institutes"
@@ -49,10 +51,12 @@ class SharedPreferencesManager(context: Context) {
     private val JSON_IMAGES_PATH : String = "json_images_path"
     private val JSON_CURRENT_QUESTION : String = "json_current_question"
     private val JSON_CURRENT_QUESTION_NEW_FORMAT : String = "json_current_question_new_format"
+    private val JSON_COURSES : String = "json_courses"
     private val NOTIFICATION_TIME : String = "notification_time"
     private val REMINDER_SATUS : String = "reminder_status"
     private val HAS_PENDING_PAYMENT : String = "has_pending_payment"
     private val PAYMENT_ID : String = "payment_id"
+    private val COURSE_PRICE : String = "course_price"
 
     /*
      * fragment tags
@@ -487,6 +491,39 @@ class SharedPreferencesManager(context: Context) {
     fun getPaymentId() : String {
         val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         return prefs.getString(PAYMENT_ID, "")
+    }
+
+    fun saveCoursePrice(coursePrice : String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(COURSE_PRICE, coursePrice)
+        editor.apply()
+    }
+
+    fun getCoursePrice() : String {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(COURSE_PRICE, "")
+    }
+
+    fun storeJsonCourses(jsonCourses: String) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putString(JSON_COURSES, jsonCourses)
+        editor.apply()
+    }
+
+    fun getJsonCourses() : String{
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(JSON_COURSES, "")
+    }
+
+    fun storeAfterLogin(afterLogIn: Boolean) {
+        val editor = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(AFTER_LOGIN, afterLogIn)
+        editor.apply()
+    }
+
+    fun getIsAfterLogIn() : Boolean {
+        val prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(AFTER_LOGIN, false)
     }
 
 }

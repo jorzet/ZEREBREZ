@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import com.google.firebase.database.ValueEventListener
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.database.DataHelper
-import kotlin.collections.HashMap
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.SendQuestionRequestTask
@@ -77,6 +77,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
      */
     private val COURSE_KEY : String = "course"
     private val PREMIUM_KEY : String = "premium"
+    private val COMPROPAGO_KEY : String = "comproPago"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val DEVELOPERS_DEBUG_KEY : String = "developersDebug"
     private val METHOD_KEY : String = "method"
@@ -88,6 +89,9 @@ open class Firebase(activity: Activity) : Engagement(activity) {
     private val INCORRECT_REFERENCE : String = "incorrect"
     private val INSTITUTION_ID : String = "institutionId"
     private val SCHOOL_ID : String = "schoolId"
+    private val EMAIL_KEY : String = "email"
+    private val BILLING_ID_KEY : String = "id"
+    private val STATUS_KEY : String = "status"
 
     /*
      * Database object
@@ -119,7 +123,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
+                val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                 val mCourses = arrayListOf<String>()
 
                 Log.d(TAG, post.toString())
@@ -130,7 +134,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 for ( key in map.keys) {
                     println(key)
                     mCourses.add(key)
-                    val obj = map.get(key) as HashMap<String, Any>
+                    val obj = map.get(key) as kotlin.collections.HashMap<String, Any>
                     for (key2 in obj.keys) {
                         if (key2.toString().equals("modules")) {
                             for (m in obj.get("modules") as List<String>) {
@@ -198,7 +202,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
         val user = getCurrentUser()
         if (user != null) {
-            val userUpdates = HashMap<String, Any>()
+            val userUpdates = kotlin.collections.HashMap<String, Any>()
             if (!userCache.getCourse().equals("")) {
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + DEVELOPERS_DEBUG_KEY, "Suscripcion")
@@ -206,6 +210,72 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + METHOD_KEY, userCache.getPayGayMethod())
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + PAYMENT_CONFIRMED_IN_KEY, "Android")
                 userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+            }
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
+            //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
+
+            mFirebaseDatabase.updateChildren(userUpdates).addOnCompleteListener(mActivity, object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isComplete) {
+                        Log.d(TAG, "complete requestSendUser")
+                        onRequestListenerSucces.onSuccess(true)
+                    } else {
+                        Log.d(TAG, "cancelled requestSendUser")
+                        val error = GenericError()
+                        error.setErrorType(ErrorType.USER_NOT_SENDED)
+                        onRequestLietenerFailed.onFailed(error)
+                    }
+                }
+            })
+        }
+    }
+
+
+    fun requestRemoveCompropagoNode(userCache : User) {
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
+        mFirebaseDatabase.keepSynced(true)
+
+        val user = getCurrentUser()
+        if (user != null) {
+
+            mFirebaseDatabase
+                    .child(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY)
+                    .removeValue().addOnCompleteListener(object: OnCompleteListener<Void> {
+                        override fun onComplete(task: Task<Void>) {
+                            if (task.isComplete) {
+                                Log.d(TAG, "complete requestSendUser")
+                                onRequestListenerSucces.onSuccess(true)
+                            } else {
+                                Log.d(TAG, "cancelled requestSendUser")
+                                val error = GenericError()
+                                error.setErrorType(ErrorType.USER_NOT_SENDED)
+                                onRequestLietenerFailed.onFailed(error)
+                            }
+                        }
+                    })
+        }
+    }
+
+    fun requestSendUserComproPago(userCache : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        // Get a reference to our posts
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                .getReference()
+
+        mFirebaseDatabase.keepSynced(true)
+
+        val user = getCurrentUser()
+        if (user != null) {
+            val userUpdates = kotlin.collections.HashMap<String, Any>()
+            if (!userCache.getCourse().equals("")) {
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + COURSE_KEY, userCache.getCourse())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + COURSE_KEY, userCache.getCourse())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + EMAIL_KEY, userCache.getEmail())
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + BILLING_ID_KEY, billingId)
+                userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + COMPROPAGO_KEY + "/" + STATUS_KEY, comproPagoStatus.value)
             }
             //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + IS_PREMIUM_KEY, userCache.isPremiumUser())
             //userUpdates.put(user.uid + "/" + PROFILE_REFERENCE + "/" + PREMIUM_KEY + "/" + TIMESTAMP_KEY, userCache.getTimestamp())
@@ -269,7 +339,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
         val user = getCurrentUser()
         if (user != null) {
-            val userUpdates = HashMap<String, Any>()
+            val userUpdates = kotlin.collections.HashMap<String, Any>()
 
             if (module.isAnsweredModule()) {
                 var correct = 0
@@ -313,7 +383,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
         val user = getCurrentUser()
         if (user != null) {
-            val userUpdates = HashMap<String, Any>()
+            val userUpdates = kotlin.collections.HashMap<String, Any>()
 
             if (exam.isAnsweredExam()) {
                 userUpdates.put(user.uid + "/" + ANSWERED_EXAMS + "/" + course + "/" + "e" + exam.getExamId() + "/" + CORRECT_REFERENCE, exam.getHits())
@@ -346,7 +416,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
         val user = getCurrentUser()
         if (user != null) {
-            val userUpdates = HashMap<String, Any>()
+            val userUpdates = kotlin.collections.HashMap<String, Any>()
             val dbNode = mFirebaseDatabase.child(user.uid + "/" + PROFILE_REFERENCE + "/" + userCache.getCourse() + "/" + SELECTED_SCHOOLS_REFERENCE)
             dbNode.setValue(null)
 
@@ -385,17 +455,17 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     val post = dataSnapshot.getValue()
-                    val map = (post as HashMap<String, String>)
+                    val map = (post as kotlin.collections.HashMap<String, String>)
                     Log.d(TAG, "user data ------ " + map.size)
 
                     val user = User()
                     for ( key in map.keys) {
                         println(key)
                         if (key.equals("profile")) {
-                            val profile = map.get(key) as HashMap<String, String>
+                            val profile = map.get(key) as kotlin.collections.HashMap<String, String>
                             for (key2 in profile.keys) {
                                 if (key2.equals("premium")) {
-                                    val premiumHash = map.get(key) as HashMap<String, String>
+                                    val premiumHash = map.get(key) as kotlin.collections.HashMap<String, String>
                                     for (key4 in profile.keys) {
                                         if (key4.equals(IS_PREMIUM_KEY)) {
                                             val isPremium = premiumHash.get(key4) as Boolean
@@ -414,7 +484,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                     val schools = arrayListOf<School>()
                                     Log.d(TAG, "user data ------ " + selectedSchools.size)
                                     for (i in 0 .. selectedSchools.size - 1) {
-                                        val institute = selectedSchools.get(i) as HashMap<String ,String>
+                                        val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String ,String>
                                         val school = School()
                                         if (institute.containsKey("institutionId")) {
                                             school.setInstituteId(Integer(institute.get("institutionId")!!.replace("institute","")))
@@ -429,10 +499,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                 }
                             }
                         } else if (key.equals("answeredQuestions")) {
-                            val answeredQuestions = map.get(key) as HashMap<String, String>
+                            val answeredQuestions = map.get(key) as kotlin.collections.HashMap<String, String>
                             val questions = arrayListOf<QuestionNewFormat>()
                             for (key2 in answeredQuestions.keys) {
-                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+                                val questionAnswered = answeredQuestions.get(key2) as kotlin.collections.HashMap<String, String>
                                 val question = QuestionNewFormat()
                                 question.questionId = key2
                                 for (key3 in questionAnswered.keys) {
@@ -472,6 +542,33 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                                             limpiarTexto(SubjectType.FCE.value) -> {
                                                 question.subject = SubjectType.FCE
                                             }
+                                            limpiarTexto(SubjectType.FCE2.value) -> {
+                                                question.subject = SubjectType.FCE2
+                                            }
+                                            limpiarTexto("filosofiaarea") -> {
+                                                question.subject = SubjectType.PHILOSOPHY_AREA
+                                            }
+                                            limpiarTexto("filosofia(area4)") -> {
+                                                question.subject = SubjectType.PHILOSOPHY_AREA_4
+                                            }
+                                            limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                                question.subject = SubjectType.PHILOSOPHY
+                                            }
+                                            limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                                question.subject = SubjectType.LITERATURE
+                                            }
+                                            limpiarTexto("quimicaarea") -> {
+                                                question.subject = SubjectType.CHEMISTRY_AREA
+                                            }
+                                            limpiarTexto("quimica(area2)") -> {
+                                                question.subject = SubjectType.CHEMISTRY_AREA_2
+                                            }
+                                            limpiarTexto("matematicasarea") -> {
+                                                question.subject = SubjectType.MATEMATICS_AREA
+                                            }
+                                            limpiarTexto("matematicas(area1y2)") -> {
+                                                question.subject = SubjectType.MATEMATICS_AREA_1_2
+                                            }
                                         }
                                     } else if (key3.equals("isCorrect")) {
                                         val isCorrect = questionAnswered.get(key3) as Boolean
@@ -485,11 +582,11 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                             }
                             user.setAnsweredQuestionsNewFormat(questions)
                         } else if (key.equals("answeredModules")) {
-                            val answeredModules = map.get(key) as HashMap<String, String>
+                            val answeredModules = map.get(key) as kotlin.collections.HashMap<String, String>
                             val modules = arrayListOf<Module>()
 
                             for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                 val module = Module()
                                 module.setId(Integer(key2.replace("m","")))
 
@@ -507,10 +604,10 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                             }
                             user.setAnsweredModules(modules)
                         } else if (key.equals("answeredExams")) {
-                            val answeredExams = map.get(key) as HashMap<String, String>
+                            val answeredExams = map.get(key) as kotlin.collections.HashMap<String, String>
                             val exams = arrayListOf<Exam>()
                             for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                 val exam = Exam()
                                 exam.setExamId(Integer(key2.replace("e","")))
 
@@ -555,7 +652,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
+                val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                 val mInstitutes = arrayListOf<Institute>()
 
                 Log.d(TAG, post.toString())
@@ -564,16 +661,16 @@ open class Firebase(activity: Activity) : Engagement(activity) {
                     println(key)
                     val institute = Institute()
                     institute.setInstituteId(Integer(key.replace("institute","")))
-                    val instituteHash = map.get(key) as HashMap<String, String>
+                    val instituteHash = map.get(key) as kotlin.collections.HashMap<String, String>
                     for (key2 in instituteHash.keys) {
                         if (key2.equals("schoolsList")) {
                             val schools = arrayListOf<School>()
-                            val schoolsHash = instituteHash.get(key2) as HashMap<String, String>
+                            val schoolsHash = instituteHash.get(key2) as kotlin.collections.HashMap<String, String>
                             for (key3 in schoolsHash.keys) {
                                 val school = School()
                                 school.setSchoolId(Integer(key3.replace("school","")))
 
-                                val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                val schoolDataHash = schoolsHash.get(key3) as kotlin.collections.HashMap<String, String>
                                 for (key4 in schoolDataHash.keys) {
                                     if (key4.equals("name")) {
                                         school.setSchoolName(schoolDataHash.get(key4).toString())
@@ -614,7 +711,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
+                val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                 val mExams = arrayListOf<Exam>()
 
                 Log.d(TAG, post.toString())
@@ -667,7 +764,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
-                val map = (post as HashMap<String, HashMap<Any, Any>>)
+                val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                 val mImage = arrayListOf<Image>()
 
                 Log.d(TAG, post.toString())
@@ -681,7 +778,7 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
                     // set module id and question id
                     image.setImageId(Integer(key.replace("i","")))
-                    val values = map.get(key) as HashMap<String, String>
+                    val values = map.get(key) as kotlin.collections.HashMap<String, String>
 
                     for (key2 in values.keys) {
                         if (key2.equals("download")) {
@@ -725,7 +822,11 @@ open class Firebase(activity: Activity) : Engagement(activity) {
 
     override fun onEmailUpdatedSuccess(user : User) {
         super.onEmailUpdatedSuccess(user)
-        requestFirebaseUpdateUserPassword(user)
+        if (user != null && user.getPassword() != null && user.getPassword().isNotEmpty()) {
+            requestFirebaseUpdateUserPassword(user)
+        } else {
+            onPasswordUpdatedSuccess(false)
+        }
     }
 
     override fun onEmailUpdatedFail(throwable: Throwable) {

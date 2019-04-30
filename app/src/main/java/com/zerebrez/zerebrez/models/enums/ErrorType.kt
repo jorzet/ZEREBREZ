@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,5 +38,6 @@ enum class ErrorType {
     QUESTIONS_ERROR,
     NULL_RESPONSE,
     CANNOT_LOGIN,
-    CANNOT_DOWNLOAD_CONTENT
+    CANNOT_DOWNLOAD_CONTENT,
+    CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.ui.dialogs
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
@@ -37,7 +38,7 @@ import java.lang.Exception
  * jorzet.94@gmail.com
  */
 
-class ErrorDialog : DialogFragment(){
+class ErrorDialog : DialogFragment(), DialogInterface.OnCancelListener{
 
     /*
      * UI accessors
@@ -214,6 +215,13 @@ class ErrorDialog : DialogFragment(){
             mOnErrorDialogListener!!.onConfirmationCancel()
         }
         dismiss()
+    }
+
+    override fun onCancel(dialog: DialogInterface?) {
+        super.onCancel(dialog)
+        if (mOnErrorDialogListener != null) {
+            mOnErrorDialogListener!!.onConfirmationCancel()
+        }
     }
 
 }

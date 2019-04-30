@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
     /*
      * Node references
      */
-    private val COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE : String = "course_label/question_id"
-    private val COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE : String = "course_label"
+    private val COURSE_QUESTION_NEW_FORMAT_REFERENCE : String = "course_label/question_id"
+    private val COURSE_QUESTIONS_NEW_FORMAT_REFERENCE : String = "course_label"
     private val MODULES_REFERENCE : String = "modules/course_label"
     private var SUBJECT_REFERENCE : String = "questionsInSubjects/course_label/subject_label"
     private val EXAMS_REFERENCE : String = "exams/course_label"
@@ -113,7 +113,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
     fun requestGetQuestionsNewFormatByExamId(examId : Int, course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
-                .getInstance()
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
                 .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course) + "/e" + examId)
 
         mFirebaseDatabase.keepSynced(true)
@@ -124,17 +124,25 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as List<String>)
+                    val postHash = (post as kotlin.collections.HashMap<*, *>)
 
-                    val questionsId = arrayListOf<String>()
+                    if (postHash.containsKey("questions")) {
 
-                    // get question id from response
-                    for (q in map) {
-                        questionsId.add(q)
-                    }
+                        val map = (postHash.get("questions") as List<String>)
 
-                    if (questionsId.isNotEmpty()) {
-                        onRequestListenerSucces.onSuccess(questionsId)
+                        val questionsId = arrayListOf<String>()
+
+                        // get question id from response
+                        for (q in map) {
+                            questionsId.add(q)
+                        }
+
+                        if (questionsId.isNotEmpty()) {
+                            onRequestListenerSucces.onSuccess(questionsId)
+                        } else {
+                            val error = GenericError()
+                            onRequestLietenerFailed.onFailed(error)
+                        }
                     } else {
                         val error = GenericError()
                         onRequestLietenerFailed.onFailed(error)
@@ -230,7 +238,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
                 .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
-                .getReference(COMIPEMS_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
+                .getReference(COURSE_QUESTIONS_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course))
         mFirebaseDatabase.keepSynced(true)
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
@@ -238,11 +246,11 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as java.util.HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val mQuestions = ArrayList<QuestionNewFormat>()
                     for (key in map.keys) {
-                        val questionMap = map.get(key) as HashMap<*, *>
+                        val questionMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val question = Gson().fromJson(JSONObject(questionMap).toString(), QuestionNewFormat::class.java)
                         question.questionId = key.toString()
                         if (questionMap.containsKey("subject")) {
@@ -283,6 +291,30 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                                 }
                                 limpiarTexto(SubjectType.FCE2.value) -> {
                                     question.subject = SubjectType.FCE2
+                                }
+                                limpiarTexto("filosofiaarea") -> {
+                                    question.subject = SubjectType.PHILOSOPHY_AREA
+                                }
+                                limpiarTexto("filosofia(area4)") -> {
+                                    question.subject = SubjectType.PHILOSOPHY_AREA_4
+                                }
+                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                    question.subject = SubjectType.PHILOSOPHY
+                                }
+                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                    question.subject = SubjectType.LITERATURE
+                                }
+                                limpiarTexto("quimicaarea") -> {
+                                    question.subject = SubjectType.CHEMISTRY_AREA
+                                }
+                                limpiarTexto("quimica(area2)") -> {
+                                    question.subject = SubjectType.CHEMISTRY_AREA_2
+                                }
+                                limpiarTexto("matematicasarea") -> {
+                                    question.subject = SubjectType.MATEMATICS_AREA
+                                }
+                                limpiarTexto("matematicas(area1y2)") -> {
+                                    question.subject = SubjectType.MATEMATICS_AREA_1_2
                                 }
                             }
                         }
@@ -330,7 +362,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
                 .getInstance(Engagement.QUESTIONS_DATABASE_REFERENCE)
-                .getReference(COMIPEMS_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
+                .getReference(COURSE_QUESTION_NEW_FORMAT_REFERENCE.replace(COURSE_LABEL, course).replace(QUESTION_ID, questionId))
 
         mFirebaseDatabase.keepSynced(true)
 
@@ -340,7 +372,7 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val questionMap = (post as java.util.HashMap<*, *>)
+                    val questionMap = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + questionMap.size)
 
                     val question = Gson().fromJson(JSONObject(questionMap).toString(), QuestionNewFormat::class.java)
@@ -383,6 +415,30 @@ class QuestionNewFormatRequest(activity: Activity) : Engagement(activity) {
                             }
                             limpiarTexto(SubjectType.FCE2.value) -> {
                                 question.subject = SubjectType.FCE2
+                            }
+                            limpiarTexto("filosofiaarea") -> {
+                                question.subject = SubjectType.PHILOSOPHY_AREA
+                            }
+                            limpiarTexto("filosofia(area4)") -> {
+                                question.subject = SubjectType.PHILOSOPHY_AREA_4
+                            }
+                            limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                question.subject = SubjectType.PHILOSOPHY
+                            }
+                            limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                question.subject = SubjectType.LITERATURE
+                            }
+                            limpiarTexto("quimicaarea") -> {
+                                question.subject = SubjectType.CHEMISTRY_AREA
+                            }
+                            limpiarTexto("quimica(area2)") -> {
+                                question.subject = SubjectType.CHEMISTRY_AREA_2
+                            }
+                            limpiarTexto("matematicasarea") -> {
+                                question.subject = SubjectType.MATEMATICS_AREA
+                            }
+                            limpiarTexto("matematicas(area1y2)") -> {
+                                question.subject = SubjectType.MATEMATICS_AREA_1_2
                             }
                         }
                     }

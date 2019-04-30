@@ -107,7 +107,7 @@
     <RelativeLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/question_bottom_bar_height"
         android:layout_alignParentBottom="true"
         android:background="@color/bottom_bar_background_color">
 

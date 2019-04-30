@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.request.RequestManager
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
@@ -46,6 +47,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val UPDATE_WRONG_QUESTIONS : String = "update_wrong_questions"
         val REQUEST_NEW_QUESTION : String = "request_new_question"
         val QUESTION_POSITION : String = "question_position"
+        val REFRESH_FRAGMENT : String = "refresh_fragment"
         val SHOW_QUESTION_RESULT_CODE : Int = 1
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
@@ -308,6 +310,20 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+
+                        val user = getUser()
+                        if (user != null) {
+
+                            val userFirebase = FirebaseAuth.getInstance().currentUser
+                            if (userFirebase != null && !userFirebase.email.equals("")) {
+                                user.setEmail(userFirebase.email!!)
+                            }
+
+                            if (!user.getCourse().equals("")) {
+                                requestSendUserComproPago(user, chargeResponse.id, ComproPagoStatus.CHARGE_SUCCESS)
+                            }
+                        }
+
                         ErrorDialog.newInstance("Felicidades ya eres PREMIUM",
                                 DialogType.OK_DIALOG ,this)!!
                                 .show(supportFragmentManager, "paywaySuccess")
@@ -676,15 +692,40 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetMinimumVersionSuccess(minimumVersion: String) {}
     open fun onGetMinimumVersionFail(throwable: Throwable) {}
 
-    override fun onConfirmationCancel() {
+    override fun onConfirmationCancel() {}
 
+    override fun onConfirmationNeutral() {}
+
+    override fun onConfirmationAccept() {}
+
+
+    fun requestSendUserComproPago(user : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        mRequestManager.requestSendUserComproPago(user, billingId, comproPagoStatus, object : RequestManager.OnSendUserComproPagoListener {
+            override fun onSendUserComproPagoLoaded(success: Boolean) {
+                onSendUserComproPagoSuccess(success)
+            }
+
+            override fun onSendUserComproPagoError(throwable: Throwable) {
+                onSendUserComproPagoFail(throwable)
+            }
+        })
     }
 
-    override fun onConfirmationNeutral() {
+    open fun onSendUserComproPagoSuccess(success: Boolean) {}
+    open fun onSendUserComproPagoFail(throwable: Throwable) {}
 
+    fun requestGetCoursesRefactor() {
+        mRequestManager.requestGetCoursesrefactor(object : RequestManager.OnGetCourseRefactorListener {
+            override fun onGetCoursesRefactorLoaded(courses: List<Course>) {
+                onGetCoursesRefactorSuccess(courses)
+            }
+
+            override fun onGetCoursesRefactorError(throwable: Throwable) {
+                onGetCoursesRefactorFail(throwable)
+            }
+        })
     }
 
-    override fun onConfirmationAccept() {
-
-    }
+    open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
+    open fun onGetCoursesRefactorFail(throwable: Throwable) {}
 }

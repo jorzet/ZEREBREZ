@@ -5,7 +5,7 @@
     <item>
         <shape>
             <corners
-                android:radius="8dip" />
+                android:radius="10dip" />
             <gradient
                 android:startColor="@color/start_button_color_front"
                 android:centerY="0.50"

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,8 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
     private val ANSWERED_EXAM_KEY : String = "answeredExams"
     private val CORRECT_KEY : String = "correct"
     private val INCORRECT_KEY : String = "incorrect"
+    private val QUESTIONONS_KEY : String = "questions"
+    private val DESCRIPTION_KEY : String = "description"
 
     /*
      * Database object
@@ -108,7 +110,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
     fun requestGetExamsRefactor(course: String) {
         // Get a reference to our posts
         mFirebaseDatabase = FirebaseDatabase
-                .getInstance()
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
                 .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
 
         mFirebaseDatabase.keepSynced(true)
@@ -119,27 +121,35 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                     val mExams = arrayListOf<Exam>()
 
                     Log.d(TAG, post.toString())
 
                     /*
-                 * mapping map to module object
-                 */
+                     * mapping map to module object
+                     */
                     for (key in map.keys) {
                         println(key)
                         val exam = Exam()
                         val questions = arrayListOf<QuestionNewFormat>()
 
-                        // get question id from response
-                        val list = map.get(key) as List<String>
-                        for (q in list) {
-                            val questionNewFormat = QuestionNewFormat()
-                            questionNewFormat.questionId = q
-                            questions.add(questionNewFormat)
+                        val examContent = (map.get(key) as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
+
+                        if (examContent.contains(QUESTIONONS_KEY)) {
+                            // get question id from response
+                            val list = examContent.get(QUESTIONONS_KEY) as List<String>
+                            for (q in list) {
+                                val questionNewFormat = QuestionNewFormat()
+                                questionNewFormat.questionId = q
+                                questions.add(questionNewFormat)
+                            }
                         }
 
+                        if (examContent.contains(DESCRIPTION_KEY)) {
+                            val description = examContent.get(DESCRIPTION_KEY) as String
+                            exam.setDescription(description)
+                        }
                         // set module id and question id
                         exam.setExamId(Integer(key.replace("e", "")))
                         exam.setQuestionsNewFormat(questions)
@@ -149,8 +159,8 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                     }
 
                     /*
-                  * sort module list because service doesn't return it in order
-                  */
+                     * sort module list because service doesn't return it in order
+                     */
                     Collections.sort(mExams, object : Comparator<Exam> {
                         override fun compare(o1: Exam, o2: Exam): Int {
                             return extractInt(o1) - extractInt(o2)
@@ -193,7 +203,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -230,7 +240,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                             val answeredExams = (map.get(ANSWERED_EXAM_KEY) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                             val exams = arrayListOf<Exam>()
                             for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                 val exam = Exam()
                                 exam.setExamId(Integer(key2.replace("e", "")))
 

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/tv_pending_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="Pendiente de pago"
+            android:textColor="@color/payment_text_color_1"
+            android:textSize="25sp"/>
+
+        <TextView
+            android:id="@+id/tv_instruction_send_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_pending_payment"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/payment_text_color_2"
+            android:text="Las instrucciones se enviaron a:"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/tv_email_to_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_instruction_send_to"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="email@email.com"
+            android:textColor="@color/payment_email_text_color"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/btn_change_payment_method"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@+id/tv_email_to_send"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/change_payment_method_background_button"
+            android:text="   Cambiar forma de pago   "/>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

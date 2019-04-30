@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/question_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -64,9 +65,9 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_height="match_parent"
+        android:id="@+id/ll_options_container"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_weight="1"
         android:background="@color/answer_background_color">
 
         <ScrollView
@@ -84,8 +85,8 @@
 
                 <RelativeLayout
                     android:id="@+id/padding_top"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/margin_anwer_buttons_top">
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -180,7 +181,7 @@
                     android:id="@+id/rl_option_b"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="@dimen/margin_anwer_button_top">
 
                     <RelativeLayout
                         android:id="@+id/rl_b_option"
@@ -271,7 +272,7 @@
                     android:id="@+id/rl_option_c"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="@dimen/margin_anwer_button_top">
 
                     <RelativeLayout
                         android:id="@+id/rl_c_option"
@@ -361,7 +362,7 @@
                     android:id="@+id/rl_option_d"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="@dimen/margin_anwer_button_top">
 
                     <RelativeLayout
                         android:id="@+id/rl_d_option"

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package com.zerebrez.zerebrez.fragments.payment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,8 +33,12 @@ import com.zerebrez.zerebrez.models.OrderResponse
 
 import com.zerebrez.zerebrez.models.Provider
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
+import com.zerebrez.zerebrez.services.database.DataHelper
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
+import com.zerebrez.zerebrez.ui.activities.BaseActivityLifeCycle
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.NetworkUtil
 import retrofit2.Response
@@ -44,7 +51,7 @@ import retrofit2.Response
 class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDialogListener{
 
     private val TAG = "ProvidersFragment"
-    private val PRICE = 99.0f
+    private var PRICE = 99.0f
     private var ORDER_GENERATED = false
 
     private lateinit var mNameEditText: EditText
@@ -57,6 +64,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     private lateinit var mScrollView: ScrollView
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mCloseContainer: RelativeLayout
+    private lateinit var mCourseDescriptionTextView: TextView
 
     private var mProvider: Provider? = null
     private lateinit var mComproPagoManager: ComproPagoManager
@@ -69,34 +77,50 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.confirm_order_fragment, container, false)!!
 
-        mNameEditText = root.findViewById(R.id.et_order_name)
-        mLastNameEditText = root.findViewById(R.id.et_order_last_name)
-        mEmailEditText = root.findViewById(R.id.et_order_mail)
-        mPriceTextView = root.findViewById(R.id.tv_suscription_price)
-        mProvierImageView = root.findViewById(R.id.iv_order_provider_icon)
-        mComissionTextView = root.findViewById(R.id.tv_order_provider_comision)
-        mConfirmOrderButton = root.findViewById(R.id.btn_order_confirm)
-        mScrollView = root.findViewById(R.id.sv_confirm_order)
-        mProgressBar = root.findViewById(R.id.pb_confirm_order)
-        mCloseContainer = root.findViewById(R.id.rl_close_confirm_order)
+        val rootView = inflater.inflate(R.layout.confirm_order_fragment, container, false)!!
 
-        mConfirmOrderButton.setOnClickListener {GenerateOrder()}
+        mNameEditText = rootView.findViewById(R.id.et_order_name)
+        mLastNameEditText = rootView.findViewById(R.id.et_order_last_name)
+        mEmailEditText = rootView.findViewById(R.id.et_order_mail)
+        mPriceTextView = rootView.findViewById(R.id.tv_suscription_price)
+        mProvierImageView = rootView.findViewById(R.id.iv_order_provider_icon)
+        mComissionTextView = rootView.findViewById(R.id.tv_order_provider_comision)
+        mConfirmOrderButton = rootView.findViewById(R.id.btn_order_confirm)
+        mScrollView = rootView.findViewById(R.id.sv_confirm_order)
+        mProgressBar = rootView.findViewById(R.id.pb_confirm_order)
+        mCloseContainer = rootView.findViewById(R.id.rl_close_confirm_order)
+        mCourseDescriptionTextView = rootView.findViewById(R.id.tv_suscription_details)
+
+        PRICE = SharedPreferencesManager(context!!).getCoursePrice().toFloat()
+        val user = getUser()
+
+        if (user != null && !user.getCourse().equals("")) {
+            val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
+            if (course != null) {
+                mCourseDescriptionTextView.text = course.comproPagoDescription
+            }
+        }
+
+        mPriceTextView.text = "$${PRICE}"
+
+        mConfirmOrderButton.setOnClickListener {
+            //OnFakeGenerateOrderSuccess()
+            GenerateOrder()
+        }
         mCloseContainer.setOnClickListener {
             if (activity != null) {
                 activity!!.onBackPressed()
             }
         }
 
-        mPriceTextView.text = "$${PRICE}"
         mComproPagoManager = ComproPagoManager()
 
         //Show provider information
         SetEmailIfUser()
         ShowProviderInformation()
 
-        return root
+        return rootView
     }
 
     private fun GenerateOrder() {
@@ -104,18 +128,30 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         val lastName = mLastNameEditText.text.toString()
         val email = mEmailEditText.text.toString()
         if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@") && activity != null){
-            if (NetworkUtil.isConnected(this!!.activity!!)) {
+            if (NetworkUtil.isConnected(this.activity!!)) {
                 setWaitScreen(true)
-                mComproPagoManager.GenerateOrder("$name $lastName", email, mProvider!!.internal_name, PRICE, object: ComproPagoManager.OnGenerateOrderListener{
-                    override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
-                        OnGenerateOrderSuccess(response)
+
+                if (context != null) {
+                    val user = getUser()
+
+                    if (user != null && !user.getCourse().equals("")) {
+                        val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
+                        if (course != null) {
+                            mComproPagoManager.GenerateOrder(course, "$name $lastName", email, mProvider!!.internal_name, PRICE, object : ComproPagoManager.OnGenerateOrderListener {
+                                override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
+                                    OnGenerateOrderSuccess(response)
+                                }
+
+                                override fun onGenerateOrderFailure(throwable: Throwable?) {
+                                    OnGenerateOrderError(throwable)
+                                }
+
+                            })
+                        }
                     }
 
-                    override fun onGenerateOrderFailure(throwable: Throwable?) {
-                        OnGenerateOrderError(throwable)
-                    }
+                }
 
-                })
             } else
                 SendRequestErrorMessage()
         }
@@ -123,16 +159,35 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
             Toast.makeText(activity, "Es necesario llenar todos los campos", Toast.LENGTH_SHORT).show()
     }
 
+    fun OnFakeGenerateOrderSuccess() {
+        ORDER_GENERATED=true
+        setPendingPayment(true)
+        setPaymentId("sdagIDSNFLDSJZBSF")
+
+        val user = getUser()
+        if (user != null && !user.getCourse().equals("")) {
+            requestSendUserComproPago(user, "DSBNVIAEBSC34251KDBL", ComproPagoStatus.CHARGE_PENDING)
+        }
+
+        ErrorDialog.newInstance("Orden de pago generada", "Las instrucciones de pago llegarán al corrreo proporcionado, una vez realizado el pago obtendrás tu suscripción.",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
+    }
 
     fun OnGenerateOrderSuccess(response: Response<OrderResponse>?){
         if(response!=null){
             if(response.code()<300 && response.code()>199){
                 val orderResponse = response.body()
                 if (orderResponse != null) {
-                    if(!orderResponse.short_id.equals("")) {
+                    if(orderResponse.short_id != null && !orderResponse.short_id.equals("")) {
                         ORDER_GENERATED=true
                         setPendingPayment(true)
                         setPaymentId(orderResponse.id)
+
+                        val user = getUser()
+                        if (user != null && !user.getCourse().equals("")) {
+                            requestSendUserComproPago(user, orderResponse.id, ComproPagoStatus.CHARGE_PENDING)
+                        }
+
                         ErrorDialog.newInstance("Orden de pago generada", "Las instrucciones de pago llegarán al corrreo proporcionado, una vez realizado el pago obtendrás tu suscripción.",
                                 DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
                     }else
@@ -150,8 +205,8 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     private fun setWaitScreen(set: Boolean) {
-        mScrollView.setVisibility(if (set) View.GONE else View.VISIBLE)
-        mProgressBar.setVisibility(if (set) View.VISIBLE else View.GONE)
+        mScrollView.visibility = if (set) View.GONE else View.VISIBLE
+        mProgressBar.visibility = if (set) View.VISIBLE else View.GONE
     }
 
     private fun ImageView.loadUrl(url: String) {
@@ -200,6 +255,9 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     override fun onConfirmationNeutral() {
         if (ORDER_GENERATED) {
             if (activity != null) {
+                val data = Intent()
+                data.putExtra(BaseActivityLifeCycle.REFRESH_FRAGMENT, true)
+                activity!!.setResult(AppCompatActivity.RESULT_OK, data)
                 activity!!.finish()
             }
         } else
@@ -207,6 +265,8 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
     override fun onConfirmationAccept() {
+        if (ORDER_GENERATED) {
 
+        }
     }
 }

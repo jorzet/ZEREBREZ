@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,10 @@ class ColorUtils {
          * Define all color for courses
          */
         val mExamColors = intArrayOf(
-                R.color.comipems_background,
-                R.color.secundary_background,
-                R.color.unam_1_background,
-                R.color.unam_2_background,
-                R.color.ipn_1_background)
+                R.drawable.comipems_background,
+                R.drawable.secundary_background,
+                R.drawable.unam_1_background,
+                R.drawable.unam_2_background,
+                R.drawable.ipn_1_background)
     }
 }

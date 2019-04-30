@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.services.firebase.CheckUserWithProviderRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
@@ -58,7 +59,7 @@ class RequestManager(activity : Activity) {
 
         firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
             override fun onFailed(result: Throwable) {
-                onSendPasswordResetEmailListener.onSendPasswordResetEmailFail(result)
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailError(result)
             }
         })
 
@@ -135,6 +136,43 @@ class RequestManager(activity : Activity) {
         })
 
         firebase.requestSendUser(user)
+    }
+
+
+    fun requestSendUserComproPago(user: User, billingId: String, comproPagoStatus: ComproPagoStatus, onSendUserComproPagoListener: OnSendUserComproPagoListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onSendUserComproPagoListener.onSendUserComproPagoLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onSendUserComproPagoListener.onSendUserComproPagoError(result)
+            }
+        })
+
+        firebase.requestSendUserComproPago(user, billingId, comproPagoStatus)
+    }
+
+    fun requestRemoveCompropagoNode(user: User, onRemoveComproPagoNodeListener: OnRemoveComproPagoNodeListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeError(result)
+            }
+        })
+
+        firebase.requestRemoveCompropagoNode(user)
     }
 
     /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
@@ -454,7 +492,7 @@ class RequestManager(activity : Activity) {
 
     interface OnSendPasswordResetEmailListener {
         fun onSendPasswordResetEmailLoaded(success : Boolean)
-        fun onSendPasswordResetEmailFail(throwable: Throwable)
+        fun onSendPasswordResetEmailError(throwable: Throwable)
     }
 
     interface OnDoLogInListener {
@@ -475,6 +513,16 @@ class RequestManager(activity : Activity) {
     interface OnSendUserListener {
         fun onSendUserLoaded(success: Boolean)
         fun onSendUserError(throwable: Throwable)
+    }
+
+    interface OnSendUserComproPagoListener {
+        fun onSendUserComproPagoLoaded(success: Boolean)
+        fun onSendUserComproPagoError(throwable: Throwable)
+    }
+
+    interface OnRemoveComproPagoNodeListener {
+        fun onRemoveComproPagoNodeLoaded(success: Boolean)
+        fun onRemoveComproPagoNodeError(throwable: Throwable)
     }
 
     interface OnGetModulesListener {
@@ -1134,6 +1182,24 @@ class RequestManager(activity : Activity) {
         schoolsAverageRequest.requestGetScoreLast128QuestionsExam()
     }
 
+    fun requestGetCourseExamMaxScore(course: String, onGetCourseExamMaxScore: OnGetCourseExamMaxScore) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreLoaded(result as String)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetCourseExamMaxScore(course)
+    }
+
     interface OnGetUserSelectedSchoolsRefactorListener {
         fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>)
         fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable)
@@ -1143,6 +1209,13 @@ class RequestManager(activity : Activity) {
         fun onGetScoreLast128QuestionsExamLoaded(score: Int)
         fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
     }
+
+    interface  OnGetCourseExamMaxScore {
+        fun onGetCourseExamMaxScoreLoaded(score: String)
+        fun onGetCourseExamMaxScoreError(throwable: Throwable)
+    }
+
+
 
     fun requestGetSchools(course: String, onGetSchoolsListener : OnGetSchoolsListener) {
         val schoolsRequest = SchoolsRequest(mActivity)

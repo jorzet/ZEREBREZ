@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ class ShowQuestionsAdapter(context: Context, questions: List<QuestionNewFormat>,
     /*
      * This method returns the QuestionNewFormat according the position
      */
-    fun getQuestionByPosition(position: Int) : QuestionNewFormat? {
+    public fun getQuestionByPosition(position: Int) : QuestionNewFormat? {
         if (mQuestios != null && mQuestios.isNotEmpty()) {
             return mQuestios[position]
         } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -287,7 +287,10 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
     }
 
     private fun onDeleteSchool(position : Int) {
-        mSchools.removeAt(position)
+        try {
+            mSchools.removeAt(position)
+        }catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) {}
     }
 
     private val mContinueListener = View.OnClickListener {
@@ -312,6 +315,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
                     saveUser(user)
                 }
                 if (showContinueButton) {
+                    if (baseContext !=  null) {
+                        DataHelper(baseContext!!).setisAfterLogIn(true)
+                    }
                     goContentActivity()
                 } else {
                     onBackPressed()
@@ -340,6 +346,9 @@ class ChooseSchoolsActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialog
             }
 
             if (showContinueButton) {
+                if (baseContext !=  null) {
+                    DataHelper(baseContext!!).setisAfterLogIn(true)
+                }
                 goContentActivity()
             } else {
                 onBackPressed()

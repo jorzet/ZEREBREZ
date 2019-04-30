@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class ExamListAdapter (user : User, exams : List<Exam>, context : Context) : Bas
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val examView = inflator.inflate(R.layout.custom_option_exam, null)
 
-        examView.tv_exam.text = "Examen " + currentExam.getExamId().toString()
+        examView.tv_exam.text = currentExam.getDescription()
         if (currentExam.isAnsweredExam()){
             examView.rl_correct_incorrect_container.visibility = View.VISIBLE
             examView.rl_exam_not_done_container.visibility = View.GONE

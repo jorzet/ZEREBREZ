@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,11 +65,11 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val subjects = ArrayList<SubjectRefactor>()
                     for (key in map.keys) {
-                        val subjectMap = map.get(key) as HashMap<*, *>
+                        val subjectMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val subject = Gson().fromJson(JSONObject(subjectMap).toString(), SubjectRefactor::class.java)
                         subject.subjectId = key.toString()
 
@@ -111,6 +111,30 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
                                 }
                                 limpiarTexto(SubjectType.FCE2.value) -> {
                                     subject.subjectType = SubjectType.FCE2
+                                }
+                                limpiarTexto("filosofiaarea") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA
+                                }
+                                limpiarTexto("filosofia(area4)") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA_4
+                                }
+                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY
+                                }
+                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                    subject.subjectType = SubjectType.LITERATURE
+                                }
+                                limpiarTexto("quimicaarea") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA
+                                }
+                                limpiarTexto("quimica(area2)") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA_2
+                                }
+                                limpiarTexto("matematicasarea") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA
+                                }
+                                limpiarTexto("matematicas(area1y2)") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA_1_2
                                 }
                             }
                         }

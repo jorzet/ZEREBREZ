@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
     private val DOWNLOAD_COMPLETE : String = "download_complete"
     private val CANNOT_DOWNLOAD_CONTENT : String = "cannot_download_content"
+    private val FILE_NOT_FOUND : String = "file_not_found"
 
     private var mProgress : Int = 0
     private var mDownloadComplete : Boolean = false
@@ -47,10 +48,12 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
     private var mContext : Context = context
     private val mCourse : String = course
 
+    private var isFileNotFound : Boolean = false
+
     override fun onPreExecute() {
         super.onPreExecute()
 
-        if (onRequestListenerSucces == null || onRequestLietenerFailed == null)
+        if (onRequestListenerSucces == null || onRequestLietenerFailed == null || onDownloadStatusListener == null)
             return
 
     }
@@ -63,12 +66,17 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
                 if (image.isDownloadable()) {
                     downloadToLocalFile(image.getNameInStorage())
-                    while (!mProgress.equals(100) && !mDownloadComplete || mErrorOccurred);
-                    if (mErrorOccurred) {
-                        Log.d(DownloadImages.TAG, "an error occurred while download image")
-                        //val error = GenericError()
-                        //error.setErrorType(ErrorType.USER_NOT_SENDED)
-                        //onRequestLietenerFailed.onFailed(error)
+                    while (!mProgress.equals(100) && !mDownloadComplete) {
+                        if (mErrorOccurred) {
+                            Log.d(DownloadImages.TAG, "an error occurred while download image")
+
+                            if (isFileNotFound) {
+                                return FILE_NOT_FOUND
+                            }
+                            //val error = GenericError()
+                            //error.setErrorType(ErrorType.USER_NOT_SENDED)
+                            //onRequestLietenerFailed.onFailed(error)
+                        }
                     }
                 } else {
 
@@ -87,6 +95,10 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
 
         if (result.equals(DOWNLOAD_COMPLETE)) {
             onRequestListenerSucces.onSuccess(true)
+        } else if (result.equals(FILE_NOT_FOUND)) {
+            val error = GenericError()
+            error.setErrorType(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)
+            onRequestLietenerFailed.onFailed(error)
         } else {
             val error = GenericError()
             error.setErrorType(ErrorType.CANNOT_DOWNLOAD_CONTENT)
@@ -101,7 +113,14 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
         val fileRef = storage.getReference().child(mCourse + "/images/${imageName}")
         if (fileRef != null) {
             try {
-                val localFile: File = File.createTempFile("images", "jpg")
+
+                var localFile: File
+                try {
+                    localFile = File.createTempFile("images", "jpg")
+                } catch (e: IOException) {
+                    localFile = File.createTempFile("images2", "jpg")
+                }
+
 
                 fileRef.getFile(localFile)
                         .addOnSuccessListener {
@@ -115,6 +134,8 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                                 mContext.openFileOutput(imageName, Context.MODE_PRIVATE).use {
                                     it.write(stream.toByteArray())
                                 }
+
+                                onDownloadStatusListener.onImageDownloaded()
                                 // Assume block needs to be inside a Try/Catch block.
                                 /*val path = Environment.getExternalStorageDirectory().toString()
                                 var fOut: OutputStream? = null
@@ -140,10 +161,14 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                                     mErrorOccurred = false
                                 }*/
                             } catch (e : kotlin.Exception) {
-                            } catch (e : java.lang.Exception) {}
+                                onDownloadStatusListener.onImagesError()
+                            } catch (e : java.lang.Exception) {
+                                onDownloadStatusListener.onImagesError()
+                            }
                         }
                         .addOnFailureListener { exception ->
                             mErrorOccurred = true
+                            onDownloadStatusListener.onImagesError()
                             Log.d(DownloadImages.TAG, "an error occurred while downliading images: " + exception.stackTrace)
                             exception.printStackTrace()
                         }
@@ -155,8 +180,11 @@ class DownloadImageTask(context : Context, course: String): AbstractRequestTask<
                             mProgress = progress.toInt()
                             mErrorOccurred = false
                         }
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
+                if (e.message!!.contains("No such file or directory")) {
+                    isFileNotFound = true
+                }
                 mErrorOccurred = true
             }
 

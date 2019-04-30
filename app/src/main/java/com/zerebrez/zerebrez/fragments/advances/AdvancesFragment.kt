@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ import com.zerebrez.zerebrez.adapters.AverageSubjectListAdapter
 import com.zerebrez.zerebrez.adapters.ExamScoreListAdapter
 import com.zerebrez.zerebrez.components.NonScrollListView
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.Subject
+import com.zerebrez.zerebrez.models.SubjectRefactor
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
@@ -65,6 +67,12 @@ class AdvancesFragment : BaseContentFragment() {
      */
     private lateinit var examScoreListAdapter : ExamScoreListAdapter
     private lateinit var averageSubjectListAdapter: AverageSubjectListAdapter
+
+    /*
+     * Objects
+     */
+    private lateinit var subjects : List<SubjectRefactor>
+    private var mUpdatedExams : List<Exam> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -106,10 +114,13 @@ class AdvancesFragment : BaseContentFragment() {
             mLoadingHitssUser.visibility = View.VISIBLE
             mLoadingMissesUser.visibility = View.VISIBLE
             mLoadingUserExamsProgressBar.visibility = View.VISIBLE
-            requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+            requestGetExamsRefactor(user.getCourse())
 
             mLoadingAverageBySubject.visibility = View.VISIBLE
-            requestGetAverageSubjects(user.getCourse())
+
+            requestGetSubjects(user.getCourse())
+
+
         }
 
 
@@ -119,6 +130,50 @@ class AdvancesFragment : BaseContentFragment() {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onGetSubjectsSuccess(subjects: List<SubjectRefactor>) {
+        super.onGetSubjectsSuccess(subjects)
+
+        if (context != null) {
+            this.subjects = subjects
+            val user = getUser()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetAverageSubjects(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetSubjectsFail(throwable: Throwable) {
+        super.onGetSubjectsFail(throwable)
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
+        super.onGetExamsRefactorSuccess(exams)
+        if (context != null) {
+            mUpdatedExams = exams
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetHitAndMissesAnsweredModulesAndExams(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetExamsRefactorFail(throwable: Throwable) {
+        super.onGetExamsRefactorFail(throwable)
+
+        mLoadingNumAnsweredQuestions.visibility = View.GONE
+        mLoadingHitssUser.visibility = View.GONE
+        mLoadingMissesUser.visibility = View.GONE
+        mLoadingUserExamsProgressBar.visibility = View.GONE
+
+        mExamList.visibility = View.GONE
+        mNotExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+
     }
 
     override fun onGetHitAndMissesAnsweredModulesAndExamsSuccess(user: User) {
@@ -158,6 +213,15 @@ class AdvancesFragment : BaseContentFragment() {
                 mExamList.visibility = View.GONE
                 mNotExamsDidIt.visibility = View.VISIBLE
             } else {
+
+                // update answeredExams List
+                for (i in 0..mUpdatedExams.size - 1) {
+                    for (answeredExam in answeredExams) {
+                        if (mUpdatedExams.get(i).getExamId().equals(answeredExam.getExamId())) {
+                            answeredExam.setDescription(mUpdatedExams[i].getDescription())
+                        }
+                    }
+                }
                 mLoadingUserExamsProgressBar.visibility = View.GONE
                 examScoreListAdapter = ExamScoreListAdapter(answeredExams, context!!)
                 mExamList.adapter = examScoreListAdapter
@@ -192,7 +256,8 @@ class AdvancesFragment : BaseContentFragment() {
                 val subjects = setSubjectsInZero()
 
             } else {
-                averageSubjectListAdapter = AverageSubjectListAdapter(subjects2, context!!)
+                val subjects = getSubjects(subjects2)
+                averageSubjectListAdapter = AverageSubjectListAdapter(subjects, context!!)
                 mAverageSubjectList.adapter = averageSubjectListAdapter
             }
         }
@@ -277,6 +342,27 @@ class AdvancesFragment : BaseContentFragment() {
         subjects.add(subject11)
 
         return subjects
+    }
+
+    private fun getSubjects(subjects: List<Subject>) : List<Subject>{
+        val subjects2 = arrayListOf<Subject>()
+
+        for (subject2 in this.subjects) {
+            val subject = Subject()
+            subject.setSubjectType(subject2.subjectType)
+            subject.setSubjectAverage(0.0)
+            subjects2.add(subject)
+        }
+
+        for (subject in subjects) {
+            for (subject2 in subjects2) {
+                if (subject2.getsubjectType().equals(subject.getsubjectType())) {
+                    subject2.setSubjectAverage(subject.getSubjectAverage())
+                }
+            }
+        }
+
+        return subjects2
     }
 
 }

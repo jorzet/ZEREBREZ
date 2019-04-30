@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
         val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val examView = inflator.inflate(R.layout.custom_exam, null)
 
-        examView.tv_exam_number.text = currentExam.getExamId().toString()
+        examView.tv_exam.text = currentExam.getDescription()
         if (currentExam.getHits().equals(1)) {
             examView.tv_hits_number.text = currentExam.getHits().toString() + " acierto de " + (currentExam.getHits() + currentExam.getMisses())
         } else {
@@ -52,15 +52,13 @@ class ExamScoreListAdapter (exams : List<Exam>, context : Context) : BaseAdapter
         }
 
         examView.tv_exam.typeface = FontUtil.getNunitoSemiBold(mContext)
-        examView.tv_exam_number.typeface = FontUtil.getNunitoSemiBold(mContext)
         examView.tv_hits_number.typeface = FontUtil.getNunitoSemiBold(mContext)
 
         // generate random color
         //val color = ColorGenerator.MATERIAL.getColor(getItem(position))
 
-        val color = ColorUtils.mExamColors[position%ColorUtils.mExamColors.size]
-
-        examView.rl_background.setBackgroundColor(mContext.resources.getColor(color))
+        val background = mContext.resources.getDrawable(ColorUtils.mExamColors[position%ColorUtils.mExamColors.size])
+        examView.rl_background.background = background
 
         return examView
     }

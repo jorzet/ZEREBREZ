@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.request.RequestManager
 
 /**
@@ -215,91 +216,61 @@ abstract class BaseContentFragment : BaseFragment() {
         })
     }
 
-    open fun onDoLogInSuccess(success : Boolean) {
-    }
+    open fun onDoLogInSuccess(success : Boolean) {}
 
-    open fun onDoLogInFail(throwable: Throwable) {
-    }
+    open fun onDoLogInFail(throwable: Throwable) {}
 
-    open fun onUpdateUserSuccess(success: Boolean) {
-    }
+    open fun onUpdateUserSuccess(success: Boolean) {}
 
-    open fun onUpdateUserFail(throwable: Throwable) {
-    }
+    open fun onUpdateUserFail(throwable: Throwable) {}
 
-    open fun onSendUserSuccess(success: Boolean) {
-    }
+    open fun onSendUserSuccess(success: Boolean) {}
 
-    open fun onSendUserFail(throwable: Throwable) {
-    }
+    open fun onSendUserFail(throwable: Throwable) {}
 
-    open fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {
-    }
+    open fun onSignInUserWithFacebookProviderSuccess(success: Boolean) {}
 
-    open fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {
-    }
+    open fun onSignInUserWithFacebookProviderFail(throwable: Throwable) {}
 
-    open fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {
-    }
+    open fun onSignInUserWithGoogleProviderSuccess(success: Boolean) {}
 
-    open fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {
-    }
+    open fun onSignInUserWithGoogleProviderFail(throwable: Throwable) {}
 
-    open fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {
-    }
+    open fun onLinkAnonymousUserWithFacebookProviderSuccess(success: Boolean) {}
 
-    open fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {
-    }
+    open fun onLinkAnonymousUserWithFacebookProviderFail(throwable: Throwable) {}
 
-    open fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {
-    }
+    open fun onLinkAnonymousUserWithGoogleProviderSuccess(success: Boolean) {}
 
-    open fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {
-    }
+    open fun onLinkAnonymousUserWithGoogleProviderFail(throwable: Throwable) {}
 
-    open fun onGetModulesSucces(result : List<Module>) {
-    }
+    open fun onGetModulesSucces(result : List<Module>) {}
 
-    open fun onGetModulesFail(throwable: Throwable) {
-    }
+    open fun onGetModulesFail(throwable: Throwable) {}
 
-    open fun onGetCoursesSuccess(courses : List<String>) {
-    }
+    open fun onGetCoursesSuccess(courses : List<String>) {}
 
-    open fun onGetCoursesFail(throwable: Throwable) {
-    }
+    open fun onGetCoursesFail(throwable: Throwable) {}
 
-    open fun onGetUserDataSuccess(user : User) {
-    }
+    open fun onGetUserDataSuccess(user : User) {}
 
-    open fun onGetUserDataFail(throwable: Throwable) {
-    }
+    open fun onGetUserDataFail(throwable: Throwable) {}
 
-    open fun onGetInstitutesSuccess(institutes : List<Institute>) {
-    }
+    open fun onGetInstitutesSuccess(institutes : List<Institute>) {}
 
-    open fun onGetInstitutesFail(throwable: Throwable) {
-    }
+    open fun onGetInstitutesFail(throwable: Throwable) {}
 
-    open fun onGetExamsSuccess(exams : List<Exam>) {
-    }
+    open fun onGetExamsSuccess(exams : List<Exam>) {}
 
-    open fun onGetExamsFail(throwable: Throwable) {
-    }
+    open fun onGetExamsFail(throwable: Throwable) {}
 
-    open fun onGetImagesPathSuccess(images : List<Image>) {
-    }
+    open fun onGetImagesPathSuccess(images : List<Image>) {}
 
-    open fun onGetImagesPathFail(throwable: Throwable) {
-    }
+    open fun onGetImagesPathFail(throwable: Throwable) {}
 
-    open fun onGetExamScoresSuccess(examScores : List<ExamScore>) {
-    }
+    open fun onGetExamScoresSuccess(examScores : List<ExamScore>) {}
 
-    open fun onGetExamScoresFail(throwable: Throwable) {
-    }
-
-
+    open fun onGetExamScoresFail(throwable: Throwable) {}
 
 
     /*
@@ -681,7 +652,7 @@ abstract class BaseContentFragment : BaseFragment() {
                 onSendPasswordResetEmailSuccess(success)
             }
 
-            override fun onSendPasswordResetEmailFail(throwable: Throwable) {
+            override fun onSendPasswordResetEmailError(throwable: Throwable) {
                 onSendPasswordResetEmailFail(throwable)
             }
         })
@@ -690,4 +661,34 @@ abstract class BaseContentFragment : BaseFragment() {
     open fun onSendPasswordResetEmailSuccess(success: Boolean) {}
     open fun onSendPasswordResetEmailFail(throwable: Throwable) {}
 
+
+    fun requestRemoveCompropagoNode(user: User) {
+        mRequestManager.requestRemoveCompropagoNode(user, object : RequestManager.OnRemoveComproPagoNodeListener {
+            override fun onRemoveComproPagoNodeLoaded(success: Boolean) {
+                onRemoveCompropagoNodeSuccess(success)
+            }
+
+            override fun onRemoveComproPagoNodeError(throwable: Throwable) {
+                onRemoveCompropagoNodeFail(throwable)
+            }
+        })
+    }
+
+    open fun onRemoveCompropagoNodeSuccess(success: Boolean) {}
+    open fun onRemoveCompropagoNodeFail(throwable: Throwable) {}
+
+    fun requestGetCourseExamMaxScore(course: String) {
+        mRequestManager.requestGetCourseExamMaxScore(course, object: RequestManager.OnGetCourseExamMaxScore {
+            override fun onGetCourseExamMaxScoreLoaded(score: String) {
+                onGetCourseExamMaxScoreSuccess(score)
+            }
+
+            override fun onGetCourseExamMaxScoreError(throwable: Throwable) {
+                onGetCourseExamMexScoreFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCourseExamMaxScoreSuccess(score: String) {}
+    open fun onGetCourseExamMexScoreFail(throwable: Throwable) {}
 }

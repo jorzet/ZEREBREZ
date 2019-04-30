@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.ui.dialogs.ErrorDialog
 import com.zerebrez.zerebrez.utils.CacheManager
 import com.zerebrez.zerebrez.utils.FontUtil
+import java.io.File
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -114,6 +115,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     private lateinit var mTimeTextView: TextView
     private lateinit var mMobileDataTextView: TextView
     private lateinit var mTermsAndPrivacyTextView: TextView
+    private lateinit var mVersionApp : TextView
     private lateinit var mLoadingUserSchoolsProgressBar: ProgressBar
 
     /*
@@ -162,13 +164,14 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         //mMobileDataTextView = rootView.findViewById(R.id.tv_mobile_data)
         mTermsAndPrivacyTextView = rootView.findViewById(R.id.terms_and_privacy_container_text)
         mLoadingUserSchoolsProgressBar = rootView.findViewById(R.id.pb_loading_user_schools)
+        mVersionApp = rootView.findViewById(R.id.tv_version_app)
 
         mProfileTextView.typeface = FontUtil.getNunitoBold(context!!)
-        mCourseTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mCourse.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mCourseTextView.typeface = FontUtil.getNunitoRegular(context!!)
+        mCourse.typeface = FontUtil.getNunitoRegular(context!!)
         mNotSelectedSchools.typeface = FontUtil.getNunitoSemiBold(context!!)
         mEditSchoolsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
-        mLinktYourAccountsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mLinktYourAccountsTextView.typeface = FontUtil.getNunitoRegular(context!!)
         mChangePasswordText.typeface = FontUtil.getNunitoSemiBold(context!!)
         mLogOut.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
@@ -177,7 +180,9 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         mTimeTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         //mMobileDataTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTermsAndPrivacyTextView.typeface = FontUtil.getNunitoBold(context!!)
+        mVersionApp.typeface = FontUtil.getNunitoSemiBold(context!!)
 
+        mVersionApp.text = BuildConfig.VERSION_NAME
 
         // set listeners
         mEditSchoolsButton.setOnClickListener(mEditSchoolsListener)
@@ -339,11 +344,34 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
             ok7 = true
         }
 
+        /*try {
+            context!!.deleteFile("images")
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                context!!.dataDir.deleteRecursively()
+            }
+            context!!.cacheDir.deleteRecursively()
+            context!!.filesDir.deleteRecursively()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }*/
+
         FirebaseAuth.getInstance().signOut()
         SharedPreferencesManager(context!!).removeSessionData()
         SharedPreferencesManager(context!!).setPersistanceDataEnable(true)
         LoginManager.getInstance().logOut()
         CacheManager.deleteCache(context!!)
+
+
+
+        if (activity != null) {
+            (activity as ContentActivity).stopDownloadImagesService()
+        }
+
+        DataHelper(context!!).setImagesDownloaded(false)
+        DataHelper(context!!).setisAfterLogIn(false)
 
         if (ok1) {
             setQuestionModuleFragmentOK()
@@ -368,6 +396,14 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
         }
 
         goLogInActivity()
+    }
+
+    fun deleteRecursive(fileOrDirectory: File) {
+        if (fileOrDirectory.isDirectory())
+            for (child in fileOrDirectory.listFiles()) {
+                deleteRecursive(child)
+            }
+        fileOrDirectory.delete();
     }
 
     private val mTermsAndPrivacyListener = View.OnClickListener {
@@ -598,7 +634,7 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
     /*
      * This method returns the devices current API version
      */
-    fun getAndroidVersion(): String {
+    private fun getAndroidVersion(): String {
         val release = Build.VERSION.RELEASE
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"
@@ -718,16 +754,37 @@ class ProfileFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener
 
             mLoadingUserSchoolsProgressBar.visibility = View.VISIBLE
             if (mSchools.isEmpty()) {
+                val updatedSchools = arrayListOf<School>()
+                val school1 = School()
+                val school2 = School()
+                val school3 = School()
+                school1.setSchoolName("Sin opción")
+                updatedSchools.add(school1)
+                school2.setSchoolName("Sin opción")
+                updatedSchools.add(school2)
+                school3.setSchoolName("Sin opción")
+                updatedSchools.add(school3)
 
+                mSchoolsListAdapter = SchoolListAdapter(updatedSchools, activity!!.applicationContext)
+                mSelectedSchoolsList.adapter = mSchoolsListAdapter
+
+                mLoadingUserSchoolsProgressBar.visibility = View.GONE
+                mEditSchoolsButton.visibility = View.VISIBLE
+                mEditSchoolsTextView.text = "Escoger"
+                mSelectedSchoolsList.visibility = View.GONE
+                mNotSelectedSchools.visibility = View.VISIBLE
             } else {
                 if (!user.getCourse().equals("")) {
                     requestGetUserSchools(mSchools, user.getCourse())
                 }
             }
 
-            val course = user.getCourse()
-            if (!course.equals("")) {
-                mCourse.text = course.toUpperCase()
+            val userCourse = user.getCourse()
+            if (!userCourse.equals("")) {
+                val course = DataHelper(context!!).getCourseFromUserCourse(userCourse)
+                if (course != null && !course.equals("")) {
+                    mCourse.text = course.description
+                }
             }
 
             val userFirebase = FirebaseAuth.getInstance().currentUser

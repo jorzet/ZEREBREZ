@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,21 @@ enum class SubjectType constructor(val value : String)  {
     @SerializedName("Matemáticas")
     @Expose
     MATHEMATICS("Matemáticas"),
+    @SerializedName("matematicas(area1y2)")
+    @Expose
+    MATEMATICS_AREA_1_2("Matemáticas (Área 1 y 2)"),
+    @SerializedName("matematicasarea")
+    @Expose
+    MATEMATICS_AREA("Matemáticas (Área 1 y 2)"),
     @SerializedName("Química")
     @Expose
     CHEMISTRY("Química"),
+    @SerializedName("quimica(area2)")
+    @Expose
+    CHEMISTRY_AREA_2("Química (Área 2)"),
+    @SerializedName("quimicaarea")
+    @Expose
+    CHEMISTRY_AREA("Química (Área 2)"),
     @SerializedName("Física")
     @Expose
     PHYSICS("Física"),
@@ -67,5 +79,17 @@ enum class SubjectType constructor(val value : String)  {
     FCE("Formación cívica y ética"),
     @SerializedName("FCE")
     @Expose
-    FCE2("FCE");
+    FCE2("FCE"),
+    @SerializedName("filosofiaarea")
+    @Expose
+    PHILOSOPHY_AREA("Filosofia"),
+    @SerializedName("filosofia")
+    @Expose
+    PHILOSOPHY("Filosofia"),
+    @SerializedName("filosofia(area4)")
+    @Expose
+    PHILOSOPHY_AREA_4("Filosofia"),
+    @SerializedName("literatura")
+    @Expose
+    LITERATURE("Literatura");
 }

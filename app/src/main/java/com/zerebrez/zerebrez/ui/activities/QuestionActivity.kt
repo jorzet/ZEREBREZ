@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,7 +285,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
 
                 // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-                MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+                //MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712") //test
+                MobileAds.initialize(this, "ca-app-pub-4979517608172495/5959613048") //prod
                 // Use an activity context to get the rewarded video instance.
                 mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
                 mRewardedVideoAd.rewardedVideoAdListener = this
@@ -293,7 +294,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 loadRewardedVideoAd()
 
                 mInterstitialAd = InterstitialAd(this)
-                mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+                //mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712" //test
+                mInterstitialAd.adUnitId = "ca-app-pub-4979517608172495/5959613048" //prod
                 mInterstitialAd.loadAd(AdRequest.Builder().build())
                 mInterstitialAd.adListener = object : AdListener() {
                     override fun onAdLoaded() {
@@ -322,7 +324,8 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
     }
 
     private fun loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+        mRewardedVideoAd.loadAd("ca-app-pub-4979517608172495/5959613048", // prod
+                //"ca-app-pub-3940256099942544/5224354917",// test
                 AdRequest.Builder().build())
     }
 
@@ -331,13 +334,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         if (resultCode.equals(SHOW_ANSWER_RESULT_CODE)) {
             val showAnswer = data!!.getBooleanExtra(SET_CHECKED_TAG, false)
             if (showAnswer) {
-                if (currentFragment is QuestionFragmentRefactor) {
+                if (::currentFragment.isInitialized && currentFragment is QuestionFragmentRefactor) {
                     (currentFragment as QuestionFragmentRefactor).showAnswerQuestion()
                 }
             }
         } else if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE)) {
             //DataHelper(baseContext).saveCurrentQuestion(mQuestions.get(mCurrentQuestion))
-            DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
+            }
             showAnswer()
         } else if (resultCode.equals(SHOW_QUESTIONS_RESULT_CODE)) {
             val questionId = data!!.getStringExtra(REQUEST_NEW_QUESTION)
@@ -453,7 +458,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
 
                 mQuestionsAux[mCurrentQuestion].answered = true
-                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+
+                if (::mCurrentQuestionNewFormat.isInitialized) {
+                    mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+                }
 
 
                 if (mCurrentQuestionSkiped == mQuestionsAux.size - 1) {
@@ -462,12 +470,24 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                     mCurrentQuestionSkiped++
                 }
 
+                var hasNextQuestion = false
+                if (mQuestionsAux[mQuestionsAux.size - 1].answered) {
+                    for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
+                        if (mQuestionsAux[i].answered) {
+                            hasNextQuestion = true
+                        }
+                    }
+                }
+
                 mCurrentQuestion = mCurrentQuestionSkiped
 
                 Log.d("mNextQuestionListener"," next--mCurrentQuestionSkiped: " + mCurrentQuestionSkiped)
 
 
                 if (mQuestionsAux[mCurrentQuestionSkiped].answered) {
+                    if (hasNextQuestion) {
+                        mCurrentQuestionSkiped = 0
+                    }
                     for (i in mCurrentQuestionSkiped..mQuestionsAux.size - 1) {
                         mCurrentQuestionSkiped = i
                         mCurrentQuestion = mCurrentQuestionSkiped
@@ -486,7 +506,9 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
 
 
             mQuestionsAux[mCurrentQuestion].answered = true
-            mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                mAnsweredQuestions.add(mCurrentQuestionNewFormat)
+            }
 
             Log.d("mNextQuestionListener"," else-- mAnsweredQuestions.size: " + mAnsweredQuestions.size)
             Log.d("mNextQuestionListener"," else-- mQuestionsId.size: " + mQuestionsId.size)
@@ -544,7 +566,7 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
                 }
             }*/
             if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
-                if (mCurrentQuestionNewFormat.stepByStepData.isNotEmpty()) {
+                if (::mCurrentQuestionNewFormat.isInitialized && mCurrentQuestionNewFormat.stepByStepData.isNotEmpty()) {
                     DataHelper(baseContext).saveCurrentQuestionNewFormat(mCurrentQuestionNewFormat)
                     showAnswer()
                 }
@@ -600,8 +622,10 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
      */
     fun setQuestionNewFormatAnswer(answer : String, wasOK : Boolean) {
         if (mCurrentQuestion >= 0 && mCurrentQuestion < mQuestionsId.size) {
-            mCurrentQuestionNewFormat.chosenOption = answer
-            mCurrentQuestionNewFormat.wasOK = wasOK
+            if (::mCurrentQuestionNewFormat.isInitialized) {
+                mCurrentQuestionNewFormat.chosenOption = answer
+                mCurrentQuestionNewFormat.wasOK = wasOK
+            }
             if (wasOK) {
                 mCorrectQuestions++
             } else {
@@ -657,13 +681,13 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         exam.setMisses(mIncorrectQiestions)
         exam.setAnsweredExam(true)
 
-            requestSendAnsweredExams(exam, mCourse)
-            //requestSendAnsweredQuestions(mQuestions, mCourse)
+        requestSendAnsweredExams(exam, mCourse)
+        //requestSendAnsweredQuestions(mQuestions, mCourse)
         requestSendAnsweredQuestionsNewFormat(mAnsweredQuestions, mCourse)
-            mExamAnsQuestionsSaved = true
-            showQuestionsCompleteFragment()
-            // this is called on QuestionsCompleteFragment
-            //onBackPressed()
+        mExamAnsQuestionsSaved = true
+        showQuestionsCompleteFragment()
+        // this is called on QuestionsCompleteFragment
+        //onBackPressed()
         //}
 
     }
@@ -819,8 +843,15 @@ class QuestionActivity : BaseActivityLifeCycle(), ErrorDialog.OnErrorDialogListe
         super.onGetQuestionNewFormatSuccess(question)
         mCurrentQuestionNewFormat = question
 
-        if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
-            mQuestiontypeText.text = question.subject.value
+        try {
+            if (isFromWrongQuestionFragment || isFromSubjectQuestionFragment) {
+                mQuestiontypeText.text = question.subject.value
+            }
+
+        } catch (e: kotlin.Exception) {
+            e.printStackTrace()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
 
         showQuestion()
