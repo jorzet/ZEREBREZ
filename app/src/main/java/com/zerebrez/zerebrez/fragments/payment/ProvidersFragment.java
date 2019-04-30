@@ -45,18 +45,36 @@ import retrofit2.Response;
  * jcampos.jc38@gmail.com
  */
 
-public class ProvidersFragment extends BaseContentDialogFragment implements ErrorDialog.OnErrorDialogListener {
+public class ProvidersFragment extends BaseContentDialogFragment
+        implements ErrorDialog.OnErrorDialogListener {
+    /*
+     * Tags
+     */
     private static final String TAG = "ProvidersFragment";
     private static final String DIALOG_TAG = "dialog";
 
+    /*
+     * UI accessors
+     */
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingView;
     private RelativeLayout mCloseContainer;
 
+    /*
+     * Manager
+     */
     private ComproPagoManager mComproPagoManager;
+
+    /*
+     * Adapter
+     */
     private ProviderListAdapter mProviderAdapter;
 
-    private ConfirmOrderFragment mConfirmOrderFragment=null;
+    /*
+     * Fragment
+     */
+    private ConfirmOrderFragment mConfirmOrderFragment = null;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +84,7 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View root = inflater.inflate(R.layout.providers_fragment, container, false);
         mRecyclerView = (RecyclerView) root.findViewById(R.id.rv_providers_list);
         mLoadingView = (ProgressBar) root.findViewById(R.id.pb_providers);
@@ -74,7 +93,9 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
         mCloseContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().onBackPressed();
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
             }
         });
 
@@ -92,7 +113,7 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
     }
 
     private void getProvidersList(){
-        mComproPagoManager.ListProviders(new ComproPagoManager.OnListProvidersListener(){
+        mComproPagoManager.listProviders(new ComproPagoManager.OnListProvidersListener(){
             @Override
             public void onListProvidersResponse(Response<List<Provider>> response) {
                 onListProvidersSuccess(response);
@@ -106,24 +127,27 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
     }
 
     void onListProvidersSuccess(Response<List<Provider>> response){
-        if(response!=null){
-            if(response.code()<300 && response.code()>199){
-                if(response.body()!=null)
-                    setmRecyclerView(response.body());
-                else
-                    SendFailedMessage();
-            }else
-                SendFailedMessage();
-        }else
-            SendFailedMessage();
+        if(response != null){
+            if(response.code() < 300 && response.code() > 199){
+                if(response.body() != null) {
+                    setRecyclerView(response.body());
+                } else {
+                    sendFailedMessage();
+                }
+            } else {
+                sendFailedMessage();
+            }
+        } else {
+            sendFailedMessage();
+        }
     }
 
     void onListProvidersError(Throwable throwable){
         Log.e(TAG,"GetProvidersFailure: "+throwable.getLocalizedMessage());
-        SendFailedMessage();
+        sendFailedMessage();
     }
 
-    private void setmRecyclerView(List<Provider> providers){
+    private void setRecyclerView(List<Provider> providers){
         if (mRecyclerView != null && getActivity() != null) {
             mProviderAdapter = new ProviderListAdapter(providers, getActivity(), this);
             if (mRecyclerView.getAdapter() == null) {
@@ -134,12 +158,14 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
         }
     }
 
-    public void ShowConfirmOrderFragment(Bundle bundle){
+    public void showConfirmOrderFragment(Bundle bundle){
 
         if (mConfirmOrderFragment==null) {
             mConfirmOrderFragment = new  ConfirmOrderFragment();
         }
+
         mConfirmOrderFragment.setArguments(bundle);
+
         if (!isConfirmOrderFragmentShown()) {
             mConfirmOrderFragment.show(getFragmentManager(),DIALOG_TAG);
         }
@@ -149,7 +175,7 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
         return mConfirmOrderFragment != null && mConfirmOrderFragment.isVisible();
     }
 
-    private void SendFailedMessage(){
+    private void sendFailedMessage(){
         ErrorDialog.Companion.newInstance("Algo salió mal...", "Asegurate de tener una conexión a internet.",
                 DialogType.OK_DIALOG, this).show(getFragmentManager(), "networkError");
     }
@@ -161,7 +187,9 @@ public class ProvidersFragment extends BaseContentDialogFragment implements Erro
 
     @Override
     public void onConfirmationNeutral() {
-        getActivity().onBackPressed();
+        if (getActivity() != null) {
+            getActivity().onBackPressed();
+        }
     }
 
     @Override

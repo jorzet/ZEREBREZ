@@ -35,7 +35,7 @@ class ComipemsFragment : BaseContentFragment() {
         if (container == null)
             return null
 
-        val rootView = inflater?.inflate(R.layout.comipems_fragment, container, false)
+        val rootView = inflater.inflate(R.layout.comipems_fragment, container, false)
 
         return rootView
     }

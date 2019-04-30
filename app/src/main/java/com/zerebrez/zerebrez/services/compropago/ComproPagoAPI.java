@@ -50,7 +50,7 @@ public interface ComproPagoAPI {
             "Content-type: application/json"
     })
     @POST("/v1/charges")
-    Call<OrderResponse> GenerateOrder(@Body OrderRequest orderRequest, @Header("Authorization") String credentials);
+    Call<OrderResponse> generateOrder(@Body OrderRequest orderRequest, @Header("Authorization") String credentials);
 
     //Consult an existing charge
     @Headers({
@@ -58,6 +58,6 @@ public interface ComproPagoAPI {
             "Content-type: application/json"
     })
     @GET("/v1/charges/{payment_id}")
-    Call<ChargeResponse> VerifyCharge(@Path("payment_id") String paymentId, @Header("Authorization") String credentials);
+    Call<ChargeResponse> verifyCharge(@Path("payment_id") String paymentId, @Header("Authorization") String credentials);
 
 }

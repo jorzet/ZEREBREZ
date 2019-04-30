@@ -16,6 +16,8 @@
 
 package com.zerebrez.zerebrez.services.compropago;
 
+import android.support.annotation.NonNull;
+
 import com.zerebrez.zerebrez.models.*;
 import java.util.List;
 
@@ -30,33 +32,67 @@ import retrofit2.Response;
  */
 
 public class ComproPagoManager {
-    private final ComproPagoAPI comproPagoAPI;
+
+    /*
+     * Tags
+     */
     private static final String BASE_URL = "https://api.compropago.com";
     private static final String PK_TEST = "pk_test_496575160fe502e1aa";
     private static final String SK_TEST = "sk_test_7be79c8752725ac584";
     private static final String PK_LIVE = "pk_live_518507516122571bf3";
     private static final String SK_LIVE = "sk_live_5be40752805f3573e6";
 
+    /*
+     * Manager
+     */
+    private final ComproPagoAPI comproPagoAPI;
+
+    /**
+     * {@link ComproPagoManager} constructor
+     */
     public ComproPagoManager() {
-        comproPagoAPI = RetrofitClientInstance.getRetrofitInstance(BASE_URL).create(ComproPagoAPI.class);
+        comproPagoAPI = RetrofitClientInstance
+                .getRetrofitInstance(BASE_URL)
+                .create(ComproPagoAPI.class);
     }
 
-    public void ListProviders(final OnListProvidersListener onListProvidersListener) {
-        Call<List<Provider>> call = comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_LIVE,null));
+    /**
+     * The method return on {@link OnListProvidersListener} the provider list
+     *
+     * @param onListProvidersListener listener {@link OnListProvidersListener}
+     */
+    public void listProviders(final OnListProvidersListener onListProvidersListener) {
+        Call<List<Provider>> call =
+                comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_LIVE,null));
+
         call.enqueue(new Callback<List<Provider>>() {
             @Override
-            public void onResponse(Call<List<Provider>> call, Response<List<Provider>> response) {
+            public void onResponse(@NonNull Call<List<Provider>> call,
+                                   @NonNull Response<List<Provider>> response) {
                 onListProvidersListener.onListProvidersResponse(response);
             }
 
             @Override
-            public void onFailure(Call<List<Provider>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Provider>> call, @NonNull Throwable t) {
                 onListProvidersListener.onListProvidersFailure(t);
             }
         });
     }
 
-    public void GenerateOrder(Course course, String customerName, String customerEmail, String paymentType, Float orderPrice, final OnGenerateOrderListener onGenerateOrderListener) {
+    /**
+     * Create a request to generate comproPago order
+     *
+     * @param course course Id
+     * @param customerName course text name
+     * @param customerEmail user email
+     * @param paymentType provider
+     * @param orderPrice price
+     * @param onGenerateOrderListener success or error listener {@link OnGenerateOrderListener}
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    public void generateOrder(Course course, String customerName, String customerEmail,
+                              String paymentType, Float orderPrice,
+                              final OnGenerateOrderListener onGenerateOrderListener) {
 
         OrderRequest orderRequest = new OrderRequest(course.getId(),
                 0.0f,
@@ -70,46 +106,63 @@ public class ComproPagoManager {
         orderRequest.setCustomer_email(customerEmail);
         orderRequest.setPayment_type(paymentType);
         orderRequest.setOrder_price(orderPrice);
-        Call<OrderResponse> call = comproPagoAPI.GenerateOrder(orderRequest,okhttp3.Credentials.basic(PK_LIVE,null));
+        Call<OrderResponse> call =
+                comproPagoAPI.generateOrder(orderRequest,
+                                            okhttp3.Credentials.basic(PK_LIVE,
+                                            null));
+
         call.enqueue(new Callback<OrderResponse>() {
             @Override
-            public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
+            public void onResponse(@NonNull Call<OrderResponse> call,
+                                   @NonNull Response<OrderResponse> response) {
                 onGenerateOrderListener.onGenerateOrderResponse(response);
             }
 
             @Override
-            public void onFailure(Call<OrderResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<OrderResponse> call, @NonNull Throwable t) {
                 onGenerateOrderListener.onGenerateOrderFailure(t);
             }
         });
     }
 
-    public void VerifyCharge(String paymentId, final OnVerifyChargeListener onVerifyChargeListener) {
-        Call<ChargeResponse> call = comproPagoAPI.VerifyCharge(paymentId, Credentials.basic(SK_LIVE,PK_LIVE));
+    /**
+     * this method verify updates
+     *
+     * @param paymentId payment id got it from comproPago response
+     * @param onVerifyChargeListener listener {@link OnVerifyChargeListener}
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    public void verifyCharge(String paymentId,
+                             final OnVerifyChargeListener onVerifyChargeListener) {
+
+        Call<ChargeResponse> call =
+                comproPagoAPI.verifyCharge(paymentId, Credentials.basic(SK_LIVE, PK_LIVE));
+
         call.enqueue(new Callback<ChargeResponse>() {
             @Override
-            public void onResponse(Call<ChargeResponse> call, Response<ChargeResponse> response) {
+            public void onResponse(@NonNull Call<ChargeResponse> call,
+                                   @NonNull Response<ChargeResponse> response) {
                 onVerifyChargeListener.onVerifyChargeResponse(response);
             }
 
             @Override
-            public void onFailure(Call<ChargeResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ChargeResponse> call, @NonNull Throwable t) {
                 onVerifyChargeListener.onVerifyChargeFailure(t);
             }
         });
     }
 
-    public interface OnGenerateOrderListener{
+    public interface OnGenerateOrderListener {
         void onGenerateOrderResponse(Response<OrderResponse> response);
         void onGenerateOrderFailure(Throwable throwable);
     }
 
-    public interface OnVerifyChargeListener{
+    public interface OnVerifyChargeListener {
         void onVerifyChargeResponse(Response<ChargeResponse> response);
         void onVerifyChargeFailure(Throwable throwable);
     }
 
-    public interface OnListProvidersListener{
+    public interface OnListProvidersListener {
         void onListProvidersResponse(Response<List<Provider>> response);
         void onListProvidersFailure(Throwable throwable);
     }

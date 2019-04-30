@@ -41,6 +41,9 @@ import retrofit2.Response
 
 open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialogListener {
 
+    /*
+     * Global Tags
+     */
     companion object {
         val SET_CHECKED_TAG : String = "set_checked_tag"
         val SHOW_PAYMENT_FRAGMENT : String = "show_payment_fragment"
@@ -58,6 +61,9 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val SHOW_QUESTIONS_RESULT_CODE = 8
     }
 
+    /*
+     * Manager
+     */
     private lateinit var mRequestManager : RequestManager
 
     override fun onStart() {
@@ -69,7 +75,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         super.onCreate(savedInstanceState)
         mRequestManager = RequestManager(this)
         //setUserNormal()
-        CheckPendingPayment()
+        checkPendingPayment()
     }
 
     override fun onStop() {
@@ -288,11 +294,13 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         })
     }
 
-    fun CheckPendingPayment() {
+    fun checkPendingPayment() {
         if (hasPendingPayment() && !getPaymentId().equals("")) {
             Log.e("CheckPendingPayment","Tiene un cargo pendiente")
             val mComproPagoManager = ComproPagoManager()
-            mComproPagoManager.VerifyCharge(getPaymentId(), object: ComproPagoManager.OnVerifyChargeListener{
+            mComproPagoManager.verifyCharge(getPaymentId(),
+                    object: ComproPagoManager.OnVerifyChargeListener {
+
                 override fun onVerifyChargeResponse(response: Response<ChargeResponse>?) {
                     onVerifyChargeSuccess(response)
                 }
@@ -306,7 +314,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
 
     fun onVerifyChargeSuccess(response: Response<ChargeResponse>?){
         if (response != null) {
-            if(response.code()>199 && response.code()<300){
+            if(response.code() > 199 && response.code() < 300){
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
@@ -335,7 +343,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     }
 
     fun setUserPremium(){
-        var user = getUser()
+        val user = getUser()
         if(user!=null){
             val userFirebase = FirebaseAuth.getInstance().currentUser
             if (userFirebase != null) {
@@ -352,7 +360,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
 
     fun setUserNormal(){
         Log.e("SetUserPremium","YA ERES PREMIUM")
-        var user = getUser()
+        val user = getUser()
         if(user!=null){
             val userFirebase = FirebaseAuth.getInstance().currentUser
             if (userFirebase != null) {

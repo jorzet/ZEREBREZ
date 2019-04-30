@@ -16,7 +16,6 @@
 
 package com.zerebrez.zerebrez.fragments.payment
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -48,12 +47,22 @@ import retrofit2.Response
  * jcampos.jc38@gmail.com
  */
 
-class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDialogListener{
+class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDialogListener {
 
+    /*
+     * Tags
+     */
     private val TAG = "ProvidersFragment"
+
+    /*
+     * Attributes
+     */
     private var PRICE = 99.0f
     private var ORDER_GENERATED = false
 
+    /*
+     * UI accessors
+     */
     private lateinit var mNameEditText: EditText
     private lateinit var mLastNameEditText: EditText
     private lateinit var mEmailEditText: EditText
@@ -66,12 +75,19 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     private lateinit var mCloseContainer: RelativeLayout
     private lateinit var mCourseDescriptionTextView: TextView
 
+    /*
+     * Model
+     */
     private var mProvider: Provider? = null
+
+    /*
+     * Manager
+     */
     private lateinit var mComproPagoManager: ComproPagoManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(android.support.v4.app.DialogFragment.STYLE_NORMAL, R.style.AppTheme)
+        setStyle(STYLE_NORMAL, R.style.AppTheme)
         //Recover provider information
         mProvider = arguments!!.getSerializable("Provider") as Provider?
     }
@@ -106,7 +122,7 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
 
         mConfirmOrderButton.setOnClickListener {
             //OnFakeGenerateOrderSuccess()
-            GenerateOrder()
+            generateOrder()
         }
         mCloseContainer.setOnClickListener {
             if (activity != null) {
@@ -117,16 +133,17 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         mComproPagoManager = ComproPagoManager()
 
         //Show provider information
-        SetEmailIfUser()
-        ShowProviderInformation()
+        setEmailIfUser()
+        showProviderInformation()
 
         return rootView
     }
 
-    private fun GenerateOrder() {
+    private fun generateOrder() {
         val name = mNameEditText.text.toString()
         val lastName = mLastNameEditText.text.toString()
         val email = mEmailEditText.text.toString()
+
         if(!name.equals("") && !lastName.equals("") && !email.equals("") && email.contains("@") && activity != null){
             if (NetworkUtil.isConnected(this.activity!!)) {
                 setWaitScreen(true)
@@ -137,13 +154,13 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
                     if (user != null && !user.getCourse().equals("")) {
                         val course = DataHelper(context!!).getCourseFromUserCourse(user.getCourse())
                         if (course != null) {
-                            mComproPagoManager.GenerateOrder(course, "$name $lastName", email, mProvider!!.internal_name, PRICE, object : ComproPagoManager.OnGenerateOrderListener {
+                            mComproPagoManager.generateOrder(course, "$name $lastName", email, mProvider!!.internal_name, PRICE, object : ComproPagoManager.OnGenerateOrderListener {
                                 override fun onGenerateOrderResponse(response: Response<OrderResponse>?) {
-                                    OnGenerateOrderSuccess(response)
+                                    onGenerateOrderSuccess(response)
                                 }
 
                                 override fun onGenerateOrderFailure(throwable: Throwable?) {
-                                    OnGenerateOrderError(throwable)
+                                    onGenerateOrderError(throwable)
                                 }
 
                             })
@@ -151,15 +168,17 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
                     }
 
                 }
-
-            } else
-                SendRequestErrorMessage()
+            } else {
+                sendRequestErrorMessage()
+            }
+        } else {
+            Toast.makeText(activity,
+                    "Es necesario llenar todos los campos",
+                    Toast.LENGTH_SHORT).show()
         }
-        else
-            Toast.makeText(activity, "Es necesario llenar todos los campos", Toast.LENGTH_SHORT).show()
     }
 
-    fun OnFakeGenerateOrderSuccess() {
+    fun onFakeGenerateOrderSuccess() {
         ORDER_GENERATED=true
         setPendingPayment(true)
         setPaymentId("sdagIDSNFLDSJZBSF")
@@ -173,9 +192,9 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
                 DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
     }
 
-    fun OnGenerateOrderSuccess(response: Response<OrderResponse>?){
-        if(response!=null){
-            if(response.code()<300 && response.code()>199){
+    fun onGenerateOrderSuccess(response: Response<OrderResponse>?){
+        if(response != null){
+            if(response.code() < 300 && response.code() > 199){
                 val orderResponse = response.body()
                 if (orderResponse != null) {
                     if(orderResponse.short_id != null && !orderResponse.short_id.equals("")) {
@@ -190,18 +209,22 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
 
                         ErrorDialog.newInstance("Orden de pago generada", "Las instrucciones de pago llegarán al corrreo proporcionado, una vez realizado el pago obtendrás tu suscripción.",
                                 DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderGenerated")
-                    }else
-                        SendOrderErrorMessage()
-                }else
-                    SendOrderErrorMessage()
-            }else
-                SendOrderErrorMessage()
-        }else
-            SendOrderErrorMessage()
+                    } else {
+                        sendOrderErrorMessage()
+                    }
+                } else {
+                    sendOrderErrorMessage()
+                }
+            } else {
+                sendOrderErrorMessage()
+            }
+        } else {
+            sendOrderErrorMessage()
+        }
     }
 
-    fun OnGenerateOrderError(throwable: Throwable?){
-        SendOrderErrorMessage()
+    fun onGenerateOrderError(throwable: Throwable?){
+        sendOrderErrorMessage()
     }
 
     private fun setWaitScreen(set: Boolean) {
@@ -213,15 +236,15 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
         Picasso.with(context).load(url).into(this)
     }
 
-    private fun ShowProviderInformation(){
-        if(mProvider!=null){
+    private fun showProviderInformation(){
+        if(mProvider != null){
             mProvierImageView.loadUrl(mProvider!!.image_small)
-            mComissionTextView.text = getString(R.string.comission_text, mProvider!!.commission.toFloat())
+            mComissionTextView.text =
+                    getString(R.string.comission_text, mProvider!!.commission.toFloat())
         }
     }
 
-
-    private fun SetEmailIfUser(){
+    private fun setEmailIfUser(){
         val userFirebase = FirebaseAuth.getInstance().currentUser
 
         if (userFirebase != null) {
@@ -237,15 +260,21 @@ class ConfirmOrderFragment: BaseContentDialogFragment(),  ErrorDialog.OnErrorDia
     }
 
 
-    fun SendRequestErrorMessage(){
+    fun sendRequestErrorMessage(){
         Log.i(TAG, "onErrorOrderRequest() Failed to enqueue")
-        ErrorDialog.newInstance("Algo salió mal...", "La orden de pago no pudo ser generada. Asegurate de tener una conexión a internet.",
-                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "networkError")
+        ErrorDialog.newInstance("Algo salió mal...",
+                "La orden de pago no pudo ser generada. Asegurate de tener una conexión a internet.",
+                DialogType.OK_DIALOG,
+                this)!!
+                .show(fragmentManager!!, "networkError")
     }
 
-    fun SendOrderErrorMessage(){
-        ErrorDialog.newInstance("Algo salió mal...", "La orden de pago no pudo ser generada. Asegurate de haber proporcionado un correo válido",
-                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "OrderError")
+    fun sendOrderErrorMessage(){
+        ErrorDialog.newInstance("Algo salió mal...",
+                "La orden de pago no pudo ser generada. Asegurate de haber proporcionado un correo válido",
+                DialogType.OK_DIALOG,
+                this)!!
+                .show(fragmentManager!!, "OrderError")
     }
 
     override fun onConfirmationCancel() {

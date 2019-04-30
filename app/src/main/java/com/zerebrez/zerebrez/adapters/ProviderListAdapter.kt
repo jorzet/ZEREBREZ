@@ -26,16 +26,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.zerebrez.zerebrez.R
-import com.zerebrez.zerebrez.fragments.payment.ConfirmOrderFragment
 import com.zerebrez.zerebrez.fragments.payment.ProvidersFragment
 import com.zerebrez.zerebrez.models.Provider
 import java.io.Serializable
-
-//import java.util.List
 
 /**
  * Created by Jorge Zepeda Tinoco on 03/06/18.
@@ -45,8 +41,19 @@ import java.io.Serializable
 class ProviderListAdapter(providers: List<Provider>, context: Context, fragment: ProvidersFragment):
         RecyclerView.Adapter<ViewHolder>(), ViewHolder.OnButtonClickListener {
 
+    /*
+     * Model
+     */
     private var mProviders: List<Provider> = providers
+
+    /*
+     * Attributes
+     */
     private var mContext: Context = context
+
+    /*
+     * Fragment
+     */
     private var mProvidersFragment: ProvidersFragment = fragment
 
 
@@ -75,13 +82,16 @@ class ProviderListAdapter(providers: List<Provider>, context: Context, fragment:
     override fun onButtonClicked(position: Int) {
         val bundle = Bundle()
         bundle.putSerializable("Provider", mProviders.get(position) as Serializable)
-        mProvidersFragment.ShowConfirmOrderFragment(bundle)
+        mProvidersFragment.showConfirmOrderFragment(bundle)
     }
 }
 
 class ViewHolder(view: View, clickListener: OnButtonClickListener) :
         RecyclerView.ViewHolder(view) {
 
+    /*
+     * UI accessors
+     */
     val mLoadingProviderProgressBar = view.findViewById(R.id.pb_loading_provider) as ProgressBar
     val mProviderTextView = view.findViewById(R.id.tv_provider_name) as TextView
     val mProviderImageView = view.findViewById(R.id.iv_provider_icon) as ImageView
@@ -115,7 +125,8 @@ class ViewHolder(view: View, clickListener: OnButtonClickListener) :
 
         itemView.setOnClickListener { mClickListener.onButtonClicked(adapterPosition) }
     }
-    fun ImageView.loadUrl(url: String, callback: Callback) {
+
+    private fun ImageView.loadUrl(url: String, callback: Callback) {
         Picasso.with(context).load(url).into(this, callback)
     }
 }

@@ -25,8 +25,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitClientInstance {
+
+    /*
+     * Retrofit instance
+     */
     private static Retrofit retrofit;
 
+    /**
+     * This method creates an instance of Retrofit with given url
+     *
+     * @param BASE_URL service url
+     * @return A Retrofit instance {@link Retrofit}
+     */
     public static Retrofit getRetrofitInstance(String BASE_URL) {
         if (retrofit == null) {
             retrofit = new retrofit2.Retrofit.Builder()
