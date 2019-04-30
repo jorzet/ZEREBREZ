@@ -1,3 +1,19 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.subject
 
 import android.app.Activity
@@ -19,31 +35,41 @@ import java.util.*
 
 class SubjectRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
     private val TAG: String = "SubjectRequest"
+
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
     private val SUBJECT_REFERENCE: String = "subjects/course_label"
 
-    private val mActivity: Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-    }
 
     fun requestGetSubjects(course: String) {
-        mFirebaseDatabase = mFirebaseInstance.getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(SUBJECT_REFERENCE.replace(COURSE_LABEL, course))
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<*, *>)
+                    val map = (post as kotlin.collections.HashMap<*, *>)
                     Log.d(TAG, "user data ------ " + map.size)
                     val subjects = ArrayList<SubjectRefactor>()
                     for (key in map.keys) {
-                        val subjectMap = map.get(key) as HashMap<*, *>
+                        val subjectMap = map.get(key) as kotlin.collections.HashMap<*, *>
                         val subject = Gson().fromJson(JSONObject(subjectMap).toString(), SubjectRefactor::class.java)
                         subject.subjectId = key.toString()
 
@@ -85,6 +111,30 @@ class SubjectRequest(activity: Activity) : Engagement(activity) {
                                 }
                                 limpiarTexto(SubjectType.FCE2.value) -> {
                                     subject.subjectType = SubjectType.FCE2
+                                }
+                                limpiarTexto("filosofiaarea") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA
+                                }
+                                limpiarTexto("filosofia(area4)") -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY_AREA_4
+                                }
+                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                    subject.subjectType = SubjectType.PHILOSOPHY
+                                }
+                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                    subject.subjectType = SubjectType.LITERATURE
+                                }
+                                limpiarTexto("quimicaarea") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA
+                                }
+                                limpiarTexto("quimica(area2)") -> {
+                                    subject.subjectType = SubjectType.CHEMISTRY_AREA_2
+                                }
+                                limpiarTexto("matematicasarea") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA
+                                }
+                                limpiarTexto("matematicas(area1y2)") -> {
+                                    subject.subjectType = SubjectType.MATEMATICS_AREA_1_2
                                 }
                             }
                         }

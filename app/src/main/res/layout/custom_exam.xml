@@ -7,12 +7,12 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="60dp">
+        android:layout_height="50dp">
 
         <RelativeLayout
             android:id="@+id/rl_background"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:background="@drawable/custom_exam_item_background">
 
@@ -25,20 +25,9 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/exam_text"
                 android:textColor="@color/exam_text_color"
-                android:textSize="20sp"/>
+                android:textSize="13sp"
+                android:ellipsize="end"/>
 
-            <TextView
-                android:id="@+id/tv_exam_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/tv_exam"
-                android:layout_toEndOf="@+id/tv_exam"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textColor="@color/exam_text_color"
-                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/iv_vertical_line"
@@ -65,7 +54,7 @@
                             android:layout_marginRight="20dp"
                             android:text="23"
                             android:textColor="@color/exam_text_color"
-                            android:textSize="15sp"/>
+                            android:textSize="13sp"/>
 
             </RelativeLayout>
 

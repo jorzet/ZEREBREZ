@@ -1,3 +1,19 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase
 
 import android.app.Activity
@@ -7,13 +23,24 @@ import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.School
 import com.zerebrez.zerebrez.models.User
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG : String = "CheckUserWithFacebook"
 
 class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Tags
+     */
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
 
-    private val USERS_REFERENCE : String = "users"
-
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -23,25 +50,21 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
     private val INSTITUTE_ID_KEY : String = "institutionId"
     private val SCHOOL_ID_KEY : String = "schoolId"
 
-    private val INSTITUTE_TAG : String = "institute"
-    private val SCHOOL_TAG : String = "school"
-
+    /*
+     * Database objects
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
     private var mFirebaseInstance: FirebaseDatabase
 
     init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
+        mFirebaseInstance = FirebaseDatabase.getInstance(Engagement.USERS_DATABASE_REFERENCE)
     }
 
     fun requestGetUserWithProvider() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = mFirebaseInstance.getReference(user.uid)
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -50,16 +73,16 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
                         if (map.containsKey(PROFILE_KEY)) {
                             val user = User()
-                            val profile = map.get(PROFILE_KEY) as HashMap<String, String>
+                            val profile = map.get(PROFILE_KEY) as kotlin.collections.HashMap<String, String>
                             for (key2 in profile.keys) {
                                 if (key2.equals(PREMIUM_KEY)) {
 
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -79,7 +102,7 @@ class CheckUserWithProviderRequest(activity: Activity) : Engagement(activity) {
                                     val schools = arrayListOf<School>()
                                     Log.d(TAG, "profile data ------ " + selectedSchools.size)
                                     for (i in 0..selectedSchools.size - 1) {
-                                        val institute = selectedSchools.get(i) as HashMap<String, String>
+                                        val institute = selectedSchools.get(i) as kotlin.collections.HashMap<String, String>
                                         val school = School()
                                         if (institute.containsKey(INSTITUTE_ID_KEY)) {
                                             school.setInstituteId(Integer(institute.get(INSTITUTE_ID_KEY)!!.replace(INSTITUTE_TAG, "")))

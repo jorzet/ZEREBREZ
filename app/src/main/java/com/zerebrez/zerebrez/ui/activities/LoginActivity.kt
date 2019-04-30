@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,7 +261,7 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 
-    fun startDownloadImages() {
+    public fun startDownloadImages() {
         try {
             if (!isMyServiceRunning(DownloadImages::class.java)) {
                 this.startService(Intent(this, DownloadImages::class.java))
@@ -283,11 +283,9 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         return false
     }
 
-    fun stopDownloadImagesService() {
+    public fun stopDownloadImagesService() {
         this.stopService(Intent(this, DownloadImages::class.java))
         Log.i(TAG, "Stopped service ***************************")
-        val dataHelper = DataHelper(this)
-        dataHelper.setImagesDownloaded(true)
         //goQuestionActivity()
         //showInitFragment()
     }
@@ -296,6 +294,10 @@ class LoginActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFaile
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.getExtras() != null) {
                 if (intent.getBooleanExtra(DownloadImages.DOWNLOAD_COMPLETE,false)) {
+                    if (baseContext != null) {
+                        val dataHelper = DataHelper(baseContext)
+                        dataHelper.setImagesDownloaded(true)
+                    }
                     stopDownloadImagesService()
                 } else {
                     Log.i(TAG, "Downloading ...")

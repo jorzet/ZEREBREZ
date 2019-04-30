@@ -1,3 +1,19 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.firebase.subject
 
 import android.app.Activity
@@ -10,13 +26,28 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import java.util.*
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "SubjectQuestionRequest"
 
 class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to be replaced
+     */
     private val COURSE_LABEL : String = "course_label"
-    private val USERS_REFERENCE : String = "users"
+
+    /*
+     * Node references
+     */
     private val FREE_SUBJECTS_QUESTION_REFERENCE : String = "freeUser/course_label/subjects/numberOfQuestionsEnabeled"
+
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -24,17 +55,19 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
     private val COURSE_KEY : String = "course"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
 
-    private val mActivity: Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
 
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-    }
     fun requestGetFreeSubjectsQuestionsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_SUBJECTS_QUESTION_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(FREE_SUBJECTS_QUESTION_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -62,7 +95,10 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val firebaseUser = getCurrentUser()
         if (firebaseUser != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + firebaseUser.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(firebaseUser.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -71,7 +107,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = post as HashMap<*, *>
+                        val map = post as kotlin.collections.HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -107,7 +143,7 @@ class SubjectQuestionRequest(activity: Activity) : Engagement(activity) {
                             val modules = arrayListOf<Module>()
 
                             for (key2 in answeredModules.keys) {
-                                val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                 val module = Module()
                                 module.setId(Integer(key2.replace("m", "")))
 

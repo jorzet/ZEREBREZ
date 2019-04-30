@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import com.zerebrez.zerebrez.fragments.payment.PendingPaymentFragment
 import com.zerebrez.zerebrez.fragments.profile.PaymentFragment
 import com.zerebrez.zerebrez.fragments.profile.ProfileFragment
 import com.zerebrez.zerebrez.fragments.profile.YouArePremiumFragment
@@ -43,7 +44,12 @@ class ProfileViewPager (context : Context, fm: FragmentManager, tabCount : Int) 
                 if (DataHelper(mContext).isPremiumUser()) {
                     fragment = YouArePremiumFragment()
                 } else {
-                    fragment = PaymentFragment()
+                    // if has pending payment show pending payment fragment
+                    if (DataHelper(mContext).hasPendingPayment()) {
+                        fragment = PendingPaymentFragment()
+                    } else {
+                        fragment = PaymentFragment()
+                    }
                 }
             }
         }

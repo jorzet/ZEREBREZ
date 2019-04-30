@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 
 import com.zerebrez.zerebrez.R;
@@ -54,6 +57,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     private int mTextSchoolSize;
 
     private int maxHits = 128; // 128 question per exam in mexico
+    private int minHitsToShow = 80;
 
     private List<School> mSchools = new ArrayList<>();
 
@@ -89,14 +93,24 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         this.userHits = userHits;
     }
 
-    private int getChartStart() {
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
+
+    private int getChartStart(boolean considerUserHits) {
         List<Integer> scores = new ArrayList<>();
         for (int i = 0; i < mSchools.size(); i++) {
             scores.add(mSchools.get(i).getHitsNumber());
         }
-        scores.add(userHits);
+        if (considerUserHits)
+            scores.add(userHits);
 
-        int min = Collections.min(scores);
+        int min = scores.isEmpty() ? 0 : Collections.min(scores);
+
+        if (min > 80) {
+            return 80;
+        }
+
         return min;
     }
 
@@ -122,7 +136,7 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                 width - 250, 0, width - 50, mTextTopWidth);
 
         int progressHeight = height - mTextTopWidth;
-        int startHit = (getChartStart() - 10) < 0 ? 0 : getChartStart() - 10;
+        int startHit = (getChartStart(true) - 10) < 0 ? 0 : getChartStart(true) - 10;
         int starts = progressHeight - (((startHit) * progressHeight) / maxHits);
 
 
@@ -136,8 +150,13 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                     50, 150, width - 210, width - 10);
         }
 
+        if (getChartStart(true) >= 80) {
+            drawUserHits(80, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
+                    width - 250, width - 140);
+        }
+
         drawUserHits(userHits, mTextTopSize, getResources().getColor(R.color.my_score_text_color),
-                width - 290, width - 90);
+                width - 250, width - 140);
 
         // draw progress bar
         drawProgressBar(userHits,xPos - offset, mTextTopWidth, xPos + offset, progressHeight + mTextTopWidth);
@@ -151,8 +170,15 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     }
 
     private void drawProgressBar(int userHits, int left, int top, int right, int bottom) {
-        int progressHeight = height;
-        int progress = progressHeight - ((userHits * progressHeight) / maxHits);
+        int progressHeight = height - mTextTopWidth;
+
+        int newRange = maxHits - getChartStart(true);
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
+        int newUserHits = ((userHits * progressHeight) / newMaxHits);
+        int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
+        newUserHits = newUserHits - minPixs;
+
+        int progress = progressHeight - newUserHits;
 
         /*
          * here is drawn the progressbar background
@@ -193,52 +219,25 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
     private void drawSchoolAndHits(String text, int hits, int textSizeSchool, int textHitsSize,
                                    int textSchoolColor, int textHitsColor,
                                    int leftSchool, int rightSchool, int leftHits, int rightHits) {
+
         int progressHeight = height - mTextTopWidth;
-        int yPos = mTextTopWidth + progressHeight - ((hits * progressHeight) / maxHits);
+
+        int newRange = maxHits - getChartStart(true);
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
+        int newSchoolHits = ((hits * progressHeight) / newMaxHits);
+        int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
+        newSchoolHits = newSchoolHits - minPixs;
+
+        int yPos;
+        if (getChartStart(true) == hits) {
+            yPos = mTextTopWidth + progressHeight - newSchoolHits;
+        } else  {
+            yPos = mTextTopWidth + progressHeight - newSchoolHits;
+        }
+
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
-        /*
-         * Draw school name
-         */
-        // fake ractangle where text going to center
-        Rect areaRectSchool = new Rect(leftSchool, yPos - 10, rightSchool, yPos + 10);
-        // draw the background style (pure color or image)
-        paint.setColor(getResources().getColor(R.color.background));
-        canvas.drawRect(areaRectSchool, paint);
-        // measure text
-        RectF boundsSchool = new RectF(areaRectSchool);
-        paint.setTextSize(textSizeSchool);
-        boundsSchool.right = paint.measureText(text, 0, text.length());
-        boundsSchool.bottom = paint.descent() - paint.ascent();
-        boundsSchool.left += (areaRectSchool.width() - boundsSchool.right) / 2.0f;
-        boundsSchool.top += (areaRectSchool.height() - boundsSchool.bottom) / 2.0f;
-        // draw text in center
-        paint.setColor(textSchoolColor);
-        paint.setTextSize(textSizeSchool);
-        paint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
-        canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
 
-        /*
-         * Draw school hits
-         */
-        // fake ractangle where text going to center
-        Rect areaRectHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
-        // draw the background style (pure color or image)
-        paint.setColor(getResources().getColor(R.color.background));
-        canvas.drawRect(areaRectHits, paint);
-        // measure text
-        String hitsText = String.valueOf(hits);
-        RectF boundsHits = new RectF(areaRectHits);
-        paint.setTextSize(textHitsSize);
-        boundsHits.right = paint.measureText(hitsText, 0, hitsText.length());
-        boundsHits.bottom = paint.descent() - paint.ascent();
-        boundsHits.left += (areaRectHits.width() - boundsHits.right) / 2.0f;
-        boundsHits.top += (areaRectHits.height() - boundsHits.bottom) / 2.0f;
-        // draw text in center
-        paint.setColor(textHitsColor);
-        paint.setTextSize(textHitsSize);
-        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
-        canvas.drawText(hitsText, boundsHits.left, boundsHits.top - paint.ascent(), paint);
 
         /*
          * Draw percentage line
@@ -257,11 +256,114 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
         paint.setColor(getResources().getColor(R.color.my_score_text_color));
         canvas.drawRect(secondLine, paint);
 
+        /*
+         * Draw school name
+         */
+        // fake ractangle where text going to center
+        Rect areaRectSchool;
+        if (getChartStart(true) == hits) {
+            areaRectSchool = new Rect(leftSchool, yPos - 20, rightSchool, yPos);
+        } else {
+            areaRectSchool = new Rect(leftSchool, yPos - 10, rightSchool, yPos + 10);
+        }
+        // draw the background style (pure color or image)
+        paint.setColor(getResources().getColor(R.color.background));
+        canvas.drawRect(areaRectSchool, paint);
+        // measure text
+        RectF boundsSchool = new RectF(areaRectSchool);
+        paint.setTextSize(textSizeSchool);
+        boundsSchool.right = paint.measureText(text, 0, text.length());
+        boundsSchool.bottom = paint.descent() - paint.ascent();
+        boundsSchool.left += (areaRectSchool.width() - boundsSchool.right) / 2.0f;
+        boundsSchool.top += (areaRectSchool.height() - boundsSchool.bottom) / 2.0f;
+        // draw text in center
+        paint.setColor(textSchoolColor);
+        paint.setTextSize(textSizeSchool);
+        paint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
+
+        TextPaint textPaint = new TextPaint();
+        textPaint.setColor(textSchoolColor);
+        textPaint.setTextSize(textSizeSchool);
+        textPaint.setTypeface(FontUtil.Companion.getNunitoBold(mContext));
+        textPaint.measureText(text, 0, text.length());
+
+        StaticLayout staticLayout = new StaticLayout(text, textPaint, xPos - offset - firstLine.width() - offset - offset,
+                Layout.Alignment.ALIGN_OPPOSITE, 1, 1, true);
+
+        if (staticLayout.getLineCount() > 1) {
+            //boundsSchool.left += areaRectSchool.width() / 2.0f;
+
+            canvas.save();
+            float textHeight = getTextHeight(text, textPaint);
+            int numberOfTextLines = staticLayout.getLineCount();
+            float textYCoordinate = boundsSchool.top - paint.ascent() -
+                    ((numberOfTextLines * textHeight) / 2);
+
+            //text will be drawn from left
+            float textXCoordinate = areaRectSchool.width() / 2.0f - offset - offset ;
+
+            canvas.translate(textXCoordinate, textYCoordinate);
+
+            //draws static layout on canvas
+            staticLayout.draw(canvas);
+            canvas.restore();
+
+        } else {
+            canvas.drawText(text, boundsSchool.left, boundsSchool.top - paint.ascent(), paint);
+        }
+
+        /*
+         * Draw school hits
+         */
+        // fake ractangle where text going to center
+        Rect areaRectHits;
+        if (getChartStart(true) == hits) {
+            areaRectHits = new Rect(leftHits, yPos - 20, rightHits, yPos);
+        } else {
+            areaRectHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
+        }
+
+        // draw the background style (pure color or image)
+        paint.setColor(getResources().getColor(R.color.background));
+        canvas.drawRect(areaRectHits, paint);
+        // measure text
+        String hitsText = String.valueOf(hits);
+        RectF boundsHits = new RectF(areaRectHits);
+        paint.setTextSize(textHitsSize);
+        boundsHits.right = paint.measureText(hitsText, 0, hitsText.length());
+        boundsHits.bottom = paint.descent() - paint.ascent();
+        boundsHits.left += (areaRectHits.width() - boundsHits.right) / 2.0f;
+        boundsHits.top += (areaRectHits.height() - boundsHits.bottom) / 2.0f;
+        // draw text in center
+        paint.setColor(textHitsColor);
+        paint.setTextSize(textHitsSize);
+        paint.setTypeface(FontUtil.Companion.getNunitoSemiBold(mContext));
+        canvas.drawText(hitsText, boundsHits.left, boundsHits.top - paint.ascent(), paint);
+
+
+
     }
 
     public void drawUserHits(int hits, int textUserHitsSize, int textUserHitsColor, int leftHits, int rightHits) {
-        int progressHeight = height ;
-        int yPos = mTextTopWidth + progressHeight - ((hits * progressHeight) / maxHits);
+        int progressHeight = height - mTextTopWidth;
+
+        int newRange = maxHits - getChartStart(true);
+
+        int newMaxHits = getChartStart(true) < 80 ? newRange : (maxHits - 80);
+
+        int newUserHits = ((hits * progressHeight) / newMaxHits);
+        int minPixs = ((getChartStart(true) * progressHeight) / newMaxHits);
+        newUserHits = newUserHits - minPixs;
+
+        int yPos;
+        if (getChartStart(true) == hits) {
+            yPos = mTextTopWidth + progressHeight - newUserHits;
+        } else {
+            yPos = mTextTopWidth + progressHeight - newUserHits;
+        }
+
+
+
         int xPos = width/2;
         int offset = mProgressBarWidth/2;
 
@@ -269,7 +371,12 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
          * Draw user hits
          */
         // fake ractangle where text going to center
-        Rect areaRectuserHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
+        Rect areaRectuserHits;
+        if (getChartStart(true) == hits) {
+            areaRectuserHits = new Rect(leftHits, yPos - 20, rightHits, yPos );
+        } else {
+            areaRectuserHits = new Rect(leftHits, yPos - 10, rightHits, yPos + 10);
+        }
         // draw the background style (pure color or image)
         paint.setColor(getResources().getColor(R.color.background));
         canvas.drawRect(areaRectuserHits, paint);
@@ -293,5 +400,15 @@ public class SchoolAverageCanvas extends android.support.v7.widget.AppCompatImag
                 yPos + mLineProgressBarWidth/2);
         paint.setColor(getResources().getColor(R.color.my_score_text_color));
         canvas.drawRect(secondLine, paint);
+    }
+
+    /**
+     * @return text height
+     */
+    private float getTextHeight(String text, Paint paint) {
+
+        Rect rect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), rect);
+        return rect.height();
     }
 }

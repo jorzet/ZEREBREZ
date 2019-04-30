@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.app.Activity
 import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.services.firebase.CheckUserWithProviderRequest
 import com.zerebrez.zerebrez.services.firebase.Firebase
 import com.zerebrez.zerebrez.services.firebase.advances.AdvancesRequest
@@ -46,6 +47,24 @@ private const val TAG : String = "RequestManager"
 class RequestManager(activity : Activity) {
 
     private val mActivity = activity
+
+    fun requestSendPasswordResetEmail(email: String, onSendPasswordResetEmailListener: OnSendPasswordResetEmailListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onSendPasswordResetEmailListener.onSendPasswordResetEmailError(result)
+            }
+        })
+
+        firebase.requestSendPasswordResetEmail(email)
+    }
 
     fun requestDoLogIn(user : User?, onDoLogInListener : OnDoLogInListener) {
         val firebase = Firebase(mActivity)
@@ -117,6 +136,43 @@ class RequestManager(activity : Activity) {
         })
 
         firebase.requestSendUser(user)
+    }
+
+
+    fun requestSendUserComproPago(user: User, billingId: String, comproPagoStatus: ComproPagoStatus, onSendUserComproPagoListener: OnSendUserComproPagoListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onSendUserComproPagoListener.onSendUserComproPagoLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onSendUserComproPagoListener.onSendUserComproPagoError(result)
+            }
+        })
+
+        firebase.requestSendUserComproPago(user, billingId, comproPagoStatus)
+    }
+
+    fun requestRemoveCompropagoNode(user: User, onRemoveComproPagoNodeListener: OnRemoveComproPagoNodeListener) {
+        val firebase = Firebase(mActivity)
+
+        firebase.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeLoaded(result as Boolean)
+            }
+        })
+
+        firebase.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onRemoveComproPagoNodeListener.onRemoveComproPagoNodeError(result)
+            }
+        })
+
+        firebase.requestRemoveCompropagoNode(user)
     }
 
     /*fun requestSendAnsweredQuestions(questions: List<Question>, course: String, onSendAnsweredQuestionsListener: OnSendAnsweredQuestionsListener) {
@@ -434,6 +490,11 @@ class RequestManager(activity : Activity) {
         fun onFireBaseLogIn(success : Boolean)
     }
 
+    interface OnSendPasswordResetEmailListener {
+        fun onSendPasswordResetEmailLoaded(success : Boolean)
+        fun onSendPasswordResetEmailError(throwable: Throwable)
+    }
+
     interface OnDoLogInListener {
         fun onDoLogInLoaded(success : Boolean)
         fun onDoLogInError(throwable: Throwable)
@@ -452,6 +513,16 @@ class RequestManager(activity : Activity) {
     interface OnSendUserListener {
         fun onSendUserLoaded(success: Boolean)
         fun onSendUserError(throwable: Throwable)
+    }
+
+    interface OnSendUserComproPagoListener {
+        fun onSendUserComproPagoLoaded(success: Boolean)
+        fun onSendUserComproPagoError(throwable: Throwable)
+    }
+
+    interface OnRemoveComproPagoNodeListener {
+        fun onRemoveComproPagoNodeLoaded(success: Boolean)
+        fun onRemoveComproPagoNodeError(throwable: Throwable)
     }
 
     interface OnGetModulesListener {
@@ -1111,6 +1182,24 @@ class RequestManager(activity : Activity) {
         schoolsAverageRequest.requestGetScoreLast128QuestionsExam()
     }
 
+    fun requestGetCourseExamMaxScore(course: String, onGetCourseExamMaxScore: OnGetCourseExamMaxScore) {
+        val schoolsAverageRequest = SchoolsAverageRequest(mActivity)
+
+        schoolsAverageRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreLoaded(result as String)
+            }
+        })
+
+        schoolsAverageRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetCourseExamMaxScore.onGetCourseExamMaxScoreError(result)
+            }
+        })
+
+        schoolsAverageRequest.requestGetCourseExamMaxScore(course)
+    }
+
     interface OnGetUserSelectedSchoolsRefactorListener {
         fun onGetUserSelectedSchoolsRefactorLoaded(schools: List<School>)
         fun onGetUserSelectedSchoolsRefactorError(throwable: Throwable)
@@ -1120,6 +1209,13 @@ class RequestManager(activity : Activity) {
         fun onGetScoreLast128QuestionsExamLoaded(score: Int)
         fun onGetScoreLast128QuestionsExamError(throwable: Throwable)
     }
+
+    interface  OnGetCourseExamMaxScore {
+        fun onGetCourseExamMaxScoreLoaded(score: String)
+        fun onGetCourseExamMaxScoreError(throwable: Throwable)
+    }
+
+
 
     fun requestGetSchools(course: String, onGetSchoolsListener : OnGetSchoolsListener) {
         val schoolsRequest = SchoolsRequest(mActivity)
@@ -1331,6 +1427,104 @@ class RequestManager(activity : Activity) {
     interface OnGetSubjectQuestionsNewFormatBySubjectQuestionIdListener {
         fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdLoaded(questions: List<QuestionNewFormat>)
         fun OnGetSubjectQuestionsNewFormatBySubjectQuestionIdError(throwable: Throwable)
+    }
+
+    fun requestGetQuestionNewFormat(questionId: String, course: String,
+                                 onGetQuestionNewFormatListener: OnGetQuestionNewFormatListener) {
+        val questionsRequest = QuestionNewFormatRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetQuestionNewFormatListener
+                        .onGetQuestionNewFormatLoaded(result as QuestionNewFormat)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetQuestionNewFormatListener
+                        .onGetQuestionNewFormatError(result)
+            }
+        })
+
+        questionsRequest.requestQuestionNewFormat(questionId, course)
+    }
+
+    interface OnGetQuestionNewFormatListener {
+        fun onGetQuestionNewFormatLoaded(question: QuestionNewFormat)
+        fun onGetQuestionNewFormatError(throwable: Throwable)
+    }
+
+
+    fun requestGetQuestionsIdByModuleId(moduleId : Int, course: String, onGetQuestionsIdListener: OnGetQuestionsIdListener) {
+        val questionsRequest = QuestionNewFormatRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetQuestionsIdListener
+                        .onGetQuestionsIdLoaded(result as List<String>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetQuestionsIdListener
+                        .onGetQuestionsIdError(result)
+            }
+        })
+
+        questionsRequest.requestGetQuestionsNewFormatByModuleId(moduleId, course)
+    }
+
+    fun requestGetQuestionsIdByExamId(examId: Int, course: String, onGetQuestionsIdListener: OnGetQuestionsIdListener) {
+        val questionsRequest = QuestionNewFormatRequest(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetQuestionsIdListener
+                        .onGetQuestionsIdLoaded(result as List<String>)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetQuestionsIdListener
+                        .onGetQuestionsIdError(result)
+            }
+        })
+
+        questionsRequest.requestGetQuestionsNewFormatByExamId(examId, course)
+    }
+
+    interface OnGetQuestionsIdListener {
+        fun onGetQuestionsIdLoaded(questionsId: List<String>)
+        fun onGetQuestionsIdError(throwable: Throwable)
+    }
+
+    fun requestGetMinimumVersion(onGetMinimumVersionListener: OnGetMinimumVersionListener) {
+        val questionsRequest = Firebase(mActivity)
+
+        questionsRequest.setOnRequestSuccess(object : AbstractPendingRequest.OnRequestListenerSuccess{
+            override fun onSuccess(result: Any?) {
+                onGetMinimumVersionListener
+                        .onGetMinimumVersionLoaded(result as String)
+            }
+        })
+
+        questionsRequest.setOnRequestFailed(object : AbstractPendingRequest.OnRequestListenerFailed{
+            override fun onFailed(result: Throwable) {
+                onGetMinimumVersionListener
+                        .onGetMinimumVersionError(result)
+            }
+        })
+
+        questionsRequest.requestGetMinimumVersion()
+
+    }
+
+    interface OnGetMinimumVersionListener {
+        fun onGetMinimumVersionLoaded(minimumVersion: String)
+        fun onGetMinimumVersionError(throwable: Throwable)
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,26 @@ import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.enums.SubjectType
 import com.zerebrez.zerebrez.services.firebase.Engagement
-import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
-import java.util.HashMap
 import java.text.Normalizer
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
 
 private const val TAG: String = "AdvancesRequest"
 
 class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
-    private val USERS_REFERENCE : String = "users"
+    /*
+     * Node references
+     */
     private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_QUESTION_REFERENCE : String = "answeredQuestions"
 
+    /*
+     * Json keys
+     */
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
@@ -44,27 +51,22 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
     private val SUBJECT_KEY : String = "subject"
     private val CHOOSEN_OPTION_KEY : String = "chosenOption"
     private val ANSWERED_EXAM_KEY : String = "answeredExams"
-    private val ANSWERED_MODULE_KEY : String = "answeredModules"
     private val CORRECT_KEY : String = "correct"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
 
     fun requestGetHitAndMissesAnsweredModulesAndExams(course: String) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -73,16 +75,16 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val user = User()
                         for (key in map.keys) {
                             println(key)
                             if (key.equals(PROFILE_REFERENCE)) {
-                                val profile = map.get(key) as HashMap<String, String>
+                                val profile = map.get(key) as kotlin.collections.HashMap<String, String>
                                 if (profile.containsKey(PREMIUM_KEY)) {
-                                    val premiumHash = profile.get(PREMIUM_KEY) as java.util.HashMap<String, String>
+                                    val premiumHash = profile.get(PREMIUM_KEY) as kotlin.collections.HashMap<String, String>
 
                                     if (premiumHash.containsKey(IS_PREMIUM_KEY)) {
                                         val isPremium = premiumHash.get(IS_PREMIUM_KEY) as Boolean
@@ -139,6 +141,33 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                                 limpiarTexto(SubjectType.FCE.value) -> {
                                                     question.subject = SubjectType.FCE
                                                 }
+                                                limpiarTexto(SubjectType.FCE2.value) -> {
+                                                    question.subject = SubjectType.FCE2
+                                                }
+                                                limpiarTexto("filosofiaarea") -> {
+                                                    question.subject = SubjectType.PHILOSOPHY_AREA
+                                                }
+                                                limpiarTexto("filosofia(area4)") -> {
+                                                    question.subject = SubjectType.PHILOSOPHY_AREA_4
+                                                }
+                                                limpiarTexto(SubjectType.PHILOSOPHY.value) -> {
+                                                    question.subject = SubjectType.PHILOSOPHY
+                                                }
+                                                limpiarTexto(SubjectType.LITERATURE.value) -> {
+                                                    question.subject = SubjectType.LITERATURE
+                                                }
+                                                limpiarTexto("quimicaarea") -> {
+                                                    question.subject = SubjectType.CHEMISTRY_AREA
+                                                }
+                                                limpiarTexto("quimica(area2)") -> {
+                                                    question.subject = SubjectType.CHEMISTRY_AREA_2
+                                                }
+                                                limpiarTexto("matematicasarea") -> {
+                                                    question.subject = SubjectType.MATEMATICS_AREA
+                                                }
+                                                limpiarTexto("matematicas(area1y2)") -> {
+                                                    question.subject = SubjectType.MATEMATICS_AREA_1_2
+                                                }
                                             }
                                         } else if (key3.equals(IS_CORRECT_KEY)) {
                                             val isCorrect = questionAnswered.get(key3) as Boolean
@@ -155,7 +184,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                                 val answeredExams = (map.get(key) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                                 val exams = arrayListOf<Exam>()
                                 for (key2 in answeredExams.keys) {
-                                    val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                    val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                     val exam = Exam()
                                     exam.setExamId(Integer(key2.replace("e", "")))
 
@@ -194,7 +223,10 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -206,7 +238,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
 
 
 
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         val subjects = arrayListOf<Subject>()
@@ -269,7 +301,7 @@ class AdvancesRequest(activity: Activity) : Engagement(activity) {
                         if (map.containsKey(ANSWERED_QUESTION_REFERENCE)) {
                             val answeredQuestions = (map.get(ANSWERED_QUESTION_REFERENCE) as kotlin.collections.HashMap<String, String> ).get(course) as kotlin.collections.HashMap<String, String>
                             for (key2 in answeredQuestions.keys) {
-                                val questionAnswered = answeredQuestions.get(key2) as HashMap<String, String>
+                                val questionAnswered = answeredQuestions.get(key2) as kotlin.collections.HashMap<String, String>
 
                                 if (questionAnswered.containsKey(SUBJECT_KEY)) {
                                     val subjectType = limpiarTexto(questionAnswered.get(SUBJECT_KEY))

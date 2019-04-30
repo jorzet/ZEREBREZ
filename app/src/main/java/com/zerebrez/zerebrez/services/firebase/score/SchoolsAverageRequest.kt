@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,35 @@ import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "SchoolsAverageRequest"
 
 class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
-    private val COURSE_LABEL : String = "course_label"
-    private val USERS_REFERENCE : String = "users"
-    private val PROFILE_REFERENCE : String = "profile"
-    private val INSTITUTES_REFERENCE : String = "schools/course_label"
+    /*
+     * Tags
+     */
+    private val INSTITUTE_TAG : String = "institute"
+    private val SCHOOL_TAG : String = "school"
 
+    /*
+     * Labels to be replaced
+     */
+    private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
+    private val INSTITUTES_REFERENCE : String = "schools/course_label"
+    private val SCORE_REFERENCE : String = "scores/course_label"
+
+    /*
+     * Json keys
+     */
     private val PROFILE_KEY : String = "profile"
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
@@ -48,32 +68,26 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
     private val CORRECT_KEY : String = "correct"
     private val INCORRECT_KEY : String = "incorrect"
 
-    private val INSTITUTE_TAG : String = "institute"
-    private val SCHOOL_TAG : String = "school"
-
+    /*
+     * Variables
+     */
     private lateinit var mUserSchools : List<School>
-    private var mSchools = arrayListOf<School>()
-    private var mCurrentSchool : Int = 0
     private var mUserSchoolsSize : Int = 0
     private val EXAM_128_QUESTIONS : Int = 128
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetUserSelectedSchoolsRefactor() {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -82,7 +96,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "profile data ------ " + map.size)
 
                         val user = User()
@@ -164,8 +178,12 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
     private fun requestSchool(schools: List<School>, course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(INSTITUTES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -175,17 +193,17 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
                 if (post != null) {
 
-                    val institutesHash = post as HashMap<String, String>
+                    val institutesHash = post as kotlin.collections.HashMap<String, String>
 
                     for (school in schools) {
                         if (institutesHash.containsKey("institute" + school.getInstituteId().toString())) {
-                            val instituteHash = institutesHash.get("institute" + school.getInstituteId().toString()) as HashMap<String, String>
+                            val instituteHash = institutesHash.get("institute" + school.getInstituteId().toString()) as kotlin.collections.HashMap<String, String>
                             school.setInstituteName(instituteHash.get("name") as String)
 
-                            val schoolsHash = instituteHash.get("schoolsList") as HashMap<String, String>
+                            val schoolsHash = instituteHash.get("schoolsList") as kotlin.collections.HashMap<String, String>
                             for (key3 in schoolsHash.keys) {
                                 if (school.getSchoolId().equals(Integer(key3.replace("school", "")))) {
-                                    val schoolDataHash = schoolsHash.get(key3) as HashMap<String, String>
+                                    val schoolDataHash = schoolsHash.get(key3) as kotlin.collections.HashMap<String, String>
                                     for (key4 in schoolDataHash.keys) {
                                         if (key4.equals("name")) {
                                             school.setSchoolName(schoolDataHash.get("name").toString())
@@ -225,7 +243,10 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -234,7 +255,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as java.util.HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -269,7 +290,7 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                             val answeredExams = (map.get(ANSWERED_EXAM_KEY) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                             val exams = arrayListOf<Exam>()
                             for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as java.util.HashMap<String, String>
+                                val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                 val exam = Exam()
                                 exam.setExamId(Integer(key2.replace("e", "")))
 
@@ -307,6 +328,36 @@ class SchoolsAverageRequest(activity: Activity) : Engagement(activity) {
                 }
             })
         }
+    }
+
+    fun requestGetCourseExamMaxScore(course: String) {
+        // Get a reference to our posts
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(SCORE_REFERENCE.replace(COURSE_LABEL, course))
+
+        mFirebaseDatabase.keepSynced(true)
+
+        // Attach a listener to read the data at our posts reference
+        mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val post = dataSnapshot.getValue()
+                if (post != null) {
+                    val score = (post as Long).toString()
+                    Log.d(TAG, "price data ------ " )
+                    onRequestListenerSucces.onSuccess(score)
+                } else {
+                    val error = GenericError()
+                    onRequestLietenerFailed.onFailed(error)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("The read failed: " + databaseError.code)
+                onRequestLietenerFailed.onFailed(databaseError.toException())
+            }
+        })
     }
 
 

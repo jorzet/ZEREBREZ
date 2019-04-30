@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,11 @@ package com.zerebrez.zerebrez.services.firebase
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
+import com.zerebrez.zerebrez.models.Error.GenericError
 import com.zerebrez.zerebrez.models.Image
 import com.zerebrez.zerebrez.models.User
+import com.zerebrez.zerebrez.models.enums.ErrorType
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.request.AbstractRequestTask
 import com.zerebrez.zerebrez.request.DownloadImageTask
@@ -34,45 +37,107 @@ import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 class DownloadImages: Service() {
 
+    /*
+     * Tags
+     */
     companion object {
         const val TAG : String = "DownloadImages"
         const val DOWNLOAD_IMAGES_BR = "com.zerebrez.zerebrez.services.firebase.DownloadImages"
         const val DOWNLOAD_COMPLETE = "download_complete"
+        const val DOWNLOAD_PROGRESS = "download_progress"
+        const val DOWNLOAD_ERROR = "download_error"
+        const val ERROR_WHEN_DOWNLOAD = "error_when_download"
     }
 
-
+    /*
+     * Broadcast intent
+     */
     var bi = Intent(DOWNLOAD_IMAGES_BR)
 
+    /*
+     * images list path
+     */
     private lateinit var mImages : List<Image>
+
+    /*
+     * Variable
+     */
+    private var downloadProgress = 0
+    private var downloadCount = 0
+    private var downloadWithError = false
 
     override fun onCreate() {
         super.onCreate()
 
         // get images from data base
         try {
+            Log.d("DownloadService", "call DownloadImages service")
             val dataHelper = DataHelper(this)
             mImages = dataHelper.getImagesPath()
 
             val user = getUser()
+            // check if user is not null and has course
             if (user != null && !user.getCourse().equals("")) {
                 // instance download image task and set listeners
                 val downloadImageTask = DownloadImageTask(this, user.getCourse())
 
                 downloadImageTask.setOnRequestSuccess(object : AbstractRequestTask.OnRequestListenerSuccess {
                     override fun onSuccess(result: Any) {
-                        bi.putExtra(DOWNLOAD_COMPLETE, true)
-                        sendBroadcast(bi)
+                        //bi.putExtra(DOWNLOAD_COMPLETE, true)
+                        //sendBroadcast(bi)
                     }
                 })
 
                 downloadImageTask.setOnRequestFailed(object : AbstractRequestTask.OnRequestListenerFailed {
                     override fun onFailed(result: Throwable) {
-                        bi.putExtra(DOWNLOAD_COMPLETE, false)
+
+                        bi.putExtra(DOWNLOAD_ERROR, true)
+
+                        if (result is GenericError) {
+                            val error = result as GenericError
+                            if (error.getErrorType().equals(ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)) {
+                                bi.putExtra(ERROR_WHEN_DOWNLOAD, ErrorType.CANNOT_DOWNLOAD_CONTENT_FILE_NOT_FOUND)
+                            }
+                        }
+
                         sendBroadcast(bi)
                     }
                 })
 
-                downloadImageTask.execute(mImages)
+                downloadImageTask.setOnDownloadStatus(object: AbstractRequestTask.OnDownloadStatusListener {
+                    override fun onImageDownloaded() {
+                        downloadCount++
+                        downloadProgress = (downloadCount * 100) / mImages.size
+                        bi.putExtra(DOWNLOAD_PROGRESS, downloadProgress)
+                        sendBroadcast(bi)
+                        if (downloadCount == mImages.size - 1) {
+                            bi.putExtra(DOWNLOAD_COMPLETE, true)
+                            sendBroadcast(bi)
+                        }
+                    }
+                    override fun onImagesError() {
+                        downloadCount++
+                        downloadProgress = (downloadCount * 100) / mImages.size
+
+                        downloadWithError = true
+
+                        bi.putExtra(DOWNLOAD_PROGRESS, downloadProgress)
+                        sendBroadcast(bi)
+
+                        if (downloadCount == mImages.size - 1) {
+                            bi.putExtra(DOWNLOAD_COMPLETE, false)
+                            sendBroadcast(bi)
+                        }
+                    }
+                })
+
+                val isAfterLogIn = DataHelper(baseContext).isAfterLogIn()
+                val areImagesDownloaded = DataHelper(baseContext).areImagesDownloaded()
+
+                if (isAfterLogIn && !areImagesDownloaded) {
+                    Log.d("DownloadService", "start download task")
+                    downloadImageTask.execute(mImages)
+                }
             }
         } catch (exception : Exception) {}
 
@@ -90,6 +155,9 @@ class DownloadImages: Service() {
         return null
     }
 
+    /*
+     * This method returns current user
+     */
     fun getUser() : User? {
         val json = SharedPreferencesManager(this).getJsonUser()
         if (json != null) {

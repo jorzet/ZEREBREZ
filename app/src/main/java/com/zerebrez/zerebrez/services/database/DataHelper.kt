@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@ class DataHelper(context: Context) {
     private val mContext : Context = context
 
     val dbHelper = DataBase(context)
+
+    fun setisAfterLogIn(afterLogin: Boolean) {
+        SharedPreferencesManager(mContext).storeAfterLogin(afterLogin)
+    }
+
+    fun isAfterLogIn() : Boolean {
+        return SharedPreferencesManager(mContext).getIsAfterLogIn()
+    }
 
     fun saveSessionData(hasSessionData : Boolean) {
         SharedPreferencesManager(mContext).storeLogInData(hasSessionData)
@@ -137,9 +145,50 @@ class DataHelper(context: Context) {
     fun getCurrentQuestionNewFormat() : QuestionNewFormat? {
         val json = SharedPreferencesManager(mContext).getJsonCurrentQuestionNewFormat()
         if (json != null) {
-            val currectQuestionNewFormat = JsonParcer.getObjectFromJson(json, QuestionNewFormat::class.java) as QuestionNewFormat
-            return currectQuestionNewFormat
+            try {
+                val currectQuestionNewFormat = JsonParcer.getObjectFromJson(json, QuestionNewFormat::class.java) as QuestionNewFormat
+                return currectQuestionNewFormat
+            } catch (e: java.lang.Exception) {
+            } catch (e: kotlin.Exception) {}
         }
+        return null
+    }
+
+    fun hasPendingPayment() : Boolean{
+        val pendingPayment = SharedPreferencesManager(mContext).getPendingPayment()
+        return pendingPayment
+    }
+
+    fun saveCourses(courses: List<Course>) {
+        val json = JsonParcer.parceObjectListToJson(courses)
+        SharedPreferencesManager(mContext).storeJsonCourses(json)
+    }
+
+    fun getCourses(): List<Course> {
+        val json = SharedPreferencesManager(mContext).getJsonCourses()
+        val courses = arrayListOf<Course>()
+        val coursesArray = JSONArray(json)
+        for (i in 0 .. coursesArray.length() - 1) {
+            courses.add(JsonParcer.getObjectFromJson(coursesArray.get(i).toString(), Course::class.java) as Course)
+        }
+
+        return courses
+    }
+
+    fun getCourseFromUserCourse(course: String): Course? {
+        val json = SharedPreferencesManager(mContext).getJsonCourses()
+        val courses = arrayListOf<Course>()
+        val coursesArray = JSONArray(json)
+        for (i in 0 .. coursesArray.length() - 1) {
+            courses.add(JsonParcer.getObjectFromJson(coursesArray.get(i).toString(), Course::class.java) as Course)
+        }
+
+        for (mCourse in courses) {
+            if (mCourse.id.equals(course)) {
+                return mCourse
+            }
+        }
+
         return null
     }
 

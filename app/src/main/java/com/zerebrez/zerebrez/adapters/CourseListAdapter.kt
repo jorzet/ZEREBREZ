@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ class CourseListAdapter (context : Context, courses : List<Course>) : BaseAdapte
 
     override fun getItem(position: Int): Any? {
         if (mCourses!= null && mCourses.isNotEmpty() && mCourses.get(position).isActive) {
+        //if (mCourses!= null && mCourses.isNotEmpty()) {
             return mCourses.get(position)
         } else {
             return null

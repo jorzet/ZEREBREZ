@@ -9,12 +9,39 @@
         android:layout_height="wrap_content"
         android:background="@color/background">
 
-        <ImageView
-            android:id="@+id/iv_provider_icon"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_margin="10dp" />
+        <RelativeLayout
+            android:id="@+id/rl_provider_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/pb_loading_provider"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/suggestion_text_color"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/iv_provider_icon"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_margin="10dp" />
+
+            <TextView
+                android:id="@+id/tv_provider_name"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:minWidth="120dp"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/suggestion_text_color"
+                android:visibility="gone"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_providers_comision"

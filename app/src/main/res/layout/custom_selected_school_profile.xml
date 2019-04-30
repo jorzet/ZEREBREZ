@@ -6,7 +6,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
+        android:minHeight="30dp"
         android:layout_centerInParent="true">
         <TextView
             android:id="@+id/tv_school_name"
@@ -14,10 +15,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:text="ESCUELA DE COMPUTO"
-            android:textColor="@color/exams_text_color2"
+            android:textColor="@color/exams_text_color3"
             android:textSize="15sp" />
     </RelativeLayout>
 

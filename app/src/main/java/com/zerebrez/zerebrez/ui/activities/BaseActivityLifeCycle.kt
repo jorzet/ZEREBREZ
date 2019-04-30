@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 package com.zerebrez.zerebrez.ui.activities
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.zerebrez.zerebrez.models.*
+import com.zerebrez.zerebrez.models.enums.ComproPagoStatus
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.request.RequestManager
 import com.zerebrez.zerebrez.services.compropago.ComproPagoManager
@@ -43,6 +45,9 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val SET_CHECKED_TAG : String = "set_checked_tag"
         val SHOW_PAYMENT_FRAGMENT : String = "show_payment_fragment"
         val UPDATE_WRONG_QUESTIONS : String = "update_wrong_questions"
+        val REQUEST_NEW_QUESTION : String = "request_new_question"
+        val QUESTION_POSITION : String = "question_position"
+        val REFRESH_FRAGMENT : String = "refresh_fragment"
         val SHOW_QUESTION_RESULT_CODE : Int = 1
         val SHOW_ANSWER_RESULT_CODE : Int = 2
         val SHOW_ANSWER_MESSAGE_RESULT_CODE : Int = 3
@@ -50,6 +55,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         val RC_CHOOSE_SCHOOL : Int = 5
         val UPDATE_USER_SCHOOLS_RESULT_CODE = 6
         val UPDATE_WRONG_QUESTIONS_RESULT_CODE = 7
+        val SHOW_QUESTIONS_RESULT_CODE = 8
     }
 
     private lateinit var mRequestManager : RequestManager
@@ -304,6 +310,20 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
                 val chargeResponse = response.body()
                 if (chargeResponse != null) {
                     if(chargeResponse.paid && chargeResponse.type.equals("charge.success")){
+
+                        val user = getUser()
+                        if (user != null) {
+
+                            val userFirebase = FirebaseAuth.getInstance().currentUser
+                            if (userFirebase != null && !userFirebase.email.equals("")) {
+                                user.setEmail(userFirebase.email!!)
+                            }
+
+                            if (!user.getCourse().equals("")) {
+                                requestSendUserComproPago(user, chargeResponse.id, ComproPagoStatus.CHARGE_SUCCESS)
+                            }
+                        }
+
                         ErrorDialog.newInstance("Felicidades ya eres PREMIUM",
                                 DialogType.OK_DIALOG ,this)!!
                                 .show(supportFragmentManager, "paywaySuccess")
@@ -557,17 +577,6 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
         })
     }
 
-    fun requestGetQuestionsNewFormatBySubject(subject: String, course: String) {
-        mRequestManager.requestGetQuestionsNewFormatBySubject(subject, course, object : RequestManager.OnGetQuestionsNewFormatBySubjectListener {
-            override fun onGetQuestionsNewFormatBySubjectLoaded(questions: List<QuestionNewFormat>) {
-                onGetQuestionsNewFormatBySubjectSuccess(questions)
-            }
-
-            override fun onGetQuestionsNewFormatBySubjectError(throwable: Throwable) {
-                onGetQuestionsNewFormatBySubjectFail(throwable)
-            }
-        })
-    }
 
     open fun onGetQuestionsNewFormatByModuleIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetQuestionsNewFormatByModuleIdRefactorFail(throwable: Throwable) {}
@@ -575,8 +584,7 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetQuestionsNewFormatByExamIdRefactorFail(throwable: Throwable) {}
     open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorSuccess(questions : List<QuestionNewFormat>) {}
     open fun onGetWrongQuestionsNewFormatByQuestionIdRefactorFail(throwable: Throwable) {}
-    open fun onGetQuestionsNewFormatBySubjectSuccess(questions : List<QuestionNewFormat>) {}
-    open fun onGetQuestionsNewFormatBySubjectFail(throwable: Throwable) {}
+
 
     fun requestGetSchools(course: String) {
         mRequestManager.requestGetSchools(course, object : RequestManager.OnGetSchoolsListener {
@@ -612,15 +620,112 @@ open class BaseActivityLifeCycle : AppCompatActivity(), ErrorDialog.OnErrorDialo
     open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdSuccess(questions: List<QuestionNewFormat>) {}
     open fun onGetSubjectQuestionsNewFormatBySubjectQuestionIdFail(throwable: Throwable) {}
 
-    override fun onConfirmationCancel() {
 
+    fun requestGetQuestionsIdByExamId(examId: Int, course: String) {
+        mRequestManager.requestGetQuestionsIdByExamId(examId, course, object: RequestManager.OnGetQuestionsIdListener {
+            override fun onGetQuestionsIdLoaded(questionsId: List<String>) {
+                onGetQuestionsIdSuccess(questionsId)
+            }
+            override fun onGetQuestionsIdError(throwable: Throwable) {
+                onGetQuestionsIdFail(throwable)
+            }
+        })
     }
 
-    override fun onConfirmationNeutral() {
-
+    fun requestGetQuestionsIdByModuleId(moduleId: Int, course: String) {
+        mRequestManager.requestGetQuestionsIdByModuleId(moduleId, course, object: RequestManager.OnGetQuestionsIdListener {
+            override fun onGetQuestionsIdLoaded(questionsId: List<String>) {
+                onGetQuestionsIdSuccess(questionsId)
+            }
+            override fun onGetQuestionsIdError(throwable: Throwable) {
+                onGetQuestionsIdFail(throwable)
+            }
+        })
     }
 
-    override fun onConfirmationAccept() {
+    open fun onGetQuestionsIdSuccess(questionsId: List<String>) {}
+    open fun onGetQuestionsIdFail(throwable: Throwable) {}
 
+
+    fun requestGetQuestionNewFormat(questionId: String, course: String) {
+        mRequestManager.requestGetQuestionNewFormat(questionId, course, object : RequestManager.OnGetQuestionNewFormatListener {
+            override fun onGetQuestionNewFormatLoaded(question: QuestionNewFormat) {
+                onGetQuestionNewFormatSuccess(question)
+            }
+
+            override fun onGetQuestionNewFormatError(throwable: Throwable) {
+                ongetQuestionNewFormatFail(throwable)
+            }
+        })
     }
+
+    open fun onGetQuestionNewFormatSuccess(question: QuestionNewFormat) {}
+    open fun ongetQuestionNewFormatFail(throwable: Throwable) {}
+
+    fun requestGetWrongQuestionsAndProfileRefactor(course: String) {
+        mRequestManager.requestGetWrongQuestionsAndProfileRefactor(course,object : RequestManager.OnGetWrongQuestionAndProfileListener {
+            override fun onGetWrongQuestionsAndProfileLoaded(user: User) {
+                onGetWrongQuestionsAndProfileRefactorSuccess(user)
+            }
+
+            override fun onGetWrongQuestionsAndProfileError(throwable: Throwable) {
+                onGetWrongQuestionsAndProfileRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetWrongQuestionsAndProfileRefactorSuccess(user : User) {}
+    open fun onGetWrongQuestionsAndProfileRefactorFail(throwable: Throwable) {}
+
+    fun requestGetMinimumVersion() {
+        mRequestManager.requestGetMinimumVersion(object : RequestManager.OnGetMinimumVersionListener {
+            override fun onGetMinimumVersionLoaded(minimumVersion: String) {
+                onGetMinimumVersionSuccess(minimumVersion)
+            }
+
+            override fun onGetMinimumVersionError(throwable: Throwable) {
+                onGetMinimumVersionFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetMinimumVersionSuccess(minimumVersion: String) {}
+    open fun onGetMinimumVersionFail(throwable: Throwable) {}
+
+    override fun onConfirmationCancel() {}
+
+    override fun onConfirmationNeutral() {}
+
+    override fun onConfirmationAccept() {}
+
+
+    fun requestSendUserComproPago(user : User, billingId: String, comproPagoStatus: ComproPagoStatus) {
+        mRequestManager.requestSendUserComproPago(user, billingId, comproPagoStatus, object : RequestManager.OnSendUserComproPagoListener {
+            override fun onSendUserComproPagoLoaded(success: Boolean) {
+                onSendUserComproPagoSuccess(success)
+            }
+
+            override fun onSendUserComproPagoError(throwable: Throwable) {
+                onSendUserComproPagoFail(throwable)
+            }
+        })
+    }
+
+    open fun onSendUserComproPagoSuccess(success: Boolean) {}
+    open fun onSendUserComproPagoFail(throwable: Throwable) {}
+
+    fun requestGetCoursesRefactor() {
+        mRequestManager.requestGetCoursesrefactor(object : RequestManager.OnGetCourseRefactorListener {
+            override fun onGetCoursesRefactorLoaded(courses: List<Course>) {
+                onGetCoursesRefactorSuccess(courses)
+            }
+
+            override fun onGetCoursesRefactorError(throwable: Throwable) {
+                onGetCoursesRefactorFail(throwable)
+            }
+        })
+    }
+
+    open fun onGetCoursesRefactorSuccess(courses: List<Course>) {}
+    open fun onGetCoursesRefactorFail(throwable: Throwable) {}
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.zerebrez.zerebrez.fragments.practice
 
 import android.content.Intent
@@ -20,6 +37,11 @@ import com.zerebrez.zerebrez.utils.FontUtil
 import kotlinx.android.synthetic.main.custom_subject_question.view.*
 import kotlinx.android.synthetic.main.init_fragment.*
 import java.text.Normalizer
+
+/**
+ * Created by Jorge Zepeda Tinoco on 04/01/19.
+ * jorzet.94@gmail.com
+ */
 
 class StudySubjectQuestionsFragment : BaseContentFragment() {
 
@@ -44,13 +66,20 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
     private lateinit var mNotSubjectQuestionsCurrently : TextView
     private lateinit var mMainContainer : View
     private lateinit var mLoadingQuestionSubject : ProgressBar
+    private lateinit var mShowMoreQuestionsButton: View
+    private lateinit var mShowMoreQuestionsTextView: TextView
+
+    /*
+     * Variables
+     */
+    private var mTotalQuestionsToShow : Int = 20
 
     /*
      * Objects
      */
     private var mQuestionList = arrayListOf<QuestionNewFormat>()
     private var mUpdatedQuestions = arrayListOf<QuestionNewFormat>()
-    private var mSubjectQuestionsId = arrayListOf<Int>()
+    private var mSubjectQuestionsId = arrayListOf<String>()
     private lateinit var mUser : User
 
     /*
@@ -58,6 +87,7 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
      */
     private var mSubject : String = ""
     private lateinit var mSelectedSubject : String
+    private lateinit var mSelectedSubjectType : SubjectType
     private var mNumberOfFreeQuestionSubject : Long = 0
     private var isRequesting : Boolean = false
 
@@ -75,14 +105,20 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
         mNotSubjectQuestionsCurrently = rootView.findViewById(R.id.tv_not_subject_questions_currently)
         mMainContainer = rootView.findViewById(R.id.sv_main_container)
         mLoadingQuestionSubject = rootView.findViewById(R.id.pb_loading_question_subjects)
+        mShowMoreQuestionsButton = rootView.findViewById(R.id.rl_show_more_button)
+        mShowMoreQuestionsTextView = rootView.findViewById(R.id.tv_show_more)
+
+        mShowMoreQuestionsTextView.typeface = FontUtil.getNunitoSemiBold(context!!)
+
+        mShowMoreQuestionsButton.setOnClickListener(mShowMoreQuestionsListener)
 
         if (::mSelectedSubject.isInitialized && mSelectedSubject != null && !mSelectedSubject.equals("")) {
             mLoadingQuestionSubject.visibility = View.VISIBLE
             /*if (activity != null)
                 (activity as ContentActivity).showLoading(true)*/
-            isRequesting = true
             val user = getUser()
             if (user != null && !user.getCourse().equals("")) {
+                isRequesting = true
                 requestGetQuestionsNewFormatBySubject(mSelectedSubject, user.getCourse())
             }
         }
@@ -108,6 +144,10 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
 
     fun setSelectedSubject(selectedSubject: String) {
         this.mSelectedSubject = selectedSubject
+    }
+
+    fun setSelectedSubjectType(selectedSubjectType: SubjectType) {
+        this.mSelectedSubjectType = selectedSubjectType
     }
 
     private fun resetValues() {
@@ -176,158 +216,199 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
         var cnt : Int = 0
         var count : Int = 0
 
+        if (mTotalQuestionsToShow < mUpdatedQuestions.size) {
+            mShowMoreQuestionsButton.visibility = View.VISIBLE
+        } else {
+            mShowMoreQuestionsButton.visibility = View.GONE
+        }
+
         for (i in 0 .. mQuestionList.size - 1) {
 
-            val view = LayoutInflater.from(context).inflate(R.layout.custom_subject_question, null, false)
-            val image : ImageView = view.findViewById(R.id.image)
-            val number = mQuestionList.get(i).questionId.replace("p","")
+            if (count < mTotalQuestionsToShow) {
 
-            // params for module
-            val param = GridLayout.LayoutParams()
+                val view = LayoutInflater.from(context).inflate(R.layout.custom_subject_question, null, false)
+                val image: ImageView = view.findViewById(R.id.image)
+                val number = mQuestionList.get(i).questionId.replace("p", "")
 
-            if (number.equals("-1")) {
-                view.background = resources.getDrawable(R.drawable.empty_square)
-                image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-            } else if(number.equals("-2")) {
-                val randomNumber = Math.random()
-                var rand = 0
-                if (randomNumber > 0.5) {
-                    rand = 1
-                }
-                if (rand.equals(0)) {
-                    view.background = resources.getDrawable(R.drawable.square_first_module_background)
-                } else {
-                    view.background = resources.getDrawable(R.drawable.square_second_module_background)
-                }
-                view.text.visibility = View.VISIBLE
-                view.text.typeface = FontUtil.getNunitoSemiBold(context!!)
-                image.visibility = View.GONE
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-                view.setOnClickListener(View.OnClickListener {
-                    Log.d(TAG, "onClick: number --- " + number)
-                    fragmentManager!!.popBackStack()
-                    fragmentManager!!.popBackStack()
-                })
+                // params for module
+                val param = GridLayout.LayoutParams()
 
-            } else {
-                val currentQuestion = mQuestionList.get(i)
-                val subject = limpiarTexto(currentQuestion.subject.value)
-                if (count >= mNumberOfFreeQuestionSubject.toInt() && !mUser.isPremiumUser()) {
-                    view.background = resources.getDrawable(R.drawable.not_premium_module_background)
-                } else if (currentQuestion.wasOK) {
-                    view.background = resources.getDrawable(R.drawable.checked_module_background)
-                } else {
-                    view.background = resources.getDrawable(R.drawable.unchecked_module_background)
-                }
-                when (subject) {
-                    limpiarTexto(SubjectType.MATHEMATICS.value) -> {
-                        mSubject = SubjectType.MATHEMATICS.value
-                        image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                if (number.equals("-1")) {
+                    view.background = resources.getDrawable(R.drawable.empty_square)
+                    image.visibility = View.GONE
+                    param.height = resources.getDimension(R.dimen.height_empty_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_empty_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
+                } else if (number.equals("-2")) {
+                    val randomNumber = Math.random()
+                    var rand = 0
+                    if (randomNumber > 0.5) {
+                        rand = 1
                     }
-                    limpiarTexto(SubjectType.SPANISH.value) -> {
-                        mSubject = SubjectType.SPANISH.value
-                        image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.VERBAL_HABILITY.value) -> {
-                        mSubject = SubjectType.VERBAL_HABILITY.value
-                        image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.MATHEMATICAL_HABILITY.value) -> {
-                        mSubject = SubjectType.MATHEMATICAL_HABILITY.value
-                        image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.BIOLOGY.value) -> {
-                        mSubject = SubjectType.BIOLOGY.value
-                        image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.CHEMISTRY.value) -> {
-                        mSubject = SubjectType.CHEMISTRY.value
-                        image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.PHYSICS.value) -> {
-                        mSubject = SubjectType.PHYSICS.value
-                        image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.GEOGRAPHY.value) -> {
-                        mSubject = SubjectType.GEOGRAPHY.value
-                        image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.MEXICO_HISTORY.value) -> {
-                        mSubject = SubjectType.MEXICO_HISTORY.value
-                        image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.UNIVERSAL_HISTORY.value) -> {
-                        mSubject = SubjectType.UNIVERSAL_HISTORY.value
-                        image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.FCE.value) -> {
-                        mSubject = SubjectType.FCE.value
-                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.FCE2.value) -> {
-                        mSubject = SubjectType.FCE2.value
-                        image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
-                    }
-                    limpiarTexto(SubjectType.NONE.value) -> {
-                        //image.background = resources.getDrawable(R.drawable.main_icon)
-                    }
-                }
-
-                param.height = resources.getDimension(R.dimen.height_square).toInt()
-                param.width = resources.getDimension(R.dimen.width_square).toInt()
-                param.bottomMargin = 2
-                param.rightMargin = 2
-                param.leftMargin = 2
-                param.topMargin = 2
-                param.setGravity(Gravity.CENTER)
-                val c = count
-                if (mUser.isPremiumUser()) {
-                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
-                } else if (!mUser.isPremiumUser() && c < mNumberOfFreeQuestionSubject.toInt()){
-                    mSubjectQuestionsId.add(Integer.parseInt(currentQuestion.questionId.replace("p", "")))
-                }
-
-                view.setOnClickListener(View.OnClickListener {
-
-                    if (mUser.isPremiumUser() || c < mNumberOfFreeQuestionSubject.toInt()) {
-                        Log.d(TAG, "onClick: number --- " + number)
-                        goQuestionActivity(Integer.parseInt(number))
+                    if (rand.equals(0)) {
+                        view.background = resources.getDrawable(R.drawable.square_first_module_background)
                     } else {
-                        (activity as ContentActivity).goPaymentFragment()
+                        view.background = resources.getDrawable(R.drawable.square_second_module_background)
                     }
-                })
-                count++
-            }
+                    view.text.visibility = View.VISIBLE
+                    view.text.typeface = FontUtil.getNunitoSemiBold(context!!)
+                    image.visibility = View.GONE
+                    param.height = resources.getDimension(R.dimen.height_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
+                    view.setOnClickListener(View.OnClickListener {
+                        Log.d(TAG, "onClick: number --- " + number)
+                        fragmentManager!!.popBackStack()
+                        fragmentManager!!.popBackStack()
+                    })
 
-            when (cnt) {
-                0 -> {
-                    mLeftTableLayout.addView(view)
-                    view.setLayoutParams(param)
+                } else {
+                    val currentQuestion = mQuestionList.get(i)
+                    val subject = mSelectedSubjectType
+                    if (count >= mNumberOfFreeQuestionSubject.toInt() && !mUser.isPremiumUser()) {
+                        view.background = resources.getDrawable(R.drawable.not_premium_module_background)
+                    } else if (currentQuestion.wasOK) {
+                        view.background = resources.getDrawable(R.drawable.checked_module_background)
+                    } else {
+                        view.background = resources.getDrawable(R.drawable.unchecked_module_background)
+                    }
+                    when (subject) {
+                        SubjectType.MATHEMATICS -> {
+                            mSubject = SubjectType.MATHEMATICS.value
+                            image.background = resources.getDrawable(R.drawable.mat_1_subject_icon_white)
+                        }
+                        SubjectType.SPANISH -> {
+                            mSubject = SubjectType.SPANISH.value
+                            image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                        }
+                        SubjectType.SPANISH2 -> {
+                            mSubject = SubjectType.SPANISH.value
+                            image.background = resources.getDrawable(R.drawable.esp_subject_icon_white)
+                        }
+                        SubjectType.VERBAL_HABILITY -> {
+                            mSubject = SubjectType.VERBAL_HABILITY.value
+                            image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                        }
+                        SubjectType.MATHEMATICAL_HABILITY -> {
+                            mSubject = SubjectType.MATHEMATICAL_HABILITY.value
+                            image.background = resources.getDrawable(R.drawable.hab_mat_subject_icon_white)
+                        }
+                        SubjectType.BIOLOGY -> {
+                            mSubject = SubjectType.BIOLOGY.value
+                            image.background = resources.getDrawable(R.drawable.bio_subject_icon_white)
+                        }
+                        SubjectType.CHEMISTRY -> {
+                            mSubject = SubjectType.CHEMISTRY.value
+                            image.background = resources.getDrawable(R.drawable.quim_subject_icon_white)
+                        }
+                        SubjectType.PHYSICS -> {
+                            mSubject = SubjectType.PHYSICS.value
+                            image.background = resources.getDrawable(R.drawable.fis_subject_icon_white)
+                        }
+                        SubjectType.GEOGRAPHY -> {
+                            mSubject = SubjectType.GEOGRAPHY.value
+                            image.background = resources.getDrawable(R.drawable.geo_subject_icon_white)
+                        }
+                        SubjectType.MEXICO_HISTORY -> {
+                            mSubject = SubjectType.MEXICO_HISTORY.value
+                            image.background = resources.getDrawable(R.drawable.his_mex_subject_icon_white)
+                        }
+                        SubjectType.UNIVERSAL_HISTORY -> {
+                            mSubject = SubjectType.UNIVERSAL_HISTORY.value
+                            image.background = resources.getDrawable(R.drawable.his_subject_icon_white)
+                        }
+                        SubjectType.FCE -> {
+                            mSubject = SubjectType.FCE.value
+                            image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                        }
+                        SubjectType.FCE2 -> {
+                            mSubject = SubjectType.FCE2.value
+                            image.background = resources.getDrawable(R.drawable.civ_et_subject_icon_white)
+                        }
+                        SubjectType.PHILOSOPHY_AREA -> {
+                            mSubject = SubjectType.PHILOSOPHY_AREA.value
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        SubjectType.PHILOSOPHY_AREA_4 -> {
+                            mSubject = SubjectType.PHILOSOPHY_AREA_4.value
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        SubjectType.PHILOSOPHY -> {
+                            mSubject = SubjectType.PHILOSOPHY.value
+                            image.background = resources.getDrawable(R.drawable.filo_subject_icon_white)
+                        }
+                        SubjectType.LITERATURE -> {
+                            mSubject = SubjectType.LITERATURE.value
+                            image.background = resources.getDrawable(R.drawable.hab_ver_subject_icon_white)
+                        }
+                        SubjectType.CHEMISTRY_AREA -> {
+                            mSubject = SubjectType.CHEMISTRY_AREA.value
+                            image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                        }
+                        SubjectType.CHEMISTRY_AREA_2 -> {
+                            mSubject = SubjectType.CHEMISTRY_AREA_2.value
+                            image.background = resources.getDrawable(R.drawable.quim_plus_subject_icon_white)
+                        }
+                        SubjectType.MATEMATICS_AREA -> {
+                            mSubject = SubjectType.MATEMATICS_AREA.value
+                            image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                        }
+                        SubjectType.MATEMATICS_AREA_1_2 -> {
+                            mSubject = SubjectType.MATEMATICS_AREA_1_2.value
+                            image.background = resources.getDrawable(R.drawable.mat_plus_subject_icon_white)
+                        }
+                        SubjectType.NONE -> {
+                            //image.background = resources.getDrawable(R.drawable.main_icon)
+                        }
+                    }
+
+                    param.height = resources.getDimension(R.dimen.height_square).toInt()
+                    param.width = resources.getDimension(R.dimen.width_square).toInt()
+                    param.bottomMargin = 2
+                    param.rightMargin = 2
+                    param.leftMargin = 2
+                    param.topMargin = 2
+                    param.setGravity(Gravity.CENTER)
+                    val c = count
+
+                    view.setOnClickListener {
+                        if (mUser.isPremiumUser() || c < mNumberOfFreeQuestionSubject.toInt()) {
+                            Log.d(TAG, "onClick: number --- " + number)
+                            goQuestionActivity(Integer.parseInt(number))
+                        } else {
+                            (activity as ContentActivity).goPaymentFragment()
+                        }
+                    }
+                    count++
                 }
-                1 -> {
-                    mCenterTableLayout.addView(view)
-                    view.setLayoutParams(param)
+
+                when (cnt) {
+                    0 -> {
+                        mLeftTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
+                    1 -> {
+                        mCenterTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
+                    2 -> {
+                        mRightTableLayout.addView(view)
+                        view.setLayoutParams(param)
+                    }
                 }
-                2 -> {
-                    mRightTableLayout.addView(view)
-                    view.setLayoutParams(param)
+                cnt++
+                if (cnt == 3) {
+                    cnt = 0
                 }
             }
-            cnt++
-            if (cnt==3) { cnt = 0 }
         }
 
     }
@@ -390,6 +471,11 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
                             mUpdatedQuestions[i].wasOK = answeredQuestion.wasOK
                         }
                     }
+                    if (mUser.isPremiumUser()) {
+                        mSubjectQuestionsId.add(mUpdatedQuestions[i].questionId)
+                    } else if (!mUser.isPremiumUser() && i < mNumberOfFreeQuestionSubject.toInt()) {
+                        mSubjectQuestionsId.add(mUpdatedQuestions[i].questionId)
+                    }
                 }
 
                 updateQuestionList(mUpdatedQuestions)
@@ -437,5 +523,13 @@ class StudySubjectQuestionsFragment : BaseContentFragment() {
             limpio = Normalizer.normalize(limpio, Normalizer.Form.NFC).replace(" ","").toLowerCase()
         }
         return limpio
+    }
+
+    private val mShowMoreQuestionsListener = View.OnClickListener {
+        mTotalQuestionsToShow += 20
+        mLeftTableLayout.removeAllViews()
+        mCenterTableLayout.removeAllViews()
+        mRightTableLayout.removeAllViews()
+        drawQuestions()
     }
 }

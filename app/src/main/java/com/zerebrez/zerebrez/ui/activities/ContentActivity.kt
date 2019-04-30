@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import com.zerebrez.zerebrez.fragments.practice.StudySubjectQuestionsFragment
 import com.zerebrez.zerebrez.models.*
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.services.firebase.DownloadImages
+import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 
 /**
  * This class call all components and adapters to build home view
@@ -196,6 +197,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
         //requestGetExamScores()
         requestGetProfileRefactor()
+        requestGetCoursesRefactor()
 
         mTopTabLayout.setOnTabSelectedListener(onTopTabLayoutListener);
         mBottomTabLayout.setOnTabSelectedListener(onBottomTabLayoutListener)
@@ -213,7 +215,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         //if (!dataHelper.areImagesDownloaded()) {
 
         //if (isWriteStoragePermissionGranted() && isReadStoragePermissionGranted()) {
-            startDownloadImages()
+        startDownloadImages()
         //} else {
         //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         //    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
@@ -236,6 +238,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         super.onActivityResult(requestCode, resultCode, data)
         mCallbackManager.onActivityResult(requestCode, resultCode, data)
 
+
         if (resultCode.equals(SHOW_ANSWER_MESSAGE_RESULT_CODE) &&
                 !resultCode.equals(BaseActivityLifeCycle.UPDATE_USER_SCHOOLS_RESULT_CODE) &&
                 !resultCode.equals(BaseActivityLifeCycle.UPDATE_WRONG_QUESTIONS_RESULT_CODE)) {
@@ -243,6 +246,12 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
             //if (showPayment) {
                 goPaymentFragment()
             //}
+        }
+
+        if (data != null) {
+            if (data.getBooleanExtra(REFRESH_FRAGMENT, false)) {
+                changePendingPaymentMethodFragmentToPaywayFragment()
+            }
         }
     }
 
@@ -432,20 +441,23 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
      * Backpress override method, shows snackbar when user whants to exit
      */
     override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
+        try {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
 
-        val fragment = mPracticeViewPager.getItem(mViewPager.currentItem)
-        Snackbar.make(mCordinatorView,
-                "Presiona otra vez para SALIR de la aplicación",
-                2000)
-                .show()
+            val fragment = mPracticeViewPager.getItem(mViewPager.currentItem)
+            Snackbar.make(mCordinatorView,
+                    "Presiona otra vez para SALIR de la aplicación",
+                    2000)
+                    .show()
 
-        this.doubleBackToExitPressedOnce = true
+            this.doubleBackToExitPressedOnce = true
 
-        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+            Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+        } catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) {}
     }
 
     override fun onGetProfileRefactorSuccess(user: User) {
@@ -455,6 +467,15 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     override fun onGetProfileRefactorFail(throwable: Throwable) {
         super.onGetProfileRefactorFail(throwable)
+    }
+
+    override fun onGetCoursesRefactorSuccess(courses: List<Course>) {
+        super.onGetCoursesRefactorSuccess(courses)
+        DataHelper(this).saveCourses(courses)
+    }
+
+    override fun onGetCoursesRefactorFail(throwable: Throwable) {
+        super.onGetCoursesRefactorFail(throwable)
     }
 
     /*override fun onGetExamScoresSuccess(examScores: List<ExamScore>) {
@@ -481,12 +502,29 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
 
     fun startDownloadImages() {
         try {
-            if (!isMyServiceRunning(DownloadImages::class.java)) {
+            if (!DataHelper(baseContext).areImagesDownloaded()) {
+                val showLoadingImagesActivity = Intent(this, DownloadingImagesActivity::class.java)
+                startActivity(showLoadingImagesActivity)
+                Log.d("DownloadService","show download images activity")
+            }
+
+            val isServiceRunning = isMyServiceRunning(DownloadImages::class.java)
+            val isAfterLogIn = DataHelper(baseContext).isAfterLogIn()
+            val areImagesDownloaded = DataHelper(baseContext).areImagesDownloaded()
+            Log.d("DownloadService", "!isServiceRunning: {$isServiceRunning} && isAfterLogIn: {$isAfterLogIn} && !areImagesDownloaded: {$areImagesDownloaded}")
+            // start download after login (signin or signup)
+            if (!isServiceRunning && isAfterLogIn && !areImagesDownloaded) {
                 this.startService(Intent(this, DownloadImages::class.java))
                 Log.i(TAG, "Started download service **********************")
                 //this.registerReceiver(br, IntentFilter(DownloadImages.DOWNLOAD_IMAGES_BR))
+                Log.d("DownloadService","start download images service")
             }
-        } catch (exception : Exception) {}
+
+        } catch (exception : kotlin.Exception) {
+            exception.printStackTrace()
+        } catch (exception: java.lang.Exception) {
+            exception.printStackTrace()
+        }
     }
 
     private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
@@ -499,7 +537,7 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         return false
     }
 
-    fun stopDownloadImagesService() {
+    public fun stopDownloadImagesService() {
         this.stopService(Intent(this, DownloadImages::class.java))
         Log.i(TAG, "Stopped service ***************************")
         val dataHelper = DataHelper(this)
@@ -515,12 +553,6 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
                     Log.i(TAG, "Downloading ...")
                 }
             }
-        }
-    }
-
-    private val notificationBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(p0: Context?, p1: Intent?) {
-
         }
     }
 
@@ -551,52 +583,22 @@ class ContentActivity : BaseActivityLifeCycle(), GoogleApiClient.OnConnectionFai
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onGetModulesSucces(result: List<Module>) {
-        super.onGetModulesSucces(result)
-    }
-
-    override fun onGetModulesFail(throwable: Throwable) {
-        super.onGetModulesFail(throwable)
-    }
-
-    override fun onGetCoursesSuccess(courses: List<String>) {
-        super.onGetCoursesSuccess(courses)
-    }
-
-    override fun onGetCoursesFail(throwable: Throwable) {
-        super.onGetCoursesFail(throwable)
-    }
-
-    override fun onGetUserDataSuccess(user: User) {
-        super.onGetUserDataSuccess(user)
-    }
-
-    override fun onGetUserDataFail(throwable: Throwable) {
-        super.onGetUserDataFail(throwable)
-    }
-
-    override fun onGetExamsSuccess(exams: List<Exam>) {
-        super.onGetExamsSuccess(exams)
-    }
-
-    override fun onGetExamsFail(throwable: Throwable) {
-        super.onGetExamsFail(throwable)
-    }
-
-    override fun onGetImagesPathSuccess(images: List<Image>) {
-        super.onGetImagesPathSuccess(images)
-    }
-
-    override fun onGetImagesPathFail(throwable: Throwable) {
-        super.onGetImagesPathFail(throwable)
-    }
-
     fun getUserProfile(): User? {
         if (::mUser.isInitialized) {
             return this.mUser
         } else {
             return null
         }
+    }
+
+    public fun changePendingPaymentMethodFragmentToPaywayFragment() {
+        val tab = mBottomTabLayout.getTabAt(3)
+        tab!!.select()
+        currentTab = NodeType.PROFILE
+        setTopTabIcons()
+        // go to payment fragment
+        mViewPager.currentItem = 1
+        mViewPager.adapter!!.notifyDataSetChanged()
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,9 +199,15 @@ public class ExamScoreCanvas extends android.support.v7.widget.AppCompatImageVie
             mHappyEmojiIcon.setBounds(imageBounds);
             mHappyEmojiIcon.draw(canvas);
         } else if (userHits == usersAverageScore) {
-            Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
-            mOkEmojiIcon.setBounds(imageBounds);
-            mOkEmojiIcon.draw(canvas);
+            if (userHits == userHighestScore) {
+                Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
+                mHappyEmojiIcon.setBounds(imageBounds);
+                mHappyEmojiIcon.draw(canvas);
+            } else {
+                Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
+                mOkEmojiIcon.setBounds(imageBounds);
+                mOkEmojiIcon.draw(canvas);
+            }
         } else {
             Rect imageBounds = new Rect(width - mEmojiWidth, progressAverage - mEmojiWidth / 2, width, progressAverage + mEmojiWidth/2); // Adjust this for where you want it
             mSadEmijiIcon.setBounds(imageBounds);

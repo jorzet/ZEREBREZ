@@ -1,3 +1,19 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.services.compropago;
 
 import com.zerebrez.zerebrez.models.*;
@@ -20,21 +36,13 @@ public class ComproPagoManager {
     private static final String SK_TEST = "sk_test_7be79c8752725ac584";
     private static final String PK_LIVE = "pk_live_518507516122571bf3";
     private static final String SK_LIVE = "sk_live_5be40752805f3573e6";
-    private OrderRequest orderRequest = new OrderRequest("comipems",
-                                                        0.0f,
-                                                        "COMIPEMS 12 meses",
-                                                          "",
-                                                      "",
-                                                      "",
-                                                        "",
-                                                            "MXN");
 
     public ComproPagoManager() {
         comproPagoAPI = RetrofitClientInstance.getRetrofitInstance(BASE_URL).create(ComproPagoAPI.class);
     }
 
     public void ListProviders(final OnListProvidersListener onListProvidersListener) {
-        Call<List<Provider>> call = comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_TEST,null));
+        Call<List<Provider>> call = comproPagoAPI.getProviders(okhttp3.Credentials.basic(PK_LIVE,null));
         call.enqueue(new Callback<List<Provider>>() {
             @Override
             public void onResponse(Call<List<Provider>> call, Response<List<Provider>> response) {
@@ -48,12 +56,21 @@ public class ComproPagoManager {
         });
     }
 
-    public void GenerateOrder(String customerName, String customerEmail, String paymentType, Float orderPrice, final OnGenerateOrderListener onGenerateOrderListener) {
+    public void GenerateOrder(Course course, String customerName, String customerEmail, String paymentType, Float orderPrice, final OnGenerateOrderListener onGenerateOrderListener) {
+
+        OrderRequest orderRequest = new OrderRequest(course.getId(),
+                0.0f,
+                course.getComproPagoDescription(),
+                "",
+                "",
+                "",
+                "",
+                "MXN");
         orderRequest.setCustomer_name(customerName);
         orderRequest.setCustomer_email(customerEmail);
         orderRequest.setPayment_type(paymentType);
         orderRequest.setOrder_price(orderPrice);
-        Call<OrderResponse> call = comproPagoAPI.GenerateOrder(orderRequest,okhttp3.Credentials.basic(PK_TEST,null));
+        Call<OrderResponse> call = comproPagoAPI.GenerateOrder(orderRequest,okhttp3.Credentials.basic(PK_LIVE,null));
         call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
@@ -68,7 +85,7 @@ public class ComproPagoManager {
     }
 
     public void VerifyCharge(String paymentId, final OnVerifyChargeListener onVerifyChargeListener) {
-        Call<ChargeResponse> call = comproPagoAPI.VerifyCharge(paymentId, Credentials.basic(SK_TEST,PK_TEST));
+        Call<ChargeResponse> call = comproPagoAPI.VerifyCharge(paymentId, Credentials.basic(SK_LIVE,PK_LIVE));
         call.enqueue(new Callback<ChargeResponse>() {
             @Override
             public void onResponse(Call<ChargeResponse> call, Response<ChargeResponse> response) {

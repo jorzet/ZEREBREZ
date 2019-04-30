@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,41 +26,51 @@ import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
-import kotlin.collections.HashMap
+
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
 
 private const val TAG: String = "QuestionModuleRequest"
 
 class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to replace
+     */
     private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
     private val FREE_MODULES_REFERENCE : String = "freeUser/course_label/modules"
     private val MODULES_REFERENCE : String = "modules/course_label"
-    private val USERS_REFERENCE : String = "users"
-    private val PROFILE_REFERENCE : String = "profile"
     private val ANSWERED_MODULED_REFERENCE : String = "answeredModules"
 
+    /*
+     * Json keys
+     */
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
     private val COURSE_KEY : String = "course"
     private val PROFILE_KEY : String = "profile"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
 
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetFreeModulesRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_MODULES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(FREE_MODULES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -95,15 +105,19 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetModulesRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance()
+                .getReference(MODULES_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, String>)
+                    val map = (post as kotlin.collections.HashMap<String, String>)
                     val mModules = arrayListOf<Module>()
 
                     Log.d(TAG, post.toString())
@@ -169,7 +183,9 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val firebaseUser = getCurrentUser()
         if (firebaseUser != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + firebaseUser.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(firebaseUser.uid)
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -178,7 +194,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = post as HashMap<*, *>
+                        val map = post as kotlin.collections.HashMap<*, *>
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -210,11 +226,15 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                         }
 
                         if (map.containsKey(ANSWERED_MODULED_REFERENCE)) {
-                                val answeredModules = (map.get(ANSWERED_MODULED_REFERENCE) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
+                            val answeredModuleCourse = map.get(ANSWERED_MODULED_REFERENCE) as kotlin.collections.HashMap<String, String>
+
+                            if (answeredModuleCourse.containsKey(course)) {
+
+                                val answeredModules = answeredModuleCourse.get(course) as kotlin.collections.HashMap<String, String>
                                 val modules = arrayListOf<Module>()
 
                                 for (key2 in answeredModules.keys) {
-                                    val moduleAnswered = answeredModules.get(key2) as HashMap<String, String>
+                                    val moduleAnswered = answeredModules.get(key2) as kotlin.collections.HashMap<String, String>
                                     val module = Module()
                                     module.setId(Integer(key2.replace("m", "")))
 
@@ -231,7 +251,7 @@ class QuestionModuleRequest(activity: Activity) : Engagement(activity) {
                                     modules.add(module)
                                 }
                                 user.setAnsweredModules(modules)
-
+                            }
                         }
                         Log.d(TAG, "user data ------ " + user.getUUID())
                         onRequestListenerSucces.onSuccess(user)

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ import android.os.IBinder
 import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
-
-
 
 /*
 * Created by Jorge Zepeda Tinoco on 27/02/18.

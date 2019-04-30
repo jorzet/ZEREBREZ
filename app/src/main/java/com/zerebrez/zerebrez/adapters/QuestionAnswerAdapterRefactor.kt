@@ -1,8 +1,25 @@
+/*
+ * Copyright [2019] [Jorge Zepeda Tinoco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zerebrez.zerebrez.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,12 +33,27 @@ import com.zerebrez.zerebrez.models.QuestionNewFormat
 import com.zerebrez.zerebrez.utils.FontUtil
 import katex.hourglass.`in`.mathlib.MathView
 import com.felipecsl.gifimageview.library.GifImageView
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.storage.FirebaseStorage
+import com.zerebrez.zerebrez.models.User
+import com.bumptech.glide.Glide
 import com.zerebrez.zerebrez.utils.GifDataDownloader
 
-class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : QuestionNewFormat, imagesPath : List<Image>, context: Context) : RecyclerView.Adapter<QuestionAnswerViewHolder>() {
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
+class QuestionAnswerAdapterRefactor (isAnswer : Boolean,
+                                     questionNewFormat : QuestionNewFormat,
+                                     imagesPath : List<Image>,
+                                     user: User,
+                                     context: Context) : RecyclerView.Adapter<QuestionAnswerViewHolder>() {
 
     private val mQuestionNewFormat = questionNewFormat
     private val mImagesPath : List<Image> = imagesPath
+    private val mUser: User = user
     private val mContext : Context = context
     private val mIsAnswer : Boolean = isAnswer
 
@@ -93,6 +125,24 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
                             holder.mOptionGifImage.setImageBitmap(bitmap)
                             holder.mOptionGifImage.startAnimation()
 
+                            FirebaseStorage
+                                    .getInstance()
+                                    .getReference()
+                                    .child(mUser.getCourse() + "/images/${nameInStorage}")
+                                    .getDownloadUrl()
+                                    .addOnSuccessListener(object: OnSuccessListener<Uri> {
+                                        override fun onSuccess(uri: Uri?) {
+
+                                            Glide.with(mContext)
+                                                    .asGif()
+                                                    .load(uri.toString())
+                                                    .into(holder.mOptionImage);
+                                        }
+                                    }).addOnFailureListener(object: OnFailureListener {
+                                        override fun onFailure(exception: java.lang.Exception) {
+
+                                        }
+                                    })
                             /*object : GifDataDownloader() {
                             override fun onPostExecute(bytes: ByteArray) {
                                 holder.mOptionGifImage.setBytes(bytes)
@@ -102,8 +152,8 @@ class QuestionAnswerAdapterRefactor (isAnswer : Boolean, questionNewFormat : Que
 
                             holder.mOptionText.visibility = View.GONE
                             holder.mOptionMath.visibility = View.GONE
-                            holder.mOptionImage.visibility = View.GONE
-                            holder.mOptionGifImage.visibility = View.VISIBLE
+                            holder.mOptionImage.visibility = View.VISIBLE
+                            holder.mOptionGifImage.visibility = View.GONE
                         } else {
                             holder.mOptionImage.setImageBitmap(getBitmap(nameInStorage))
                             holder.mOptionText.visibility = View.GONE

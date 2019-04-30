@@ -29,7 +29,7 @@
             android:value="ca-app-pub-4979517608172495~7450198544"/>
 
         <service android:name=".services.firebase.DownloadImages"/>
-        <service android:name=".services.notification.NotificationService"/>
+
         <!-- Register the Alarm Receiver -->
         <receiver android:name=".services.notification.NotificationAlarmReciver"
             android:enabled="false">
@@ -85,6 +85,15 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.activities.ShowAnswerActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.ShowQuestionsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.UpdateAppActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.DownloadingImagesActivity"
             android:screenOrientation="portrait"/>
 
     </application>

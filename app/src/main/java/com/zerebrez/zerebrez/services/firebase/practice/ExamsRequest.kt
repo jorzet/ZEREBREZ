@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,42 +28,53 @@ import com.zerebrez.zerebrez.services.firebase.Engagement
 import com.zerebrez.zerebrez.services.sharedpreferences.SharedPreferencesManager
 import java.util.*
 
+/**
+ * Created by Jorge Zepeda Tinoco on 03/06/18.
+ * jorzet.94@gmail.com
+ */
+
 private const val TAG: String = "ExamsRequest"
 
 class ExamsRequest(activity: Activity) : Engagement(activity) {
 
+    /*
+     * Labels to replace
+     */
     private val COURSE_LABEL : String = "course_label"
+
+    /*
+     * Node references
+     */
     private val FREE_EXAMS_REFERENCE : String = "freeUser/course_label/exams"
     private val EXAMS_REFERENCE : String = "exams/course_label"
-    private val USERS_REFERENCE : String = "users"
-    private val PROFILE_REFERENCE : String = "profile"
-    private val ANSWERED_EXAMS_REFERENCE : String = "answeredExams"
+
+    /*
+     * Json keys
+     */
     private val COURSE_KEY : String = "course"
     private val PROFILE_KEY : String = "profile"
-
     private val IS_PREMIUM_KEY : String = "isPremium"
     private val TIMESTAMP_KEY : String = "timeStamp"
     private val PREMIUM_KEY : String = "premium"
     private val ANSWERED_EXAM_KEY : String = "answeredExams"
     private val CORRECT_KEY : String = "correct"
     private val INCORRECT_KEY : String = "incorrect"
+    private val QUESTIONONS_KEY : String = "questions"
+    private val DESCRIPTION_KEY : String = "description"
 
-    private val mActivity : Activity = activity
+    /*
+     * Database object
+     */
     private lateinit var mFirebaseDatabase: DatabaseReference
-    private var mFirebaseInstance: FirebaseDatabase
-
-    init {
-        mFirebaseInstance = FirebaseDatabase.getInstance()
-        //if (!SharedPreferencesManager(mActivity).isPersistanceData()) {
-        //    mFirebaseInstance.setPersistenceEnabled(true)
-        //    SharedPreferencesManager(mActivity).setPersistanceDataEnable(true)
-        //}
-    }
 
     fun requestGetFreeExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(FREE_EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -98,35 +109,47 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
     fun requestGetExamsRefactor(course: String) {
         // Get a reference to our posts
-        mFirebaseDatabase = mFirebaseInstance.getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+        mFirebaseDatabase = FirebaseDatabase
+                .getInstance(Engagement.SETTINGS_DATABASE_REFERENCE)
+                .getReference(EXAMS_REFERENCE.replace(COURSE_LABEL, course))
+
         mFirebaseDatabase.keepSynced(true)
+
         // Attach a listener to read the data at our posts reference
         mFirebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val post = dataSnapshot.getValue()
                 if (post != null) {
-                    val map = (post as HashMap<String, HashMap<Any, Any>>)
+                    val map = (post as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
                     val mExams = arrayListOf<Exam>()
 
                     Log.d(TAG, post.toString())
 
                     /*
-                 * mapping map to module object
-                 */
+                     * mapping map to module object
+                     */
                     for (key in map.keys) {
                         println(key)
                         val exam = Exam()
                         val questions = arrayListOf<QuestionNewFormat>()
 
-                        // get question id from response
-                        val list = map.get(key) as List<String>
-                        for (q in list) {
-                            val questionNewFormat = QuestionNewFormat()
-                            questionNewFormat.questionId = q
-                            questions.add(questionNewFormat)
+                        val examContent = (map.get(key) as kotlin.collections.HashMap<String, kotlin.collections.HashMap<Any, Any>>)
+
+                        if (examContent.contains(QUESTIONONS_KEY)) {
+                            // get question id from response
+                            val list = examContent.get(QUESTIONONS_KEY) as List<String>
+                            for (q in list) {
+                                val questionNewFormat = QuestionNewFormat()
+                                questionNewFormat.questionId = q
+                                questions.add(questionNewFormat)
+                            }
                         }
 
+                        if (examContent.contains(DESCRIPTION_KEY)) {
+                            val description = examContent.get(DESCRIPTION_KEY) as String
+                            exam.setDescription(description)
+                        }
                         // set module id and question id
                         exam.setExamId(Integer(key.replace("e", "")))
                         exam.setQuestionsNewFormat(questions)
@@ -136,8 +159,8 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                     }
 
                     /*
-                  * sort module list because service doesn't return it in order
-                  */
+                     * sort module list because service doesn't return it in order
+                     */
                     Collections.sort(mExams, object : Comparator<Exam> {
                         override fun compare(o1: Exam, o2: Exam): Int {
                             return extractInt(o1) - extractInt(o2)
@@ -168,7 +191,10 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
         // Get a reference to our posts
         val user = getCurrentUser()
         if (user != null) {
-            mFirebaseDatabase = mFirebaseInstance.getReference(USERS_REFERENCE + "/" + user.uid)
+            mFirebaseDatabase = FirebaseDatabase
+                    .getInstance(Engagement.USERS_DATABASE_REFERENCE)
+                    .getReference(user.uid)
+
             mFirebaseDatabase.keepSynced(true)
 
             // Attach a listener to read the data at our posts reference
@@ -177,7 +203,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
 
                     val post = dataSnapshot.getValue()
                     if (post != null) {
-                        val map = (post as HashMap<String, String>)
+                        val map = (post as kotlin.collections.HashMap<String, String>)
                         Log.d(TAG, "user data ------ " + map.size)
 
                         var course = ""
@@ -214,7 +240,7 @@ class ExamsRequest(activity: Activity) : Engagement(activity) {
                             val answeredExams = (map.get(ANSWERED_EXAM_KEY) as kotlin.collections.HashMap<String, String>).get(course) as kotlin.collections.HashMap<String, String>
                             val exams = arrayListOf<Exam>()
                             for (key2 in answeredExams.keys) {
-                                val examAnswered = answeredExams.get(key2) as HashMap<String, String>
+                                val examAnswered = answeredExams.get(key2) as kotlin.collections.HashMap<String, String>
                                 val exam = Exam()
                                 exam.setExamId(Integer(key2.replace("e", "")))
 

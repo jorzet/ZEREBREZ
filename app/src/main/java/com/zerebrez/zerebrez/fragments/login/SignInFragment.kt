@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     private lateinit var mTextLoginWith : TextView
     private lateinit var mForgotPassword : TextView
     private lateinit var mSendEmail : TextView
+    private lateinit var mVersionApp : TextView
 
     /*
      * Objects
@@ -109,12 +110,15 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         mTextLoginWith = rootView.findViewById(R.id.tv_login_with)
         mForgotPassword = rootView.findViewById(R.id.tv_i_forgot_my_password)
         mSendEmail = rootView.findViewById(R.id.tv_support_email)
+        mVersionApp = rootView.findViewById(R.id.tv_version_app)
 
         mSinginButton.typeface = FontUtil.getNunitoSemiBold(context!!)
         mTextLoginWith.typeface = FontUtil.getNunitoBold(context!!)
         mForgotPassword.typeface = FontUtil.getNunitoSemiBold(context!!)
         mSendEmail.typeface = FontUtil.getNunitoSemiBold(context!!)
+        mVersionApp.typeface = FontUtil.getNunitoSemiBold(context!!)
 
+        mVersionApp.text = BuildConfig.VERSION_NAME
 
         mSinginButton.setOnClickListener(mSinginButtonListener)
         mSinginFacebookButton.setOnClickListener(mSignInFacebookButtonListener)
@@ -159,6 +163,10 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
 
     private fun goContentActivity() {
         if (activity != null) {
+            if (context !=  null) {
+                DataHelper(context!!).setisAfterLogIn(true)
+            }
+
             val intent = Intent(activity, ContentActivity::class.java)
             startActivity(intent)
             activity!!.finish()
@@ -189,7 +197,7 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
     }
 
     private val mForgotPasswordListener = View.OnClickListener {
-
+        sendPasswordResetEmail()
     }
 
     private val mSendEmailListener = View.OnClickListener {
@@ -227,6 +235,26 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
         val release = Build.VERSION.RELEASE
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"
+    }
+
+    /*
+     * This method send a request to reset password
+     */
+    fun sendPasswordResetEmail(){
+        val email = mEmailEditText.text.toString().replace(" ", "")
+        if (mForgotPassword.text.toString().equals("Escribe tu correo")) {
+            if (email != null && !email.equals("")) {
+                mLogInView.visibility = View.GONE
+                mLoginAnotherProvidersView.visibility = View.GONE
+                mLoadingProgresBar.visibility = View.VISIBLE
+                requestSendPasswordResetEmail(email)
+            } else {
+                ErrorDialog.newInstance("Error", "Necesitas ingresar un email",
+                        DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "loginError")
+            }
+        } else {
+            mForgotPassword.text = "Escribe tu correo"
+        }
     }
 
     /*
@@ -831,6 +859,25 @@ class SignInFragment : BaseContentFragment(), ErrorDialog.OnErrorDialogListener 
                 }
             })
         }
+    }
+
+    override fun onSendPasswordResetEmailSuccess(success: Boolean) {
+        super.onSendPasswordResetEmailSuccess(success)
+        mForgotPassword.text = "Se enviaron las instrucciones a tu correo"
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+    }
+
+    override fun onSendPasswordResetEmailFail(throwable: Throwable) {
+        super.onSendPasswordResetEmailFail(throwable)
+        mForgotPassword.text = "Escribe tu correo"
+        mLogInView.visibility = View.VISIBLE
+        mLoginAnotherProvidersView.visibility = View.VISIBLE
+        mLoadingProgresBar.visibility = View.GONE
+        ErrorDialog.newInstance("Error", "Necesitas ingresar un email",
+                DialogType.OK_DIALOG, this)!!.show(fragmentManager!!, "loginError")
+
     }
 
 }

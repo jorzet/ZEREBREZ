@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.zerebrez.zerebrez.request
-
-import android.os.AsyncTask
+package com.zerebrez.zerebrez.models.enums
 
 /**
- * Created by Jorge Zepeda Tinoco on 28/04/18.
+ * Created by Jorge Zepeda Tinoco on 30/11/18.
  * jorzet.94@gmail.com
  */
 
-class GetModulesTask : AsyncTask<Void, Void, Void>() {
-    override fun doInBackground(vararg p0: Void?): Void {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+enum class ComproPagoStatus constructor(val value : String) {
+    CHARGE_PENDING("charge.pending"),
+    CHARGE_SUCCESS("charge.success"),
+    CHARGE_EXPIRED("charge.expired")
 }

@@ -14,10 +14,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="10dp"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:textStyle="bold"/>
 
         <ImageView
@@ -25,8 +25,8 @@
             android:layout_width="1dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/tv_module_number"
-            android:layout_marginLeft="30dp"
+            android:layout_toEndOf="@+id/tv_module_number"
+            android:layout_marginStart="10dp"
             android:background="@color/black"/>
 
         <TextView
@@ -34,15 +34,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/iv_vertical_line"
-            android:layout_marginLeft="30dp"
+            android:layout_toEndOf="@+id/iv_vertical_line"
+            android:layout_toStartOf="@+id/rl_show_questions"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:ellipsize="end"
+            android:lines="1"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="17sp"/>
+            android:textSize="15sp"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_show_questions"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/iv_close_question"
+            android:background="@drawable/next_question_button_background">
+            <TextView
+                android:id="@+id/tv_show_questions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="   P R E G U N T A S   "
+                android:textSize="9sp"
+                android:textColor="@color/white"/>
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/iv_close_question"
-            android:layout_width="70dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true">
             <ImageView
@@ -86,14 +107,14 @@
     <RelativeLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/question_bottom_bar_height"
         android:layout_alignParentBottom="true"
         android:background="@color/bottom_bar_background_color">
 
         <RelativeLayout
             android:id="@+id/btn_show_answer"
             android:layout_width="120dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:background="@drawable/show_answer_button_background">
@@ -103,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_centerVertical="true"
                 android:text="E X P L I C A C I Ó N"
                 android:textSize="9sp"
                 android:textColor="@color/white"/>
@@ -121,7 +142,7 @@
         <RelativeLayout
             android:id="@+id/btn_next_question"
             android:layout_width="120dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
@@ -132,7 +153,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_centerVertical="true"
                 android:text="S I G U I E N T E"
                 android:textSize="9sp"
                 android:textColor="@color/white"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,14 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.adapters.ExamAverageListAdapterRefactor
 import com.zerebrez.zerebrez.fragments.content.BaseContentFragment
+import com.zerebrez.zerebrez.models.Exam
 import com.zerebrez.zerebrez.models.ExamScore
 import com.zerebrez.zerebrez.models.ExamScoreRafactor
 import com.zerebrez.zerebrez.models.User
 import com.zerebrez.zerebrez.services.database.DataHelper
 import com.zerebrez.zerebrez.ui.activities.ContentActivity
 import com.zerebrez.zerebrez.utils.FontUtil
+import java.lang.Exception
 
 /**
  * Created by Jorge Zepeda Tinoco on 20/03/18.
@@ -54,6 +56,7 @@ class ExamsAverageFragment : BaseContentFragment() {
      * Objects
      */
     private lateinit var mExams : List<ExamScoreRafactor>
+    private var mUpdatedExams : List<Exam> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -84,13 +87,46 @@ class ExamsAverageFragment : BaseContentFragment() {
         if (activity != null) {
             val user = (activity as ContentActivity).getUserProfile()
             if (user != null && !user.getCourse().equals("")) {
-                requestGetAnsweredExamsRefactor(user.getCourse())
+                requestGetExamsRefactor(user.getCourse())
             }
         }
     }
 
     override fun onGetExamScoreRefactorFail(throwable: Throwable) {
         super.onGetExamScoreRefactorFail(throwable)
+
+        examsAverageListView.visibility = View.GONE
+        notExamsDidIt.visibility = View.VISIBLE
+        if (activity != null)
+            (activity as ContentActivity).showLoading(false)
+    }
+
+    override fun onGetExamsRefactorSuccess(exams: List<Exam>) {
+        super.onGetExamsRefactorSuccess(exams)
+        if (context != null) {
+            try {
+                for (exam in exams) {
+                    for (mExam in mExams) {
+                        if (exam.getExamId().equals(Integer.parseInt(mExam.examId.replace("e","")))) {
+                            mExam.examDescription = exam.getDescription()
+                        }
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+            } catch (e: kotlin.Exception) {}
+
+            val user = (activity as ContentActivity).getUserProfile()
+            if (user != null && !user.getCourse().equals("")) {
+                requestGetAnsweredExamsRefactor(user.getCourse())
+            }
+        }
+    }
+
+    override fun onGetExamsRefactorFail(throwable: Throwable) {
+        super.onGetExamsRefactorFail(throwable)
+
+        examsAverageListView.visibility = View.GONE
+        notExamsDidIt.visibility = View.VISIBLE
         if (activity != null)
             (activity as ContentActivity).showLoading(false)
     }

@@ -64,10 +64,16 @@
     <color name="become_user_premium_text_color">#205A8F</color>
     <color name="paymen_line_color">#5E87AC</color>
     <color name="exams_text_color2">#205A8F</color>
+    <color name="exams_text_color3">#101E45</color>
     <color name="questions_text_color2">#205A8F</color>
     <color name="get_all_exams_and_questions_text_color">#808080</color>
     <color name="you_have_acces_of_all_contents_text_color">#205A8F</color>
     <color name="expiration_date_text_color">#F7921E</color>
+    <color name="tips_text_color">#101E45</color>
+    <color name="payment_text_color_1">#101E45</color>
+    <color name="payment_text_color_2">#205A8F</color>
+    <color name="payment_email_text_color">#FBA428</color>
+    <color name="change_payment_method_background_color">#FF0416</color>
 
 
     <!--question module fragment-->
@@ -92,6 +98,7 @@
     <!--show answer activity-->
     <color name="show_question_background">#EAEAEA</color>
     <color name="answer_text_color">#8B8B8B</color>
+    <color name="answer_image_background_color">#101C46</color>
 
     <!--advances fragment-->
     <color name="verbal_skills_text_color">#059CAE</color>
@@ -153,5 +160,12 @@
     <color name="physics_subject_color">#2CA5B6</color>
     <color name="biology_subject_color">#2B659A</color>
     <color name="mexico_history_subject_color">#BADF3D</color>
+
+    <!--questions-->
+    <color name="not_selected_question_color">#D7D7D7</color>
+    <color name="selected_question_color">#A0A0A0</color>
+    <color name="wrong_question_answered_color">#FD0007</color>
+    <color name="ok_question_answered_color">#BDE645</color>
+    <color name="question_to_answer_text_color">#56585D</color>
 
 </resources>

@@ -1,5 +1,5 @@
 /*
- * Copyright [2018] [Jorge Zepeda Tinoco]
+ * Copyright [2019] [Jorge Zepeda Tinoco]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.zerebrez.zerebrez.ui.dialogs
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
@@ -30,13 +31,14 @@ import android.widget.TextView
 import com.zerebrez.zerebrez.R
 import com.zerebrez.zerebrez.models.enums.DialogType
 import com.zerebrez.zerebrez.models.enums.ErrorType
+import java.lang.Exception
 
 /**
  * Created by Jorge Zepeda Tinoco on 12/03/18.
  * jorzet.94@gmail.com
  */
 
-class ErrorDialog : DialogFragment(){
+class ErrorDialog : DialogFragment(), DialogInterface.OnCancelListener{
 
     /*
      * UI accessors
@@ -195,7 +197,10 @@ class ErrorDialog : DialogFragment(){
     }
 
     override fun show(fragmentManager : FragmentManager, tag : String) {
-        super.show(fragmentManager, tag)
+        try {
+            super.show(fragmentManager, tag)
+        } catch (e: java.lang.Exception) {
+        } catch (e: kotlin.Exception) { }
     }
 
     private val mYesButtonListener = View.OnClickListener {
@@ -210,6 +215,13 @@ class ErrorDialog : DialogFragment(){
             mOnErrorDialogListener!!.onConfirmationCancel()
         }
         dismiss()
+    }
+
+    override fun onCancel(dialog: DialogInterface?) {
+        super.onCancel(dialog)
+        if (mOnErrorDialogListener != null) {
+            mOnErrorDialogListener!!.onConfirmationCancel()
+        }
     }
 
 }
